@@ -9,27 +9,72 @@
 </head>
 
 <body>
-    <!-- trp_story2 -->
-        クリア
-    <!-- /trp_story2 -->
+    <!-- trp2 -->
+    クリア
+    <!-- /trp2 -->
+
     <br>
     <br>
-    <!-- trp_story3 -->
-        <div style="background-color:#ffcc99;">
-            <!-- 折り畳み展開ポインタ -->
-            <div onclick="obj=document.getElementById('trp_story_3_open').style; obj.display=(obj.display=='none')?'block':'none';">
-                <a style="cursor:pointer;">▼ trp_story_3</a>
-            </div>
-            <!--// 折り畳み展開ポインタ -->
-                
-            <!-- 折り畳まれ部分 -->
-            <div id="trp_story_3_open" style="display:none;clear:both;">
-            　クリア
-            </div>
-            <!--ここの部分が折りたたまれる＆展開される部分になります。
-            自由に記述してください。-->  
+
+    <!-- trp3 -->
+    <div style="background-color:#ffcc99;">
+        <!-- 折り畳み展開ポインタ -->
+        <a id="trp3_title" style="cursor:pointer;" onclick="obj=document.getElementById('trp3_open').style; obj.display=(obj.display=='none')?'block':'none';">
+            trp3_dummy
+            <script>
+                var trp3_title_1 = '▼ trp_story_3';
+                var trp3_title_2 = '▲ trp_story_3';
+                addEventListener('load' ,function(){
+                    document.getElementById('trp3_title').innerHTML = trp3_title_1;
+                })
+                document.getElementById('trp3_title').addEventListener('click' ,function(){
+                    var elm = document.getElementById('trp3_title');
+                    if(elm.innerHTML === trp3_title_1)  {elm.innerHTML = trp3_title_2;}
+                    else                                {elm.innerHTML = trp3_title_1;}
+                })
+            </script>
+        </a>
+        <!--// 折り畳み展開ポインタ -->
+            
+        <!-- 折り畳まれ部分 -->
+        <div id="trp3_open" style="display:none;clear:both;">
+        　クリア
         </div>
-    <!-- /trp_story3 -->
+        <!--ここの部分が折りたたまれる＆展開される部分になります。
+        自由に記述してください。-->  
+    </div>
+    <!-- /trp3 -->
+
+    <br>
+    <br>
+
+    <!-- trp4 -->
+    <div style="background-color:#33aa77;">
+        <a id="trp4_title" style="cursor:pointer;" onclick="obj=document.getElementById('trp4_open').style; obj.display=(obj.display=='none')?'block':'none';">
+            trp4_dummy
+            <script>
+                var trp4_title_1 = '▼ trp_story_4';
+                var trp4_title_2 = '▲ trp_story_4';
+                addEventListener('load' ,function(){
+                    document.getElementById('trp4_title').innerHTML = trp4_title_1;
+                })
+                document.getElementById('trp4_title').addEventListener('click' ,function(){
+                    var elm = document.getElementById('trp4_title');
+                    if(elm.innerHTML === trp4_title_1)  {elm.innerHTML = trp4_title_2;}
+                    else                                {elm.innerHTML = trp4_title_1;}
+                })
+            </script>
+        </a>
+        
+        <div id="trp4_open"  style="display:none;clear:both;">
+            <a>　</a><!-- 全角スペース -->
+            <a style="cursor:pointer;" onclick="innerHTML='ク'">■</a>
+            <a style="cursor:pointer;" onclick="innerHTML='リ'">■</a>
+            <a style="cursor:pointer;" onclick="innerHTML='ア'">■</a>
+        </div>
+    </div>
+    <!-- /trp4 -->
+
 </body>
 
 </html>
