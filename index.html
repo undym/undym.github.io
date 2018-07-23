@@ -75,6 +75,101 @@
     </div>
     <!-- /trp4 -->
 
+    <br>
+    <br>
+
+    <!-- trp5 -->
+    <div style="background-color:#00cccc;">
+        <a id="trp5_title" style="cursor:pointer;" onclick="obj=document.getElementById('trp5_open').style; obj.display=(obj.display=='none')?'block':'none';">
+            trp5_dummy
+            <script>
+                var trp5_titles = ['▼ trp_story_5','▲ trp_story_5'];
+                addEventListener('load' ,function(){
+                    document.getElementById('trp5_title').innerHTML = trp5_titles[0];
+                })
+                document.getElementById('trp5_title').addEventListener('click' ,function(){
+                    var elm = document.getElementById('trp5_title');
+                    if(elm.innerHTML === trp5_titles[0]){elm.innerHTML = trp5_titles[1];}
+                    else                                {elm.innerHTML = trp5_titles[0];}
+                })
+            </script>
+        </a>
+        
+        <div id="trp5_open"  style="display:none;clear:both;">
+            <script>
+                var trp5_slot = ['ク','リ','ア'];
+                var trp5_slot_len = 3;
+                var trp5_slot_id = [];
+                var trp5_slot_num = [];
+                var trp5_rolling = [];
+
+                function slotAction(){
+                    var rolling_i = -1;
+                    for(var i = 0; i < trp5_slot_len; i++){
+                        if(trp5_rolling[i]){
+                            rolling_i = i;
+                            break;
+                        }
+                    }
+
+                    if(rolling_i === -1){
+                        function slot(i){
+                            return document.getElementById(trp5_slot_id[i]).innerHTML;
+                        }
+                        if(slot(0) === 'ク' && slot(1) === 'リ' && slot(2) === 'リ'){
+                            if(document.getElementById('trp5_invisible_slot_id').innerHTML === 'ン'){
+                                document.getElementById('trp5_invisible_slot_id').innerHTML = '';
+                            }else{
+                                document.getElementById('trp5_invisible_slot_id').innerHTML = "ン";
+                                return;
+                            }
+                        }
+                        if(slot(0) === 'ク' && slot(1) === 'リ' && slot(2) === 'ア'){
+                            if(document.getElementById('trp5_invisible_slot_id').innerHTML === '★'){
+                                document.getElementById('trp5_invisible_slot_id').innerHTML = '';
+                            }else{
+                                document.getElementById('trp5_invisible_slot_id').innerHTML = "★";
+                                return;
+                            }
+                        }
+
+                        for(var i = 0; i < trp5_slot_len; i++){
+                            trp5_rolling[i] = true;
+                        }
+                    }else{
+                        trp5_rolling[ rolling_i ] = false;
+                    }
+                }
+                
+                document.write('<div onclick="slotAction();" style="cursor:pointer;user-select:none;" onCopy="return false;">');
+                document.write('<br>');
+                document.write('　');
+                for(var i = 0; i < trp5_slot_len; i++){
+                    trp5_slot_id.push('trp5_slot'+i);
+                    trp5_slot_num.push(i % trp5_slot.length);
+                    trp5_rolling.push(true);
+                    document.write('<span id='+trp5_slot_id[i]+'>dummy</span>');
+                }
+                document.write('<span id="trp5_invisible_slot_id"></span>');
+                document.write('<br>');
+                document.write('　');
+                document.write('</div>');
+
+                function trp5_roll(){
+                    for(var i = 0; i < trp5_slot_len; i++){
+                        if(trp5_rolling[i]){
+                            trp5_slot_num[i] = (trp5_slot_num[i]+1) % trp5_slot.length;
+
+                            document.getElementById(trp5_slot_id[i]).innerHTML = trp5_slot[ trp5_slot_num[i] ];
+                        }
+                    }
+                }
+                setInterval(trp5_roll ,50);
+            </script>
+        </div>
+    </div>
+    <!-- /trp5 -->
+
 </body>
 
 </html>
