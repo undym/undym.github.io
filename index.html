@@ -14,7 +14,6 @@
     <!-- /trp2 -->
 
     <br>
-    <br>
 
     <!-- trp3 -->
     <div style="background-color:#ffcc99;">
@@ -46,7 +45,6 @@
     <!-- /trp3 -->
 
     <br>
-    <br>
 
     <!-- trp4 -->
     <div style="background-color:#33aa77;">
@@ -76,7 +74,6 @@
     <!-- /trp4 -->
 
     <br>
-    <br>
 
     <!-- trp5 -->
     <div style="background-color:#00cccc;">
@@ -105,7 +102,7 @@
 
                 function slotAction(){
                     var rolling_i = -1;
-                    for(var i = 0; i < trp5_slot_len; i++){
+                    for(let i = 0; i < trp5_slot_len; i++){
                         if(trp5_rolling[i]){
                             rolling_i = i;
                             break;
@@ -144,7 +141,7 @@
                 document.write('<div onclick="slotAction();" style="cursor:pointer;user-select:none;" onCopy="return false;">');
                 document.write('<br>');
                 document.write('　');
-                for(var i = 0; i < trp5_slot_len; i++){
+                for(let i = 0; i < trp5_slot_len; i++){
                     trp5_slot_id.push('trp5_slot'+i);
                     trp5_slot_num.push(i % trp5_slot.length);
                     trp5_rolling.push(true);
@@ -169,6 +166,175 @@
         </div>
     </div>
     <!-- /trp5 -->
+
+    <br>
+
+    <!-- trp6 -->
+    <div style="background-color:#e44ea0;">
+        <a id="trp6_title" style="cursor:pointer;user-select:none;" onclick="obj=document.getElementById('trp6_open').style; obj.display=(obj.display=='none')?'block':'none';">
+            trp6_dummy
+            <script>
+                var trp6_titles = ['▼ trp_story_6','▲ trp_story_6'];
+                var trp6_titles_index = 0;
+                addEventListener('load' ,function(){
+                    document.getElementById('trp6_title').innerHTML = trp6_titles[0];
+                })
+                document.getElementById('trp6_title').addEventListener('click' ,function(){
+                    document.getElementById('trp6_title').innerHTML = trp6_titles[ ++trp6_titles_index % trp6_titles.length ];
+                })
+            </script>
+        </a>
+        
+        <div id="trp6_open" style="display:none;clear:both;">
+            <script>
+                var trp6_x_len = 8;
+                var trp6_y_len = 8;
+                var trp6_squares = [];
+                var trp6_squares_id = [];
+                var trp6_block = '■';
+                var trp6_air = '☆';
+                var trp6_clear_indexes = [
+                     [0,0]//y,x
+                    ,[0,0]
+                    ,[0,0]
+                ];
+
+                for(let y = 0; y < trp6_y_len; y++){
+                    let line = [];
+                    let ids = [];
+                    for(let x = 0; x < trp6_x_len; x++){
+                        line.push( trp6_block );
+                        let id_num = y * trp6_x_len + x;
+                        ids.push( 'trp6_square_id'+id_num );
+                    }
+                    trp6_squares.push( line );
+                    trp6_squares_id.push( ids );
+                }
+                {
+                    let y = Math.floor( Math.random() * trp6_y_len );
+                    let x = Math.floor( Math.random() * trp6_x_len );
+                    trp6_squares[y][x] = trp6_air;
+                }
+                {
+                    let phase = 0;
+                    while(true){
+                        let y = Math.floor( Math.random() * trp6_y_len );
+                        let x = Math.floor( Math.random() * trp6_x_len );
+
+                        if(trp6_squares[y][x] === trp6_block){
+                            if(phase === 0){
+                                trp6_squares[y][x] = 'ク';
+                                trp6_clear_indexes[0] = [y,x];
+                            }else if(phase === 1){
+                                trp6_squares[y][x] = 'リ';
+                                trp6_clear_indexes[1] = [y,x];
+                            }else if(phase === 2){
+                                trp6_squares[y][x] = 'ア';
+                                trp6_clear_indexes[2] = [y,x];
+                            }else{
+                                break;
+                            }
+
+                            phase++;
+                        }
+                    }   
+                }
+
+                function trp6_drawSquare(y,x){
+                    document.getElementById( trp6_squares_id[y][x] ).innerHTML = trp6_squares[y][x];
+                }
+
+                function trp6_drawSquares(){
+                    for(let y = 0; y < trp6_squares.length; y++){
+                        for(let x = 0; x < trp6_squares[y].length; x++){
+                            trp6_drawSquare(y,x);
+                        }
+                    }
+                }
+
+                function trp6_clickSquare(y,x){
+                    let add = [
+                         [-1, 0]//y,x
+                        ,[ 0, 1]
+                        ,[ 1, 0]
+                        ,[ 0,-1]
+                    ];
+                    for(let i = 0; i < add.length; i++){
+                        let _y = y + add[i][0];
+                        let _x = x + add[i][1];
+                        if(_y < 0 || _y >= trp6_squares.length || _x < 0 || _x >= trp6_squares[_y].length){continue;}
+
+                        let square = trp6_squares[_y][_x];
+                        if(square === trp6_air){
+                            trp6_squares[_y][_x] = trp6_squares[y][x];
+                            trp6_squares[y][x] = trp6_air;
+                            
+                            trp6_drawSquare(y,x);
+                            trp6_drawSquare(_y,_x);
+
+                            if(trp6_squares[_y][_x] === 'ク'){trp6_clear_indexes[0] = [_y,_x];}
+                            if(trp6_squares[_y][_x] === 'リ'){trp6_clear_indexes[1] = [_y,_x];}
+                            if(trp6_squares[_y][_x] === 'ア'){trp6_clear_indexes[2] = [_y,_x];}
+
+                            if(trp6_squares[_y][_x] !== trp6_block){
+                                trp6_checkClear();
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                function trp6_checkClear(){
+                    let ku = trp6_clear_indexes[0];
+                    let ri = trp6_clear_indexes[1];
+                    let a  = trp6_clear_indexes[2];
+
+                    let clear = function(){
+                        document.getElementById('trp6_invisible_clear_id').innerHTML = 'クリア★';
+                    };
+                    //クリア
+                    if(ri[0] === ku[0] && ri[1] === ku[1]+1 && a[0] === ku[0] && a[1] === ku[1]+2){
+                        clear();
+                        return;
+                    }
+                    //ク＿＿
+                    //リ＿＿
+                    //ア＿＿
+                    if(ri[0] === ku[0]+1 && ri[1] === ku[1] && a[0] === ku[0]+2 && a[1] === ku[1]){
+                        clear();
+                        return;
+                    }
+                    //ク＿＿
+                    //＿リ＿
+                    //＿＿ア
+                    if(ri[0] === ku[0]+1 && ri[1] === ku[1]+1 && a[0] === ku[0]+2 && a[1] === ku[1]+2){
+                        clear();
+                        return;
+                    }
+                }
+                
+                document.write('<div onclick="" style="cursor:pointer;user-select:none;" onCopy="return false;">');
+                document.write('<br>');
+                for(let y = 0; y < trp6_squares.length; y++){
+                    for(let x = 0; x < trp6_squares[y].length; x++){
+                        let onclick = 'onclick="trp6_clickSquare('+y+','+x+');"';
+                        document.write('<span id='+trp6_squares_id[y][x]+' '+onclick+'>dummy</span>');
+                    }
+                    document.write('<br>');
+                }
+                document.write('<br>');
+                document.write('<span id="trp6_invisible_clear_id"></span>');
+                document.write('　');
+                document.write('</div>');
+
+
+                trp6_drawSquares();
+
+            </script>
+        </div>
+    </div>
+    <!-- /trp6 -->
 
 </body>
 
