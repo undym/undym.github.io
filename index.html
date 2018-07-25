@@ -346,7 +346,6 @@
         >
             trp7_dummy
             <script>
-                var trp7_is_running = false;
                 var trp7_titles = ['▼ trp_story_7','▲ trp_story_7'];
                 var trp7_title_id = document.getElementById('trp7_title');
                 addEventListener('load' ,function(){
@@ -355,12 +354,6 @@
                 trp7_title_id.addEventListener('click' ,function(){
                     if(trp7_title_id.innerHTML === trp7_titles[0])  {trp7_title_id.innerHTML = trp7_titles[1];}
                     else                                            {trp7_title_id.innerHTML = trp7_titles[0];}
-                })
-                trp7_title_id.addEventListener('click' ,function(){
-                    if(!trp7_is_running){
-                        trp7_is_running = true;
-                        trp7_start();
-                    }
                 })
             </script>
         </a>
