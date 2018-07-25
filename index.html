@@ -315,7 +315,7 @@
                     }
                 }
                 
-                document.write('<div onclick="" style="cursor:pointer;user-select:none;" onCopy="return false;">');
+                document.write('<div style="cursor:pointer;user-select:none;">');
                 document.write('<br>');
                 for(let y = 0; y < trp6_squares.length; y++){
                     for(let x = 0; x < trp6_squares[y].length; x++){
@@ -336,6 +336,40 @@
         </div>
     </div>
     <!-- /trp6 -->
+
+    <br>
+
+    <!-- trp7 -->
+    <div style="background-color:#88c7aa;">
+        <a id="trp7_title" style="cursor:pointer;user-select:none;" 
+            onclick="obj=document.getElementById('trp7_open').style;obj.display=(obj.display=='none')?'block':'none';"
+        >
+            trp7_dummy
+            <script>
+                var trp7_is_running = false;
+                var trp7_titles = ['▼ trp_story_7','▲ trp_story_7'];
+                var trp7_title_id = document.getElementById('trp7_title');
+                addEventListener('load' ,function(){
+                    trp7_title_id.innerHTML = trp7_titles[0];
+                })
+                trp7_title_id.addEventListener('click' ,function(){
+                    if(trp7_title_id.innerHTML === trp7_titles[0])  {trp7_title_id.innerHTML = trp7_titles[1];}
+                    else                                            {trp7_title_id.innerHTML = trp7_titles[0];}
+                })
+                trp7_title_id.addEventListener('click' ,function(){
+                    if(!trp7_is_running){
+                        trp7_is_running = true;
+                        trp7_start();
+                    }
+                })
+            </script>
+        </a>
+        
+        <div id="trp7_open" style="display:none;clear:both;cursor:pointer;">
+            <span style="color:#88c7aa;">クリア</span>
+        </div>
+    </div>
+    <!-- /trp7 -->
 
 </body>
 
