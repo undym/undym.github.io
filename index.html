@@ -416,13 +416,18 @@
             <script>
                 var trp7a_titles = ['▼ trp_story_7a','▲ trp_story_7a'];
                 var trp7a_title_id = document.getElementById('trp7a_title');
+                var trp7a_original_title = document.title;
                 addEventListener('load' ,function(){
                     trp7a_title_id.innerHTML = trp7a_titles[0];
                 })
                 trp7a_title_id.addEventListener('click' ,function(){
-                    if(trp7a_title_id.innerHTML === trp7a_titles[0])  {trp7a_title_id.innerHTML = trp7a_titles[1];}
-                    else                                              {trp7a_title_id.innerHTML = trp7a_titles[0];}
-                    document.title = 'クリア'
+                    if(trp7a_title_id.innerHTML === trp7a_titles[0])  {
+                        trp7a_title_id.innerHTML = trp7a_titles[1];
+                        document.title = 'クリア';
+                    }else{
+                        trp7a_title_id.innerHTML = trp7a_titles[0];
+                        document.title = trp7a_original_title;
+                    }
                 })
             </script>
         </a>
