@@ -6,6 +6,49 @@
             background-color: #CCCCCC;
         }
     </style>
+    
+    <script>
+        function setBase(name, title_name ,start){
+            let title_id = name+'_title';
+            let open_id = name+'_open';
+            let title = document.createElement('a');
+            title.id = title_id;
+            title.style = 'cursor:pointer; user-select:none;';
+            
+            let open = document.createElement('div');
+            open.id = open_id;
+            open.style = 'display:none; clear:both; cursor:pointer;';
+
+            let init = false;
+
+            addEventListener('load' ,function(){
+                title.textContent = '▼ '+title_name;
+            })
+            title.addEventListener('click',function(){
+                let open_style = open.style;
+                if(open_style.display === 'none'){
+                    open_style.display = 'block';
+                    title.textContent = '▲ '+title_name;
+
+                    if(!init){
+                        init = true;
+                        start();
+                    }
+                }else{
+                    open_style.display = 'none';
+                    title.textContent = '▼ '+title_name;
+                }
+            });
+
+            let base = document.createElement('span');
+            base.appendChild( title );
+            base.appendChild( open );
+            let parent = document.getElementById(name);
+            parent.appendChild( base );
+            
+            return open;
+        }
+    </script>
 </head>
 
 <body>
@@ -338,7 +381,7 @@
     <!-- /trp6 -->
 
     <br>
-
+    
     <!-- trp7 -->
     <div style="background-color:#88c7aa;">
         <a id="trp7_title" style="cursor:pointer;user-select:none;" 
@@ -364,6 +407,36 @@
     </div>
     <!-- /trp7 -->
 
+    <br>
+    
+    <!-- trp7a -->
+    <div style="background-color:#AAAA00;">
+        <a id="trp7a_title" style="cursor:pointer;user-select:none;" >
+            trp7a_dummy
+            <script>
+                var trp7a_titles = ['▼ trp_story_7a','▲ trp_story_7a'];
+                var trp7a_title_id = document.getElementById('trp7a_title');
+                addEventListener('load' ,function(){
+                    trp7a_title_id.innerHTML = trp7a_titles[0];
+                })
+                trp7a_title_id.addEventListener('click' ,function(){
+                    if(trp7a_title_id.innerHTML === trp7a_titles[0])  {trp7a_title_id.innerHTML = trp7a_titles[1];}
+                    else                                              {trp7a_title_id.innerHTML = trp7a_titles[0];}
+                    document.title = 'クリア'
+                })
+            </script>
+        </a>
+    </div>
+    <!-- /trp7a -->
+
+    <br>
+
+    <!-- trp8 -->
+    <!--
+    <div id="trp8" style="background-color:#5555FF;"></div>
+    <script type="text/javascript" src="trp8.js"></script>
+    -->
+    <!-- /trp8 -->
 </body>
 
 </html>
