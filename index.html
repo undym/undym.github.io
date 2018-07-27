@@ -1,14 +1,14 @@
 <html>
 
 <head>
-	<style type="text/css">
+    <style type="text/css">
         body {
             background-color: #CCCCCC;
         }
     </style>
     
     <script>
-        function setBase(name, title_name ,start){
+        function createBase(name, title_name ,init){
             let title_id = name+'_title';
             let open_id = name+'_open';
             let title = document.createElement('a');
@@ -17,9 +17,7 @@
             
             let open = document.createElement('div');
             open.id = open_id;
-            open.style = 'display:none; clear:both; cursor:pointer;';
-
-            let init = false;
+            open.style = 'display:none; clear:both; cursor:pointer; user-select:none;';
 
             addEventListener('load' ,function(){
                 title.textContent = '▼ '+title_name;
@@ -30,10 +28,7 @@
                     open_style.display = 'block';
                     title.textContent = '▲ '+title_name;
 
-                    if(!init){
-                        init = true;
-                        start();
-                    }
+                    init();
                 }else{
                     open_style.display = 'none';
                     title.textContent = '▼ '+title_name;
@@ -436,11 +431,21 @@
 
     <br>
 
+    <!-- trp7b -->
+    <div id="trp7b" style="background-color:#b10808;"></div>
+    <script>
+        let trp7b_clear = document.createElement('span');
+            trp7b_clear.textContent = '　クリア';
+            trp7b_clear.style.fontSize = '1000%';
+        createBase('trp7b','trp_story_7b',function(){}).appendChild( trp7b_clear );
+    </script>
+    <!-- /trp7b -->
+
+    <br>
+
     <!-- trp8 -->
-    <!--
-    <div id="trp8" style="background-color:#5555FF;"></div>
-    <script type="text/javascript" src="trp8.js"></script>
-    -->
+    <!-- <div id="trp8" style="background-color:#5555FF;"></div>
+    <script type="text/javascript" src="trp8.js"></script> -->
     <!-- /trp8 -->
 </body>
 
