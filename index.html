@@ -8,7 +8,7 @@
     </style>
     
     <script>
-        function createBase(name, title_name ,init){
+        function createBase(name, title_name, init, fini){
             let title_id = name+'_title';
             let open_id = name+'_open';
             let title = document.createElement('a');
@@ -32,6 +32,8 @@
                 }else{
                     open_style.display = 'none';
                     title.textContent = '▼ '+title_name;
+                    
+                    fini();
                 }
             });
 
@@ -437,7 +439,46 @@
         let trp7b_clear = document.createElement('span');
             trp7b_clear.textContent = '　クリア';
             trp7b_clear.style.fontSize = '1000%';
-        createBase('trp7b','trp_story_7b',function(){}).appendChild( trp7b_clear );
+        createBase('trp7b','trp_story_7b',()=>{} ,()=>{}).appendChild( trp7b_clear );
+    </script>
+    <!-- /trp7b -->
+
+    <br>
+
+    <!-- trp7c -->
+    <div id="trp7c" style="background-color:#616161;"></div>
+    <script>
+            // var trp6_titles = ['▼ trp_story_6','▲ trp_story_6'];
+            // var trp6_titles_index = 0;
+        // let trp7c_trp6_titles_bak = trp6_titles;
+        let trp7c_inner_html_bak = [];
+        let trp7c_7a_bak;
+        let trp7c_7b_bak;
+        createBase('trp7c','trp_story_7c',()=>{
+            let clear = '▶ クリア★';
+            for(let i = 3; i < 8; i++){
+                let elm = document.getElementById('trp'+i+'_title');
+                trp7c_inner_html_bak.push( elm.innerHTML );
+                elm.innerHTML = clear;
+            }
+            
+            {
+                let elm = document.getElementById('trp7a_title');
+                trp7c_7a_bak = elm.innerHTML;
+                elm.innerHTML = clear;
+            }
+            {
+                let elm = document.getElementById('trp7b_title');
+                trp7c_7b_bak = elm.innerHTML;
+                elm.innerHTML = clear;
+            }
+        } ,()=>{
+            for(let i = 3; i < 8; i++){
+                document.getElementById('trp'+i+'_title').innerHTML = trp7c_inner_html_bak[i-3];
+            }
+            document.getElementById('trp7a_title').innerHTML = trp7c_7a_bak;
+            document.getElementById('trp7b_title').innerHTML = trp7c_7b_bak;
+        });
     </script>
     <!-- /trp7b -->
 
