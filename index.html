@@ -448,36 +448,29 @@
     <!-- trp7c -->
     <div id="trp7c" style="background-color:#616161;"></div>
     <script>
-            // var trp6_titles = ['▼ trp_story_6','▲ trp_story_6'];
-            // var trp6_titles_index = 0;
-        // let trp7c_trp6_titles_bak = trp6_titles;
-        let trp7c_inner_html_bak = [];
-        let trp7c_7a_bak;
-        let trp7c_7b_bak;
+        let trp7c_id =
+            [
+                'trp3_title',
+                'trp4_title',
+                'trp5_title',
+                'trp6_title',
+                'trp7_title',
+                'trp7a_title',
+                'trp7b_title',
+            ];
+        let trp7c_text_bak = [];
         createBase('trp7c','trp_story_7c',()=>{
             let clear = '▶ クリア★';
-            for(let i = 3; i < 8; i++){
-                let elm = document.getElementById('trp'+i+'_title');
-                trp7c_inner_html_bak.push( elm.innerHTML );
-                elm.innerHTML = clear;
-            }
-            
-            {
-                let elm = document.getElementById('trp7a_title');
-                trp7c_7a_bak = elm.innerHTML;
-                elm.innerHTML = clear;
-            }
-            {
-                let elm = document.getElementById('trp7b_title');
-                trp7c_7b_bak = elm.innerHTML;
+            trp7c_text_bak = [];
+            for(let i = 0; i < trp7c_id.length; i++){
+                let elm = document.getElementById(trp7c_id[i]);
+                trp7c_text_bak.push( elm.innerHTML );
                 elm.innerHTML = clear;
             }
         } ,()=>{
-            for(let i = 3; i < 8; i++){
-                document.getElementById('trp'+i+'_title').innerHTML = trp7c_inner_html_bak[i-3];
+            for(let i = 0; i < trp7c_id.length; i++){
+                document.getElementById(trp7c_id[i]).innerHTML = trp7c_text_bak[i];
             }
-            document.getElementById('trp7a_title').innerHTML = trp7c_7a_bak;
-            document.getElementById('trp7b_title').innerHTML = trp7c_7b_bak;
         });
     </script>
     <!-- /trp7b -->
