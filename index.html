@@ -473,7 +473,103 @@
             }
         });
     </script>
-    <!-- /trp7b -->
+    <!-- /trp7c -->
+
+    <br>
+
+    <!-- trp7d -->
+    <div id="trp7d" style="background-color:#8d7ae0;"></div>
+    <script>
+        let trp7d_init = false;
+        createBase('trp7d','trp_story_7c',()=>{
+            if(trp7d_init){return;}
+            trp7d_init = true;
+
+            let invisible_clear_elm = document.createElement('span');
+            
+            let x_len = 30;
+            let y_len = 10;
+            let strings = [];
+            let clear = ['ク','リ','ア'];
+            for(let y = 0; y < y_len; y++){
+                let arr = [];
+                for(let x = 0; x < x_len; x++){
+                    let index = Math.floor( Math.random() * clear.length );
+                    arr.push( clear[index] );
+                }
+                strings.push( arr );
+            }
+            for(let y = 0; y < y_len; y++){
+                for(let x = 0; x < x_len-2; x++){
+                    if(strings[y][x] === 'ク' && strings[y][x+1] === 'リ' && strings[y][x+2] === 'ア'){
+                        strings[y][x] = '★';
+                        continue;
+                    }
+                    if(y < y_len-2){
+                        //ク＿＿
+                        //リ＿＿
+                        //ア＿＿
+                        if(strings[y][x] === 'ク' && strings[y+1][x] === 'リ' && strings[y+2][x] === 'ア'){
+                            strings[y][x] = '★';
+                            continue;
+                        }
+                        //ク＿＿
+                        //＿リ＿
+                        //＿＿ア
+                        if(strings[y][x] === 'ク' && strings[y+1][x+1] === 'リ' && strings[y+2][x+2] === 'ア'){
+                            strings[y][x] = '★';
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            let clear_x = Math.floor( Math.random() * (x_len-2) );
+            let clear_y = Math.floor( Math.random() * y_len );
+
+            strings[clear_y][clear_x]   = 'ク';
+            strings[clear_y][clear_x+1] = 'リ';
+            strings[clear_y][clear_x+2] = 'ア';
+
+            let parent = document.createElement('span');
+            for(let y = 0; y < y_len; y++){
+                let str = '';
+                for(let x = 0; x < x_len; x++){
+                    str += strings[y][x];
+                }
+
+                if(y === clear_y){
+                    let line1 = document.createElement('span');
+                    line1.textContent = str.substring(0,clear_x);
+                    parent.appendChild( line1 );
+                    
+                    let clear_elm = document.createElement('span');
+                    clear_elm.textContent = str.substring(clear_x ,clear_x+3);
+                    clear_elm.addEventListener('click',()=>{
+                        invisible_clear_elm.textContent = 'クリア★';
+                    });
+                    parent.appendChild( clear_elm );
+
+                    let line2 = document.createElement('span');
+                    line2.textContent = str.substring(clear_x+3,str.length);
+                    parent.appendChild( line2 );
+
+                    parent.appendChild( document.createElement('br') );
+                }else{
+                    let line = document.createElement('span');
+                    line.textContent = str;
+                    parent.appendChild( line );
+                    parent.appendChild( document.createElement('br') );
+                }
+            }
+
+            parent.appendChild( document.createElement('br') );
+            parent.appendChild( invisible_clear_elm );
+
+            document.getElementById('trp7d_open').appendChild( parent );
+        } ,()=>{});
+    </script>
+    <!-- /trp7c -->
 
     <br>
 

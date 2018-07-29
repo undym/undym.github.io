@@ -27,33 +27,32 @@ let trp8_enemy;
 let trp8_draw_enemy = [];
 let trp8_msg = {
      element:[]
-    ,index:0
-    ,add:(str)=>{
-        element[ trp8_msg._index ].textContent = str;
-        trp8_msg._index = (trp8_msg._index+1) % trp8_msg.length;
+    ,_index:0
+    ,add:function(str){
+        for(let i = trp8_msg.element.length-1; i > 0; i--){
+            trp8_msg.element[i].textContent = trp8_msg.element[i-1].textContent;
+        }
+        trp8_msg.element[0].textContent = str;
     }
-
 };
+let trp8_player_hp_element;
 
 function trp8_start(){
     if(trp8_init){return;}
     trp8_init = true;
 
     trp8_player = new trp8_Unit();
-    trp8_player.name = 'おまえ';
-    trp8_player.hp_max = 30;
-    trp8_player.hp = trp8_player.hp_max;
-    trp8_player.atk = 10;
 
     trp8_enemy = new trp8_Unit();
 
     let parent = document.createElement('span');
 
-    trp8_au_elm = document.createElement('span');
-    parent.appendChild( trp8_au_elm );
+
+    trp8_player_hp_element = document.createElement('span');
+    parent.appendChild( trp8_player_hp_element );
     parent.appendChild( document.createElement('br') );
 
-    for(let i = 0; i < 2; i++){
+    for(let i = 0; i < 3; i++){
         let elm = document.createElement('span');
         trp8_msg.element.push( elm );
         parent.appendChild( elm );
@@ -66,6 +65,10 @@ function trp8_start(){
         parent.appendChild( trp8_draw_enemy[i] );
         parent.appendChild( document.createElement('br') );
     }
+
+    trp8_au_elm = document.createElement('span');
+    parent.appendChild( trp8_au_elm );
+    parent.appendChild( document.createElement('br') );
 
     {
         let adv = document.createElement('span');
@@ -84,6 +87,7 @@ function trp8_start(){
         parent.appendChild( ret );
     }
 
+    trp8_reset();
     trp8_update();
 
     trp8_base.appendChild( parent );
@@ -91,6 +95,16 @@ function trp8_start(){
 
 function trp8_update(){
     trp8_au_elm.textContent = ''+trp8_au+'AU';
+    trp8_player_hp_element.textContent = 'HP:'+trp8_player.hp;
+}
+
+function trp8_reset(){
+    trp8_player.name = '自分';
+    trp8_player.hp_max = 30;
+    trp8_player.hp = trp8_player.hp_max;
+    trp8_player.atk = 10;
+
+    trp8_au = 0;
 }
 
 function trp8_adv(move){
@@ -98,6 +112,8 @@ function trp8_adv(move){
         trp8_attack( trp8_player ,trp8_enemy );
 
         if(trp8_enemy.hp <= 0){
+            trp8_msg.add('勝った');
+            trp8_in_battle = false;
 
             trp8_update();
             return;
@@ -105,14 +121,17 @@ function trp8_adv(move){
         
         trp8_attack( trp8_enemy ,trp8_player );
         if(trp8_player.hp <= 0){
+            trp8_msg.add('負けた...');
+            trp8_in_battle = false;
+
+            trp8_reset();
 
             trp8_update();
             return;
         }
     }else{
         trp8_au++;
-        trp8_in_battle = true;
-        trp8_walkEvent( trp8_au );
+        trp8_runWalkEvent( trp8_au );
     }
 
     trp8_update();
@@ -126,19 +145,21 @@ function trp8_ret(){
     trp8_au --;
     if(trp8_au < 0){trp8_au = 0;}
 
-    trp8_walkEvent( trp8_au );
+    trp8_runWalkEvent( trp8_au );
 
     trp8_update();
 }
 
-function trp8_walkEvent(au){
+function trp8_runWalkEvent(au){
     if(au === 0){
         trp8_player.hp = trp8_player.hp_max;
         trp8_msg.add('回復した');
     }else if(au === 1){
+        trp8_in_battle = true;
+
         trp8_enemy.name = 'しんまい';
         trp8_enemy.setHP( 21 );
-        trp8_enemy.atk = 1;
+        trp8_enemy.atk = 10;
         trp8_draw_enemy[0].textContent = '';
         trp8_draw_enemy[1].textContent = '🍎';
         trp8_draw_enemy[2].textContent = '';
