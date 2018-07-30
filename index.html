@@ -588,8 +588,7 @@
             btn.addEventListener('click',()=>{
                 if(     input.value === 'クリア'
                     ||  input.value === 'くりあ'
-                    ||  input.value === 'clear'
-                    ||  input.value === 'CLEAR'
+                    ||  input.value.toLowerCase() === 'clear'
                 ){
                     invisible_clear_elm.textContent = 'クリア★';
                 }
