@@ -569,8 +569,42 @@
             document.getElementById('trp7d_open').appendChild( parent );
         } ,()=>{});
     </script>
-    <!-- /trp7c -->
+    <!-- /trp7d -->
 
+    <br>
+
+    <!-- trp7e -->
+    <div id="trp7e" style="background-color:#f0b616;"></div>
+    <script>
+        let trp7e_init;
+        createBase('trp7e','trp_story_7e',()=>{
+            if(trp7e_init){return;}
+            trp7e_init = true;
+            
+            let invisible_clear_elm = document.createElement('span');
+            let input = document.createElement('input');
+            let btn = document.createElement('button');
+            btn.textContent = '実行';
+            btn.addEventListener('click',()=>{
+                if(     input.value === 'クリア'
+                    ||  input.value === 'くりあ'
+                    ||  input.value === 'clear'
+                    ||  input.value === 'CLEAR'
+                ){
+                    invisible_clear_elm.textContent = 'クリア★';
+                }
+            });
+            let base = document.getElementById('trp7e_open');
+            base.appendChild( input );
+            base.appendChild( btn );
+            base.appendChild( document.createElement('br') );
+            base.appendChild( invisible_clear_elm );
+            base.appendChild( document.createElement('br') );
+
+        } ,()=>{
+        });
+    </script>
+    <!-- /trp7e -->
     <br>
 
     <!-- trp8 -->
