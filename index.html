@@ -586,9 +586,9 @@
             let btn = document.createElement('button');
             btn.textContent = '実行';
             btn.addEventListener('click',()=>{
-                if(     input.value === 'クリア'
-                    ||  input.value === 'くりあ'
-                    ||  input.value.toLowerCase() === 'clear'
+                if(     (input.value.indexOf('クリア') !== -1)
+                    ||  (input.value.indexOf('くりあ') !== -1)
+                    ||  (input.value.toLowerCase().indexOf('clear') !== -1)
                 ){
                     invisible_clear_elm.textContent = 'クリア★';
                 }
