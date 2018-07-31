@@ -604,6 +604,24 @@
         });
     </script>
     <!-- /trp7e -->
+
+    <br>
+
+    <!-- trp7f -->
+    <div id="trp7f" style="background-color:#996a2c;"></div>
+    <script>
+        let trp7f_str = '　クリア★';
+        let trp7f_elm = document.createElement('span');
+        createBase('trp7f','trp_story_7f'
+            ,()=>{
+                if(trp7f_elm.textContent.length < trp7f_str.length){
+                    trp7f_elm.textContent = trp7f_str.substring(0 ,trp7f_elm.textContent.length+1);
+                }
+            },()=>{
+            }).appendChild( trp7f_elm );
+    </script>
+    <!-- /trp7f -->
+
     <br>
 
     <!-- trp8 -->
