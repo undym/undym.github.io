@@ -624,6 +624,42 @@
 
     <br>
 
+    <!-- trp7g -->
+    <div id="trp7g" style="background-color:#c0f1c4;"></div>
+    <script>
+        let trp7g_init;
+        createBase('trp7g','trp_story_7g',()=>{
+            if(trp7g_init){return;}
+            trp7g_init = true;
+            
+            let input = document.createElement('input');
+            let input_changed = document.createElement('span');
+            input.addEventListener('change',()=>{
+                let str = '';
+                for(let i = 0; i < input.value.length; i++){
+                    let c = input.value.charCodeAt(i) - 1;
+                    str += String.fromCharCode(c);
+                }
+                console.log(str);
+                if(str === 'クリア'){
+                    input_changed.textContent = 'クリア★';
+                }else{
+                    input_changed.textContent = str;
+                }
+            });
+            let base = document.getElementById('trp7g_open');
+            base.appendChild( input );
+            base.appendChild( document.createElement('br') );
+            base.appendChild( input_changed );
+            base.appendChild( document.createElement('br') );
+
+        } ,()=>{
+        });
+    </script>
+    <!-- /trp7g -->
+
+    <br>
+
     <!-- trp8 -->
     <!-- <div id="trp8" style="background-color:#5555FF;"></div>
     <script type="text/javascript" src="trp8.js"></script> -->
