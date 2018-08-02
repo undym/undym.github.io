@@ -656,7 +656,63 @@
         } ,()=>{
         });
     </script>
-    <!-- /trp7g -->
+
+    <br>
+
+    <!-- trp7h -->
+    <div id="trp7h" style="background-color:#388dfc;"></div>
+    <script>
+        let trp7h_init = false;
+        createBase('trp7h','trp_story_7h',()=>{
+            if(trp7h_init){return;}
+            trp7h_init = true;
+            
+            let clear = document.createElement('span');
+            let base = document.getElementById('trp7h_open');
+            let strings = ['はい','いいえ','クリア'];
+            let name = 'clear';
+            for(let s of strings){
+                let radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = name;
+                if(s === 'クリア'){
+                    radio.addEventListener('change',()=>{
+                        clear.textContent = 'クリア★';
+                    });
+                }
+
+                let span = document.createElement('span');
+                span.textContent = s;
+                base.appendChild( radio );
+                base.appendChild( span );
+            }
+            
+            base.appendChild( document.createElement('br') );
+            base.appendChild(clear);
+            // let input = document.createElement('input');
+            // let input_changed = document.createElement('span');
+            // input.addEventListener('change',()=>{
+            //     let str = '';
+            //     for(let i = 0; i < input.value.length; i++){
+            //         let c = input.value.charCodeAt(i) - 1;
+            //         str += String.fromCharCode(c);
+            //     }
+            //     console.log(str);
+            //     if(str === 'クリア' || str === 'くりあ' || str.toLowerCase() === 'clear'){
+            //         input_changed.textContent = 'クリア★';
+            //     }else{
+            //         input_changed.textContent = str;
+            //     }
+            // });
+            // let base = document.getElementById('trp7h_open');
+            // base.appendChild( input );
+            // base.appendChild( document.createElement('br') );
+            // base.appendChild( input_changed );
+            // base.appendChild( document.createElement('br') );
+
+        } ,()=>{
+        });
+    </script>
 
     <br>
 
