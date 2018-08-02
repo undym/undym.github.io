@@ -671,13 +671,17 @@
             let base = document.getElementById('trp7h_open');
             let strings = ['はい','いいえ','クリア'];
             let name = 'clear';
+            let space = document.createElement('span');
+            space.textContent = '　';
+            base.appendChild( space );
+
             for(let s of strings){
                 let radio = document.createElement('input');
                 radio.type = 'radio';
                 radio.name = name;
                 if(s === 'クリア'){
                     radio.addEventListener('change',()=>{
-                        clear.textContent = 'クリア★';
+                        clear.textContent = '　クリア★';
                     });
                 }
 
