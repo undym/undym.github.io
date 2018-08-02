@@ -8,7 +8,7 @@
     </style>
     
     <script>
-        function createBase(name, title_name, init, fini){
+        function createBase(name, title_name, color, init, fini){
             let title_id = name+'_title';
             let open_id = name+'_open';
             let title = document.createElement('a');
@@ -40,10 +40,12 @@
             let base = document.createElement('span');
             base.appendChild( title );
             base.appendChild( open );
-            let parent = document.getElementById(name);
+            // let parent = document.getElementById(name);
+            let parent = document.createElement('div');
+            parent.style.backgroundColor = color;
             parent.appendChild( base );
-            
-            return open;
+
+            document.body.appendChild( parent );
         }
     </script>
 </head>
@@ -434,19 +436,17 @@
     <br>
 
     <!-- trp7b -->
-    <div id="trp7b" style="background-color:#b10808;"></div>
     <script>
         let trp7b_clear = document.createElement('span');
             trp7b_clear.textContent = '　クリア';
             trp7b_clear.style.fontSize = '1000%';
-        createBase('trp7b','trp_story_7b',()=>{} ,()=>{}).appendChild( trp7b_clear );
+        createBase('trp7b','trp_story_7b','#b10808',()=>{} ,()=>{});
+        document.getElementById('trp7b_open').appendChild( trp7b_clear );
     </script>
-    <!-- /trp7b -->
 
     <br>
 
     <!-- trp7c -->
-    <div id="trp7c" style="background-color:#616161;"></div>
     <script>
         let trp7c_id =
             [
@@ -459,7 +459,7 @@
                 'trp7b_title',
             ];
         let trp7c_text_bak = [];
-        createBase('trp7c','trp_story_7c',()=>{
+        createBase('trp7c','trp_story_7c','#616161',()=>{
             let clear = '▶ クリア★';
             trp7c_text_bak = [];
             for(let i = 0; i < trp7c_id.length; i++){
@@ -473,15 +473,13 @@
             }
         });
     </script>
-    <!-- /trp7c -->
-
+    
     <br>
 
     <!-- trp7d -->
-    <div id="trp7d" style="background-color:#8d7ae0;"></div>
     <script>
         let trp7d_init = false;
-        createBase('trp7d','trp_story_7d',()=>{
+        createBase('trp7d','trp_story_7d','#8d7ae0',()=>{
             if(trp7d_init){return;}
             trp7d_init = true;
 
@@ -569,15 +567,13 @@
             document.getElementById('trp7d_open').appendChild( parent );
         } ,()=>{});
     </script>
-    <!-- /trp7d -->
 
     <br>
 
     <!-- trp7e -->
-    <div id="trp7e" style="background-color:#f0b616;"></div>
     <script>
         let trp7e_init;
-        createBase('trp7e','trp_story_7e',()=>{
+        createBase('trp7e','trp_story_7e','f0b616',()=>{
             if(trp7e_init){return;}
             trp7e_init = true;
             
@@ -603,32 +599,29 @@
         } ,()=>{
         });
     </script>
-    <!-- /trp7e -->
 
     <br>
 
     <!-- trp7f -->
-    <div id="trp7f" style="background-color:#996a2c;"></div>
     <script>
         let trp7f_str = '　クリア★';
         let trp7f_elm = document.createElement('span');
-        createBase('trp7f','trp_story_7f'
+        createBase('trp7f','trp_story_7f','#996a2c'
             ,()=>{
                 if(trp7f_elm.textContent.length < trp7f_str.length){
                     trp7f_elm.textContent = trp7f_str.substring(0 ,trp7f_elm.textContent.length+1);
                 }
             },()=>{
-            }).appendChild( trp7f_elm );
+            });
+        document.getElementById('trp7f_open').appendChild( trp7f_elm );
     </script>
-    <!-- /trp7f -->
 
     <br>
 
     <!-- trp7g -->
-    <div id="trp7g" style="background-color:#c0f1c4;"></div>
     <script>
         let trp7g_init;
-        createBase('trp7g','trp_story_7g',()=>{
+        createBase('trp7g','trp_story_7g','#c0f1c4',()=>{
             if(trp7g_init){return;}
             trp7g_init = true;
             
@@ -660,10 +653,9 @@
     <br>
 
     <!-- trp7h -->
-    <div id="trp7h" style="background-color:#388dfc;"></div>
     <script>
         let trp7h_init = false;
-        createBase('trp7h','trp_story_7h',()=>{
+        createBase('trp7h','trp_story_7h','#388dfc' ,()=>{
             if(trp7h_init){return;}
             trp7h_init = true;
             
@@ -696,8 +688,116 @@
         } ,()=>{
         });
     </script>
-
     <br>
+
+    <!-- trp7i -->
+    <style>
+        trp7i_left{
+            width:20px;
+            background-color:#AAAA00;
+            position:relative;
+        }
+    </style>
+    <script>
+        let trp7i_init = false;
+        createBase('trp7i','trp_story_7i','#f13838',()=>{
+            if(trp7i_init){return;}
+            trp7i_init = true;
+
+            let CLEAR = 
+                [
+                    '□■■■■■□□■□□□■□□■■■■■■■□□□□□□■□□□□',
+                    '□■□□□■□□■□□□■□□□□□□□□■□□□□■■■■■□□',
+                    '■□□□□■□□■□□□■□□□□□■□□□□□■■■■■■■■■',
+                    '□□□□□■□□□□□□■□□□□□■□□□□□□□■■■■■□□',
+                    '□□□□■□□□□□□□■□□□□□■□□□□□□□■■□■■□□',
+                    '□□□■□□□□□□□■□□□□□■□□□□□□□□■□□□■□□',
+                ];
+            let EMPTY = '＿';
+            
+            let block_area = document.createElement('div');
+            let block_lines = [];
+            let block_lines_str = [];
+            let LINE_NUM = CLEAR.length;
+            let LINE_LENGTH = CLEAR[0].length;
+            let empty_str = (()=>{
+                let s = '';
+                for(let i = 0; i < LINE_LENGTH; i++){
+                    s += EMPTY;
+                }
+                return s;
+            })();
+            for(let i = 0; i < LINE_NUM; i++){
+                let line = document.createElement('span');
+                block_lines_str.push( empty_str );
+                line.textContent = block_lines_str[i];
+                block_area.appendChild( line );
+                block_area.appendChild( document.createElement('br') );
+
+                block_lines.push( line );
+            }
+
+            let open = document.getElementById('trp7i_open');
+            open.style.cursor = 'default';
+            let say_clear = document.createElement('span');
+
+            open.appendChild((()=>{
+                function trp7i_set(x, y_before, y_now, y_end, block){
+                    function trp7i_setInner(){
+                        if(y_before !== -1){
+                            let line = block_lines_str[y_before];
+                            block_lines_str[y_before] = line.substring(0,x) +EMPTY+ line.substring(x+1,line.length);
+                            block_lines[y_before].textContent = block_lines_str[y_before];
+                        }
+                        let line = block_lines_str[y_now];
+                        block_lines_str[y_now] = line.substring(0,x) +block+ line.substring(x+1,line.length);
+                        block_lines[y_now].textContent = block_lines_str[y_now];
+
+                        if(y_now !== y_end){
+                            y_before = y_now;
+                            y_now++;
+                            console.log(x+","+y_now);
+                            setTimeout( trp7i_setInner ,50 );
+                        }
+                    }
+
+                    trp7i_setInner();
+                }
+
+                let block_x = 0;
+                let block_y = CLEAR.length - 1;
+                let block_fall_num = 1;
+                
+                let btn = document.createElement('span');
+                btn.textContent = '👺';
+                btn.style.cursor = 'pointer';
+                btn.addEventListener('click',()=>{
+                    if(block_fall_num < 10){
+                        block_fall_num += 0.05;
+                    }
+                    
+                    for(let i = 0; i < Math.floor( block_fall_num ); i++){
+                        if(block_y === -1){
+                            say_clear.textContent = '＜クリア★';
+                            return;
+                        }
+                        trp7i_set( block_x, -1, 0 ,block_y, CLEAR[block_y].substring(block_x,block_x+1) );
+
+                        block_x++;
+                        if(block_x === CLEAR[0].length){
+                            block_x = 0;
+                            block_y--;
+                        }
+                    }
+                });
+                return btn;
+            })());
+            open.appendChild( say_clear );
+            open.appendChild( document.createElement('br') );
+            open.appendChild( block_area );
+        } ,()=>{});
+    </script>
+
 
     <!-- trp8 -->
     <!-- <div id="trp8" style="background-color:#5555FF;"></div>
