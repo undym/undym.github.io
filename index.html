@@ -667,10 +667,10 @@
             if(trp7h_init){return;}
             trp7h_init = true;
             
-            let clear = document.createElement('span');
+            let clear = 'クリア';
+            let game_end_msg = document.createElement('span');
             let base = document.getElementById('trp7h_open');
-            let strings = ['はい','いいえ','クリア'];
-            let name = 'clear';
+            let strings = ['はい','いいえ',clear];
             let space = document.createElement('span');
             space.textContent = '　';
             base.appendChild( space );
@@ -678,10 +678,10 @@
             for(let s of strings){
                 let radio = document.createElement('input');
                 radio.type = 'radio';
-                radio.name = name;
-                if(s === 'クリア'){
+                radio.name = 'clear';
+                if(s === clear){
                     radio.addEventListener('change',()=>{
-                        clear.textContent = '　クリア★';
+                        game_end_msg.textContent = '　クリア★';
                     });
                 }
 
@@ -692,28 +692,7 @@
             }
             
             base.appendChild( document.createElement('br') );
-            base.appendChild(clear);
-            // let input = document.createElement('input');
-            // let input_changed = document.createElement('span');
-            // input.addEventListener('change',()=>{
-            //     let str = '';
-            //     for(let i = 0; i < input.value.length; i++){
-            //         let c = input.value.charCodeAt(i) - 1;
-            //         str += String.fromCharCode(c);
-            //     }
-            //     console.log(str);
-            //     if(str === 'クリア' || str === 'くりあ' || str.toLowerCase() === 'clear'){
-            //         input_changed.textContent = 'クリア★';
-            //     }else{
-            //         input_changed.textContent = str;
-            //     }
-            // });
-            // let base = document.getElementById('trp7h_open');
-            // base.appendChild( input );
-            // base.appendChild( document.createElement('br') );
-            // base.appendChild( input_changed );
-            // base.appendChild( document.createElement('br') );
-
+            base.appendChild( game_end_msg );
         } ,()=>{
         });
     </script>
