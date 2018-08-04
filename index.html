@@ -838,6 +838,7 @@
                 function jump(){
                     player_action = PLAYER_ACTION_JUMP;
                     player_y--;
+                    update();
                     if(player_y <= 0){
                         player_y = 0;
                         setTimeout( fall, 50 );
@@ -850,6 +851,7 @@
                 function fall(){
                     player_action = PLAYER_ACTION_FALL;
                     player_y++;
+                    update();
                     if(player_y >= field.length - 1){
                         player_y = field.length - 1;
                         player_action = PLAYER_ACTION_STAND;
@@ -868,8 +870,6 @@
                     field[player_y][player_x].textContent = player_face;
 
                     draw_jump_count.textContent = 'ジャンプ回数:'+jump_count;
-
-                    setTimeout( update, 50 );
                 }
 
                 reset();
@@ -915,6 +915,7 @@
                     btn.addEventListener('click',()=>{
                         index = (index + 1) % PLAYER_FACES.length;
                         player_face = PLAYER_FACES[index];
+                        update();
                     });
                     return btn;
                 })());
@@ -931,7 +932,6 @@
                 open.appendChild( document.createElement('br') );
                 open.appendChild( you_win );
             } ,()=>{
-                clearTimeout( update );
             });
         </script>
 
