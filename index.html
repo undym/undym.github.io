@@ -23,14 +23,13 @@
                 title.textContent = '▼ '+title_name;
             })
             title.addEventListener('click',function(){
-                let open_style = open.style;
-                if(open_style.display === 'none'){
-                    open_style.display = 'block';
+                if(open.style.display === 'none'){
+                    open.style.display = 'block';
                     title.textContent = '▲ '+title_name;
 
                     init();
                 }else{
-                    open_style.display = 'none';
+                    open.style.display = 'none';
                     title.textContent = '▼ '+title_name;
                     
                     fini();
@@ -42,6 +41,7 @@
             base.appendChild( open );
             // let parent = document.getElementById(name);
             let parent = document.createElement('div');
+            parent.id = name;
             parent.style.backgroundColor = color;
             parent.appendChild( base );
 
@@ -691,13 +691,6 @@
     <br>
 
     <!-- trp7i -->
-    <style>
-        trp7i_left{
-            width:20px;
-            background-color:#AAAA00;
-            position:relative;
-        }
-    </style>
     <script>
         let trp7i_init = false;
         createBase('trp7i','trp_story_7i','#f13838',()=>{
@@ -797,11 +790,159 @@
         } ,()=>{});
     </script>
 
+    <br>
+
+    <!-- trp7j -->
+    <script>
+            let trp7j_init = false;
+            createBase('trp7j','trp_story_7j','chartreuse',()=>{
+                if(trp7j_init){return;}
+                trp7j_init = true;
+
+                let FIELD_W = 11;
+                let FIELD_H = 4;
+                let EMPTY = '　';
+                let field = (()=>{
+                    let ret = [];
+                    for(let y = 0; y < FIELD_H; y++){
+                        let arr = [];
+                        for(let x = 0; x < FIELD_W; x++){
+                            let elm = document.createElement('span');
+                            elm.style.fontSize = '200%';
+                            arr.push( elm );
+                        }
+                        
+                        ret.push( arr );
+                    }
+                    return ret;
+                })();
+                let PLAYER_FACES = ['🍖','👺','💣','💰','🍙'];
+                let player_face = PLAYER_FACES[0];
+                let PLAYER_ACTION_STAND = 0;
+                let PLAYER_ACTION_JUMP  = 1;
+                let PLAYER_ACTION_FALL  = 2;
+                
+                let player_x = 0;
+                let player_y = 0;
+                let player_action = 0;
+                
+                let jump_count = 0;
+                let draw_jump_count = document.createElement('span');
+                let you_win = document.createElement('span');
+
+                function reset(){
+                    player_x = Math.floor( FIELD_W / 2 );
+                    player_y = FIELD_H - 1;
+                }
+
+                function jump(){
+                    player_action = PLAYER_ACTION_JUMP;
+                    player_y--;
+                    if(player_y <= 0){
+                        player_y = 0;
+                        setTimeout( fall, 50 );
+                        return;
+                    }
+
+                    setTimeout( jump, 50 );
+                }
+
+                function fall(){
+                    player_action = PLAYER_ACTION_FALL;
+                    player_y++;
+                    if(player_y >= field.length - 1){
+                        player_y = field.length - 1;
+                        player_action = PLAYER_ACTION_STAND;
+                        return;
+                    }
+
+                    setTimeout( fall, 50 );
+                }
+                
+                function update(){
+                    for(let y = 0; y < field.length; y++){
+                        for(let x = 0; x < field[y].length; x++){
+                            field[y][x].textContent = EMPTY;
+                        }
+                    }
+                    field[player_y][player_x].textContent = player_face;
+
+                    draw_jump_count.textContent = 'ジャンプ回数:'+jump_count;
+
+                    setTimeout( update, 50 );
+                }
+
+                reset();
+                update();
+                
+                let open = document.getElementById('trp7j_open');
+
+                open.appendChild( draw_jump_count );
+                open.appendChild( document.createElement('br') );
+
+                open.appendChild((()=>{
+                    let ret = document.createElement('div');
+                    ret.addEventListener('click',()=>{
+                        switch(player_action){
+                            case PLAYER_ACTION_STAND :
+                                jump_count++;
+                                if(jump_count === 30){
+                                    you_win.textContent = 'クリア★';
+                                }
+                                jump();
+                                break;
+                            case PLAYER_ACTION_JUMP :
+                                break;
+                            case PLAYER_ACTION_FALL :
+                                break;
+                        }
+                    });
+
+                    for(let y = 0; y < field.length; y++){
+                        for(let x = 0; x < field[y].length; x++){
+                            ret.appendChild( field[y][x] );
+                        }
+                        ret.appendChild( document.createElement('br') );
+                    }
+                    return ret;
+                })());               
+
+
+                open.appendChild((()=>{
+                    let btn = document.createElement('button');
+                    btn.textContent = '肉選択';
+                    let index = 0;
+                    btn.addEventListener('click',()=>{
+                        index = (index + 1) % PLAYER_FACES.length;
+                        player_face = PLAYER_FACES[index];
+                    });
+                    return btn;
+                })());
+                open.appendChild((()=>{
+                    let btn = document.createElement('button');
+                    btn.textContent = 'ステージ選択';
+                    btn.addEventListener('click',()=>{
+                        let elm = document.getElementById('trp7j');
+                        let rnd = ()=>Math.floor( Math.random() * 255 ).toString(16);
+                        elm.style.backgroundColor = '#'+rnd()+rnd()+rnd();
+                    });
+                    return btn;
+                })());
+                open.appendChild( document.createElement('br') );
+                open.appendChild( you_win );
+            } ,()=>{
+                clearTimeout( update );
+            });
+        </script>
 
     <!-- trp8 -->
     <!-- <div id="trp8" style="background-color:#5555FF;"></div>
     <script type="text/javascript" src="trp8.js"></script> -->
     <!-- /trp8 -->
+
+    <br>
+    <br>
+    <br>
 </body>
 
 </html>
