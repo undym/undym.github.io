@@ -934,41 +934,117 @@
         } ,()=>{});
     </script>
 
-    <br>
+<br>
 
-    <!-- trp7k -->
-    <script>
-    {   
-        let left = 50;
-        let clear = document.createElement('div');
-        clear.textContent = 'クリア★';
-        clear.style.position = 'relative';
-        clear.style.fontSize = '300%';
-        let timer;
+<!-- trp7k -->
+<script>
+{   
+    let left = 50;
+    let clear = document.createElement('div');
+    clear.textContent = 'クリア★';
+    clear.style.position = 'relative';
+    clear.style.fontSize = '300%';
+    let timer;
 
-        function run(){
-            clear.style.left = ''+left+'%';
-            left += 0.8;
-            if(left >= 100){
-                left = -20;
-            }
-
-            timer = setTimeout( run, 25 );
+    function run(){
+        clear.style.left = ''+left+'%';
+        left += 0.8;
+        if(left >= 100){
+            left = -20;
         }
 
-        createBase('trp7k','trp_story_7k','#986ddd',()=>{
-            let open = document.getElementById('trp7k_open');
-            open.appendChild( clear );
-            open.style.overflow = 'hidden';
-            run();
-        },()=>{
-            document.getElementById('trp7k_open').removeChild( clear );
-            clearTimeout( timer );
-        });
+        timer = setTimeout( run, 25 );
     }
-    </script>
 
-    <span style="color:#986ddd;"></span>
+    createBase('trp7k','trp_story_7k','#986ddd',()=>{
+        let open = document.getElementById('trp7k_open');
+        open.appendChild( clear );
+        open.style.overflow = 'hidden';
+        run();
+    },()=>{
+        document.getElementById('trp7k_open').removeChild( clear );
+        clearTimeout( timer );
+    });
+}
+</script>
+
+<br>
+
+<!-- trp7l -->
+<script>
+{   
+    const NUM = 50;
+    let clears = [];
+    let panel;
+    let init = false;
+    let timer;
+
+    function createSpd(){
+        return 0.4 + Math.random() * 2;
+    }
+
+    function setFontSize(element){
+        let mul = 50 + Math.floor( Math.random() * 400 );
+        element.style.fontSize = mul+'%';
+    }
+
+    function setColor(element){
+        let rnd = ()=> (Math.floor( Math.random() * 255 )).toString(16);
+        element.style.color = '#'+rnd()+rnd()+rnd();
+    }
+
+    function run(){
+        clears.forEach(v=>{
+            v.top += v.spd;
+            if(v.top >= 120){
+                v.top = -20;
+                v.spd = createSpd();
+                setFontSize( v.element );
+            }
+            v.element.style.top = v.top+'%';
+            v.element.style.left = v.left+'%';
+        });
+
+        timer = setTimeout( run, 25 );
+    }
+
+    createBase('trp7l','trp_story_7l','#fbff14',()=>{
+        if(!init){
+            init = true;
+
+            panel = document.createElement('div');
+
+            for(let i = 0; i < NUM; i++){
+                let elm = document.createElement('span');
+                elm.textContent = 'クリア★';
+                elm.style.position = 'fixed';
+                
+                let clear = {
+                    element:elm,
+                    left:(-20 + Math.random() * 120),
+                    top:(-20 + Math.random() * 120),
+                    spd:createSpd()
+                };
+                
+                setFontSize(elm);
+                setColor(elm);
+
+                panel.appendChild( elm );
+                clears.push( clear );
+            }
+        }
+        document.body.appendChild( panel );
+
+        run();
+    },()=>{
+        document.body.removeChild( panel );
+
+        clearTimeout( timer );
+    });
+}
+</script>
+
+    <span style="color:#fbff14;"></span>
     <!-- trp8 -->
     <!-- <div id="trp8" style="background-color:#5555FF;"></div>
     <script type="text/javascript" src="trp8.js"></script> -->
