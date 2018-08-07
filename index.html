@@ -1044,15 +1044,61 @@
 }
 </script>
 
-    <span style="color:#fbff14;"></span>
-    <!-- trp8 -->
-    <!-- <div id="trp8" style="background-color:#5555FF;"></div>
-    <script type="text/javascript" src="trp8.js"></script> -->
-    <!-- /trp8 -->
+<br>
 
-    <br>
-    <br>
-    <br>
+<!-- trp7m -->
+<script>
+{   
+    let init = false;
+
+    createBase('trp7m','trp_story_7m','#8f7278',()=>{
+        if(init){return;}
+        init = true;
+
+        const URL_PRM = 'trp7m';
+        const URL_VALUE = 'clear';
+        
+        let prm_is_clear = (()=>{
+            let prms = location.search
+                                .substring(1)//左端にある'?'を除外
+                                .split('&');
+            let ret = false;
+            for(let i = 0; i < prms.length; i++){
+                let set = prms[i].split('=');
+                if(set[0] === URL_PRM && set[1] === URL_VALUE){
+                    return true;
+                }
+            }
+            return false;
+        })();
+        
+        if(prm_is_clear){
+            let clear = document.createElement('span');
+            clear.textContent = '　クリア★';
+            document.getElementById('trp7m_open').appendChild( clear );
+        }else{
+            let a = document.createElement('a');
+            a.textContent = '　👺';
+            a.href = location.href+'?'+URL_PRM+'='+URL_VALUE;
+            document.getElementById('trp7m_open').appendChild( a );
+        }
+    },()=>{});
+}
+</script>
+
+<span style="color:#8f7278;"></span>
+<!-- trp8 -->
+<!-- <div id="trp8" style="background-color:#5555FF;"></div>
+<script type="text/javascript" src="trp8.js"></script> -->
+<!-- /trp8 -->
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
 </body>
 
 </html>
