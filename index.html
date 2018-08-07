@@ -1071,16 +1071,19 @@
             }
             return false;
         })();
+
+        let open = document.getElementById('trp7m_open');
+        open.style.textIndent = '1em';
         
         if(prm_is_clear){
             let clear = document.createElement('span');
-            clear.textContent = '　クリア★';
-            document.getElementById('trp7m_open').appendChild( clear );
+            clear.textContent = 'クリア★';
+            open.appendChild( clear );
         }else{
             let a = document.createElement('a');
-            a.textContent = '　👺';
+            a.textContent = '👺';
             a.href = location.href+'?'+URL_PRM+'='+URL_VALUE;
-            document.getElementById('trp7m_open').appendChild( a );
+            open.appendChild( a );
         }
     },()=>{});
 }
