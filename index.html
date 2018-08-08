@@ -9,19 +9,15 @@
     
     <script>
         function createBase(name, title_name, color, init, fini){
-            let title_id = name+'_title';
-            let open_id = name+'_open';
             let title = document.createElement('a');
-            title.id = title_id;
+            title.id = name+'_title';
             title.style = 'cursor:pointer; user-select:none;';
+            title.textContent = '▼ '+title_name;
             
             let open = document.createElement('div');
-            open.id = open_id;
+            open.id = name+'_open';
             open.style = 'display:none; clear:both; cursor:pointer; user-select:none;';
 
-            addEventListener('load' ,function(){
-                title.textContent = '▼ '+title_name;
-            })
             title.addEventListener('click',function(){
                 if(open.style.display === 'none'){
                     open.style.display = 'block';
@@ -36,14 +32,11 @@
                 }
             });
 
-            let base = document.createElement('span');
-            base.appendChild( title );
-            base.appendChild( open );
-            // let parent = document.getElementById(name);
             let parent = document.createElement('div');
             parent.id = name;
             parent.style.backgroundColor = color;
-            parent.appendChild( base );
+            parent.appendChild( title );
+            parent.appendChild( open );
 
             document.body.appendChild( parent );
         }
@@ -1089,7 +1082,79 @@
 }
 </script>
 
-<span style="color:#8f7278;"></span>
+<br>
+
+<!-- trp7n -->
+<script>
+{   
+    let init = false;
+    let color = '#a19a9c';
+    
+    createBase('trp7n','trp_story_7n',color,()=>{
+        if(init){return;}
+        init = true;
+        
+        const NEST = 5;
+        let arr = [];
+
+        function f(num){
+            const name = 'trp7n'+num;
+            const title_name = 'trp_story_7n';
+
+            let title = document.createElement('a');
+            title.id = name+'_title';
+            title.style = 'cursor:pointer; user-select:none;';
+            title.textContent = '▼ '+title_name;
+            
+            let open = document.createElement('div');
+            open.id = name+'_open';
+            open.style = 'display:none; clear:both; cursor:pointer; user-select:none;';
+
+            let init_done = false;
+
+            title.addEventListener('click',function(){
+                if(open.style.display === 'none'){
+                    open.style.display = 'block';
+                    title.textContent = '▲ '+title_name;
+                    
+                    if(!init_done){
+                        init_done = true;
+                        if(num === NEST - 1){
+                            let clear = document.createElement('div');
+                            clear.textContent = 'クリア★';
+                            clear.style.textIndent = (num+2)+'em';
+                            open.appendChild( clear );
+                        }else{
+                            open.appendChild( arr[num+1] );
+                        }
+                    }
+                }else{
+                    open.style.display = 'none';
+                    title.textContent = '▼ '+title_name;
+                }
+            });
+
+            let parent = document.createElement('div');
+            parent.id = name;
+            parent.style.backgroundColor = color;
+            parent.style.textIndent = (num+1)+'em';
+            parent.appendChild( title );
+            parent.appendChild( open );
+            
+            return parent;
+        }
+
+        let open = document.getElementById('trp7n_open');
+        for(let i = 0; i < 5; i++){
+            arr.push( f(i) );
+        }
+
+        document.getElementById('trp7n_open').appendChild( arr[0] );
+    },()=>{});
+}
+</script>
+
+<span style="color:#a19a9c;"></span>
 <!-- trp8 -->
 <!-- <div id="trp8" style="background-color:#5555FF;"></div>
 <script type="text/javascript" src="trp8.js"></script> -->
