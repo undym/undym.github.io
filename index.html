@@ -1154,7 +1154,60 @@
 }
 </script>
 
-<span style="color:#a19a9c;"></span>
+<br>
+
+<!-- trp7o -->
+<script>
+{   
+    let init = false;
+    let panel = document.createElement('div');
+    let clear = document.createElement('span');
+        clear.textContent = 'クリア★';
+        clear.style.position = 'fixed';
+        clear.style.textAlign = 'center';
+        clear.style.whiteSpace = 'nowrap';
+    let size_zoom_spd;
+    let size;
+    let top;
+    let left;
+    let timer;
+
+    function calcTop(){
+        return window.innerHeight / 2 - size;
+    }
+
+    function run(){
+        size += Math.floor( size_zoom_spd );
+        size_zoom_spd -= 0.4;
+        top = calcTop();
+        left = left;
+
+        clear.style.fontSize = size;
+        clear.style.top = top+'px';
+        clear.style.left = (left - clear.offsetWidth / 2)+'px';
+
+        timer = setTimeout( run, 30 );
+    }
+    
+    createBase('trp7o','trp_story_7o','#e4a289',()=>{
+        {//init
+            size_zoom_spd = 15;
+            size = 1;
+            top = calcTop();
+            left = window.innerWidth / 2;
+        }
+        document.body.appendChild( clear );
+
+        run();
+    },()=>{
+        document.body.removeChild( clear );
+
+        clearTimeout( timer );
+    });
+}
+</script>
+
+<span style="color:#e4a289;"></span>
 <!-- trp8 -->
 <!-- <div id="trp8" style="background-color:#5555FF;"></div>
 <script type="text/javascript" src="trp8.js"></script> -->
