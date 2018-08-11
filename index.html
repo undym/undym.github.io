@@ -1272,7 +1272,91 @@
 }
 </script>
 
-<span style="color:#4bd5ff;"></span>
+<br>
+
+<!-- trp7q -->
+<script>
+{   
+    let init = false;
+    let timer;
+    let clear = document.createElement('div');
+    let count = 0;
+    let r_zoom = 0;
+    let zooming = true;
+
+    function run(){
+        //shadow = 'xpx ypx ぼかし半径px rgba';
+
+        let loop = 6;
+        let r = 1;
+        let shadow = '';
+        
+        shadow += '-4px -4px 4px rgba(255,200,100),';
+        shadow += ' 4px -4px 4px rgba(255,200,100),';
+        shadow += ' 4px  4px 4px rgba(255,200,100),';
+        shadow += '-4px  4px 4px rgba(255,200,100),';
+
+        for(let i2 = 0; i2 < 3; i2++){
+            let _r = r * r_zoom;
+            for(let i = 0; i < loop; i++){
+                let rad = Math.PI * 2 * i / loop + count * 0.12;
+                let x = Math.floor( Math.cos( rad ) * _r );
+                let y = Math.floor( Math.sin( rad ) * _r );
+                shadow += x+'px '+y+'px 20px rgba(255,255,255,0.8),';
+            }
+
+            r += 12;
+        }
+
+        for(let i = 0; i < 8; i++){
+            let _r = 25;
+            let rad = Math.PI * 2 * i / loop + count * 0.12;
+            let x = Math.floor( Math.cos( rad ) * _r );
+            let y = Math.floor( Math.sin( rad ) * _r );
+            shadow += x+'px '+y+'px 20px rgba(255,255,255,0.8),';
+        }
+
+
+        if(zooming){
+            r_zoom += 0.04;
+            if(r_zoom >= 1){
+                zooming = false;
+            }
+        }else{
+            r_zoom -= 0.04;
+            if(r_zoom <= 0.1){
+                zooming = true;
+            }
+        }
+
+        shadow = shadow.substr( 0, shadow.length - 1 );//最後の','を外す
+        clear.style.textShadow = shadow;
+
+        count ++;
+
+        timer = setTimeout( run, 30 );
+    }
+    
+    createBase('trp7q','trp_story_7q','#2b6c80',()=>{
+        if(!init){
+            init = true;
+            
+            clear.textContent = 'クリア★';
+            clear.style.fontSize = '100px';
+            clear.style.textAlign = 'center';
+            clear.style.color = '#EEEEDD';
+            
+            document.getElementById('trp7q_open').appendChild(clear);
+        }
+
+        run();
+    },()=>{
+        clearTimeout( timer );
+    });
+}
+</script>
+
+<span style="color:#2b6c80;"></span>
 <!-- trp8 -->
 <!-- <div id="trp8" style="background-color:#5555FF;"></div>
 <script type="text/javascript" src="trp8.js"></script> -->
