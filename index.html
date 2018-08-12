@@ -1356,7 +1356,34 @@
 }
 </script>
 
-<span style="color:#2b6c80;"></span>
+<br>
+
+<!-- trp7r -->
+<script>
+{   
+    let init = false;
+    let clear = document.createElement('div');
+    
+    createBase('trp7r','trp_story_7r','#8551ff',()=>{
+        if(!init){
+            init = true;
+            
+            clear.textContent = 'クリア★';
+            clear.style.fontSize = '100px';
+            clear.style.textAlign = 'center';
+            clear.style.color = 'rgba(0,0,0,0)';
+            
+            clear.style.textShadow = '0px 0px 30px rgba(255,255,255,1)';
+            
+            document.getElementById('trp7r_open').appendChild(clear);
+        }
+
+    },()=>{
+    });
+}
+</script>
+
+<span style="color:#8551ff;"></span>
 <!-- trp8 -->
 <!-- <div id="trp8" style="background-color:#5555FF;"></div>
 <script type="text/javascript" src="trp8.js"></script> -->
