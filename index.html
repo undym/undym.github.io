@@ -40,6 +40,41 @@
 
             document.body.appendChild( parent );
         }
+
+
+        function createBase2(name, title_name, color, init, fini){
+            let title = document.createElement('a');
+            title.id = name+'_title';
+            title.style = 'cursor:pointer; user-select:none;';
+            title.textContent = '▼ '+title_name;
+            
+            let open = document.createElement('div');
+            open.id = name+'_open';
+            open.style = 'display:none; clear:both; user-select:none;';
+            open.style.textIndent = '1em';
+
+            title.addEventListener('click',function(){
+                if(open.style.display === 'none'){
+                    open.style.display = 'block';
+                    title.textContent = '▲ '+title_name;
+
+                    init(open);
+                }else{
+                    open.style.display = 'none';
+                    title.textContent = '▼ '+title_name;
+                    
+                    fini(open);
+                }
+            });
+
+            let parent = document.createElement('div');
+            parent.id = name;
+            parent.style.backgroundColor = color;
+            parent.appendChild( title );
+            parent.appendChild( open );
+
+            document.body.appendChild( parent );
+        }
     </script>
 </head>
 
@@ -1383,7 +1418,116 @@
 }
 </script>
 
-<span style="color:#8551ff;"></span>
+<br>
+
+<!-- trp7s -->
+<script>
+{   
+    let init = false;
+    let info;
+    let choices;
+    let CHOICE_MAX = 4;
+    let before_choice;
+    let dead_with_wakeup = false;
+    let dead_with_sleep = false;
+    const EMPTY_TEXT = '　';
+
+    function clearChoices(){
+        for(let i = 0; i < choices.length; i++){
+            choices[i].textContent = EMPTY_TEXT;
+            choices[i].onclick = ()=>{};
+            choices[i].style.cursor = 'default';
+            choices[i].style.textDecoration = 'none';
+        }
+    }
+
+    function addChoice(text ,onclick){
+        for(let i = 0; i < choices.length; i++){
+            if(choices[i].textContent === EMPTY_TEXT){
+                choices[i].textContent = '・'+text;
+                choices[i].style.cursor = 'pointer';
+                choices[i].style.textDecoration = 'underline';
+                choices[i].onclick = ()=>{
+                    before_choice.textContent = '＞'+text;
+                    onclick();
+                };
+                break;
+            }
+        }
+    }
+
+    function setGameOver(info_text){
+        clearChoices();
+
+        info.textContent = info_text;
+        addChoice('GameOver',()=>{
+            info.textContent = EMPTY_TEXT;
+            before_choice.textContent = EMPTY_TEXT;
+            setChoices(0);
+        });
+    }
+
+    function setChoices(phase){
+        clearChoices();
+
+        switch(phase){
+            case 0:
+                info.textContent = 'ベッドの上にいる。';
+                addChoice( '起き上がる' 
+                    ,()=>{
+                        dead_with_wakeup = true;
+                        setGameOver('体力を使い切り死んだ。')
+                    });
+                addChoice( '寝る' 
+                    ,()=>{
+                        dead_with_sleep = true;
+                        setGameOver('二度と目を覚まさなかった。')
+                    });
+                if(dead_with_wakeup && dead_with_sleep){
+                    addChoice( 'クリア' 
+                        ,()=>{
+                            clearChoices();
+                            before_choice.textContent = EMPTY_TEXT;
+                            info.textContent = 'クリア★';
+                        });
+                }
+                break;
+            default:
+                info.textContent = '設定ミス:phase '+phase;
+                addChoice( 'reset' ,()=>setChoices(0) );
+                break;
+        }
+    }
+    
+    createBase2('trp7s','trp_story_7s','#d0ffd7',(open)=>{
+        if(!init){
+            init = true;
+            
+            before_choice = document.createElement('div');
+            before_choice.textContent = EMPTY_TEXT;
+            open.appendChild( before_choice );
+
+            info = document.createElement('div');
+            open.appendChild( info );
+
+            choices = [];
+            for(let i = 0; i < CHOICE_MAX; i++){
+                choices.push( document.createElement('a') );
+
+
+                let div = document.createElement('div');
+                div.appendChild( choices[i] );
+                open.appendChild( div );
+            }
+
+            setChoices(0);
+        }
+    },(open)=>{
+    });
+}
+</script>
+
+<span style="color:#d0ffd7;"></span>
 <!-- trp8 -->
 <!-- <div id="trp8" style="background-color:#5555FF;"></div>
 <script type="text/javascript" src="trp8.js"></script> -->
