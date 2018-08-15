@@ -1473,18 +1473,18 @@
         switch(phase){
             case 0:
                 info.textContent = 'ベッドの上にいる。';
-                addChoice( '起き上がる' 
+                addChoice('起き上がる' 
                     ,()=>{
                         dead_with_wakeup = true;
                         setGameOver('体力を使い切り死んだ。')
                     });
-                addChoice( '寝る' 
+                addChoice('寝る' 
                     ,()=>{
                         dead_with_sleep = true;
                         setGameOver('二度と目を覚まさなかった。')
                     });
                 if(dead_with_wakeup && dead_with_sleep){
-                    addChoice( 'クリア' 
+                    addChoice('クリア' 
                         ,()=>{
                             clearChoices();
                             before_choice.textContent = EMPTY_TEXT;
@@ -1527,11 +1527,18 @@
 }
 </script>
 
-<span style="color:#d0ffd7;"></span>
+<br>
+
+<!-- trp7t -->
+<div style='color:rgba(0,0,0,0)'>クリア★</div>
+
+
 <!-- trp8 -->
-<!-- <div id="trp8" style="background-color:#5555FF;"></div>
-<script type="text/javascript" src="trp8.js"></script> -->
-<!-- /trp8 -->
+<!--
+<script type="text/javascript" src="trp8.js"></script>
+-->
+
+<span style="color:#d0ffd7;"></span>
 
 <br>
 <br>

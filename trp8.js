@@ -1,179 +1,263 @@
 
-
-class trp8_Unit{
-    constructor(){
-        this.name = 'name';
-        this.hp = 0;
-        this.hp_max = 0;
-        this.atk = 0;
-    }
-
-    setHP(v){
-        this.hp = v;
-        this.hp_max = v;
-    }
-}
-
-
-let trp8_base = createBase('trp8', 'trp_story_8', trp8_start, ()=>{});
-
-
-let trp8_au = 0;
-let trp8_au_elm;
-let trp8_init;
-let trp8_in_battle;
-let trp8_player;
-let trp8_enemy;
-let trp8_draw_enemy = [];
-let trp8_msg = {
-     element:[]
-    ,_index:0
-    ,add:function(str){
-        for(let i = trp8_msg.element.length-1; i > 0; i--){
-            trp8_msg.element[i].textContent = trp8_msg.element[i-1].textContent;
+{   
+    class Unit{
+        constructor(){
+            this.name = 'def';
+            this.hp = 0;
+            this.hp_max = 0;
+            this.atk = 0;
+            this.hunger = 0;
+            this.hunger_max = 100;
         }
-        trp8_msg.element[0].textContent = str;
-    }
-};
-let trp8_player_hp_element;
 
-function trp8_start(){
-    if(trp8_init){return;}
-    trp8_init = true;
+        heal(value){
+            this.hp += value;
+            if(this.hp >= this.hp_max){
+                this.hp = this.hp_max;
+            }
+        }
 
-    trp8_player = new trp8_Unit();
-
-    trp8_enemy = new trp8_Unit();
-
-    let parent = document.createElement('span');
-
-
-    trp8_player_hp_element = document.createElement('span');
-    parent.appendChild( trp8_player_hp_element );
-    parent.appendChild( document.createElement('br') );
-
-    for(let i = 0; i < 3; i++){
-        let elm = document.createElement('span');
-        trp8_msg.element.push( elm );
-        parent.appendChild( elm );
-        parent.appendChild( document.createElement('br') );
-    }
-
-    let DRAW_LINE_NUM = 3;
-    for(let i = 0; i < DRAW_LINE_NUM; i++){
-        trp8_draw_enemy[i] = document.createElement('span');
-        parent.appendChild( trp8_draw_enemy[i] );
-        parent.appendChild( document.createElement('br') );
-    }
-
-    trp8_au_elm = document.createElement('span');
-    parent.appendChild( trp8_au_elm );
-    parent.appendChild( document.createElement('br') );
-
-    {
-        let adv = document.createElement('span');
-        adv.textContent = ':進む';
-        adv.addEventListener('click',trp8_adv);
-
-        let ret = document.createElement('span');
-        ret.textContent = ':戻る';
-        ret.addEventListener('click',trp8_ret);
-
-        let space = document.createElement('span');
-        space.textContent = '　';
-
-        parent.appendChild( adv );
-        parent.appendChild( space );
-        parent.appendChild( ret );
-    }
-
-    trp8_reset();
-    trp8_update();
-
-    trp8_base.appendChild( parent );
-}
-
-function trp8_update(){
-    trp8_au_elm.textContent = ''+trp8_au+'AU';
-    trp8_player_hp_element.textContent = 'HP:'+trp8_player.hp;
-}
-
-function trp8_reset(){
-    trp8_player.name = '自分';
-    trp8_player.hp_max = 30;
-    trp8_player.hp = trp8_player.hp_max;
-    trp8_player.atk = 10;
-
-    trp8_au = 0;
-}
-
-function trp8_adv(move){
-    if(trp8_in_battle){
-        trp8_attack( trp8_player ,trp8_enemy );
-
-        if(trp8_enemy.hp <= 0){
-            trp8_msg.add('勝った');
-            trp8_in_battle = false;
-
-            trp8_update();
-            return;
+        setHP(value){
+            this.hp_max = value;
+            this.hp = value;
         }
         
-        trp8_attack( trp8_enemy ,trp8_player );
-        if(trp8_player.hp <= 0){
-            trp8_msg.add('負けた...');
-            trp8_in_battle = false;
+        attack(target){
+            let value = this.atk;
+            target.hp -= value;
+            if(target.hp < 0){
+                target.hp = 0;
+            }
 
-            trp8_reset();
-
-            trp8_update();
-            return;
+            addMsg( attacker.name+'は'+target.name+'に'+value+'のダメージを与えた' );
         }
-    }else{
-        trp8_au++;
-        trp8_runWalkEvent( trp8_au );
     }
 
-    trp8_update();
-}
+    let init = false;
+    let dom = {
+        player:undefined,
+        dungeon:undefined,
+        before_choice:undefined,
+        info:undefined,
+        choices:undefined,
+        msg:undefined,
+    };
+    const CHOICE_MAX = 4;
+    const MSG_MAX = 3;
+    const EMPTY_TEXT = '　';
 
-function trp8_ret(){
-    if(trp8_in_battle){return;}
-    if(trp8_au <= 0){return;}
+    const Choices = {
+        dungeon:()=>{
+            clearChoices();
+
+            dom.info.textContent = EMPTY_TEXT;
+            addChoice('進む'
+                ,()=>{
+                    player.hunger--;
+                    if(player.hunger <= 0){
+                        player.hunger = 0;
+
+                        player.hp -= player.hp / 10 + 1;
+
+                        if(player.hp <= 0){
+                            setGameOver('空腹で死んだ');
+                            return;
+                        }
+                    }
+
+                    au++;
+
+                    setRndEvent();
+                });
+            addChoice('休む' 
+                ,()=>{
+                    if(player.hunger > 0){
+                        let value = player.hunger < 10 ? player.hunger : 10;
+                        player.hunger -= value;
+                        let heal_value = Math.floor( player.hp / value ) + 1;
+                        player.heal( heal_value );
+                        addMsg(''+heal_value+'回復した');
+                    }else{
+                        addMsg('お腹が減って休めない');
+                    }
+
+                    updateDom();
+                });
+        },
+        BATTLE:()=>{
+            clearChoices();
+            
+
+            dom.info.textContent = EMPTY_TEXT;
+            addChoice('殴る'
+                ,()=>{
+                    player.attack( enemy );
+                    if(enemy.hp <= 0){
+                        addMsg( enemy.name+'は死んだ' );
+                        Choice.dungeon();
+                    }
+                });
+        },
+    };
+
+    let au = 0;
+    // let battle = {
+    //     phase:0,
+    // };
+
+    let player = new Unit();
+    let enemy = new Unit();
+
+    function addMsg(str ,color = '#000000'){
+        if(this.i === undefined){this.i = 0;}
+        else                    {i = (i+1) % dom.msg.length;}
+        
+        dom.msg[i].textContent = str;
+        dom.msg[i].style.color = color;
+    }
+
+
+    function setEnemy(name){
+        switch(name){
+            case 'しんまい':
+                enemy.name = 'しんまい';
+                enemy.setHP(2);
+                enemy.atk = 1;
+                break;
+            default:
+                enemy.name = 'bug?';
+                enemy.setHP(2);
+                enemy.atk = 1;
+                break;
+        }
+    }
+
+
+    function clearChoices(){
+        for(let i = 0; i < dom.choices.length; i++){
+            dom.choices[i].textContent = EMPTY_TEXT;
+            dom.choices[i].onclick = ()=>{};
+            dom.choices[i].style.cursor = 'default';
+            dom.choices[i].style.textDecoration = 'none';
+        }
+    }
+
+
+    function addChoice(text ,onclick){
+        for(let i = 0; i < dom.choices.length; i++){
+            if(dom.choices[i].textContent === EMPTY_TEXT){
+                dom.choices[i].textContent = '・'+text;
+                dom.choices[i].style.cursor = 'pointer';
+                dom.choices[i].style.textDecoration = 'underline';
+                dom.choices[i].onclick = ()=>{
+                    dom.before_choice.textContent = '＞'+text;
+                    onclick();
+                };
+                break;
+            }
+        }
+    }
+
+
+    function setGameOver(info_text){
+        clearChoices();
+
+        dom.info.textContent = info_text;
+        addChoice('GameOver',()=>{
+            dom.info.textContent = EMPTY_TEXT;
+            dom.before_choice.textContent = EMPTY_TEXT;
+            Choices.dungeon();
+        });
+    }
+
+
+    function setRndEvent(){
+        if(Math.random() <= 0.3){
+            setEnemy('しんまい');
+            if(Math.random() <= 0.5){battlePhase('player');}
+            else                    {battlePhase('enemy');}
+            
+            return;
+        }
+    }
+
+
+    function battlePhase(phase){
+        if(phase === 'player'){
+            Choices.battle();
+        }else{
+            enemy.attack( player );
+            
+            if(player.hp <= 0){
+                addMsg( player.name+'は死んだ' );
+                reset();
+            }else{
+                battlePhase('player');
+            }
+        }
+    }
+
+
+    function reset(){
+        au = 0;
+        player.name = 'わたし';
+        player.hp_max = 10;
+        player.hp = player.hp_max;
+        player.atk = 1;
+        player.hunger_max = 100;
+        player.hunger = player.hunger_max;
+
+        updateDom();
+
+        Choices.dungeon();
+    }
+
+
+    function updateDom(){
+        dom.player.textContent = 'HP:'+(player.hp)+' お腹:'+(player.hunger)+'%';
+        dom.dungeon = 'AU:0';
+    }
 
     
-    trp8_au --;
-    if(trp8_au < 0){trp8_au = 0;}
+    createBase2('trp8','trp_story_8','#d0ffd7',(open)=>{
+        if(!init){
+            init = true;
 
-    trp8_runWalkEvent( trp8_au );
+            dom.player = document.createElement('div');
+            dom.player.textContent = EMPTY_TEXT;
+            
+            dom.before_choice = document.createElement('div');
+            dom.before_choice.textContent = EMPTY_TEXT;
 
-    trp8_update();
-}
+            dom.info = document.createElement('div');
 
-function trp8_runWalkEvent(au){
-    if(au === 0){
-        trp8_player.hp = trp8_player.hp_max;
-        trp8_msg.add('回復した');
-    }else if(au === 1){
-        trp8_in_battle = true;
+            dom.choices = [];
+            for(let i = 0; i < CHOICE_MAX; i++){
+                dom.choices.push( document.createElement('span') );
+            }
 
-        trp8_enemy.name = 'しんまい';
-        trp8_enemy.setHP( 21 );
-        trp8_enemy.atk = 10;
-        trp8_draw_enemy[0].textContent = '';
-        trp8_draw_enemy[1].textContent = '🍎';
-        trp8_draw_enemy[2].textContent = '';
-        
-        trp8_msg.add(trp8_enemy.name+'が現れた');
-    }else{
+            dom.msg = [];
+            for(let i = 0; i < MSG_MAX; i++){
+                dom.msg.push( document.createElement('span') );
+                dom.msg[i].textContent = EMPTY_TEXT;
+            }
 
-    }
-}
-
-function trp8_attack(attacker ,target){
-    let dmg = attacker.atk;
-    target.hp -= dmg;
-    if(target.hp < 0){
-        target.hp = 0;
-    }
+            open.appendChild( dom.player );
+            open.appendChild( dom.before_choice );
+            open.appendChild( dom.info );
+            for(let i = 0; i < dom.choices.length; i++){
+                let div = document.createElement('div');
+                div.appendChild( dom.choices[i] );
+                open.appendChild( div );
+            }
+            for(let i = 0; i < dom.msg.length; i++){
+                let div = document.createElement('div');
+                div.appendChild( dom.msg[i] );
+                open.appendChild( div );
+            }
+            
+            reset();
+        }
+    },(open)=>{
+    });
 }
