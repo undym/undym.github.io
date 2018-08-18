@@ -1,1 +1,80 @@
-a
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+        body {
+            background-color: #CCCCCC;
+        }
+    </style>
+
+    <script>
+        function createBase(name, title_name, color, open, close){
+            let title = document.createElement('a');
+            title.id = name+'_title';
+            title.style = 'cursor:pointer; user-select:none;';
+            title.textContent = '▼ '+title_name;
+            
+            let inside = document.createElement('div');
+            inside.id = name+'_inside';
+            inside.style = 'display:none; clear:both; user-select:none;';
+            inside.style.textIndent = '1em';
+
+            title.addEventListener('click',function(){
+                if(inside.style.display === 'none'){
+                    inside.style.display = 'block';
+                    title.textContent = '▲ '+title_name;
+
+                    open(inside);
+                }else{
+                    inside.style.display = 'none';
+                    title.textContent = '▼ '+title_name;
+                    
+                    close(inside);
+                }
+            });
+
+            let parent = document.createElement('div');
+            parent.id = name;
+            parent.style.backgroundColor = color;
+            parent.appendChild( title );
+            parent.appendChild( inside );
+
+            document.body.appendChild( parent );
+        }
+    </script>
+</head>
+<body>
+
+<br>
+
+<!-- trp10 -->
+<script>
+{   
+    let init = false;
+    createBase('trp10','trp_story_10','#d0ffd7',(inside)=>{
+        if(!init){
+            init = true;
+
+            let div = document.createElement('div');
+            div.textContent = 'test';
+            isinde.appendChild( div );
+        }
+    },(inside)=>{
+    });
+}
+</script>
+
+<br>
+
+<span style="color:#ff7268;"></span>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+</body>
+
+</html>
