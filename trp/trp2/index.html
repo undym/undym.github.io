@@ -45,21 +45,266 @@
 </head>
 <body>
 
+<a href="https://undym.github.io/">前の</a>
+
+<br>
 <br>
 
 <!-- trp10 -->
 <script>
 {   
+    
+    const MapData = {
+        CLICK_START:[
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                'C l i c k S t a r t',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+        ],
+        STAGE_0:[
+                '                                ',
+                '                                ',
+                '                                ',
+                '                                ',
+                '                                ',
+                '                                ',
+                '                                ',
+                '             *             <|   ',
+                '             **             |   ',
+                '********************   *****.***',
+                '********************   *********',
+                '********************************',
+        ],
+    };
     let init = false;
+
+    let map = [];
+    let dom = {
+        map_parent:undefined,
+        map:undefined,
+        ball:undefined,
+        ball_charge:undefined,
+        clear:undefined,
+    };
+
+    let ball = {
+        x:0.0,
+        y:0.0,
+        vec_x:0.0,
+        vec_y:0.0,
+        moving:false,
+        charge:0.0,
+        charging:false,
+    };
+
+    const BLOCK_SIZE = 8;
+    const BALL_CHARGE_MAX = 20.0;
+
+    let start = false;
+    let run_timer;
+
+
+    function resetMapDom(){
+        while(dom.map_parent.firstChild){
+            dom.map_parent.removeChild( dom.map_parent.firstChild );
+        }
+
+        dom.map_parent.appendChild( dom.ball );
+    }
+
+    function setMap(map_data){
+        resetMapDom();
+
+        map = map_data;
+
+        dom.map = [];
+        for(let y = 0; y < map.length; y++){
+            let arr = [];
+            for(let x = 0; x < map[y].length; x++){
+                arr.push( document.createElement('div') );
+                arr[x].textContent = map[y].substr(x,1);
+                arr[x].style.position = 'absolute';
+                arr[x].style.top  = (y * BLOCK_SIZE)+'px';
+                arr[x].style.left = (x * BLOCK_SIZE)+'px';
+
+                dom.map_parent.appendChild( arr[x] );
+            }
+            
+            dom.map.push( arr );
+        }
+
+    }
+
+
+    function reset(){
+        start = false;
+        dom.ball.textContent = '';
+        setMap( MapData.CLICK_START );
+
+        clearTimeout( run_timer );
+    }
+
+
+    function getSquareBlock(x,y){
+        x = Math.floor(x);
+        y = Math.floor(y);
+        if(y >= 0 && y < map.length && x >= 0 && x < map[y].length){
+            return map[y].substr(x,1);
+        }
+        return ' ';
+    }
+
+
+    function run(){
+        if(ball.moving){
+            let x = Math.floor( ball.x / BLOCK_SIZE );
+            let y = Math.floor( ball.y / BLOCK_SIZE );
+
+            if(getSquareBlock(x,y+1) !== '*'){
+                ball.vec_y += 0.4;
+                if(ball.vec_y >= 7){
+                    ball.vec_y = 7;
+                }
+            }
+
+            if(ball.vec_y > 0 && getSquareBlock(x,y+1) === '*'){
+                ball.vec_y *= -0.5;
+
+                if(Math.abs( ball.vec_x ) <= 0.1 && Math.abs( ball.vec_y ) <= 0.3){
+                    ball.moving = false;
+                }
+            }
+            
+            if(
+                   (ball.vec_x > 0 && getSquareBlock(x+1,y) === '*')
+                || (ball.vec_x < 0 && getSquareBlock(x-1,y) === '*')
+            ){
+                ball.vec_x *= -0.95;
+            }
+
+            if(getSquareBlock(x,y) === '.'){
+                dom.clear.textContent = 'クリア★';
+            }
+
+            ball.vec_x *= 0.95;
+            
+            ball.x += ball.vec_x;
+            ball.y += ball.vec_y;
+        }else{
+            let charge_spd = BALL_CHARGE_MAX / 30;
+            if(ball.charging){
+                ball.charge += charge_spd;
+                if(ball.charge >= BALL_CHARGE_MAX){
+                    ball.charge = BALL_CHARGE_MAX;
+                    ball.charging = false;
+                }
+            }else{
+                ball.charge -= charge_spd;
+                if(ball.charge <= 0){
+                    ball.charge = 0;
+                    ball.charging = true;
+                }
+            }
+
+            dom.ball_charge.textContent = (()=>{
+                let sp = BALL_CHARGE_MAX / 10;
+                let str = '';
+                for(let i = 0; i * sp <= ball.charge; i++){
+                    str += '*';
+                }
+                return str;
+            })();
+        }
+
+        dom.ball.style.left = Math.floor( ball.x )+'px';
+        dom.ball.style.top  = Math.floor( ball.y )+'px';
+
+        run_timer = setTimeout( run ,32 );
+    }
+
+
     createBase('trp10','trp_story_10','#d0ffd7',(inside)=>{
         if(!init){
             init = true;
 
-            let div = document.createElement('div');
-            div.textContent = 'test';
-            isinde.appendChild( div );
+            dom.ball = document.createElement('div');
+            dom.ball.style.position = 'absolute';
+            dom.ball.style.fontSize = '8px';
+            
+            inside.appendChild((()=>{
+                dom.ball_charge = document.createElement('div');
+                dom.ball_charge.textContent = '　';//dummy
+                return dom.ball_charge;
+            })());
+            inside.appendChild((()=>{
+                dom.map_parent = document.createElement('div');
+                dom.map_parent.style.position = 'relative';
+
+                dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
+
+                return dom.map_parent;
+            })());
+            inside.appendChild((()=>{
+                dom.clear = document.createElement('div');
+                dom.clear.textContent = '　';//dummy
+                return dom.clear;
+            })());
+            inside.appendChild((()=>{//背景確保用
+                let div = document.createElement('div');
+                for(let i = 0; i < 8; i++){
+                    div.appendChild( document.createElement('br') );
+                }
+
+                return div;
+            })());
+
+            inside.addEventListener('click',()=>{
+                if(!start){
+                    start = true;
+
+                    dom.ball.textContent = '@';
+                    ball.x = 0;
+                    ball.y = 0;
+                    ball.vec_x = 0;
+                    ball.vec_y = 0;
+                    ball.charge = 0;
+                    ball.moving = true;
+
+                    dom.ball_charge.textContent = '　';
+
+                    setMap( MapData.STAGE_0 );
+
+                    run();
+                    return;
+                }
+
+
+                if(!ball.moving){
+                    ball.moving = true;
+                    let rad = -Math.PI / 8;
+                    ball.vec_x = Math.cos(rad) * ball.charge;
+                    ball.vec_y = Math.sin(rad) * ball.charge;
+                }
+            });
         }
+
+        reset();
     },(inside)=>{
+        dom.clear.textContent = '　';
+        clearTimeout( run_timer );
     });
 }
 </script>
