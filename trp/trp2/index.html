@@ -509,80 +509,80 @@
     }
 
 
-    // createBase('trp11','trp_story_11','#51d1c0',(inside)=>{
-    //     if(!init){
-    //         init = true;
+    createBase('trp11','trp_story_11','#51d1c0',(inside)=>{
+        if(!init){
+            init = true;
 
-    //         dom.ball = document.createElement('div');
-    //         dom.ball.style.position = 'absolute';
-    //         dom.ball.style.fontSize = '8px';
+            dom.ball = document.createElement('div');
+            dom.ball.style.position = 'absolute';
+            dom.ball.style.fontSize = '8px';
             
-    //         inside.appendChild((()=>{
-    //             dom.ball_charge = document.createElement('div');
-    //             dom.ball_charge.textContent = '　';//dummy
-    //             return dom.ball_charge;
-    //         })());
-    //         inside.appendChild((()=>{
-    //             dom.map_parent = document.createElement('div');
-    //             dom.map_parent.style.position = 'relative';
+            inside.appendChild((()=>{
+                dom.ball_charge = document.createElement('div');
+                dom.ball_charge.textContent = '　';//dummy
+                return dom.ball_charge;
+            })());
+            inside.appendChild((()=>{
+                dom.map_parent = document.createElement('div');
+                dom.map_parent.style.position = 'relative';
 
-    //             dom.map_parent.appendChild( document.createElement('br') );
-    //             dom.map_parent.appendChild( document.createElement('br') );
-    //             dom.map_parent.appendChild( document.createElement('br') );
-    //             dom.map_parent.appendChild( document.createElement('br') );
-    //             dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
+                dom.map_parent.appendChild( document.createElement('br') );
 
-    //             return dom.map_parent;
-    //         })());
-    //         inside.appendChild((()=>{
-    //             dom.clear = document.createElement('div');
-    //             dom.clear.textContent = '　';//dummy
-    //             return dom.clear;
-    //         })());
-    //         inside.appendChild((()=>{//背景確保用
-    //             let div = document.createElement('div');
-    //             for(let i = 0; i < 8; i++){
-    //                 div.appendChild( document.createElement('br') );
-    //             }
+                return dom.map_parent;
+            })());
+            inside.appendChild((()=>{
+                dom.clear = document.createElement('div');
+                dom.clear.textContent = '　';//dummy
+                return dom.clear;
+            })());
+            inside.appendChild((()=>{//背景確保用
+                let div = document.createElement('div');
+                for(let i = 0; i < 8; i++){
+                    div.appendChild( document.createElement('br') );
+                }
 
-    //             return div;
-    //         })());
+                return div;
+            })());
 
-    //         inside.addEventListener('click',()=>{
-    //             if(!start){
-    //                 start = true;
+            inside.addEventListener('click',()=>{
+                if(!start){
+                    start = true;
 
-    //                 dom.ball.textContent = '@';
-    //                 ball.x = 0;
-    //                 ball.y = 0;
-    //                 ball.vec_x = 0;
-    //                 ball.vec_y = 0;
-    //                 ball.charge = 0;
-    //                 ball.moving = true;
+                    dom.ball.textContent = '@';
+                    ball.x = 0;
+                    ball.y = 0;
+                    ball.vec_x = 0;
+                    ball.vec_y = 0;
+                    ball.charge = 0;
+                    ball.moving = true;
 
-    //                 dom.ball_charge.textContent = '　';
+                    dom.ball_charge.textContent = '　';
 
-    //                 setMap( MapData.STAGE_0 );
+                    setMap( MapData.STAGE_0 );
 
-    //                 run();
-    //                 return;
-    //             }
+                    run();
+                    return;
+                }
 
 
-    //             if(!ball.moving){
-    //                 ball.moving = true;
-    //                 let rad = -Math.PI / 8;
-    //                 ball.vec_x = Math.cos(rad) * ball.charge;
-    //                 ball.vec_y = Math.sin(rad) * ball.charge;
-    //             }
-    //         });
-    //     }
+                if(!ball.moving){
+                    ball.moving = true;
+                    let rad = -Math.PI / 8;
+                    ball.vec_x = Math.cos(rad) * ball.charge;
+                    ball.vec_y = Math.sin(rad) * ball.charge;
+                }
+            });
+        }
 
-    //     reset();
-    // },(inside)=>{
-    //     dom.clear.textContent = '　';
-    //     clearTimeout( run_timer );
-    // });
+        reset();
+    },(inside)=>{
+        dom.clear.textContent = '　';
+        clearTimeout( run_timer );
+    });
 }
 </script>
 
