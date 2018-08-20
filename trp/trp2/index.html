@@ -1,6 +1,6 @@
 <html>
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8">
     <style type="text/css">
         body {
             background-color: #CCCCCC;
@@ -588,7 +588,31 @@
 
 <br>
 
-<span style="color:#51d1c0;"></span>
+<!-- trp12 -->
+<script>
+{
+    let init = false;
+
+    createBase('trp12','trp_story_12','#d6cdcd',(inside)=>{
+        if(!init){
+            init = true;
+            
+            inside.appendChild((()=>{
+                let ret = document.createElement('div');
+                ret.textContent = 'クリア★';
+                ret.style.display = 'inline-block';
+                ret.style.transform = 'rotate(10deg)';
+                return ret;
+            })());
+
+        }
+
+    },(inside)=>{
+    });
+}
+</script>
+
+<span style="color:#d6cdcd;"></span>
 <br>
 <br>
 <br>
