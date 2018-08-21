@@ -612,7 +612,46 @@
 }
 </script>
 
-<span style="color:#d6cdcd;"></span>
+<br>
+
+<!-- trp13 -->
+<script>
+    {
+        let init = false;
+        let clear;
+        let deg = 0;
+        let run_timer;
+    
+        function run(){
+            clear.style.transform = 'rotate('+deg+'deg)';
+            deg += 25;
+            run_timer = setTimeout( run ,36 );
+        }
+    
+        createBase('trp13','trp_story_13','#ff9191',(inside)=>{
+            if(!init){
+                init = true;
+                
+                inside.appendChild((()=>{
+                    clear = document.createElement('div');
+                    clear.textContent = 'クリア★';
+                    clear.style.display = 'inline-block';
+                    clear.style.fontSize = '200%';
+                    return clear;
+                })());
+    
+            }
+            
+            run();
+        },(inside)=>{
+            clearTimeout( run_timer );
+        });
+    }
+</script>
+
+<br>
+
+<span style="color:#ff9191;"></span>
 <br>
 <br>
 <br>
