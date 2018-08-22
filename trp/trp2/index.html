@@ -651,7 +651,168 @@
 
 <br>
 
-<span style="color:#ff9191;"></span>
+<!-- trp14 -->
+<script>
+    {
+        const BACKGROUND_COLOR = '#c548ff';
+        const START_SIZE = 30;
+        let size = START_SIZE;
+
+        let init = false;
+        let center;
+        let right;
+        let clears = [];
+        let run_timer;
+        let mouse = {x:0,y:0};
+
+        class Clear{
+            constructor(){
+                this.dom = undefined;
+                this.x = 0.0;
+                this.y = 0.0;
+                let vec = 4;
+                this.vec_x = -vec + Math.random() * vec * 2;
+                this.vec_y = -0.1 - Math.random() * 3;
+                this.shake = 0;
+                this.shake_r = Math.random() * 4;
+                this.shake_spd = Math.random() * 0.3;
+            }
+
+            setPos(x,y){
+                this.x = x;
+                this.y = y;
+
+            }
+        }
+
+        function reset(){
+            setBomSize( START_SIZE );
+            center.textContent = '💣';
+            clearClears();
+        }
+
+        function setBomSize(value){
+            size = value;
+            center.style.fontSize = size+'px';
+            right.style.fontSize = size+'px';
+        }
+
+        function run(){
+            for(let i = 0; i < clears.length; i++){
+                let c = clears[i];
+
+                c.x += c.vec_x;
+                c.y += c.vec_y;
+
+                let x = c.vec_y < 0 ? c.x : c.x + Math.sin( c.shake ) * c.shake_r;
+                c.dom.style.left = x+'%';
+                c.dom.style.top  = c.y+'%';
+
+                c.vec_x *= 0.95;
+                c.vec_y += 0.13;
+                if(c.vec_y > 1){
+                    c.vec_y = 1;
+                }
+                if(c.vec_y > 0){
+                    c.shake += c.shake_spd;
+                }
+            }
+
+            run_timer = setTimeout( run ,36 );
+        }
+
+        function clearClears(){
+            for(let i = 0; i < clears.length; i++){
+                document.body.removeChild( clears[i].dom );
+            }
+
+            clears = [];
+        }
+    
+        createBase('trp14','trp_story_14',BACKGROUND_COLOR,(inside)=>{
+            if(!init){
+                init = true;
+                
+                inside.appendChild((()=>{
+                    let lc = document.createElement('div');
+                    lc.style.cssFloat = 'left';
+                    lc.style.width = '67%';
+                    lc.style.backgroundColor = BACKGROUND_COLOR;
+
+                    lc.appendChild((()=>{
+                        let left = document.createElement('div');
+                        left.style.cssFloat = 'left';
+                        left.style.width = '50%';
+                        return left;
+                    })());
+                    lc.appendChild((()=>{
+                        center = document.createElement('div');
+                        center.style.cssFloat = 'right';
+                        center.style.width = '50%';
+                        center.style.textAlign = 'center';
+
+                        center.addEventListener('click',()=>{
+                            setBomSize( Math.floor( size * 1.1 + 1 ) );
+
+                            if(size >= 200){
+                                reset();
+                                
+                                for(let i = 0; i < 100; i++){
+                                    let c = new Clear();
+                                    c.dom = document.createElement('span');
+                                    c.dom.textContent = 'クリア★';
+                                    c.dom.style.position = 'fixed';
+                                    c.dom.style.textAlign = 'center';
+                                    c.x = Math.floor( mouse.x / window.innerWidth * 100 );
+                                    c.y = Math.floor( mouse.y / window.innerHeight * 100 );
+
+                                    // console.log(c.x+','+c.y);
+                                    
+                                    c.dom.style.left = c.x+'%';
+                                    c.dom.style.top  = c.y+'%';
+
+                                    clears.push( c );
+                                    document.body.appendChild( c.dom );
+                                }
+                                
+                                clearTimeout( run_timer );
+                                run();
+                            }
+                        });
+                        center.addEventListener('mousemove',(ev)=>{
+                            mouse.x = ev.pageX;
+                            mouse.y = ev.pageY;
+                            // console.log('/');
+                            // console.log( mouse.x+','+mouse.y );
+                            // console.log( window.innerWidth+','+window.innerHeight );
+                        });
+                        return center;
+                    })());
+                    return lc;
+                })());
+                inside.appendChild((()=>{
+                    right = document.createElement('div');
+                    right.style.cssFloat = 'right';
+                    right.style.width = '33%';
+                    right.style.backgroundColor = BACKGROUND_COLOR;
+                    right.textContent = '　';
+                    return right;
+                })());
+            }
+
+
+            reset();
+        },(inside)=>{
+            reset();
+            
+            clearTimeout( run_timer );
+        });
+    }
+</script>
+
+<br>
+
+<span style="color:#c548ff;"></span>
 <br>
 <br>
 <br>
