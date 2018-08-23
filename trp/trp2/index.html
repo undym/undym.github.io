@@ -812,7 +812,267 @@
 
 <br>
 
-<span style="color:#c548ff;"></span>
+<!-- trp15 -->
+<script>
+    {
+        const DUMMY_TEXT = '　';
+
+        let init = false;
+        let msg;
+        let dom = {
+            lv:undefined,
+            job:undefined,
+            job_mastered_num:undefined,
+            item:undefined,
+            msg:undefined,
+            btn:{
+                drill:undefined,
+                job_change:undefined,
+                boss:undefined,
+            },
+            achievements:undefined,
+        };
+        let prm = {
+            hp:0,
+            hp_max:0,
+            lv:0,
+            job:'しんまい',
+            job_lv:{
+                しんまい:0,
+                戦士:0,
+                魔法使い:0,
+                スネイカー:0,
+                イカ:0,
+                タコ:0,
+                たぬき:0,
+                ダウザー:0,
+                魔女:0,
+                機械士:0,
+                機械土:0,
+                落ち武者:0,
+                体術士:0,
+                軍人:0,
+                ヴァンパイア:0,
+                蟹:0,
+                月弓子:0,
+                星士:0,
+                ネクロマンサー:0,
+                ちゅるほろ:0,
+                ドンゴ:0,
+                雷鳥:0,
+                猫:0,
+                有翼猫:0,
+                黒き小人:0,
+                フリーゲーム作家:0,
+            },
+            getJobLv:()=>prm.job_lv[ prm.job ],
+        };
+        let items = {
+            石:false,
+            岩:false,
+            棒:false,
+            少女の心を持ったおっさん:false,
+            穴:false,
+            うんち:false,
+            地球:false,
+            宇宙:false,
+            土地:false,
+            錆びたドッグタグ:false,
+            ひゃくえん:false,
+            ウンウンオクチウム:false,
+        };
+        
+        const MAX_LV = 999;
+        const MAX_JOB_LV = 10;
+        const MAX_ITEM_NUM = Object.keys( items ).length;
+        let all_job_mastered = false;
+        let have_item_num = 0;
+
+        function calcJobMasteredNum(){
+            let job_keys = getJobKeys();
+            let num = 0;
+            for(let i = 0; i < job_keys.length; i++){
+                if(prm.job_lv[ job_keys[i] ] >= MAX_JOB_LV){
+                    num++;
+                }
+            }
+            return num;
+        }
+
+        function getJobKeys(){
+            return Object.keys( prm.job_lv );
+        }
+
+        function updateDom(){
+
+            dom.lv.textContent = prm.lv >= MAX_LV
+                                ? 'Lv:'+Math.floor( prm.lv )+'★'
+                                : 'Lv:'+Math.floor( prm.lv );
+                                ;
+            dom.job.textContent = prm.getJobLv() >= MAX_JOB_LV
+                                ? prm.job+'Lv:'+Math.floor( prm.getJobLv() )+'★'
+                                : prm.job+'Lv:'+Math.floor( prm.getJobLv() )
+                                ;
+            dom.job_mastered_num.textContent = (()=>{
+                let num = calcJobMasteredNum();
+                let str = 'ジョブマスター数:'+num;
+                if(num >= getJobKeys().length){
+                    str += '★';
+                }
+                return str;
+            })();
+            dom.item.textContent = '所持アイテム数:'+have_item_num;
+            if(have_item_num >= MAX_ITEM_NUM){
+                dom.item.textContent += '★';
+            }
+            // dom.hp.textContent = 'HP:'+Math.floor( prm.hp )+'/'+Math.floor( prm.hp_max );
+            {
+                let ac = '';
+                let count = 0;
+                if(prm.lv >= MAX_LV){
+                    count ++;
+                    ac += '[阿修羅]';
+                }
+                if(calcJobMasteredNum() >= getJobKeys()){
+                    count ++;
+                    ac += '[無職]';
+                }
+                if(have_item_num >= MAX_ITEM_NUM){
+                    count ++;
+                    ac += '[ゴミ屋敷]';
+                }
+
+                if(count >= 3){
+                    ac += '[クリア★]';
+                }
+                
+                if(ac === ''){
+                    dom.achievements.textContent = DUMMY_TEXT;
+                }else{
+                    dom.achievements.textContent = ac;
+                }
+            }
+        }
+
+        createBase('trp15','trp_story_15','#9cbda1',(inside)=>{
+            if(!init){
+                init = true;
+
+                function createBtn(name ,click){
+                    let btn = document.createElement('span');
+                    btn.textContent = name;
+                    btn.style.cursor = 'pointer';
+                    btn.style.textDecoration = 'underline';
+                    btn.addEventListener('click',()=>{
+                        click();
+                    });
+                    return btn;
+                }
+
+                inside.appendChild((()=>{
+                    dom.lv = document.createElement('div');
+                    dom.lv.textContent = DUMMY_TEXT;
+                    return dom.lv;
+                })());
+                inside.appendChild((()=>{
+                    dom.job = document.createElement('div');
+                    dom.job.textContent = DUMMY_TEXT;
+                    return dom.job;
+                })());
+                inside.appendChild((()=>{
+                    dom.job_mastered_num = document.createElement('div');
+                    dom.job_mastered_num.textContent = DUMMY_TEXT;
+                    return dom.job_mastered_num;
+                })());
+                inside.appendChild((()=>{
+                    dom.item = document.createElement('div');
+                    dom.item.textContent = DUMMY_TEXT;
+                    return dom.item;
+                })());
+                inside.appendChild((()=>{
+                    dom.achievements = document.createElement('div');
+                    dom.achievements.textContent = DUMMY_TEXT;
+                    return dom.achievements;
+                })());
+                inside.appendChild((()=>{
+                    dom.msg = document.createElement('div');
+                    dom.msg.textContent = DUMMY_TEXT;
+                    return dom.msg;
+                })());
+                
+                inside.appendChild((()=>{
+                    let parent = document.createElement('div');
+                    parent.appendChild(dom.btn.drill = createBtn('・戦う',()=>{
+                        if(prm.lv < MAX_LV){
+                            prm.lv++;
+                        }
+
+                        if(prm.getJobLv() < MAX_JOB_LV){
+                            prm.job_lv[ prm.job ] ++;
+                            prm.lv++;
+                        }
+
+                        if(have_item_num < MAX_ITEM_NUM && Math.random() <= 0.05){
+                            let item_keys = Object.keys( items );
+                            let index = Math.floor( Math.random() * item_keys.length );
+                            let key = item_keys[index];
+                            if(!items[ key ]){
+                                items[ key ] = true;
+                                have_item_num++;
+
+                                dom.msg.textContent = '\"'+key+'\"を手に入れた';
+
+                                prm.lv += 15;
+                            };
+                        }
+
+                        if(prm.lv >= MAX_LV){
+                            prm.lv = MAX_LV;
+                        }
+
+                        updateDom();
+                    }));
+                    return parent;
+                })());
+                inside.appendChild((()=>{
+                    let parent = document.createElement('div');
+                    parent.appendChild(dom.btn.job_change = createBtn('・転職',()=>{
+                        let jobs = Object.keys( prm.job_lv );
+                        let i_want_to_change_to_this_job = undefined;
+
+                        if(Math.random() <= 0.3){
+                            for(let i = 0; i < jobs.length; i++){
+                                if(prm.job_lv[ jobs[i] ] < MAX_JOB_LV){
+                                    i_want_to_change_to_this_job = jobs[i];
+                                    break;            
+                                }
+                            }
+                        }
+
+                        if(i_want_to_change_to_this_job){
+                            prm.job = i_want_to_change_to_this_job;
+                        }else{
+                            let index = Math.floor( Math.random() * jobs.length );
+                            prm.job = jobs[index];
+                        }
+
+                        updateDom();
+                    }));
+                    return parent;
+                })());
+
+            }
+            
+            updateDom();
+
+        },(inside)=>{
+        });
+    }
+</script>
+
+<br>
+
+<span style="color:#9cbda1;"></span>
 <br>
 <br>
 <br>
