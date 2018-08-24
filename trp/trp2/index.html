@@ -1072,7 +1072,247 @@
 
 <br>
 
-<span style="color:#9cbda1;"></span>
+<!-- trp16 -->
+<script>
+    {
+        const DUMMY_TEXT = '　';
+        const WEPONS = [
+            '',
+            '棒',
+            '竹槍',
+            '刀',
+            '爆撃機',
+            'ミサイル',
+            '地球',
+        ];
+
+        let init = false;
+        let running = false;
+        let run_timer;
+        let msg;
+        let lv = 0;
+        let hp = 0;
+        let main_ev_phase = 0;
+        let yen = 0;
+        let clear = false;
+        let wepon_lv = 0;
+
+        function run(){
+            if(clear){
+                addMsg('クリア★');
+                running = false;
+                return;
+            }
+            if(hp <= 0){
+                gameOver();
+                return;
+            }
+            event();
+
+            run_timer = setTimeout( run ,150 );
+        }
+
+        function event(){
+            if(Math.random() <= 0.02){
+                let v = 3;
+                hp += v;
+                addMsg( '宇宙からミントアイスが降ってきてHP+'+v+'(HP:'+hp+')！' ,'green' );
+                return;
+            }
+            
+            if(Math.random() <= 0.02){
+                let texts = [
+                    'いい感じの石を拾って',
+                    '大きな蛙を触って',
+                    '美女にお尻を触らせてもらって',
+                    '美女に胸を触らせてもらって',
+                    'うんちを踏んで',
+                    '落ちてた缶ジュースを飲んで',
+                    'なぜか',
+                    '絶望と友達になって',
+                    '通行人を殴って',
+                    '空がきれいなので',
+                ];
+                let text = texts[ Math.floor( Math.random() * texts.length ) ];
+                lv += 1;
+                addMsg( text+'Lv+1(Lv:'+lv+')！' ,'darkcyan' );
+                return;
+            }
+            
+            if(Math.random() <= 0.05 && wepon_lv < WEPONS.length - 1){
+                let price = (wepon_lv + 1) * 10;
+                let wepon = WEPONS[ wepon_lv + 1 ];
+                if(yen >= price){
+                    yen -= price;
+                    wepon_lv += 1;
+                    let v = 1;
+                    lv += v;
+                    addMsg(price+'円で売られていた['+wepon+']を買った('+yen+'円)！Lv+'+v+'(Lv:'+lv+')' ,'royalblue');
+                }else{
+                    addMsg('['+wepon+']が'+price+'円で売られていたが買えなかった('+yen+'円)！');
+                }
+                return;
+            }
+            
+            if(Math.random() <= 0.1){
+                if(Math.random() <= 0.6){
+                    hp += 1 + Math.floor( Math.random() * lv / 8 );
+                    addMsg( '草を食べてHP+1(HP:'+hp+')！' ,'green' );
+                }else{
+                    let v = Math.floor(hp / 4) + 1;
+                    hp -= v;
+                    addMsg( '石に躓いてHP-'+v+'(HP:'+hp+')！' ,'red' );
+                }
+                return;
+            }
+
+            if(Math.random() <= 0.1){
+                let elv = Math.floor( Math.random() * lv );
+                battle('しんまい',/*lv*/elv);
+                return;
+            }
+
+            if(Math.random() <= 0.1){
+                let result;
+                switch(main_ev_phase){
+                    case 0:
+                        result = battle('悪代官' ,/*lv*/5);
+                        if(result === 'win'){main_ev_phase = 1;}
+                        break;
+                    case 1:
+                        result = battle('ドラゴン' ,/*lv*/10);
+                        if(result === 'win'){main_ev_phase = 2;}
+                        break;
+                    case 2:
+                        result = battle('プチ魔王' ,/*lv*/15);
+                        if(result === 'win'){main_ev_phase = 3;}
+                        break;
+                    case 3:
+                        result = battle('大魔王' ,/*lv*/20);
+                        if(result === 'win'){
+                            main_ev_phase = 4;
+
+                            addMsg('あなたは新しい大魔王に就任した！');
+                            clear = true;
+                        }
+                        break;
+                }
+                return;
+            }
+
+            if(Math.random() <= 0.05){
+                let v = Math.floor( lv / 2 + Math.random() * lv ) + 1;
+                yen += v;
+                addMsg(v+'円拾った('+yen+'円)！' ,'orange');
+                return;
+            }
+
+            if(Math.random() <= 0.005){
+                let v = lv * 10 + 1;
+                yen += v;
+                addMsg('黄金のうんちを拾ってお金+'+v+'('+yen+'円)！' ,'orange');
+                return;
+            }
+            
+            if(Math.random() <= 0.005){
+                let v = 2;
+                lv += v;
+                addMsg('すれ違ったジスカルドをビンタしてLv+'+v+'(Lv:'+lv+')！' ,'salmon');
+                while(Math.random() <= 0.7){
+                    v = 1;
+                    lv += v;
+                    addMsg('更にもう一回！Lv+'+v+'(Lv:'+lv+')！' ,'salmon');
+                }
+                return;
+            }
+
+            addMsg('..');
+        }
+
+        function addMsg(str ,color = 'black'){
+            let a = document.createElement('span');
+            a.textContent = str;
+            a.style.color = color;
+            msg.appendChild( a );
+        }
+
+        function battle(enemy_name ,enemy_lv){
+            if(Math.random() * enemy_lv * 2 <= lv){
+                let v = 1;
+                if(enemy_lv > lv)    {v += 1;}
+                if(enemy_lv > lv * 2){v += 1;}
+                lv += v;
+                let get_yen = Math.floor( Math.random() * enemy_lv ) + 1;
+                yen += get_yen;
+                addMsg(enemy_name+'Lv'+enemy_lv+'と戦って勝った！Lv+'+v+'(Lv:'+lv+')！');
+                addMsg('お金+'+get_yen+'('+yen+'円)！' ,'orange');
+                return 'win';
+            }else{
+                let v = Math.floor(hp / 3) + 1;
+                hp -= v;
+                addMsg(enemy_name+'Lv'+enemy_lv+'と戦って負けた！HP-'+v+'(HP:'+hp+')！' ,'red');
+                return 'lose';
+            }
+        }
+
+        function reset(){
+            clear = false;
+            lv = 1;
+            hp = 3;
+            main_ev_phase = 0;
+            yen = 0;
+            wepon_lv = 0;
+
+            while(msg.firstChild){
+                msg.removeChild( msg.firstChild );
+            }
+        }
+
+        function gameOver(){
+            running = false;
+            addMsg( '力尽きた！ゲームオーバー！！' ,'red' );
+        }
+
+        createBase('trp16','trp_story_16','#dcebcc',(inside)=>{
+            if(!init){
+                init = true;
+
+                inside.appendChild((()=>{
+                    let p = document.createElement('div');
+                    let btn = document.createElement('span');
+                    btn.textContent = '・旅立つ';
+                    btn.style.cursor = 'pointer';
+                    btn.style.textDecoration = 'underline';
+                    btn.addEventListener('click',()=>{
+                        if(running){return;}
+                        running = true;
+
+                        reset();
+
+                        addMsg('魔王城目指して旅立った！');
+
+                        setTimeout( run ,50 );
+                    });
+
+                    p.appendChild(btn);
+                    return p;
+                })());
+                inside.appendChild((()=>{
+                    msg = document.createElement('div');
+                    msg.textContent = DUMMY_TEXT;
+                    return msg;
+                })());
+            }
+        },(inside)=>{
+            clearTimeout( run_timer );
+            running = false;
+        });
+    }
+</script>
+
+<br>
+
+<span style="color:#dcebcc;"></span>
 <br>
 <br>
 <br>
