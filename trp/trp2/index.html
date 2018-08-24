@@ -1114,9 +1114,17 @@
 
         function event(){
             if(Math.random() <= 0.02){
-                let v = 3;
+                let v = 1 + Math.floor( Math.random() * 4 );
                 hp += v;
-                addMsg( '宇宙からミントアイスが降ってきてHP+'+v+'(HP:'+hp+')！' ,'green' );
+                let flavor = '';
+                if(Math.random() <= 0.1){flavor += 'チョコ';}
+                if(Math.random() <= 0.1){flavor += 'ミント';}
+                if(Math.random() <= 0.1){flavor += 'バナナ';}
+                if(Math.random() <= 0.1){flavor += 'イチゴ';}
+                if(Math.random() <= 0.1){flavor += '抹茶';}
+                if(Math.random() <= 0.1){flavor += 'バニラ';}
+                if(Math.random() <= 0.1){flavor += 'レモン';}
+                addMsg( '宇宙から'+flavor+'アイスが降ってきてHP+'+v+'(HP:'+hp+')！' ,'green' );
                 return;
             }
             
@@ -1156,8 +1164,9 @@
             
             if(Math.random() <= 0.1){
                 if(Math.random() <= 0.6){
-                    hp += 1 + Math.floor( Math.random() * lv / 8 );
-                    addMsg( '草を食べてHP+1(HP:'+hp+')！' ,'green' );
+                    let v = 1 + Math.floor( Math.random() * lv / 10 );
+                    hp += v;
+                    addMsg( '草を食べてHP+'+v+'(HP:'+hp+')！' ,'green' );
                 }else{
                     let v = Math.floor(hp / 4) + 1;
                     hp -= v;
@@ -1192,7 +1201,7 @@
                         if(result === 'win'){
                             main_ev_phase = 4;
 
-                            addMsg('あなたは新しい大魔王に就任した！');
+                            addMsg('あなたは大魔王になった！');
                             clear = true;
                         }
                         break;
@@ -1215,10 +1224,10 @@
             }
             
             if(Math.random() <= 0.005){
-                let v = 2;
+                let v = 1;
                 lv += v;
                 addMsg('すれ違ったジスカルドをビンタしてLv+'+v+'(Lv:'+lv+')！' ,'salmon');
-                while(Math.random() <= 0.7){
+                while(Math.random() <= 0.8){
                     v = 1;
                     lv += v;
                     addMsg('更にもう一回！Lv+'+v+'(Lv:'+lv+')！' ,'salmon');
@@ -1309,6 +1318,11 @@
         });
     }
 </script>
+
+<br>
+
+
+<!-- <script type="text/javascript" src="trp17.js"></script> -->
 
 <br>
 
