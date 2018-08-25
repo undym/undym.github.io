@@ -41,6 +41,12 @@
 
             document.body.appendChild( parent );
         }
+
+        function createElement(tag ,text_content){
+            let ret = document.createElement(tag);
+            ret.textContent = text_content;
+            return ret;
+        }
     </script>
 </head>
 <body>
@@ -1320,6 +1326,40 @@
 </script>
 
 <br>
+
+<!-- trp17 -->
+<script>
+{
+    let init = false;
+
+    createBase('trp17','trp_story_17','#d6cdcd',(inside)=>{
+        if(!init){
+            init = true;
+            
+            inside.appendChild((()=>{
+                let ret = document.createElement('div');
+                // ret.style.fontSize = '200%';
+                ret.appendChild((()=>{
+                    let ruby = document.createElement('ruby');
+                    ruby.appendChild( createElement('rb' ,'クリア') );
+                    ruby.appendChild( createElement('rt' ,'くりあ') );
+                    return ruby;
+                })());
+                ret.appendChild((()=>{
+                    let ruby = document.createElement('ruby');
+                    ruby.appendChild( createElement('rb' ,'★') );
+                    ruby.appendChild( createElement('rt' ,'きらきら') );
+                    return ruby;
+                })());
+                return ret;
+            })());
+
+        }
+
+    },(inside)=>{
+    });
+}
+</script>
 
 
 <!-- <script type="text/javascript" src="trp17.js"></script> -->
