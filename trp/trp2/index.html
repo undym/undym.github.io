@@ -1375,27 +1375,18 @@
 
             trp = document.getElementById('trp18');
             trp.style.display = 'inline-block';
-            
-            // inside.appendChild((()=>{
-            //     let ret = document.createElement('div');
-            //     ret.textContent = 'クリア★';
-            //     ret.style.display = 'inline-block';
-            //     ret.style.transform = 'rotate(60deg)';
-            //     return ret;
-            // })());
-            
         }
 
         trp.style.transform = 'rotate(30deg)';
 
         
-        let pnum = 5 + Math.floor( Math.random() * 20 );
+        let pnum = 10 + Math.floor( Math.random() * 15 );
         for(let i = 0; i < pnum; i++){
             let p = document.createElement('div');
             p.style.display = 'inline-block';
             p.style.transform = 'rotate('+Math.floor( Math.random() * 360 )+'deg)';
             inside.appendChild( p );
-            let cnum = 3 + Math.floor( Math.random() * 10 );
+            let cnum = 5 + Math.floor( Math.random() * 10 );
             for(let j = 0; j < cnum; j++){
                 let clear = document.createElement('span');
                 clear.textContent = 'クリア★';
