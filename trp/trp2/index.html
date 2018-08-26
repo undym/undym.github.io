@@ -1369,7 +1369,7 @@
     let init = false;
     let trp;
 
-    createBase('trp18','trp_story_18','#d3d5d6',(inside)=>{
+    createBase('trp18','trp_story_18','rgba(0,0,0,0)',(inside)=>{
         if(!init){
             init = true;
 
@@ -1389,7 +1389,7 @@
         trp.style.transform = 'rotate(30deg)';
 
         
-        let pnum = 5 + Math.floor( Math.random() * 10 );
+        let pnum = 5 + Math.floor( Math.random() * 20 );
         for(let i = 0; i < pnum; i++){
             let p = document.createElement('div');
             p.style.display = 'inline-block';
