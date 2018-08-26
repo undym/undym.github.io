@@ -1327,7 +1327,7 @@
 
 <br>
 
-<!-- trp17 -->
+<!-- trp17 2018/08/25-->
 <script>
 {
     let init = false;
@@ -1361,12 +1361,66 @@
 }
 </script>
 
+<br>
+
+<!-- trp18 2018/08/26-->
+<script>
+{
+    let init = false;
+    let trp;
+
+    createBase('trp18','trp_story_18','#d3d5d6',(inside)=>{
+        if(!init){
+            init = true;
+
+            trp = document.getElementById('trp18');
+            trp.style.display = 'inline-block';
+            
+            // inside.appendChild((()=>{
+            //     let ret = document.createElement('div');
+            //     ret.textContent = 'クリア★';
+            //     ret.style.display = 'inline-block';
+            //     ret.style.transform = 'rotate(60deg)';
+            //     return ret;
+            // })());
+            
+        }
+
+        trp.style.transform = 'rotate(30deg)';
+
+        
+        let pnum = 5 + Math.floor( Math.random() * 10 );
+        for(let i = 0; i < pnum; i++){
+            let p = document.createElement('div');
+            p.style.display = 'inline-block';
+            p.style.transform = 'rotate('+Math.floor( Math.random() * 360 )+'deg)';
+            inside.appendChild( p );
+            let cnum = 3 + Math.floor( Math.random() * 10 );
+            for(let j = 0; j < cnum; j++){
+                let clear = document.createElement('span');
+                clear.textContent = 'クリア★';
+                clear.style.display = 'inline-block';
+                clear.style.transform = 'rotate('+Math.floor( Math.random() * 360 )+'deg)';
+                clear.style.fontSize = (10 + Math.floor( Math.random() * 250 ) )+'%';
+                p.appendChild( clear );
+            }
+        }
+    },(inside)=>{
+        trp.style.transform = 'rotate(0deg)';
+        while(inside.firstChild){
+            inside.removeChild( inside.firstChild );
+        }
+    });
+}
+</script>
+
+<br>
 
 <!-- <script type="text/javascript" src="trp17.js"></script> -->
 
 <br>
 
-<span style="color:#88dbfc;"></span>
+<span style="color:#d3d5d6;"></span>
 <br>
 <br>
 <br>
