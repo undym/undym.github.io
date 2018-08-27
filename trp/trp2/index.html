@@ -1407,6 +1407,78 @@
 
 <br>
 
+<!-- trp19 2018/08/27-->
+<script>
+{
+    let init = false;
+    let run_timer;
+    let clears = new Array(7);
+    let count = 0;
+
+    function run(){
+        const sign = {0:-1 ,1:1};
+        let r = 30;
+        
+        for(let i = 0; i < clears.length; i++){
+            for(let j = 0; j < clears[i].length; j++){
+                let a = clears[i][j];
+                let rad = Math.PI * 2 * j / clears[i].length + count * 0.02 * (i + 1.5) * sign[ i % 2 ];
+                a.style.left = Math.floor(Math.cos( rad ) * r + window.innerWidth * 0.45)+'px';
+                a.style.top  = Math.floor(Math.sin( rad ) * r)+'px';
+                a.style.transform = 'rotate('+Math.floor( 90 + rad * 180 / Math.PI )+'deg)';
+            }
+
+            r *= 1.4;
+        }
+
+        count++;
+        run_timer = setTimeout( run , 36 );
+    }
+
+    createBase('trp19','trp_story_19','#d3d5d6',(inside)=>{
+        if(!init){
+            init = true;
+
+            inside.style.textAlign = 'center';
+            inside.appendChild((()=>{
+                let p = document.createElement('div');
+                p.style.position = 'relative';
+                let num = 5;
+
+                for(let i = 0; i < clears.length; i++){
+                    clears[i] = (()=>{
+                        let arr = new Array(num);
+
+                        for(let j = 0; j < num; j++){
+                            let a = document.createElement('div');
+                            a.textContent = 'クリア★';
+                            a.style.fontSize = '70%';
+                            a.style.display = 'inline-block';
+                            a.style.position = 'absolute';
+                            a.style.userSelect = 'none';
+
+                            arr[j] = a;
+                            p.appendChild( a );
+                        }
+
+                        return arr;
+                    })();
+                    
+                    num += 1;
+                }
+                return p;
+            })());
+        }
+
+        run();
+    },(inside)=>{
+        clearTimeout( run_timer );
+    });
+}
+</script>
+
+<br>
+
 <!-- <script type="text/javascript" src="trp17.js"></script> -->
 
 <br>
