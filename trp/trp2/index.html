@@ -1417,7 +1417,7 @@
 
     function run(){
         const sign = {0:-1 ,1:1};
-        let r = 30;
+        let r = count * 2 < 30 ? count * 2 : 30;
         
         for(let i = 0; i < clears.length; i++){
             for(let j = 0; j < clears[i].length; j++){
@@ -1473,9 +1473,18 @@
         run();
     },(inside)=>{
         clearTimeout( run_timer );
+        count = 0;
     });
 }
 </script>
+
+<br>
+
+<script type="text/javascript" src="press.js"></script>
+
+<br>
+
+<!-- <script type="text/javascript" src="tree.js"></script> -->
 
 <br>
 
@@ -1483,7 +1492,7 @@
 
 <br>
 
-<span style="color:#d3d5d6;"></span>
+<span style="color:#5e83ff;"></span>
 <br>
 <br>
 <br>
