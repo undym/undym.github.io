@@ -18,6 +18,7 @@
 
     createBase('trp22','trp_story_22','#ffac5e',(inside)=>{
         if(!init){
+            init = true;
 
             inside.appendChild((()=>{
                 dom = document.createElement('div');
