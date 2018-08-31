@@ -61,6 +61,7 @@
             const height = 200;
             let p = document.createElement('div');
             p.style.position = 'relative';
+            p.style.left = '1em';
             p.style.width = width+'px';
             p.style.height = height+'px';
             p.style.backgroundColor = 'gray';
