@@ -14,13 +14,13 @@
     let graphs = [];
 
     const VALUES = [
-        {name:"🐸" ,color:"magenta" ,percent:45},
+        {name:"🐸" ,color:"magenta" ,percent:26},
         {name:"🍖" ,color:"orange" ,percent:29},
-        {name:"🐗" ,color:"cyan" ,percent:60},
+        {name:"🐗" ,color:"cyan" ,percent:70},
         {name:"🐱" ,color:"green" ,percent:28},
         {name:"🐶" ,color:"pink" ,percent:1},
         {name:"🐰" ,color:"teal" ,percent:80},
-        {name:"👺" ,color:"red" ,percent:40},
+        {name:"👺" ,color:"red" ,percent:10},
         {name:"クリア★" ,color:"yellow" ,percent:180},
         
     ];
