@@ -141,6 +141,7 @@
             }
 
             inside.appendChild( p );
+            inside.appendChild( document.createElement('br') );
         }
 
         count = 0;
