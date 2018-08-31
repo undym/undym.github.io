@@ -21,7 +21,7 @@
         {name:"🐶" ,color:"pink" ,percent:1},
         {name:"🐰" ,color:"teal" ,percent:80},
         {name:"👺" ,color:"red" ,percent:10},
-        {name:"クリア★" ,color:"yellow" ,percent:180},
+        {name:"クリア★" ,color:"yellow" ,percent:999},
         
     ];
 
