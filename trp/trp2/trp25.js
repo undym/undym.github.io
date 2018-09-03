@@ -22,12 +22,6 @@
             inside.appendChild((()=>{
                 let p = document.createElement('div');
 
-                // p.appendChild((()=>{
-                //     let a = document.createElement('span');
-                //     a.textContent = '.';
-                //     return a;
-                // })());
-
                 for(let i = 0; i < CLEAR.length; i++){
                     p.appendChild((()=>{
                         let a = document.createElement('span');
