@@ -1,0 +1,74 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <style type="text/css">
+        body {
+            background-color: #CCCCCC;
+        }
+    </style>
+
+    <script>
+        function createBase(name, title_name, color, action){
+            let title = document.createElement('a');
+            title.id = name+'_title';
+            title.style = 'cursor:pointer; user-select:none;';
+            title.textContent = '▼ '+title_name;
+            
+            let inside = document.createElement('div');
+            inside.id = name+'_inside';
+            inside.style = 'display:none; clear:both; user-select:none;';
+            inside.style.textIndent = '1em';
+
+            let _init = false;
+
+            title.addEventListener('click',function(){
+                if(inside.style.display === 'none'){
+                    inside.style.display = 'block';
+                    title.textContent = '▲ '+title_name;
+                    
+                    if(!_init && action.init){
+                        _init = true;
+                        
+                        action.init(inside);
+                    }
+                    
+                    if(action.open){
+                        action.open(inside);
+                    }
+                }else{
+                    inside.style.display = 'none';
+                    title.textContent = '▼ '+title_name;
+                    
+                    if(action.close){
+                        action.close(inside);
+                    }
+                }
+            });
+
+            let parent = document.createElement('div');
+            parent.id = name;
+            parent.style.backgroundColor = color;
+            parent.appendChild( title );
+            parent.appendChild( inside );
+
+            document.body.appendChild( parent );
+        }
+    </script>
+</head>
+<body>
+
+<a href="https://undym.github.io/trp/trp2/">前の</a>
+<br>
+<br>
+<script type="text/javascript" src="trp29.js"></script>
+<br>
+<script type="text/javascript" src="trp30.js"></script>
+
+
+<span style="color:#f7806c;"></span>
+<br>
+<br>
+<br>
+<br>
+
+</body>
