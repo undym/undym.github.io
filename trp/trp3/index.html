@@ -19,15 +19,15 @@
             inside.style = 'display:none; clear:both; user-select:none;';
             inside.style.textIndent = '1em';
 
-            let _init = false;
+            let init = false;
 
             title.addEventListener('click',function(){
                 if(inside.style.display === 'none'){
                     inside.style.display = 'block';
                     title.textContent = '▲ '+title_name;
                     
-                    if(!_init && action.init){
-                        _init = true;
+                    if(!init && action.init){
+                        init = true;
                         
                         action.init(inside);
                     }
