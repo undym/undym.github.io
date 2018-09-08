@@ -3,7 +3,6 @@
     let time;
     let start_date;
     let run_timer;
-    let clear;
 
     function run(){
         let now_date = new Date();
@@ -14,14 +13,12 @@
             time.textContent = sec+'.'+ms;
             run_timer = setTimeout( run, 36 );
         }else{
-            time.textContent = '0.000';
-            clear.textContent = 'クリア★';
+            time.textContent = 'クリア★';
         }
     }
 
     function reset(){
         start_date = new Date();
-        clear.textContent = '　';
     }
 
     createBase('trp31','trp_story_31','#b0db7e',{
@@ -29,10 +26,6 @@
             inside.appendChild((()=>{
                 time = document.createElement('div');
                 return time;
-            })());
-            inside.appendChild((()=>{
-                clear = document.createElement('div');
-                return clear;
             })());
             
             reset();
