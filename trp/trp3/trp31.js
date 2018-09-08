@@ -10,7 +10,7 @@
         let count_ms = now_date.getTime() - start_date.getTime();
         if(count_ms < OVER * 1000){
             let sec = ''+Math.floor( OVER - count_ms / 1000 );
-            let ms = ( '000' + (1000 - count_ms) ).slice(-3);
+            let ms = ( '000' + (OVER * 1000 - count_ms) ).slice(-3);
             time.textContent = sec+'.'+ms;
             run_timer = setTimeout( run, 36 );
         }else{
@@ -24,7 +24,7 @@
         clear.textContent = '　';
     }
 
-    createBase('trp31','trp_story_31','#f7806c',{
+    createBase('trp31','trp_story_31','#b0db7e',{
         init:(inside)=>{
             inside.appendChild((()=>{
                 time = document.createElement('div');
