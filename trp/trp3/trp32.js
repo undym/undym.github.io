@@ -71,7 +71,8 @@
                 return dom.msg;
             })());
             inside.appendChild((()=>{
-                let a = document.createElement('div');
+                let p = document.createElement('div');
+                let a = document.createElement('span');
                 a.textContent = '訓練';
                 a.style.cursor = 'pointer';
                 a.style.textDecoration = 'underline';
@@ -98,10 +99,12 @@
                             }
                     }
                 });
-                return a;
+                p.appendChild( a );
+                return p;
             })());
             inside.appendChild((()=>{
-                let a = document.createElement('div');
+                let p = document.createElement('div');
+                let a = document.createElement('span');
                 a.textContent = 'ミサイル購入';
                 a.style.cursor = 'pointer';
                 a.style.textDecoration = 'underline';
@@ -117,10 +120,12 @@
                     dom.use_missile.style.display = 'block';
                     dom.msg.textContent = 'ミサイル買った';
                 });
-                return dom.buy_missile = a;
+                p.appendChild( dom.buy_missile = a );
+                return p;
             })());
             inside.appendChild((()=>{
-                let a = document.createElement('div');
+                let p = document.createElement('div');
+                let a = document.createElement('span');
                 a.textContent = 'ミサイル発射！';
                 a.style.cursor = 'pointer';
                 a.style.textDecoration = 'underline';
@@ -138,7 +143,8 @@
                         return;
                     }
                 });
-                return dom.use_missile = a;
+                p.appendChild( dom.use_missile = a );
+                return p;
             })());
         },
         open:(inside)=>{
