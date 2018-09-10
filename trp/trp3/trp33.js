@@ -28,6 +28,7 @@
                     clear.textContent = 'クリア★';
                     clear.style.position = 'absolute';
                     clear.style.fontSize = '10em';
+                    clear.style.userSelect = 'none';
                     return clear;
                 })());
                 return bg;
