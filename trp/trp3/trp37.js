@@ -34,7 +34,7 @@
                 a.style.textDecoration = 'underline';
                 a.textContent = '3.うんでぃーめんて';
                 a.addEventListener('click',()=>{
-                    answer.textContent = 'ちがう';
+                    answer.textContent = 'ちがうね';
                 });
                 return a;
             })());
@@ -44,7 +44,7 @@
                 a.style.textDecoration = 'underline';
                 a.textContent = '4.えんでぃーめんて';
                 a.addEventListener('click',()=>{
-                    answer.textContent = 'ちがう';
+                    answer.textContent = 'ちがうな';
                 });
                 return a;
             })());
@@ -54,7 +54,7 @@
                 a.style.textDecoration = 'underline';
                 a.textContent = '5.おんでぃーめんて';
                 a.addEventListener('click',()=>{
-                    answer.textContent = 'ちがう';
+                    answer.textContent = 'ちがうの';
                 });
                 return a;
             })());
