@@ -209,7 +209,7 @@ export class StringTexture {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBufferes[str.length - 1]);
         gl.drawElements(gl.TRIANGLE_STRIP, vertex.length / 2, gl.UNSIGNED_SHORT, 0);
         gl.bindTexture(gl.TEXTURE_2D, null);
-        // gl.disableVertexAttribArray(this.textureVertexAttr);
+        gl.disableVertexAttribArray(this.textureVertexAttr);
         // let strage = this.loadStrage(font, str);
         // const gl = GL.gl;
         // gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
