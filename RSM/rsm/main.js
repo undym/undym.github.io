@@ -22,12 +22,12 @@ window.onload = () => {
     Page.init();
     let canvas = document.getElementById("canvas");
     const rotate = window.navigator.userAgent.indexOf("Mobile") !== -1;
-    if (rotate) {
-        canvas.style.width = "100vh";
-        canvas.style.height = "100vw";
-        canvas.style.transformOrigin = "top left";
-        canvas.style.transform = "translateX(100vw) rotate(90deg)";
-    }
+    // if(rotate){
+    //     canvas.style.width = "100vh";
+    //     canvas.style.height = "100vw";
+    //     canvas.style.transformOrigin = "top left";
+    //     canvas.style.transform = "translateX(100vw) rotate(90deg)";
+    // }
     const innerResolution = 1.0;
     GL.init(canvas, innerResolution);
     Input.init(canvas, rotate);
