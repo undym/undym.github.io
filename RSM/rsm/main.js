@@ -6,7 +6,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { FieldScene } from "./scene/fieldscene.js";
 import { Scene } from "./undym/scene.js";
 import { Util } from "./util.js";
 import { GL } from "./gl/gl.js";
@@ -48,7 +47,7 @@ window.onload = () => {
         //isContextLost(): たとえばモバイルデバイスで電源イベントが発生したなどの理由 でwebglコンテキストが失われ、作り直さなければならない場合 は、trueを返す。
         //if(GL.getGL().isContextLost())
     }
-    Scene.load(FieldScene.ins);
+    // Scene.load( FieldScene.ins );
     // ctrl();
     setInterval(draw, 1000 / 30);
 };
