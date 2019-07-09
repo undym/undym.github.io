@@ -210,14 +210,12 @@ export function createVShader(gl, vSrc) {
     const vShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vShader, vSrc);
     gl.compileShader(vShader);
-    // gl.getShaderParameter(vShader, GL.COMPILE_STATUS);
     return vShader;
 }
 export function createFShader(gl, fSrc) {
     const fShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fShader, fSrc);
     gl.compileShader(fShader);
-    // gl.getShaderParameter(fShader, GL.COMPILE_STATUS);
     return fShader;
 }
 export function createProgram(gl, vShader, fShader) {
@@ -225,7 +223,6 @@ export function createProgram(gl, vShader, fShader) {
     gl.attachShader(program, vShader);
     gl.attachShader(program, fShader);
     gl.linkProgram(program);
-    // gl.getProgramParameter(program, GL.LINK_STATUS);
     return program;
 }
 export function toGLPoints(origin) {
