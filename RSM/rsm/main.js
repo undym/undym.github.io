@@ -12,10 +12,9 @@ import { Util } from "./util.js";
 import { GL } from "./gl/gl.js";
 import { Input } from "./undym/input.js";
 import { Unit } from "./unit.js";
-import { FX } from "./fx/fx.js";
 import { DungeonArea } from "./dungeon/dungeon.js";
 import { Player } from "./player.js";
-import { Rect } from "./undym/type.js";
+import { Rect, Color } from "./undym/type.js";
 import { Page } from "./undym/page.js";
 window.onload = () => {
     console.log("start");
@@ -42,14 +41,15 @@ window.onload = () => {
         });
     }
     function draw() {
-        Scene.now.draw(Rect.FULL);
-        FX.draw();
+        // Scene.now.draw(Rect.FULL);
+        // FX.draw();
+        GL.fillRect(Rect.FULL, Color.GREEN);
         GL.gl.flush();
         //isContextLost(): たとえばモバイルデバイスで電源イベントが発生したなどの理由 でwebglコンテキストが失われ、作り直さなければならない場合 は、trueを返す。
         //if(GL.getGL().isContextLost())
     }
     Scene.load(FieldScene.ins);
-    ctrl();
+    // ctrl();
     setInterval(draw, 1000 / 30);
 };
 const newGame = () => {
