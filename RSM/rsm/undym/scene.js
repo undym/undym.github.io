@@ -57,7 +57,7 @@ export class Scene {
     }
 }
 Scene.waiting = false;
-export const wait = (frame = 8) => __awaiter(this, void 0, void 0, function* () {
+export const wait = (frame = 6) => __awaiter(this, void 0, void 0, function* () {
     let count = 0;
     yield Scene.wait(() => count++ < frame);
 });

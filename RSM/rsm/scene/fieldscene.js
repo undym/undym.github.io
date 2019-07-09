@@ -13,6 +13,7 @@ import { Btn } from "../widget/btn.js";
 import { Dungeon, DungeonArea } from "../dungeon/dungeon.js";
 import { Rect, Color } from "../undym/type.js";
 import DungeonScene from "./dungeonscene.js";
+import { GL } from "../gl/gl.js";
 import DungeonEvent from "../dungeon/dungeonevent.js";
 import { DrawUnitDetail, DrawSTBoxes, DrawTop } from "./sceneutil.js";
 import { Unit, Prm } from "../unit.js";
@@ -27,6 +28,9 @@ export class FieldScene extends Scene {
     }
     init() {
         super.clear();
+        super.add(Rect.FULL, ILayout.createDraw((bounds) => {
+            GL.fillRect(bounds, Color.BLACK);
+        }));
         super.add(Place.TOP, DrawTop.ins);
         const dInfoH = 0.15;
         const dEnterW = 0.15;
