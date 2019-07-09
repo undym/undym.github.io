@@ -26,7 +26,7 @@ window.onload = () => {
         canvas.style.transformOrigin = "top left";
         canvas.style.transform = "translateX(100vw) rotate(90deg)";
     }
-    const innerResolution = 1.0;
+    const innerResolution = 0.5;
     GL.init(canvas, innerResolution);
     Input.init(canvas, innerResolution, rotate);
     Util.init();
