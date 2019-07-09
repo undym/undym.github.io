@@ -6,7 +6,7 @@ class StringStrage {
         this.offsetX = 0;
         this.offsetY = 0;
         this.w = 512;
-        this.h = 512;
+        this.h = 128;
         const gl = GL.gl;
         this.texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
@@ -320,7 +320,7 @@ export class Font {
         this._toString = Font.createString(size, weight, name);
     }
     static getDef() {
-        return this.DEF !== undefined ? this.DEF : (this.DEF = this.create(18));
+        return this.DEF !== undefined ? this.DEF : (this.DEF = this.create(30));
     }
     /**
      *
