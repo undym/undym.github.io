@@ -1,4 +1,3 @@
-import { Size } from "../undym/type.js";
 import { StringTexture } from "./glstring.js";
 export class GL {
     static get gl() { return this._gl; }
@@ -13,7 +12,7 @@ export class GL {
         this.innerResolution = innerResolution;
         this.canvas.width = this.canvas.clientWidth * innerResolution;
         this.canvas.height = this.canvas.clientHeight * innerResolution;
-        this._pixel = new Size(1 / this.canvas.width, 1 / this.canvas.height);
+        this._pixel = { w: 1 / this.canvas.width, h: 1 / this.canvas.height };
         this._gl = this.canvas.getContext('webgl');
         this.setViewport(0, 0, this.canvas.width, this.canvas.height);
         // 深度テストを有効化
@@ -25,7 +24,6 @@ export class GL {
         this._gl.depthFunc(this._gl.LEQUAL);
         this._gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this._gl.clear(this._gl.COLOR_BUFFER_BIT);
-        this._gl.activeTexture(this._gl.TEXTURE0);
         Figure.init();
         StringTexture.init();
     }

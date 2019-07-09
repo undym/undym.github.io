@@ -1,4 +1,3 @@
-import { Size, Color } from "../undym/type.js";
 import { GL, toGLPoints, createVShader, createFShader, createProgram } from "./gl.js";
 class StringStrage {
     constructor() {
@@ -100,7 +99,7 @@ export class StringTexture {
         this.ctx = this.canvas.getContext('2d');
         this.ctx.textAlign = "left";
         this.ctx.textBaseline = "top";
-        this.ctx.fillStyle = Color.WHITE.toString();
+        this.ctx.fillStyle = "rgb(255,255,255)";
         const vSrc = `
                 precision lowp float;
 
@@ -392,7 +391,7 @@ export class Font {
             }
             h += this.size;
         }
-        return new Size(w, h);
+        return { w: w, h: h };
     }
     /**現在のframebufferのサイズを基準にしたもの。 */
     measureRatioW(s) {
@@ -404,11 +403,11 @@ export class Font {
     measureRatioSize(strings) {
         const size = this.measurePixel(strings);
         const view = GL.getViewport();
-        return new Size(size.w / view.w, size.h / view.h);
+        return { w: size.w / view.w, h: size.h / view.h };
     }
 }
 Font.pool = new Map();
-Font.MONOSPACE = "monospace";
+Font.MONOSPACE = "sans-serif";
 Font.UPPER_LEFT = "upperLeft";
 Font.TOP = "top";
 Font.UPPER_RIGHT = "upperRight";
