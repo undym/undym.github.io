@@ -17,14 +17,14 @@ export class GL {
         this._gl = this.canvas.getContext('webgl');
         this.setViewport(0, 0, this.canvas.width, this.canvas.height);
         // 深度テストを有効化
-        // this._gl.enable(this._gl.DEPTH_TEST);
+        this._gl.enable(this._gl.DEPTH_TEST);
         this._gl.enable(this._gl.BLEND);
         this._gl.blendFunc(this._gl.SRC_ALPHA, this._gl.ONE_MINUS_SRC_ALPHA);
         // gl.enable(GL.CULL_FACE);
         // 近くにある物体は、遠くにある物体を覆い隠す
         this._gl.depthFunc(this._gl.LEQUAL);
         this._gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        this._gl.clear(this._gl.COLOR_BUFFER_BIT);
+        this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
         Figure.init();
         StringTexture.init();
     }
