@@ -13,11 +13,10 @@ import { YLayout, ILayout, Layout, Label } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { FieldScene } from "./fieldscene.js";
 import { List } from "../widget/list.js";
-import { GL } from "../gl/gl.js";
 import { FXTest } from "../fx/fx.js";
 import { MsgPopup } from "../widget/popup.js";
 import { Item } from "../item.js";
-import { Font } from "../gl/glstring.js";
+import { Font, Graphics } from "../graphics/graphics.js";
 export class OptionScene extends Scene {
     constructor() {
         super();
@@ -70,14 +69,14 @@ class EffectTest extends Scene {
             _super.add.call(this, new Rect(0, 0.1, 0.2, 0.8), list);
             _super.add.call(this, Rect.FULL, ILayout.createDraw((bounds) => {
                 {
-                    let w = GL.pixel.w * 5;
-                    let h = GL.pixel.h * 5;
-                    GL.fillRect(new Rect(FXTest.attacker.x - w / 2, FXTest.attacker.y - h / 2, w, h), Color.RED);
+                    let w = 5 / Graphics.pixelW;
+                    let h = 5 / Graphics.pixelH;
+                    Graphics.fillRect(new Rect(FXTest.attacker.x - w / 2, FXTest.attacker.y - h / 2, w, h), Color.RED);
                 }
                 {
-                    let w = GL.pixel.w * 5;
-                    let h = GL.pixel.h * 5;
-                    GL.fillRect(new Rect(FXTest.target.x - w / 2, FXTest.target.y - h / 2, w, h), Color.CYAN);
+                    let w = 5 / Graphics.pixelW;
+                    let h = 5 / Graphics.pixelH;
+                    Graphics.fillRect(new Rect(FXTest.target.x - w / 2, FXTest.target.y - h / 2, w, h), Color.CYAN);
                 }
             }));
             _super.add.call(this, new Rect(0.8, 0.8, 0.2, 0.2), new Btn(() => "<-", () => {

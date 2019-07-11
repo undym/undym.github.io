@@ -7,14 +7,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { ILayout } from "../undym/layout.js";
-import { GL } from "../gl/gl.js";
-import { Color } from "../undym/type.js";
+import { Rect, Color } from "../undym/type.js";
 import { Input } from "../undym/input.js";
-import { Font } from "../gl/glstring.js";
+import { Font, Graphics } from "../graphics/graphics.js";
 export class Btn extends ILayout {
     constructor(name, push) {
         super();
         this.cursorON = false;
+        this.count = 0;
         if (typeof name === "string") {
             this.name = () => name;
         }
@@ -42,8 +42,12 @@ export class Btn extends ILayout {
         });
     }
     drawInner(bounds) {
-        GL.fillRect(bounds, this.cursorON ? this.groundColor().darker() : this.groundColor());
-        GL.drawRect(bounds, this.frameColor());
-        this.font.draw(this.name(), bounds.center, this.stringColor(), Font.CENTER);
+        const moveLim = bounds.w / 2;
+        let move = moveLim - moveLim * this.count / (this.count + 1);
+        let rect = new Rect(bounds.x - move, bounds.y, bounds.w, bounds.h);
+        Graphics.fillRect(rect, this.cursorON ? this.groundColor().darker() : this.groundColor());
+        Graphics.drawRect(rect, this.frameColor());
+        this.font.draw(this.name(), rect.center, this.stringColor(), Font.CENTER);
+        this.count++;
     }
 }

@@ -8,10 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Rect, Color } from "../undym/type.js";
 import { ILayout, YLayout, RatioLayout, XLayout } from "../undym/layout.js";
-import { GL } from "../gl/gl.js";
 import { Input } from "../undym/input.js";
 import { Btn } from "./btn.js";
-import { Font } from "../gl/glstring.js";
+import { Graphics, Font } from "../graphics/graphics.js";
 export class List extends ILayout {
     constructor(aPageElmNum = 7) {
         super();
@@ -21,7 +20,7 @@ export class List extends ILayout {
         this.aPageElmNum = aPageElmNum;
         this.elmPanel = new YLayout();
         this.panel = new RatioLayout()
-            .add(new Rect(0, 0, 1, 0.85 - GL.pixel.h * 2), this.elmPanel)
+            .add(new Rect(0, 0, 1, 0.85 - 2 / Graphics.pixelH), this.elmPanel)
             .add(new Rect(0, 0.85, 1, 0.15), new XLayout()
             .add(new Btn(() => "＜", () => {
             this.page--;
@@ -111,8 +110,8 @@ class Elm extends ILayout {
         });
     }
     drawInner(bounds) {
-        GL.fillRect(bounds, this.groundColor());
-        GL.drawRect(bounds, this.frameColor());
+        Graphics.fillRect(bounds, this.groundColor());
+        Graphics.drawRect(bounds, this.frameColor());
         if (this.values.left !== undefined) {
             const color = this.values.leftColor ? this.values.leftColor() : Color.WHITE;
             this.font.draw(this.values.left(), bounds.left, color, Font.LEFT);

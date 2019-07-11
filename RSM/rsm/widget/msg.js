@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { ILayout, Label } from "../undym/layout.js";
 import { Color } from "../undym/type.js";
-import { Font } from "../gl/glstring.js";
 import { Scene } from "../undym/scene.js";
+import { Font } from "../graphics/graphics.js";
 const GET_WHITE = (cnt) => Color.WHITE;
 export default class Msg extends ILayout {
     constructor() {
@@ -94,7 +94,7 @@ export default class Msg extends ILayout {
             }
         }
         this.reserves = [];
-        let fontRatioH = this.font.getSizeRatio();
+        let fontRatioH = this.font.ratioH;
         let y = bounds.yh - fontRatioH;
         for (let i = 0; i < this.lines.length; i++) {
             let l = this.lines[i];

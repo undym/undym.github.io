@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Rect, Size, Color } from "../undym/type.js";
 import { ILayout } from "../undym/layout.js";
 import { Input } from "../undym/input.js";
-import { GL } from "../gl/gl.js";
+import { Graphics } from "../graphics/graphics.js";
 export class Popup extends ILayout {
     /**
      *
@@ -94,14 +94,14 @@ export class MsgPopup extends ILayout {
             if (w < _w) {
                 w = _w;
             }
-            h += font.getSizeRatio();
+            h += font.ratioH;
         }
         this.popup = new Popup(dir, new Size(w, h), (bounds) => {
-            GL.fillRect(bounds, Color.D_GRAY);
+            Graphics.fillRect(bounds, Color.D_GRAY);
             let p = bounds.upperLeft;
             for (let set of stringSets) {
                 font.draw(set[0], p, set[1]);
-                p = p.move(0, font.getSizeRatio());
+                p = p.move(0, font.ratioH);
             }
         });
     }

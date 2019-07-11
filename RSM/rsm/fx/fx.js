@@ -1,6 +1,5 @@
 import { Rect, Color, Point } from "../undym/type.js";
-import { GL } from "../gl/gl.js";
-import { Font } from "../gl/glstring.js";
+import { Graphics, Font } from "../graphics/graphics.js";
 export class FX {
     static set(effect) {
         let e = new Elm(effect);
@@ -48,11 +47,11 @@ export const FX_Advance = (bounds) => {
     FX.set((count) => {
         const over = 3;
         let w = bounds.w - bounds.w * count / over;
-        let ph = GL.pixel.h * 8;
+        let ph = 8 / Graphics.pixelH;
         let h = ph - ph * count / over;
         let bh = (bounds.h - h) * 0.75;
         let y = bounds.y + bh - bh * count / (over - 1);
-        GL.fillRect(new Rect(bounds.cx - w / 2, y, w, h), Color.GRAY);
+        Graphics.fillRect(new Rect(bounds.cx - w / 2, y, w, h), Color.GRAY);
         return count < over;
     });
 };
@@ -61,11 +60,11 @@ export const FX_Return = (bounds) => {
     FX.set((count) => {
         const over = 3;
         let w = bounds.w * count / over;
-        let ph = GL.pixel.h * 8;
+        let ph = 8 / Graphics.pixelH;
         let h = ph * count / over;
         let bh = (bounds.h - h) * 0.75;
         let y = bounds.y + bh * (count - 1) / (over - 1);
-        GL.fillRect(new Rect(bounds.cx - w / 2, y, w, h), Color.GRAY);
+        Graphics.fillRect(new Rect(bounds.cx - w / 2, y, w, h), Color.GRAY);
         return count < over;
     });
 };
@@ -79,7 +78,7 @@ export const FX_ShakeStr = (font, str, center, color) => {
         measures.push(font.measureRatioW(s));
     }
     const x = center.x - font.measureRatioW(str) / 2;
-    let y = center.y - font.getSizeRatio() / 2;
+    let y = center.y - font.ratioH / 2;
     FX.set((count) => {
         const over = 30;
         let x2 = x;
@@ -87,18 +86,18 @@ export const FX_ShakeStr = (font, str, center, color) => {
         let a = count < over / 2 ? 1 : 1 - (count - over / 2) / (over / 2);
         let col = new Color(color.r, color.g, color.b, a);
         for (let i = 0; i < strings.length; i++) {
-            let shakeX = GL.pixel.w / 2 * (Math.random() * 2 - 1) / (count / over);
-            let shakeY = GL.pixel.h / 2 * (Math.random() * 2 - 1) / (count / over);
+            let shakeX = (1 / Graphics.pixelW) / 2 * (Math.random() * 2 - 1) / (count / over);
+            let shakeY = (1 / Graphics.pixelH) / 2 * (Math.random() * 2 - 1) / (count / over);
             let x3 = x2 + shakeX;
             let y3 = y2 + shakeY;
             font.draw(strings[i], new Point(x3, y3), col);
             x2 += measures[i];
         }
-        y -= GL.pixel.h / 2;
+        y -= (1 / Graphics.pixelH) / 2;
         return count < over;
     });
 };
-FXTest.add(FX_ShakeStr.name, () => FX_ShakeStr(Font.create(30, Font.BOLD), "1234", FXTest.target, Color.RED));
+FXTest.add(FX_ShakeStr.name, () => FX_ShakeStr(new Font(30, Font.BOLD), "1234", FXTest.target, Color.RED));
 export const FX_Str = (font, str, center, color) => {
     let strings = [];
     let measures = [];
@@ -108,7 +107,7 @@ export const FX_Str = (font, str, center, color) => {
         measures.push(font.measureRatioW(s));
     }
     const x = center.x - font.measureRatioW(str) / 2;
-    let y = center.y - font.getSizeRatio() / 2;
+    let y = center.y - font.ratioH / 2;
     FX.set((count) => {
         const over = 30;
         let x2 = x;
@@ -119,8 +118,8 @@ export const FX_Str = (font, str, center, color) => {
             font.draw(strings[i], new Point(x2, y2), col);
             x2 += measures[i];
         }
-        y -= GL.pixel.h / 2;
+        y -= (1 / Graphics.pixelH) / 2;
         return count < over;
     });
 };
-FXTest.add(FX_Str.name, () => FX_Str(Font.create(30, Font.BOLD), "1234", FXTest.target, Color.GREEN));
+FXTest.add(FX_Str.name, () => FX_Str(new Font(30, Font.BOLD), "1234", FXTest.target, Color.GREEN));

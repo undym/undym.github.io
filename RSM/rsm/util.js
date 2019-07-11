@@ -1,6 +1,6 @@
 import { Rect, Color } from "./undym/type.js";
 import Msg from "./widget/msg.js";
-import { GL } from "./gl/gl.js";
+import { Graphics } from "./graphics/graphics.js";
 export class Util {
     constructor() { }
     static init() {
@@ -21,11 +21,11 @@ export class Place {
     }
     static get P_BOX() {
         return this.p_box !== undefined ? this.p_box :
-            (this.p_box = new Rect(1 - this.BTN_W - this.ST_W - GL.pixel.w, this.TOP.yh, this.ST_W, this.ST_H));
+            (this.p_box = new Rect(1 - this.BTN_W - this.ST_W - 1 / Graphics.pixelW, this.TOP.yh, this.ST_W, this.ST_H));
     }
     static get E_BOX() {
         return this.e_box !== undefined ? this.e_box :
-            (this.e_box = new Rect(GL.pixel.w, this.P_BOX.y, this.ST_W, this.ST_H));
+            (this.e_box = new Rect(1 / Graphics.pixelW, this.P_BOX.y, this.ST_W, this.ST_H));
     }
     static get MAIN() {
         return this.main !== undefined ? this.main :
@@ -33,15 +33,15 @@ export class Place {
     }
     static get MSG() {
         return this.msg !== undefined ? this.msg :
-            (this.msg = new Rect(this.MAIN.x, this.MAIN.y + GL.pixel.w, this.MAIN.w, this.MAIN.h * 0.7));
+            (this.msg = new Rect(this.MAIN.x, this.MAIN.y + 1 / Graphics.pixelW, this.MAIN.w, this.MAIN.h * 0.7));
     }
     static get DUNGEON_DATA() {
         return this.dungeon_data !== undefined ? this.dungeon_data :
-            (this.dungeon_data = new Rect(this.MAIN.x + this.MAIN.w * 0.05, this.MSG.yh, this.MAIN.w * 0.9, this.MAIN.h - this.MSG.h - GL.pixel.h));
+            (this.dungeon_data = new Rect(this.MAIN.x + this.MAIN.w * 0.05, this.MSG.yh, this.MAIN.w * 0.9, this.MAIN.h - this.MSG.h - 1 / Graphics.pixelH));
     }
     static get UNIT_DETAIL() {
         return this.unit_detail !== undefined ? this.unit_detail :
-            (this.unit_detail = new Rect(GL.pixel.w, this.E_BOX.yh + GL.pixel.h * 2, this.P_BOX.xw - GL.pixel.w, 1 - this.E_BOX.yh - GL.pixel.h * 3));
+            (this.unit_detail = new Rect(1 / Graphics.pixelW, this.E_BOX.yh + 2 / Graphics.pixelH, this.P_BOX.xw - 1 / Graphics.pixelW, 1 - this.E_BOX.yh - 3 / Graphics.pixelH));
     }
 }
 Place.GAMBIT_H = 0.05;

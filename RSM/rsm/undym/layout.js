@@ -6,21 +6,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { GL } from "../gl/gl.js";
 import { Rect, Color, Size } from "./type.js";
-import { Font } from "../gl/glstring.js";
+import { Graphics, Font } from "../graphics/graphics.js";
 export class ILayout {
-    // private pushListeneres:((bounds:Rect)=>void)[] = [];
-    // clearPushListener(){this.pushListeneres = [];}
-    // addPushListener(listener:(bounds:Rect)=>void){this.pushListeneres.push(listener);}
-    // private holdListeneres:((bounds:Rect)=>void)[] = [];
-    // clearHoldListener(){this.holdListeneres = [];}
-    // addHoldListener(listener:(bounds:Rect)=>void){this.holdListeneres.push(listener);}
     constructor() {
-        this.outsideMarginTop = 0;
-        this.outsideMarginRight = 0;
-        this.outsideMarginBottom = 0;
-        this.outsideMarginLeft = 0;
+        this.outsideRatioMargin = { top: 0, right: 0, bottom: 0, left: 0 };
         this.ilayout_UpdateBounds = true;
         this.ilayout_marginedBounds = Rect.FULL;
         this.ilayout_boundsBak = Rect.FULL;
@@ -32,7 +22,6 @@ export class ILayout {
                 ;
                 drawInner(bounds) { }
                 ;
-                delete() { }
             };
         }
         return this._empty;
@@ -47,7 +36,6 @@ export class ILayout {
             drawInner(bounds) {
                 _draw(bounds);
             }
-            delete() { }
         };
     }
     static createCtrl(_ctrl) {
@@ -56,7 +44,6 @@ export class ILayout {
                 return __awaiter(this, void 0, void 0, function* () { yield _ctrl(bounds); });
             }
             drawInner(bounds) { }
-            delete() { }
         };
     }
     static createDraw(_draw) {
@@ -65,22 +52,25 @@ export class ILayout {
                 return __awaiter(this, void 0, void 0, function* () { });
             }
             drawInner(bounds) { _draw(bounds); }
-            delete() { }
         };
     }
-    setOutsideMargin(top, right, bottom, left) {
-        this.outsideMarginTop = top;
-        this.outsideMarginRight = right;
-        this.outsideMarginBottom = bottom;
-        this.outsideMarginLeft = left;
+    setOutsideRatioMargin(top, right, bottom, left) {
+        this.outsideRatioMargin = {
+            top: top,
+            right: right,
+            bottom: bottom,
+            left: left,
+        };
         this.ilayout_UpdateBounds = true;
         return this;
     }
     setOutsidePixelMargin(top, right, bottom, left) {
-        this.outsideMarginTop = top / GL.getCanvas().height;
-        this.outsideMarginRight = right / GL.getCanvas().width;
-        this.outsideMarginBottom = bottom / GL.getCanvas().height;
-        this.outsideMarginLeft = left / GL.getCanvas().width;
+        this.outsidePixelMargin = {
+            top: top,
+            right: right,
+            bottom: bottom,
+            left: left,
+        };
         this.ilayout_UpdateBounds = true;
         return this;
     }
@@ -100,7 +90,14 @@ export class ILayout {
         }
         this.ilayout_UpdateBounds = false;
         this.ilayout_boundsBak = bounds;
-        return this.ilayout_marginedBounds = new Rect(bounds.x + this.outsideMarginLeft, bounds.y + this.outsideMarginTop, bounds.w - (this.outsideMarginLeft + this.outsideMarginRight), bounds.h - (this.outsideMarginTop + this.outsideMarginBottom));
+        if (this.outsidePixelMargin !== undefined) {
+            const left = this.outsidePixelMargin.left / Graphics.pixelW;
+            const top = this.outsidePixelMargin.top / Graphics.pixelH;
+            const right = this.outsidePixelMargin.right / Graphics.pixelW;
+            const bottom = this.outsidePixelMargin.bottom / Graphics.pixelH;
+            return this.ilayout_marginedBounds = new Rect(bounds.x + left, bounds.y + top, bounds.w - (left + right), bounds.h - (top + bottom));
+        }
+        return this.ilayout_marginedBounds = new Rect(bounds.x + this.outsideRatioMargin.left, bounds.y + this.outsideRatioMargin.top, bounds.w - (this.outsideRatioMargin.left + this.outsideRatioMargin.right), bounds.h - (this.outsideRatioMargin.top + this.outsideRatioMargin.bottom));
     }
 }
 export class Layout extends ILayout {
@@ -189,7 +186,7 @@ export class Label extends ILayout {
         });
     }
     drawInner(bounds) {
-        this.update();
+        // this.update();
         switch (this.base) {
             case Font.UPPER_LEFT:
                 this.font.draw(this.createStr(), bounds.upperLeft, this.createColor());
@@ -219,22 +216,6 @@ export class Label extends ILayout {
                 this.font.draw(this.createStr(), bounds.lowerRight, this.createColor(), this.base);
                 break;
         }
-    }
-    update() {
-        const str = this.createStr();
-        if (this.strBak === str) {
-            return;
-        }
-        this.strBak = str;
-        this.strSize = this.font.measureRatioSize([str]);
-    }
-    /**ratio. */
-    get ratioW() {
-        return this.strSize.w;
-    }
-    /**ratio. */
-    get ratioH() {
-        return this.strSize.h;
     }
 }
 export class VariableLayout extends ILayout {
@@ -279,13 +260,13 @@ export class XLayout extends ILayout {
         this.update = true;
         return this;
     }
-    setMargin(value) {
+    setRatioMargin(value) {
         this.margin = value;
         this.update = true;
         return this;
     }
     setPixelMargin(value) {
-        return this.setMargin(value / GL.getCanvas().width);
+        return this.setRatioMargin(value / Graphics.pixelW);
     }
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -351,14 +332,13 @@ export class YLayout extends ILayout {
         this.update = true;
         return this;
     }
-    /*ratio*/
-    setMargin(value) {
+    setRatioMargin(value) {
         this.margin = value;
         this.update = true;
         return this;
     }
     setPixelMargin(value) {
-        return this.setMargin(value / GL.getCanvas().height);
+        return this.setRatioMargin(value / Graphics.pixelH);
     }
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {

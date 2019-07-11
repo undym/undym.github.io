@@ -3,13 +3,12 @@ import { YLayout } from "../undym/layout.js";
 import Gage from "../widget/gage.js";
 import { Dungeon } from "../dungeon/dungeon.js";
 import { Color } from "../undym/type.js";
-import { GL } from "../gl/gl.js";
 import { PlayData, Util } from "../util.js";
 import { Unit, Prm, PUnit } from "../unit.js";
 import { Input } from "../undym/input.js";
 import { ConditionType } from "../condition.js";
 import { EqPos } from "../eq.js";
-import { Font } from "../gl/glstring.js";
+import { Font, Graphics } from "../graphics/graphics.js";
 export class DrawTop extends InnerLayout {
     static get ins() {
         return this._ins !== undefined ? this._ins
@@ -40,9 +39,9 @@ export class DrawDungeonData extends InnerLayout {
 class DrawSTBox extends InnerLayout {
     constructor(getUnit) {
         super();
-        const font = Font.create(14);
+        const font = new Font(14);
         const frame = ILayout.createDraw((bounds) => {
-            GL.drawRect(bounds, Color.L_GRAY);
+            Graphics.drawRect(bounds, Color.L_GRAY);
         });
         const l = new Layout()
             .add(frame)
@@ -64,16 +63,10 @@ class DrawSTBox extends InnerLayout {
             .add(new Label(font, () => ConditionType.badConditions()
             .map(type => getUnit().getCondition(type).toString())
             .join(""), () => Color.RED))
-            .add(ILayout.empty)
-        // .add(new VariableLayout(()=>{
-        //     if(getUnit() instanceof EUnit){return ILayout.empty;}
-        //     if(getUnit().battleAction[0] !== Action.empty){return action;}
-        //     return ILayout.empty;
-        // }))
-        )
+            .add(ILayout.empty))
             .add(ILayout.createDraw((bounds) => {
             if (getUnit().dead) {
-                GL.fillRect(bounds, new Color(1, 0, 0, 0.2));
+                Graphics.fillRect(bounds, new Color(1, 0, 0, 0.2));
             }
         }));
         super.add(new VariableLayout(() => {
@@ -98,7 +91,7 @@ export class DrawSTBoxes extends InnerLayout {
         super.add(new Layout()
             .add((() => {
             let y = new YLayout()
-                .setMargin(GL.pixel.h * 2);
+                .setPixelMargin(2);
             for (let i = 0; i < len; i++) {
                 y.add(new Layout()
                     .add(new DrawSTBox(() => getUnit(i)))
@@ -133,7 +126,7 @@ export class DrawUnitDetail extends InnerLayout {
         const font = Font.getDef();
         const getUnit = () => DrawUnitDetail.target;
         const frame = ILayout.createDraw((bounds) => {
-            GL.drawRect(bounds, Color.L_GRAY);
+            Graphics.drawRect(bounds, Color.L_GRAY);
         });
         const l = new Layout()
             .add(frame)
@@ -190,7 +183,7 @@ export class DrawUnitDetail extends InnerLayout {
                 y.add(new Layout()
                     .add(ILayout.createDraw((bounds) => {
                     if (pos === infoPos) {
-                        GL.fillRect(bounds, Color.YELLOW.darker().darker());
+                        Graphics.fillRect(bounds, Color.YELLOW.darker().darker());
                     }
                 }))
                     .add(new Label(font, () => `${pos}:${getUnit().getEq(pos)}`))

@@ -1,7 +1,6 @@
 import { ILayout, Label } from "../undym/layout.js";
-import { GL } from "../gl/gl.js";
 import { Color, Rect } from "../undym/type.js";
-import { Font } from "../gl/glstring.js";
+import { Graphics, Font } from "../graphics/graphics.js";
 export default class Gage extends ILayout {
     constructor(now, max, leftStr, rightStr, color, font) {
         super();
@@ -26,10 +25,10 @@ export default class Gage extends ILayout {
                 ratio = 1;
             }
             // let h = 0.07 * bounds.h;
-            let h = 1 / GL.getCanvas().height;
+            let h = 1 / Graphics.pixelH;
             let y = bounds.yh - h;
-            GL.fillRect(new Rect(bounds.x, y, bounds.w, h), Color.D_GRAY);
-            GL.fillRect(new Rect(bounds.x, y, bounds.w * ratio, h), this.color());
+            Graphics.fillRect(new Rect(bounds.x, y, bounds.w, h), Color.D_GRAY);
+            Graphics.fillRect(new Rect(bounds.x, y, bounds.w * ratio, h), this.color());
         }
         this.leftLabel.draw(bounds);
         this.rightLabel.draw(bounds);

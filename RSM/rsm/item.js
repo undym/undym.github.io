@@ -13,7 +13,7 @@ import { Prm } from "./unit.js";
 import { FX_Str } from "./fx/fx.js";
 import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
-import { Font } from "./gl/glstring.js";
+import { Font } from "./graphics/graphics.js";
 export class ItemType {
     constructor(name) {
         this.toString = () => name;
@@ -150,7 +150,7 @@ const healHP = (target, value) => __awaiter(this, void 0, void 0, function* () {
     value = value | 0;
     target.prm(Prm.HP).base += value;
     target.fixPrm();
-    FX_Str(Font.create(30, Font.BOLD), `${value}`, target.bounds.center, Color.GREEN);
+    FX_Str(new Font(30, Font.BOLD), `${value}`, target.bounds.center, Color.GREEN);
     Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
     yield wait();
 });

@@ -15,12 +15,11 @@ import { Unit, PUnit, Prm } from "../unit.js";
 import { Battle, BattleResult, BattleType } from "../battle.js";
 import { ActiveTec, PassiveTec } from "../tec.js";
 import { Input } from "../undym/input.js";
-import { GL } from "../gl/gl.js";
 import { Btn } from "../widget/btn.js";
 import { Targeting, Action } from "../force.js";
 import { List } from "../widget/list.js";
 import { ItemScene } from "./itemscene.js";
-import { Font } from "../gl/glstring.js";
+import { Font, Graphics } from "../graphics/graphics.js";
 export class BattleScene extends Scene {
     constructor() {
         super();
@@ -51,7 +50,7 @@ export class BattleScene extends Scene {
             const f = Font.getDef();
             let p = bounds.upperLeft;
             f.draw(`[${tec}]`, p, Color.WHITE);
-            p = p.move(0, f.getSizeRatio());
+            p = p.move(0, f.ratioH);
             if (tec instanceof ActiveTec) {
                 const user = this.tecInfo.user;
                 if (tec.mpCost > 0) {
@@ -66,7 +65,7 @@ export class BattleScene extends Scene {
             else {
             }
             for (let s of tec.info) {
-                f.draw(s, p = p.move(0, f.getSizeRatio()), Color.WHITE);
+                f.draw(s, p = p.move(0, f.ratioH), Color.WHITE);
             }
             if (Input.holding() === 0) {
                 this.tecInfo.tec = undefined;
@@ -81,7 +80,7 @@ export class BattleScene extends Scene {
             if (!Battle.getPhaseUnit().exists) {
                 return;
             }
-            GL.fillRect(Battle.getPhaseUnit().bounds, new Color(0, 1, 1, 0.2));
+            Graphics.fillRect(Battle.getPhaseUnit().bounds, new Color(0, 1, 1, 0.2));
         }));
         super.add(Rect.FULL, ILayout.createCtrl((noUsed) => __awaiter(this, void 0, void 0, function* () {
             if (Battle.start) {
@@ -266,19 +265,19 @@ class ChooseTarget extends Scene {
                     color = col.darker();
                     const v = ((Date.now() / 80 + i) % 4) | 0;
                     if (v === 0) {
-                        GL.line(u.bounds.upperLeft, u.bounds.upperRight, col);
+                        Graphics.line(u.bounds.upperLeft, u.bounds.upperRight, col);
                         continue;
                     }
                     if (v === 1) {
-                        GL.line(u.bounds.upperRight, u.bounds.lowerRight, col);
+                        Graphics.line(u.bounds.upperRight, u.bounds.lowerRight, col);
                         continue;
                     }
                     if (v === 2) {
-                        GL.line(u.bounds.lowerRight, u.bounds.lowerLeft, col);
+                        Graphics.line(u.bounds.lowerRight, u.bounds.lowerLeft, col);
                         continue;
                     }
                     if (v === 3) {
-                        GL.line(u.bounds.lowerLeft, u.bounds.upperLeft, col);
+                        Graphics.line(u.bounds.lowerLeft, u.bounds.upperLeft, col);
                         continue;
                     }
                 }

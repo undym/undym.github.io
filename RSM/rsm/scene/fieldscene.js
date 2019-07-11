@@ -13,14 +13,13 @@ import { Btn } from "../widget/btn.js";
 import { Dungeon, DungeonArea } from "../dungeon/dungeon.js";
 import { Rect, Color } from "../undym/type.js";
 import DungeonScene from "./dungeonscene.js";
-import { GL } from "../gl/gl.js";
 import DungeonEvent from "../dungeon/dungeonevent.js";
 import { DrawUnitDetail, DrawSTBoxes, DrawTop } from "./sceneutil.js";
 import { Unit, Prm } from "../unit.js";
 import { OptionScene } from "./optionscene.js";
 import { ItemScene } from "./itemscene.js";
-import { Font } from "../gl/glstring.js";
 import { Targeting } from "../force.js";
+import { Font, Graphics } from "../graphics/graphics.js";
 export class FieldScene extends Scene {
     static get ins() { return this._ins != null ? this._ins : (this._ins = new FieldScene()); }
     constructor() {
@@ -29,7 +28,7 @@ export class FieldScene extends Scene {
     init() {
         super.clear();
         super.add(Rect.FULL, ILayout.createDraw((bounds) => {
-            GL.fillRect(bounds, Color.BLACK);
+            Graphics.fillRect(bounds, Color.BLACK);
         }));
         super.add(Place.TOP, DrawTop.ins);
         const dInfoH = 0.15;

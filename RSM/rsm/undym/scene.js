@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { RatioLayout } from "./layout.js";
 import { Input } from "./input.js";
-import { GL } from "../gl/gl.js";
 export class Scene {
     constructor() {
         this.layout = new RatioLayout();
@@ -52,7 +51,6 @@ export class Scene {
         });
     }
     draw(bounds) {
-        GL.clear();
         this.layout.draw(bounds);
     }
 }

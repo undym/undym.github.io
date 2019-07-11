@@ -18,10 +18,10 @@ import { Unit, Prm } from "../unit.js";
 import { FX_Advance, FX_Return } from "../fx/fx.js";
 import { Battle, BattleType, BattleResult } from "../battle.js";
 import { BattleScene } from "../scene/battlescene.js";
-import { Img } from "../gl/gltexture.js";
 import DungeonScene from "../scene/dungeonscene.js";
 import { ItemScene } from "../scene/itemscene.js";
 import { Targeting } from "../force.js";
+import { Img } from "../graphics/graphics.js";
 export default class DungeonEvent {
     constructor() {
     }

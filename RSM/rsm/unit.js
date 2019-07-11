@@ -14,11 +14,10 @@ import { ActiveTec, PassiveTec } from "./tec.js";
 import { Action, Targeting } from "./force.js";
 import { Job } from "./job.js";
 import { FX_ShakeStr } from "./fx/fx.js";
-import { GL } from "./gl/gl.js";
 import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos } from "./eq.js";
 import { choice } from "./undym/random.js";
-import { Font } from "./gl/glstring.js";
+import { Graphics, Font } from "./graphics/graphics.js";
 class PrmSet {
     constructor() {
         this.base = 0;
@@ -184,9 +183,9 @@ export class Unit {
             value = value | 0;
             this.prm(Prm.HP).base -= value;
             this.fixPrm();
-            let cx = this.bounds.cx + GL.pixel.w * 20 * (Math.random() * 2 - 1);
-            let cy = this.bounds.cy + GL.pixel.h * 20 * (Math.random() * 2 - 1);
-            FX_ShakeStr(Font.create(30, Font.BOLD), `${value}`, new Point(cx, cy), Color.RED);
+            let cx = this.bounds.cx + (1 / Graphics.pixelW) * 20 * (Math.random() * 2 - 1);
+            let cy = this.bounds.cy + (1 / Graphics.pixelH) * 20 * (Math.random() * 2 - 1);
+            FX_ShakeStr(new Font(30, Font.BOLD), `${value}`, new Point(cx, cy), Color.RED);
             Util.msg.set(`${this.name}に${value}のダメージ`, Color.RED.bright);
             yield wait();
         });

@@ -15,9 +15,8 @@ import { Unit } from "../unit.js";
 import { List } from "../widget/list.js";
 import { Rect, Color } from "../undym/type.js";
 import { ItemParentType } from "../item.js";
-import { GL } from "../gl/gl.js";
 import { Input } from "../undym/input.js";
-import { Font } from "../gl/glstring.js";
+import { Graphics, Font } from "../graphics/graphics.js";
 export class ItemScene extends Scene {
     static ins(actions) {
         this._ins != null ? this._ins : (this._ins = new ItemScene());
@@ -38,7 +37,7 @@ export class ItemScene extends Scene {
         {
             const w = Place.E_BOX.w + Place.MAIN.w;
             let listBounds;
-            listBounds = new Rect(GL.pixel.w, Place.MAIN.y, w * 0.3, Place.MAIN.h);
+            listBounds = new Rect(1 / Graphics.pixelW, Place.MAIN.y, w * 0.3, Place.MAIN.h);
             super.add(listBounds, this.list);
             let typeBounds = new Rect(listBounds.xw, Place.MAIN.y, w * 0.3, Place.MAIN.h);
             let types = new YLayout();
@@ -50,18 +49,18 @@ export class ItemScene extends Scene {
             super.add(typeBounds, types);
             let infoBounds = new Rect(typeBounds.xw, Place.MAIN.y, w - (listBounds.w + typeBounds.w), Place.MAIN.h);
             super.add(infoBounds, ILayout.createDraw((bounds) => {
-                GL.fillRect(bounds, Color.D_GRAY);
+                Graphics.fillRect(bounds, Color.D_GRAY);
                 if (this.selectedItem !== undefined) {
                     let item = this.selectedItem;
                     let font = Font.getDef();
-                    let p = bounds.upperLeft.move(GL.pixel.w, GL.pixel.h * 2);
+                    let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
                     font.draw(`[${item}]`, p, Color.WHITE);
-                    font.draw(`所持数:${item.num}個`, p = p.move(0, font.getSizeRatio()), Color.WHITE);
-                    font.draw(`<${item.itemType}>`, p = p.move(0, font.getSizeRatio()), Color.WHITE);
-                    font.draw(`Rank:${item.rank}`, p = p.move(0, font.getSizeRatio()), Color.WHITE);
-                    p = p.move(0, font.getSizeRatio());
+                    font.draw(`所持数:${item.num}個`, p = p.move(0, font.ratioH), Color.WHITE);
+                    font.draw(`<${item.itemType}>`, p = p.move(0, font.ratioH), Color.WHITE);
+                    font.draw(`Rank:${item.rank}`, p = p.move(0, font.ratioH), Color.WHITE);
+                    p = p.move(0, font.ratioH);
                     for (let s of item.info) {
-                        font.draw(s, p = p.move(0, font.getSizeRatio()), Color.WHITE);
+                        font.draw(s, p = p.move(0, font.ratioH), Color.WHITE);
                     }
                 }
             }));
@@ -103,7 +102,7 @@ export class ItemScene extends Scene {
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.UNIT_DETAIL, DrawUnitDetail.ins);
         super.add(Rect.FULL, ILayout.createDraw((noUsed) => {
-            GL.fillRect(this.user.bounds, new Color(0, 1, 1, 0.2));
+            Graphics.fillRect(this.user.bounds, new Color(0, 1, 1, 0.2));
         }));
         super.add(Rect.FULL, ILayout.createCtrl((noUsed) => {
             if (!this.selectUser) {
