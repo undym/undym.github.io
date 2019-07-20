@@ -15,6 +15,7 @@ export class Btn extends ILayout {
         super();
         this.cursorON = false;
         this.count = 0;
+        this.noMove = false;
         if (typeof name === "string") {
             this.name = () => name;
         }
@@ -30,6 +31,10 @@ export class Btn extends ILayout {
         this.frameColor = () => new Color(0.5, 0.5, 0.5);
         this.stringColor = () => Color.BLACK;
     }
+    setNoMove() {
+        this.noMove = true;
+        return this;
+    }
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {
             let contains = bounds.contains(Input.point);
@@ -44,10 +49,13 @@ export class Btn extends ILayout {
     drawInner(bounds) {
         const moveLim = bounds.w / 2;
         let move = moveLim - moveLim * this.count / (this.count + 1);
+        if (this.noMove) {
+            move = 0;
+        }
         let rect = new Rect(bounds.x - move, bounds.y, bounds.w, bounds.h);
         Graphics.fillRect(rect, this.cursorON ? this.groundColor().darker() : this.groundColor());
         Graphics.drawRect(rect, this.frameColor());
         this.font.draw(this.name(), rect.center, this.stringColor(), Font.CENTER);
-        this.count++;
+        this.count += 4;
     }
 }

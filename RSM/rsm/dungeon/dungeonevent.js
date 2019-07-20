@@ -12,7 +12,7 @@ import { Dungeon } from "./dungeon.js";
 import { Scene, cwait, wait } from "../undym/scene.js";
 import { FieldScene } from "../scene/fieldscene.js";
 import { Item } from "../item.js";
-import { ILayout, YLayout } from "../undym/layout.js";
+import { ILayout, FlowLayout } from "../undym/layout.js";
 import { Color } from "../undym/type.js";
 import { Unit, Prm } from "../unit.js";
 import { FX_Advance, FX_Return } from "../fx/fx.js";
@@ -23,11 +23,11 @@ import { ItemScene } from "../scene/itemscene.js";
 import { Targeting } from "../force.js";
 import { Img } from "../graphics/graphics.js";
 export default class DungeonEvent {
+    // getBtnLayout():ILayout{return this.btnLayout !== undefined ? this.btnLayout : (this.btnLayout = this.createBtnLayout());}
     constructor() {
     }
     getImg() { return this.img !== undefined ? this.img : (this.img = this.createImg()); }
     createImg() { return Img.empty; }
-    getBtnLayout() { return this.btnLayout !== undefined ? this.btnLayout : (this.btnLayout = this.createBtnLayout()); }
     happen() {
         return __awaiter(this, void 0, void 0, function* () {
             DungeonEvent.now = this;
@@ -39,12 +39,8 @@ export default class DungeonEvent {
 DungeonEvent.empty = new class extends DungeonEvent {
     constructor() {
         super(...arguments);
-        this.createBtnLayout = () => new YLayout()
-            .add(ItemBtn.ins)
-            .add(ILayout.empty)
-            .add(ReturnBtn.ins)
-            .add(AdvanceBtn.ins);
         this.happenInner = () => { Util.msg.set(""); };
+        this.createBtnLayout = () => createDefLayout();
     }
 };
 DungeonEvent.BOX = new class extends DungeonEvent {
@@ -52,13 +48,10 @@ DungeonEvent.BOX = new class extends DungeonEvent {
         super(...arguments);
         this.createImg = () => new Img("data:image/png;base64,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");
         this.happenInner = () => __awaiter(this, void 0, void 0, function* () { Util.msg.set("宝箱だ"); });
-        this.createBtnLayout = () => new YLayout()
-            .add(ItemBtn.ins)
-            .add(ILayout.empty)
-            .add(new Btn(() => "開ける", () => __awaiter(this, void 0, void 0, function* () {
-            DungeonEvent.BOX_OPENED.happen();
-        })))
-            .add(AdvanceBtn.ins);
+        this.createBtnLayout = () => createDefLayout()
+            .set(ReturnBtn.index, new Btn("開ける", () => __awaiter(this, void 0, void 0, function* () {
+            yield DungeonEvent.BOX_OPENED.happen();
+        })));
     }
 };
 DungeonEvent.BOX_OPENED = new class extends DungeonEvent {
@@ -83,7 +76,7 @@ DungeonEvent.BOX_OPENED = new class extends DungeonEvent {
                 }
             }
         });
-        this.createBtnLayout = () => DungeonEvent.empty.getBtnLayout();
+        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
     }
 };
 DungeonEvent.TRAP = new class extends DungeonEvent {
@@ -93,14 +86,12 @@ DungeonEvent.TRAP = new class extends DungeonEvent {
         this.happenInner = () => {
             Util.msg.set("罠だ");
         };
-        this.createBtnLayout = () => new YLayout()
-            .add(ItemBtn.ins)
-            .add(ILayout.empty)
-            .add(new Btn(() => "解除", () => {
-            DungeonEvent.TRAP_BROKEN.happen();
-        }))
-            .add(new Btn(() => "進む", () => __awaiter(this, void 0, void 0, function* () {
-            Util.msg.set("引っかかった！", (cnt) => Color.RED);
+        this.createBtnLayout = () => createDefLayout()
+            .set(ReturnBtn.index, new Btn("解除", () => __awaiter(this, void 0, void 0, function* () {
+            yield DungeonEvent.TRAP_BROKEN.happen();
+        })))
+            .set(AdvanceBtn.index, new Btn("進む", () => __awaiter(this, void 0, void 0, function* () {
+            Util.msg.set("引っかかった！", Color.RED);
             yield wait();
             for (let p of Unit.players) {
                 if (!p.exists || p.dead) {
@@ -111,7 +102,7 @@ DungeonEvent.TRAP = new class extends DungeonEvent {
                 yield p.judgeDead();
             }
             DungeonEvent.TRAP_BROKEN.happen();
-        })));
+        })).setNoMove());
     }
 };
 DungeonEvent.TRAP_BROKEN = new class extends DungeonEvent {
@@ -122,7 +113,7 @@ DungeonEvent.TRAP_BROKEN = new class extends DungeonEvent {
         this.happenInner = () => {
             Util.msg.set("解除した");
         };
-        this.createBtnLayout = () => DungeonEvent.empty.getBtnLayout();
+        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
     }
 };
 DungeonEvent.BATTLE = new class extends DungeonEvent {
@@ -146,7 +137,7 @@ DungeonEvent.BATTLE = new class extends DungeonEvent {
             });
             Scene.load(BattleScene.ins);
         });
-        this.createBtnLayout = () => DungeonEvent.empty.getBtnLayout();
+        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
     }
 };
 DungeonEvent.BOSS_BATTLE = new class extends DungeonEvent {
@@ -169,7 +160,7 @@ DungeonEvent.BOSS_BATTLE = new class extends DungeonEvent {
                 }
             }));
         });
-        this.createBtnLayout = () => DungeonEvent.empty.getBtnLayout();
+        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
     }
 };
 DungeonEvent.ESCAPE_DUNGEON = new class extends DungeonEvent {
@@ -201,6 +192,14 @@ DungeonEvent.CLEAR_DUNGEON = new class extends DungeonEvent {
         this.createBtnLayout = () => ILayout.empty;
     }
 };
+const createDefLayout = () => {
+    //0,1,2,
+    //3,4,5,
+    return new FlowLayout(3, 2)
+        .set(ItemBtn.index, ItemBtn.ins)
+        .set(ReturnBtn.index, ReturnBtn.ins)
+        .set(AdvanceBtn.index, AdvanceBtn.ins);
+};
 class AdvanceBtn {
     static get ins() {
         if (this._ins === undefined) {
@@ -218,6 +217,7 @@ class AdvanceBtn {
         return this._ins;
     }
 }
+AdvanceBtn.index = 5;
 class ReturnBtn {
     static get ins() {
         if (this._ins === undefined) {
@@ -235,6 +235,7 @@ class ReturnBtn {
         return this._ins;
     }
 }
+ReturnBtn.index = 4;
 class ItemBtn {
     static get ins() {
         if (this._ins === undefined) {
@@ -262,3 +263,4 @@ class ItemBtn {
         return this._ins;
     }
 }
+ItemBtn.index = 0;

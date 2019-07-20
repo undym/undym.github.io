@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Prm } from "./unit.js";
-import { Util, Colors } from "./util.js";
+import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
 import { Dmg, Targeting } from "./force.js";
 import { Condition } from "./condition.js";
@@ -17,19 +17,21 @@ export class TecType {
 }
 TecType.格闘 = new class extends TecType {
     createDmg(attacker, target) {
-        let dmg = new Dmg();
-        dmg.pow = attacker.prm(Prm.STR).total();
-        dmg.def = target.prm(Prm.MAG).total();
-        return dmg;
+        return new Dmg({
+            pow: attacker.prm(Prm.STR).total(),
+            def: target.prm(Prm.MAG).total(),
+        });
+        ;
     }
     ;
 };
 TecType.魔法 = new class extends TecType {
     createDmg(attacker, target) {
-        let dmg = new Dmg();
-        dmg.pow = attacker.prm(Prm.MAG).total();
-        dmg.def = target.prm(Prm.STR).total();
-        return dmg;
+        return new Dmg({
+            pow: attacker.prm(Prm.MAG).total(),
+            def: target.prm(Prm.STR).total(),
+        });
+        ;
     }
     ;
 };
@@ -46,11 +48,10 @@ TecType.その他 = new class extends TecType {
     ;
 };
 export class PassiveTec {
-    constructor(values) {
-        const name = values.name;
-        this.toString = () => name;
-        this.info = values.info;
-        this.type = values.type;
+    constructor(args) {
+        this.uniqueName = args.uniqueName;
+        this.info = args.info;
+        this.type = args.type;
         PassiveTec._values.push(this);
     }
     static values() { return this._values; }
@@ -64,6 +65,12 @@ export class PassiveTec {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    //--------------------------------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------------------------------
+    toString() { return this.uniqueName; }
 }
 PassiveTec._values = [];
 //--------------------------------------------------------------------------
@@ -73,13 +80,25 @@ PassiveTec._values = [];
 //--------------------------------------------------------------------------
 PassiveTec.HP自動回復 = new class extends PassiveTec {
     constructor() {
-        super({ name: "HP自動回復", info: ["行動開始時HP+1%"],
+        super({ uniqueName: "HP自動回復", info: ["行動開始時HP+1%"],
             type: TecType.回復,
         });
     }
     phaseStart(unit) {
         const value = (unit.prm(Prm.MAX_HP).total() * 0.01) | 0;
-        unit.prm(Prm.HP).base += value;
+        unit.hp += value;
+        unit.fixPrm();
+    }
+};
+PassiveTec.MP自動回復 = new class extends PassiveTec {
+    constructor() {
+        super({ uniqueName: "MP自動回復", info: ["行動開始時MP+10%"],
+            type: TecType.回復,
+        });
+    }
+    phaseStart(unit) {
+        const value = 10;
+        unit.mp += value;
         unit.fixPrm();
     }
 };
@@ -89,24 +108,20 @@ export class ActiveTec {
     //
     //
     //--------------------------------------------------------------------------
-    // private constructor(name:string, info:string[], type:TecType, mul:number, rndAttackNum:()=>number, hit:number){
-    constructor(values) {
-        const name = values.name;
-        this.toString = () => name;
-        this.info = values.info;
-        this.type = values.type;
-        this.targetings = values.targetings;
-        this.mul = values.mul;
-        const num = values.num;
+    constructor(args) {
+        this.uniqueName = args.uniqueName;
+        this.info = args.info;
+        this.type = args.type;
+        this.targetings = args.targetings;
+        this.mul = args.mul;
+        const num = args.num;
         this.rndAttackNum = () => num;
-        this.hit = values.hit;
-        this.mp = values.mp !== undefined ? values.mp : 0;
-        this.tp = values.tp !== undefined ? values.tp : 0;
+        this.hit = args.hit;
+        this.mpCost = args.mp ? args.mp : 0;
+        this.tpCost = args.tp ? args.tp : 0;
         ActiveTec._values.push(this);
     }
     static values() { return this._values; }
-    get mpCost() { return this.mp; }
-    get tpCost() { return this.tp; }
     //--------------------------------------------------------------------------
     //
     //
@@ -137,9 +152,7 @@ export class ActiveTec {
     }
     use(attacker, targets) {
         return __awaiter(this, void 0, void 0, function* () {
-            Util.msg.set(`${attacker.name}`, Colors.UNIT_NAME);
-            Util.msg.add(`の`);
-            Util.msg.add(`[${this}]`, Colors.TEC);
+            Util.msg.set(`${attacker.name}の[${this}]`, Color.D_GREEN.bright);
             yield wait();
             if (targets.length === 0) {
                 return;
@@ -179,6 +192,7 @@ export class ActiveTec {
         dmg.hit = this.hit;
         return dmg;
     }
+    toString() { return this.uniqueName; }
 }
 ActiveTec._values = [];
 //--------------------------------------------------------------------------
@@ -188,7 +202,7 @@ ActiveTec._values = [];
 //--------------------------------------------------------------------------
 ActiveTec.殴る = new class extends ActiveTec {
     constructor() {
-        super({ name: "殴る", info: ["一体に格闘攻撃"],
+        super({ uniqueName: "殴る", info: ["一体に格闘攻撃"],
             type: TecType.格闘, targetings: Targeting.SELECT,
             mul: 1, num: 1, hit: 1,
         });
@@ -196,11 +210,34 @@ ActiveTec.殴る = new class extends ActiveTec {
 };
 ActiveTec.二回殴る = new class extends ActiveTec {
     constructor() {
-        super({ name: "二回殴る", info: ["一体に二回格闘攻撃"],
+        super({ uniqueName: "二回殴る", info: ["一体に二回格闘攻撃"],
             type: TecType.格闘, targetings: Targeting.SELECT,
             mul: 1, num: 2, hit: 1,
             tp: 20,
         });
+    }
+};
+ActiveTec.大いなる動き = new class extends ActiveTec {
+    constructor() {
+        super({ uniqueName: "大いなる動き", info: ["敵全体に格闘攻撃"],
+            type: TecType.格闘, targetings: Targeting.ALL,
+            mul: 1, num: 1, hit: 1,
+            tp: 60,
+        });
+    }
+};
+ActiveTec.マジカルパンチ = new class extends ActiveTec {
+    constructor() {
+        super({ uniqueName: "マジカルパンチ", info: ["マジカル格闘攻撃"],
+            type: TecType.格闘, targetings: Targeting.SELECT,
+            mul: 1, num: 1, hit: 1,
+            mp: 10,
+        });
+    }
+    createDmg(attacker, target) {
+        let dmg = super.createDmg(attacker, target);
+        dmg.pow = attacker.prm(Prm.MAG).total();
+        return dmg;
     }
 };
 // static readonly          タックル = new class extends Tec{
@@ -216,7 +253,7 @@ ActiveTec.二回殴る = new class extends ActiveTec {
 //--------------------------------------------------------------------------
 ActiveTec.ヴァハ = new class extends ActiveTec {
     constructor() {
-        super({ name: "ヴァハ", info: ["一体に魔法攻撃"],
+        super({ uniqueName: "ヴァハ", info: ["一体に魔法攻撃"],
             type: TecType.魔法, targetings: Targeting.SELECT,
             mul: 1, num: 1, hit: 1,
             mp: 20,
@@ -230,7 +267,7 @@ ActiveTec.ヴァハ = new class extends ActiveTec {
 //--------------------------------------------------------------------------
 ActiveTec.練気 = new class extends ActiveTec {
     constructor() {
-        super({ name: "練気", info: ["自分を＜練＞化"],
+        super({ uniqueName: "練気", info: ["自分を＜練＞化"],
             type: TecType.強化, targetings: Targeting.SELF,
             mul: 1, num: 1, hit: 1,
         });
@@ -243,7 +280,7 @@ ActiveTec.練気 = new class extends ActiveTec {
 };
 ActiveTec.グレートウォール = new class extends ActiveTec {
     constructor() {
-        super({ name: "グレートウォール", info: ["味方全体を＜盾＞化"],
+        super({ uniqueName: "グレートウォール", info: ["味方全体を＜盾＞化"],
             type: TecType.強化, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
             mul: 1, num: 1, hit: 1,
         });
@@ -261,7 +298,7 @@ ActiveTec.グレートウォール = new class extends ActiveTec {
 //--------------------------------------------------------------------------
 ActiveTec.何もしない = new class extends ActiveTec {
     constructor() {
-        super({ name: "何もしない", info: ["何もしないをする"],
+        super({ uniqueName: "何もしない", info: ["何もしないをする"],
             type: TecType.その他, targetings: Targeting.SELF,
             mul: 1, num: 1, hit: 1,
         });

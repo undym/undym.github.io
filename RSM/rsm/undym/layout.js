@@ -377,87 +377,101 @@ export class YLayout extends ILayout {
         // }
     }
 }
-// export class FlowLayout extends ILayout{
-//     private w:number;
-//     private h:number;
-//     private layouts:ILayout[] = [];
-//     private index:number = 0;
-//     private updateBounds:boolean = true;
-//     private boundsBak:Rect;
-//     private childrenBoundsBak:Rect[] = [];
-//     private xMargin = 0;
-//     private yMargin = 0;
-//     constructor(w:number, h:number){
-//         super();
-//         this.boundsBak = Rect.FULL;
-//         this.changeSize(w,h);
-//     }
-//     clear(){
-//         for(let i = 0; i < this.layouts.length; i++){
-//             this.layouts[i] = ILayout.empty;
-//         }
-//         this.index = 0;
-//         this.updateBounds = true;
-//     }
-//     changeSize(w:number, h:number){
-//         this.w = w;
-//         this.h = h;
-//         this.layouts = [];
-//         for(let i = 0; i < w * h; i++){
-//             this.layouts.push( ILayout.empty );
-//         }
-//         this.updateBounds = true;
-//     }
-//     set(index:number, l:ILayout):this{
-//         this.layouts[index] = l;
-//         return this;
-//     }
-//     add(l:ILayout):this{
-//         if(this.index < this.layouts.length){
-//             this.layouts[this.index] = l;
-//             this.index++;
-//         }
-//         return this;
-//     }
-//     /**ratio */
-//     setMargin(xMargin:number, yMargin:number):this{
-//         this.xMargin = xMargin;
-//         this.yMargin = yMargin;
-//         this.updateBounds = true;
-//         return this;
-//     }
-//     get length(){return this.layouts.length;}
-//     async ctrlInner(origin:Rect){
-//         let bounds:Rect[] = this.getBounds(origin);
-//         for(let i = 0; i < bounds.length; i++){
-//             this.layouts[i].ctrl( bounds[i] );
-//         }
-//     }
-//     drawInner(origin:Rect){
-//         let bounds:Rect[] = this.getBounds(origin);
-//         for(let i = 0; i < bounds.length; i++){
-//             this.layouts[i].draw( bounds[i] );
-//         }
-//     }
-//     private getBounds(origin:Rect):Rect[]{
-//         if(!this.updateBounds){
-//             if(!this.boundsBak.equals(origin)){
-//                 this.updateBounds = true;
-//             }
-//             if(!this.updateBounds){return this.childrenBoundsBak;}
-//         }
-//         this.updateBounds = false;
-//         this.childrenBoundsBak = [];
-//         let yRects:Rect[] = YLayout.createBounds(origin, this.h, /*margin*/this.yMargin);
-//         for(let y of yRects){
-//             let xRects:Rect[] = XLayout.createBounds( y, this.w, /*margin*/this.xMargin );
-//             for(let x of xRects){
-//                 this.childrenBoundsBak.push(x);
-//             }
-//         }
-//         return this.childrenBoundsBak;
-//     }
-// }
+export class FlowLayout extends ILayout {
+    constructor(w, h) {
+        super();
+        this.layouts = [];
+        this.index = 0;
+        this.updateBounds = true;
+        this.childrenBoundsBak = [];
+        this.xMargin = 0;
+        this.yMargin = 0;
+        this.boundsBak = Rect.FULL;
+        this.changeSize(w, h);
+    }
+    clear() {
+        for (let i = 0; i < this.layouts.length; i++) {
+            this.layouts[i] = ILayout.empty;
+        }
+        this.index = 0;
+        this.indexFromLast = this.layouts.length - 1;
+        this.updateBounds = true;
+    }
+    changeSize(w, h) {
+        this.w = w;
+        this.h = h;
+        this.layouts = [];
+        for (let i = 0; i < w * h; i++) {
+            this.layouts.push(ILayout.empty);
+        }
+        this.indexFromLast = this.layouts.length - 1;
+        this.updateBounds = true;
+    }
+    set(index, l) {
+        this.layouts[index] = l;
+        return this;
+    }
+    setLast(l) {
+        this.layouts[this.layouts.length - 1] = l;
+        return this;
+    }
+    add(l) {
+        if (this.index < this.layouts.length) {
+            this.layouts[this.index] = l;
+            this.index++;
+        }
+        return this;
+    }
+    addFromLast(l) {
+        if (this.indexFromLast >= 0) {
+            this.layouts[this.indexFromLast] = l;
+            this.indexFromLast--;
+        }
+        return this;
+    }
+    /**ratio */
+    setRatioMargin(xMargin, yMargin) {
+        this.xMargin = xMargin;
+        this.yMargin = yMargin;
+        this.updateBounds = true;
+        return this;
+    }
+    get length() { return this.layouts.length; }
+    ctrlInner(origin) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let bounds = this.getBounds(origin);
+            for (let i = 0; i < bounds.length; i++) {
+                this.layouts[i].ctrl(bounds[i]);
+            }
+        });
+    }
+    drawInner(origin) {
+        let bounds = this.getBounds(origin);
+        for (let i = 0; i < bounds.length; i++) {
+            this.layouts[i].draw(bounds[i]);
+        }
+    }
+    getBounds(origin) {
+        if (!this.updateBounds) {
+            if (!this.boundsBak.equals(origin)) {
+                this.updateBounds = true;
+            }
+            if (!this.updateBounds) {
+                return this.childrenBoundsBak;
+            }
+        }
+        this.updateBounds = false;
+        this.childrenBoundsBak = [];
+        let yRects = YLayout.createBounds(origin, this.h, /*margin*/ this.yMargin);
+        for (let y of yRects) {
+            let xRects = XLayout.createBounds(y, this.w, /*margin*/ this.xMargin);
+            for (let x of xRects) {
+                this.childrenBoundsBak.push(x);
+            }
+        }
+        return this.childrenBoundsBak;
+    }
+}
 export class InnerLayout extends ILayout {
     constructor() {
         super();

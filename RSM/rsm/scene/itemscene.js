@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Scene } from "../undym/scene.js";
 import { Place } from "../util.js";
-import { DrawSTBoxes, DrawTop, DrawUnitDetail } from "./sceneutil.js";
-import { YLayout, ILayout, VariableLayout } from "../undym/layout.js";
+import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
+import { ILayout, VariableLayout, FlowLayout } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
 import { List } from "../widget/list.js";
@@ -33,74 +33,55 @@ export class ItemScene extends Scene {
     init() {
         this.selectedItem = undefined;
         super.clear();
-        super.add(Place.TOP, DrawTop.ins);
-        {
-            const w = Place.E_BOX.w + Place.MAIN.w;
-            let listBounds;
-            listBounds = new Rect(1 / Graphics.pixelW, Place.MAIN.y, w * 0.3, Place.MAIN.h);
-            super.add(listBounds, this.list);
-            let typeBounds = new Rect(listBounds.xw, Place.MAIN.y, w * 0.3, Place.MAIN.h);
-            let types = new YLayout();
+        const listBounds = new Rect(0, 0, 0.5, 0.8);
+        const infoBounds = new Rect(listBounds.xw, 0, 1 - listBounds.w, 0.25);
+        const btnBounds = new Rect(infoBounds.x, infoBounds.yh, infoBounds.w, listBounds.yh - infoBounds.yh);
+        const pboxBounds = new Rect(Place.P_BOX.x, listBounds.yh, Place.P_BOX.w, 1 - listBounds.yh);
+        super.add(listBounds, this.list);
+        super.add(infoBounds, ILayout.createDraw((bounds) => {
+            Graphics.fillRect(bounds, Color.D_GRAY);
+            if (this.selectedItem === undefined) {
+                return;
+            }
+            let item = this.selectedItem;
+            let font = Font.getDef();
+            let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
+            font.draw(`[${item}]`, p, Color.WHITE);
+            font.draw(`所持数:${item.num}個`, p = p.move(0, font.ratioH), Color.WHITE);
+            font.draw(`<${item.itemType}>`, p = p.move(0, font.ratioH), Color.WHITE);
+            font.draw(`Rank:${item.rank}`, p = p.move(0, font.ratioH), Color.WHITE);
+            p = p.move(0, font.ratioH);
+            for (let s of item.info) {
+                font.draw(s, p = p.move(0, font.ratioH), Color.WHITE);
+            }
+        }));
+        super.add(btnBounds, (() => {
+            const l = new FlowLayout(2, 4);
             for (let type of ItemParentType.values()) {
-                types.add(new Btn(() => type.toString(), () => {
+                l.add(new Btn(type.toString(), () => {
                     this.setList(type);
                 }));
             }
-            super.add(typeBounds, types);
-            let infoBounds = new Rect(typeBounds.xw, Place.MAIN.y, w - (listBounds.w + typeBounds.w), Place.MAIN.h);
-            super.add(infoBounds, ILayout.createDraw((bounds) => {
-                Graphics.fillRect(bounds, Color.D_GRAY);
-                if (this.selectedItem !== undefined) {
-                    let item = this.selectedItem;
-                    let font = Font.getDef();
-                    let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                    font.draw(`[${item}]`, p, Color.WHITE);
-                    font.draw(`所持数:${item.num}個`, p = p.move(0, font.ratioH), Color.WHITE);
-                    font.draw(`<${item.itemType}>`, p = p.move(0, font.ratioH), Color.WHITE);
-                    font.draw(`Rank:${item.rank}`, p = p.move(0, font.ratioH), Color.WHITE);
-                    p = p.move(0, font.ratioH);
-                    for (let s of item.info) {
-                        font.draw(s, p = p.move(0, font.ratioH), Color.WHITE);
+            {
+                const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
+                    yield this.use(this.selectedItem, this.user);
+                }));
+                const cantUse = new Btn(() => "使用", () => { });
+                cantUse.stringColor = () => Color.GRAY;
+                l.addFromLast(new VariableLayout(() => {
+                    if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
+                        return cantUse;
                     }
-                }
+                    return canUse;
+                }));
+            }
+            l.addFromLast(new Btn("<<", () => {
+                this.returnScene();
             }));
-        }
-        super.add(Place.BTN, new YLayout()
-            .add(ILayout.empty)
-            .add(ILayout.empty)
-            .add((() => {
-            const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
-                yield this.use(this.selectedItem, this.user);
-                // if(this.battle){
-                //     Util.msg.set(`;${ItemScene.selectedItem}`);
-                //     // this.end();
-                //     return;
-                // }else{
-                //     const item = ItemScene.selectedItem as Item;
-                //     if(item.targetings & Targeting.SELECT){
-                //         await item.use( this.user, [this.user] );
-                //     }else{
-                //         let targets = Targeting.filter( item.targetings, this.user, Unit.players );
-                //         if(targets.length > 0){
-                //             await item.use( this.user, targets );
-                //         }
-                //     }
-                // }
-            }));
-            const cantUse = new Btn(() => "使用", () => { });
-            cantUse.stringColor = () => Color.GRAY;
-            return new VariableLayout(() => {
-                if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
-                    return cantUse;
-                }
-                return canUse;
-            });
-        })())
-            .add(new Btn(() => "<-", () => {
-            this.returnScene();
-        })));
-        super.add(Place.P_BOX, DrawSTBoxes.players);
-        super.add(Place.UNIT_DETAIL, DrawUnitDetail.ins);
+            return l;
+        })());
+        super.add(pboxBounds, DrawSTBoxes.players);
+        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
         super.add(Rect.FULL, ILayout.createDraw((noUsed) => {
             Graphics.fillRect(this.user.bounds, new Color(0, 1, 1, 0.2));
         }));
@@ -124,12 +105,21 @@ export class ItemScene extends Scene {
         this.list.clear();
         for (let type of parentType.children) {
             this.list.add({
-                center: () => `${type}`
+                center: () => `${type}`,
+                groundColor: () => Color.D_GRAY,
             });
             for (let item of type.values().filter(item => item.num > 0)) {
+                const color = () => this.selectedItem === item ? Color.CYAN : Color.WHITE;
                 this.list.add({
-                    left: () => `${item.num < 99 ? item.num : 99}`,
+                    left: () => {
+                        if (item.consumable) {
+                            return `${item.num - item.usedNum}/${item.num}`;
+                        }
+                        return `${item.num}`;
+                    },
+                    leftColor: color,
                     right: () => `${item}`,
+                    rightColor: color,
                     push: (elm) => {
                         this.selectedItem = item;
                     },

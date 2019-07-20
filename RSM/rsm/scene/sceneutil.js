@@ -9,10 +9,10 @@ import { Input } from "../undym/input.js";
 import { ConditionType } from "../condition.js";
 import { EqPos } from "../eq.js";
 import { Font, Graphics } from "../graphics/graphics.js";
-export class DrawTop extends InnerLayout {
+export class DrawPlayInfo extends InnerLayout {
     static get ins() {
         return this._ins !== undefined ? this._ins
-            : (this._ins = new DrawTop());
+            : (this._ins = new DrawPlayInfo());
     }
     constructor() {
         super();
@@ -90,19 +90,19 @@ export class DrawSTBoxes extends InnerLayout {
         super();
         super.add(new Layout()
             .add((() => {
-            let y = new YLayout()
+            let x = new XLayout()
                 .setPixelMargin(2);
             for (let i = 0; i < len; i++) {
-                y.add(new Layout()
+                x.add(new Layout()
                     .add(new DrawSTBox(() => getUnit(i)))
                     .add(ILayout.createDraw((bounds) => {
                     getUnit(i).bounds = bounds;
                 })));
             }
-            return y;
+            return x;
         })())
             .add(ILayout.createCtrl((noUsed) => {
-            if (!Input.holding()) {
+            if (Input.holding() < 4) {
                 return;
             }
             for (let i = 0; i < len; i++) {
@@ -126,7 +126,7 @@ export class DrawUnitDetail extends InnerLayout {
         const font = Font.getDef();
         const getUnit = () => DrawUnitDetail.target;
         const frame = ILayout.createDraw((bounds) => {
-            Graphics.drawRect(bounds, Color.L_GRAY);
+            Graphics.fillRect(bounds, Color.D_GRAY);
         });
         const l = new Layout()
             .add(frame)
@@ -174,8 +174,7 @@ export class DrawUnitDetail extends InnerLayout {
             .add(new Label(font, () => `過:${getUnit().prm(Prm.PST).total()}`)))
             .add(new XLayout()
             .add(new Label(font, () => `銃:${getUnit().prm(Prm.GUN).total()}`))
-            .add(new Label(font, () => `弓:${getUnit().prm(Prm.ARR).total()}`)))
-            .add(new Label(font, () => `速度:${getUnit().prm(Prm.SPD).total()}`)))
+            .add(new Label(font, () => `弓:${getUnit().prm(Prm.ARR).total()}`))))
             .add((() => {
             let infoPos = EqPos.頭;
             let y = new YLayout();
@@ -197,12 +196,17 @@ export class DrawUnitDetail extends InnerLayout {
                 return getUnit().getEq(infoPos).info.join();
             }, () => Color.L_GRAY));
             return y;
-        })()));
+        })()))
+            .add(ILayout.createCtrl((bounds) => {
+            if (DrawUnitDetail.target && !Input.holding()) {
+                DrawUnitDetail.target = undefined;
+            }
+        }));
         super.add(new VariableLayout(() => {
             if (DrawUnitDetail.target !== undefined && DrawUnitDetail.target.exists) {
                 return l;
             }
-            return frame;
+            return ILayout.empty;
         }));
     }
 }

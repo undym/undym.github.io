@@ -54,7 +54,6 @@ Prm.CHN = new Prm("鎖");
 Prm.PST = new Prm("過");
 Prm.GUN = new Prm("銃");
 Prm.ARR = new Prm("弓");
-Prm.SPD = new Prm("速度");
 Prm.LV = new Prm("Lv");
 Prm.EXP = new Prm("Exp");
 export class Unit {
@@ -70,6 +69,8 @@ export class Unit {
         this.prmSets = new Map();
         this.equips = new Map();
         this.tecs = [];
+        /**戦闘時の技ページ。 */
+        this.tecPage = 0;
         // protected conditions = new Map<ConditionType,Condition>();
         this.conditions = [];
         this.bounds = Rect.ZERO;
@@ -125,11 +126,9 @@ export class Unit {
                 this.prm(Prm.EXP).base = 0;
                 Util.msg.set(`${this.name}はLv${this.prm(Prm.LV).base}になった`, Color.ORANGE.bright);
                 yield wait();
-                for (let grow of this.job.getGrowingPrm()) {
-                    let gPrm = grow[0];
-                    let gValue = grow[1];
-                    this.prm(gPrm).base += gValue;
-                    Util.msg.set(`[${gPrm}]+${gValue}`, Color.GREEN.bright);
+                for (let grow of this.job.getGrowthPrms()) {
+                    this.prm(grow.prm).base += grow.value;
+                    Util.msg.set(`[${grow.prm}]+${grow.value}`, Color.GREEN.bright);
                     yield wait();
                 }
             }
@@ -299,7 +298,7 @@ export class PUnit extends Unit {
             }
             const set = this.getJobLvSet(this.job);
             set.exp += value;
-            if (set.exp >= this.job.exp) {
+            if (set.exp >= this.job.lvupExp) {
                 set.lv += 1;
                 set.exp = 0;
                 Util.msg.set(`${this.name}の${this.job}Lvが${set.lv}になった`);

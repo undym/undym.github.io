@@ -1,10 +1,13 @@
 import { EUnit, Prm, Unit } from "./unit.js";
 import { ActiveTec, PassiveTec } from "./tec.js";
 export class Job {
-    constructor(name, appearLv, exp) {
-        this.toString = () => name;
-        this.appearLv = appearLv;
-        this.exp = exp;
+    constructor(args) {
+        this.toString = () => args.name;
+        this.appearLv = args.appearLv;
+        this.lvupExp = args.lvupExp;
+        this.getGrowthPrms = args.grow;
+        this.getLearningTecs = args.learn;
+        this.canJobChange = args.canJobChange;
         Job._values.push(this);
     }
     static values() { return this._values; }
@@ -16,7 +19,6 @@ export class Job {
         }
         return Job.しんまい;
     }
-    /**次のレベルに必要な値. */
     //------------------------------------------------------------------
     //
     //
@@ -53,7 +55,7 @@ export class Job {
     setEnemyInner(e) { }
 }
 Job._values = [];
-Job.DEF_MAX_EXP = 5;
+Job.DEF_LVUP_EXP = 5;
 //------------------------------------------------------------------
 //
 //
@@ -61,23 +63,27 @@ Job.DEF_MAX_EXP = 5;
 //------------------------------------------------------------------
 Job.しんまい = new class extends Job {
     constructor() {
-        super("しんまい", /*appearLv*/ 0, /*exp*/ Job.DEF_MAX_EXP);
-        this.getLearningTecs = () => [PassiveTec.HP自動回復, ActiveTec.二回殴る];
-        this.canJobChange = (p) => true;
-    }
-    getGrowingPrm() { return [[Prm.MAX_HP, 2]]; }
-    setEnemyInner(e) {
-        e.tecs = [ActiveTec.殴る];
+        super({ name: "しんまい",
+            appearLv: 0, lvupExp: Job.DEF_LVUP_EXP,
+            grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
+            learn: () => [PassiveTec.HP自動回復, ActiveTec.二回殴る],
+            canJobChange: (p) => true,
+        });
+        this.setEnemyInner = (e) => {
+            e.tecs = [ActiveTec.殴る];
+        };
     }
 };
 Job.魔法使い = new class extends Job {
     constructor() {
-        super("魔法使い", /*appearLv*/ 1, /*exp*/ Job.DEF_MAX_EXP * 1.5);
-        this.getLearningTecs = () => [ActiveTec.ヴァハ];
-        this.canJobChange = (p) => p.isMasteredJob(this);
-    }
-    getGrowingPrm() { return [[Prm.MAG, 1]]; }
-    setEnemyInner(e) {
-        e.tecs = [ActiveTec.ヴァハ, ActiveTec.ヴァハ, ActiveTec.殴る, ActiveTec.殴る, ActiveTec.殴る];
+        super({ name: "魔法使い",
+            appearLv: 1, lvupExp: Job.DEF_LVUP_EXP * 1.5,
+            grow: () => [{ prm: Prm.MAX_HP, value: 1 }],
+            learn: () => [ActiveTec.ヴァハ, PassiveTec.MP自動回復],
+            canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+        });
+        this.setEnemyInner = (e) => {
+            e.tecs = [ActiveTec.ヴァハ, ActiveTec.ヴァハ, ActiveTec.殴る, ActiveTec.殴る, ActiveTec.殴る];
+        };
     }
 };

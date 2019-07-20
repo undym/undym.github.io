@@ -9,6 +9,9 @@ export class Dungeon {
     //
     //-----------------------------------------------------------------
     constructor(name, rank, enemyLv, au) {
+        this.rank = rank;
+        this.enemyLv = enemyLv;
+        this.au = au;
         //-----------------------------------------------------------------
         //
         //
@@ -16,9 +19,6 @@ export class Dungeon {
         //-----------------------------------------------------------------
         this.clearNum = 0;
         this.toString = () => name;
-        this.rank = rank;
-        this.enemyLv = enemyLv;
-        this.au = au;
         Dungeon._values.push(this);
     }
     static values() {

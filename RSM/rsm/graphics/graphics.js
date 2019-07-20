@@ -106,6 +106,32 @@ export class Graphics {
         ctx.closePath();
         ctx.stroke();
     }
+    static clip(bounds, run) {
+        const ctx = this.texture.ctx;
+        ctx.save();
+        ctx.beginPath();
+        if (bounds.rect !== undefined) {
+            const rect = bounds.rect;
+            ctx.rect(rect.x, rect.y, rect.w, rect.h);
+        }
+        if (bounds.arc !== undefined) {
+            const arc = bounds.arc;
+            ctx.arc(arc.cx, arc.cy, arc.r, arc.startRad, arc.endRad);
+        }
+        // if(bounds.polygon !== undefined){
+        //     const polygon = bounds.polygon;
+        //     if(polygon.length > 0){
+        //         ctx.moveTo( polygon[0].x, polygon[0].y );
+        //         for(let i = 0; i < polygon.length; i++){
+        //             ctx.lineTo( polygon[i].x, polygon[i].y );
+        //         }
+        //     }
+        // }
+        ctx.closePath();
+        ctx.clip();
+        run();
+        ctx.restore();
+    }
     static get pixelW() { return this.texture.pixelW; }
     static get pixelH() { return this.texture.pixelH; }
 }
@@ -128,7 +154,9 @@ export class Font {
         return this.DEF !== undefined ? this.DEF : (this.DEF = new Font(18));
     }
     static createHTMLString(size, weight, name) {
-        return `${weight} ${size}px ${name}`;
+        //一度代入することにより、HTML側の表現を得る。
+        Graphics.getRenderTarget().ctx.font = `${weight} ${size}px ${name}`;
+        return Graphics.getRenderTarget().ctx.font;
     }
     draw(_str, point, color, base = Font.UPPER_LEFT) {
         const ctx = Graphics.getRenderTarget().ctx;
@@ -171,14 +199,20 @@ export class Font {
                 ctx.textAlign = "right";
                 break;
         }
-        ctx.font = this.toString();
+        if (ctx.font !== this.toString()) {
+            ctx.font = this.toString();
+        }
         ctx.fillText(_str, point.x * Graphics.pixelW, point.y * Graphics.pixelH);
     }
     // /**現在のRenderTargetのサイズを基準にしたもの。 */
     get ratioH() { return this.size / Graphics.pixelH; }
     measurePixelW(s) {
+        if (Graphics.getRenderTarget().ctx.font !== this.toString()) {
+            Graphics.getRenderTarget().ctx.font = this.toString();
+        }
         return Graphics.getRenderTarget().ctx.measureText(s).width;
     }
+    // /**現在のRenderTargetのサイズを基準にしたもの。 */
     measureRatioW(s) {
         return this.measurePixelW(s) / Graphics.pixelW;
     }

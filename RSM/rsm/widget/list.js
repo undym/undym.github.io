@@ -11,6 +11,16 @@ import { ILayout, YLayout, RatioLayout, XLayout } from "../undym/layout.js";
 import { Input } from "../undym/input.js";
 import { Btn } from "./btn.js";
 import { Graphics, Font } from "../graphics/graphics.js";
+// type Values = {
+//     left?:()=>string,
+//     leftColor?:()=>Color,
+//     center?:()=>string,
+//     centerColor?:()=>Color,
+//     right?:()=>string,
+//     rightColor?:()=>Color,
+//     push?:(elm:Elm)=>void,
+//     hold?:(elm:Elm)=>void,
+// };
 export class List extends ILayout {
     constructor(aPageElmNum = 7) {
         super();
@@ -85,44 +95,43 @@ export class List extends ILayout {
 class Elm extends ILayout {
     constructor(values) {
         super();
-        this.values = values;
+        this.push = values.push ? values.push : (elm) => { };
+        this.hold = values.hold ? values.hold : (elm) => { };
+        this.left = values.left;
+        this.leftColor = values.leftColor ? values.leftColor : () => Color.WHITE;
+        this.center = values.center;
+        this.centerColor = values.centerColor ? values.centerColor : () => Color.WHITE;
+        this.right = values.right;
+        this.rightColor = values.rightColor ? values.rightColor : () => Color.WHITE;
+        this.groundColor = values.groundColor ? values.groundColor : () => Color.BLACK;
+        this.frameColor = values.frameColor ? values.frameColor : () => Color.L_GRAY;
+        this.stringColor = values.stringColor ? values.stringColor : () => Color.WHITE;
         this.font = Font.getDef();
-        this.groundColor = () => Color.BLACK;
-        this.frameColor = () => Color.L_GRAY;
-        this.stringColor = () => Color.WHITE;
-        // if(values.hold !== undefined)   {this.hold = values.hold;}
-        // if(values.left !== undefined)   {this.left = values.left;}
-        // if(values.right !== undefined)  {this.right = values.right;}
-        // if(values.center !== undefined) {this.center = values.center;}
     }
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {
             if (Input.holding() > 4) {
-                if (this.values.hold !== undefined) {
-                    this.values.hold(this);
-                }
+                this.hold(this);
             }
             if (Input.pushed() && bounds.contains(Input.point)) {
-                if (this.values.push !== undefined) {
-                    this.values.push(this);
-                }
+                this.push(this);
             }
         });
     }
     drawInner(bounds) {
         Graphics.fillRect(bounds, this.groundColor());
         Graphics.drawRect(bounds, this.frameColor());
-        if (this.values.left !== undefined) {
-            const color = this.values.leftColor ? this.values.leftColor() : Color.WHITE;
-            this.font.draw(this.values.left(), bounds.left, color, Font.LEFT);
+        if (this.left !== undefined) {
+            const color = this.leftColor ? this.leftColor() : Color.WHITE;
+            this.font.draw(this.left(), bounds.left, color, Font.LEFT);
         }
-        if (this.values.right !== undefined) {
-            const color = this.values.rightColor ? this.values.rightColor() : Color.WHITE;
-            this.font.draw(this.values.right(), bounds.right, color, Font.RIGHT);
+        if (this.right !== undefined) {
+            const color = this.rightColor ? this.rightColor() : Color.WHITE;
+            this.font.draw(this.right(), bounds.right, color, Font.RIGHT);
         }
-        if (this.values.center !== undefined) {
-            const color = this.values.centerColor ? this.values.centerColor() : Color.WHITE;
-            this.font.draw(this.values.center(), bounds.center, color, Font.CENTER);
+        if (this.center !== undefined) {
+            const color = this.centerColor ? this.centerColor() : Color.WHITE;
+            this.font.draw(this.center(), bounds.center, color, Font.CENTER);
         }
     }
 }

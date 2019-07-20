@@ -1,12 +1,12 @@
 import { PUnit, Prm, Unit } from "./unit.js";
-import { ActiveTec } from "./tec.js";
+import { ActiveTec, PassiveTec } from "./tec.js";
 import { Job } from "./job.js";
 export class Player {
     constructor(name) {
         this.toString = () => name;
     }
     get ins() {
-        if (this._ins === undefined) {
+        if (!this._ins) {
             this._ins = this.create();
         }
         return this._ins;
@@ -41,7 +41,7 @@ Player.ルイン = new class extends Player {
         p.prm(Prm.STR).base = 3;
         p.tecs = [
             ActiveTec.殴る,
-            ActiveTec.二回殴る,
+            PassiveTec.HP自動回復,
         ];
     }
 };
@@ -54,7 +54,7 @@ Player.ピアー = new class extends Player {
         p.prm(Prm.MAG).base = 4;
         p.tecs = [
             ActiveTec.殴る,
-            ActiveTec.ヴァハ,
+            ActiveTec.マジカルパンチ,
         ];
     }
 };
