@@ -101,6 +101,7 @@ export class Point {
     }
 }
 Point.ZERO = new Point(0, 0);
+Point.ONE = new Point(1, 1);
 export class Rect {
     constructor(x, y, w, h) {
         this.x = x;

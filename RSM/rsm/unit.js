@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Player } from "./player.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
-import { Color, Rect, Point } from "./undym/type.js";
-import { ActiveTec, PassiveTec } from "./tec.js";
-import { Action, Targeting } from "./force.js";
+import { Color, Rect } from "./undym/type.js";
+import { Tec, ActiveTec, PassiveTec } from "./tec.js";
+import { Targeting } from "./force.js";
 import { Job } from "./job.js";
 import { FX_ShakeStr } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
@@ -77,7 +77,6 @@ export class Unit {
         for (let prm of Prm.values()) {
             this.prmSets.set(prm, new PrmSet());
         }
-        this.battleAction = [Action.empty, [this]];
         this.job = Job.しんまい;
         // for(let type of ConditionType.values()){
         //     this.conditionSets.set(type, {condition:Condition.empty, value:0});
@@ -118,23 +117,6 @@ export class Unit {
     //
     //
     //---------------------------------------------------------
-    addExp(exp) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.prm(Prm.EXP).base += exp;
-            if (this.prm(Prm.EXP).base >= this.getNextLvExp()) {
-                this.prm(Prm.LV).base++;
-                this.prm(Prm.EXP).base = 0;
-                Util.msg.set(`${this.name}はLv${this.prm(Prm.LV).base}になった`, Color.ORANGE.bright);
-                yield wait();
-                for (let grow of this.job.getGrowthPrms()) {
-                    this.prm(grow.prm).base += grow.value;
-                    Util.msg.set(`[${grow.prm}]+${grow.value}`, Color.GREEN.bright);
-                    yield wait();
-                }
-            }
-        });
-    }
-    getNextLvExp() { return Math.pow(this.prm(Prm.LV).base, 2) * 3; }
     //---------------------------------------------------------
     //
     //
@@ -142,31 +124,28 @@ export class Unit {
     //---------------------------------------------------------
     prm(p) { return this.prmSets.get(p); }
     get hp() { return this.prm(Prm.HP).base; }
-    set hp(value) { this.prm(Prm.HP).base = value; }
+    set hp(value) {
+        this.prm(Prm.HP).base = value;
+        this.fixPrm(Prm.HP, Prm.MAX_HP);
+    }
     get mp() { return this.prm(Prm.MP).base; }
-    set mp(value) { this.prm(Prm.MP).base = value; }
+    set mp(value) {
+        this.prm(Prm.MP).base = value;
+        this.fixPrm(Prm.MP, Prm.MAX_MP);
+    }
     get tp() { return this.prm(Prm.TP).base; }
-    set tp(value) { this.prm(Prm.TP).base = value; }
+    set tp(value) {
+        this.prm(Prm.TP).base = value;
+        this.fixPrm(Prm.TP, Prm.MAX_TP);
+    }
     get exp() { return this.prm(Prm.EXP).base; }
     set exp(value) { this.prm(Prm.EXP).base = value; }
-    fixPrm() {
-        if (this.hp < 0) {
-            this.hp = 0;
+    fixPrm(checkPrm, maxPrm) {
+        if (this.prm(checkPrm).base < 0) {
+            this.prm(checkPrm).base = 0;
         }
-        if (this.hp > this.prm(Prm.MAX_HP).total()) {
-            this.hp = this.prm(Prm.MAX_HP).total();
-        }
-        if (this.mp < 0) {
-            this.mp = 0;
-        }
-        if (this.mp > this.prm(Prm.MAX_MP).total()) {
-            this.mp = this.prm(Prm.MAX_MP).total();
-        }
-        if (this.tp < 0) {
-            this.tp = 0;
-        }
-        if (this.tp > this.prm(Prm.MAX_TP).total()) {
-            this.tp = this.prm(Prm.MAX_TP).total();
+        else if (this.prm(checkPrm).base > this.prm(maxPrm).total()) {
+            this.prm(checkPrm).base = this.prm(maxPrm).total();
         }
     }
     //---------------------------------------------------------
@@ -174,19 +153,27 @@ export class Unit {
     //
     //
     //---------------------------------------------------------
-    doDmg(value) {
+    doDmg(dmg) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.exists || this.dead) {
                 return;
             }
-            value = value | 0;
-            this.prm(Prm.HP).base -= value;
-            this.fixPrm();
-            let cx = this.bounds.cx + (1 / Graphics.pixelW) * 20 * (Math.random() * 2 - 1);
-            let cy = this.bounds.cy + (1 / Graphics.pixelH) * 20 * (Math.random() * 2 - 1);
-            FX_ShakeStr(new Font(30, Font.BOLD), `${value}`, new Point(cx, cy), Color.RED);
-            Util.msg.set(`${this.name}に${value}のダメージ`, Color.RED.bright);
-            yield wait();
+            const result = dmg.calc();
+            const p = {
+                x: this.bounds.cx + (1 / Graphics.pixelW) * 20 * (Math.random() * 2 - 1),
+                y: this.bounds.cy + (1 / Graphics.pixelH) * 20 * (Math.random() * 2 - 1),
+            };
+            if (result.isHit) {
+                this.hp -= result.value;
+                FX_ShakeStr(new Font(30, Font.BOLD), `${result.value}`, p, Color.RED);
+                Util.msg.set(`${this.name}に${result.value}のダメージ`, Color.RED.bright);
+                yield wait();
+            }
+            else {
+                FX_ShakeStr(new Font(30, Font.BOLD), `MISS`, p, Color.RED);
+                Util.msg.set("MISS");
+                yield wait();
+            }
         });
     }
     judgeDead() {
@@ -288,6 +275,28 @@ export class PUnit extends Unit {
     //
     //
     //---------------------------------------------------------
+    addExp(exp) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.prm(Prm.EXP).base += exp;
+            if (this.prm(Prm.EXP).base >= this.getNextLvExp()) {
+                this.prm(Prm.LV).base++;
+                this.prm(Prm.EXP).base = 0;
+                Util.msg.set(`${this.name}はLv${this.prm(Prm.LV).base}になった`, Color.ORANGE.bright);
+                yield wait();
+                const growHP = this.prm(Prm.LV).base / 100 + 1;
+                this.growPrm(Prm.MAX_HP, growHP | 0);
+                for (let grow of this.job.getGrowthPrms()) {
+                    this.growPrm(grow.prm, grow.value);
+                }
+            }
+        });
+    }
+    getNextLvExp() { return Math.pow(this.prm(Prm.LV).base, 2) * 3; }
+    //---------------------------------------------------------
+    //
+    //
+    //
+    //---------------------------------------------------------
     getJobLvSet(job) { return this.jobLvs.get(job); }
     setJobExp(job, exp) { this.getJobLvSet(job).exp = exp; }
     getJobExp(job) { return this.getJobLvSet(job).exp; }
@@ -301,8 +310,11 @@ export class PUnit extends Unit {
             if (set.exp >= this.job.lvupExp) {
                 set.lv += 1;
                 set.exp = 0;
-                Util.msg.set(`${this.name}の${this.job}Lvが${set.lv}になった`);
+                Util.msg.set(`${this.name}の${this.job}Lvが${set.lv}になった`, Color.ORANGE.bright);
                 yield wait();
+                for (let grow of this.job.getGrowthPrms()) {
+                    this.growPrm(grow.prm, grow.value);
+                }
                 const tecs = this.job.getLearningTecs();
                 const ratio = set.lv / this.job.getMaxLv();
                 for (let i = 0; i < tecs.length; i++) {
@@ -315,6 +327,13 @@ export class PUnit extends Unit {
                     this.setMasteredTec(tecs[i], true);
                     Util.msg.set(`[${tecs[i]}]を習得した！`, Color.GREEN.bright);
                     yield wait();
+                    //技スロットに空きがあれば覚えた技をセット
+                    for (let ei = 0; ei < this.tecs.length; ei++) {
+                        if (this.tecs[ei] === Tec.empty) {
+                            this.tecs[ei] = tecs[i];
+                            break;
+                        }
+                    }
                 }
                 if (set.lv >= this.job.getMaxLv()) {
                     Util.msg.set(`${this.job}を極めた！`, Color.ORANGE.bright);
@@ -333,6 +352,18 @@ export class PUnit extends Unit {
     //---------------------------------------------------------
     setMasteredTec(tec, b) { this.masteredTecs.set(tec, b); }
     isMasteredTec(tec) { return this.masteredTecs.get(tec); }
+    //---------------------------------------------------------
+    //
+    //
+    //
+    //---------------------------------------------------------
+    growPrm(prm, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.prm(prm).base += value;
+            Util.msg.set(`[${prm}]+${value}`, Color.GREEN.bright);
+            yield wait();
+        });
+    }
 }
 export class EUnit extends Unit {
     constructor() {

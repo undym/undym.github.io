@@ -6,7 +6,7 @@ import { Place, Util } from "../util.js";
 import { DrawSTBoxes, DrawUnitDetail, DrawDungeonData, DrawPlayInfo } from "./sceneutil.js";
 import { Img } from "../graphics/graphics.js";
 export default class DungeonScene extends Scene {
-    static get ins() { return this._ins != null ? this._ins : (this._ins = new DungeonScene()); }
+    static get ins() { return this._ins ? this._ins : (this._ins = new DungeonScene()); }
     constructor() {
         super();
         DungeonEvent.now = DungeonEvent.empty;
@@ -43,7 +43,7 @@ class DrawEvent extends InnerLayout {
             if (evBak != DungeonEvent.now) {
                 evBak = DungeonEvent.now;
                 img = evBak.getImg();
-                if (evBak.isImgZoom()) {
+                if (evBak.isZoomImg()) {
                     zoomCount = 0;
                 }
             }

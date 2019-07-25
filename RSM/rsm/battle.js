@@ -2,7 +2,6 @@ import { Unit } from "./unit.js";
 import { randomInt } from "./undym/random.js";
 export class Battle {
     constructor() { }
-    // static item:{use:boolean, item:Item|undefined} = {use:false, item:undefined};
     static getPhaseUnit() {
         return Unit.all[this.phase];
     }

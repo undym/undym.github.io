@@ -1,5 +1,6 @@
 export class Force {
-    static get empty() { return this._empty !== undefined ? this._empty : (this._empty = new Force()); }
+    // private static _empty:Force;
+    // static get empty():Force{return this._empty ? this._empty : (this._empty = new Force());}
     // equip(unit:Unit):void{}
     phaseStart(unit) { }
     beforeDoAtk(action, attacker, target, dmg) { }
@@ -8,6 +9,31 @@ export class Force {
     afterBeAtk(action, attacker, target, dmg) { }
 }
 export class Dmg {
+    constructor(args) {
+        /**calc()で出された結果のbak. */
+        this.result = { value: 0, isHit: false };
+        this.clear();
+        if (args) {
+            if (args.pow) {
+                this.pow.base = args.pow;
+            }
+            if (args.mul) {
+                this.pow.mul = args.mul;
+            }
+            if (args.hit) {
+                this.hit.base = args.hit;
+            }
+            if (args.def) {
+                this.def.base = args.def;
+            }
+            if (args.absPow) {
+                this.abs.base = args.absPow;
+            }
+            if (args.absMul) {
+                this.abs.mul = args.absMul;
+            }
+        }
+    }
     //0     1
     //60    0.85
     //300   0.55
@@ -16,50 +42,57 @@ export class Dmg {
     static calcDefCut(def) {
         return (3000.0 + def * 1) / (3000.0 + def * 10);
     }
-    constructor(args) {
-        this.clear();
-        if (args !== undefined) {
-            if (args.pow) {
-                this.pow = args.pow;
-            }
-            if (args.mul) {
-                this.mul = args.mul;
-            }
-            if (args.hit) {
-                this.hit = args.hit;
-            }
-            if (args.def) {
-                this.def = args.def;
-            }
-        }
+    static calcDmgElm(elm) {
+        const res = (elm.base + elm.add) * elm.mul;
+        return res > 0 ? res : 0;
     }
     clear() {
-        this.pow = 0;
-        this.def = 0;
-        this.mul = 1;
-        this.hit = 1.0;
-        this.result = 0;
-        this.resultHit = false;
+        this.pow = {
+            base: 0,
+            add: 0,
+            mul: 1,
+        };
+        this.def = {
+            base: 0,
+            add: 0,
+            mul: 1,
+        };
+        this.hit = {
+            base: 1,
+            add: 0,
+            mul: 1,
+        };
+        this.abs = {
+            base: 0,
+            add: 0,
+            mul: 1,
+        };
+        this.result.value = 0;
+        this.result.isHit = false;
     }
     calc() {
-        let res = 0;
-        this.resultHit = Math.random() < this.hit;
-        if (this.resultHit) {
-            res = this.pow * this.mul * Dmg.calcDefCut(this.def);
+        const _pow = Dmg.calcDmgElm(this.pow);
+        const _def = Dmg.calcDmgElm(this.def);
+        const _hit = Dmg.calcDmgElm(this.hit);
+        const _abs = Dmg.calcDmgElm(this.abs);
+        let value = 0;
+        let isHit = Math.random() < _hit;
+        if (isHit) {
+            value = _pow * Dmg.calcDefCut(_def);
         }
         else {
-            res = 0;
+            value = 0;
         }
-        return (this.result = res < 0 ? 0 : res | 0);
+        if (_abs > 0) {
+            isHit = true;
+            value += _abs;
+        }
+        this.result.value = value > 0 ? value | 0 : 0;
+        this.result.isHit = isHit;
+        return this.result;
     }
 }
 export class Action {
-    static get empty() {
-        return this._empty !== undefined ? this._empty
-            : (this._empty = new class extends Action {
-                use(attacker, targets) { }
-            });
-    }
 }
 export class Targeting {
     static filter(targetings, attacker, targets) {

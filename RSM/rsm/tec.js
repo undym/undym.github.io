@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Prm } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
-import { Dmg, Targeting } from "./force.js";
+import { Force, Dmg, Targeting } from "./force.js";
 import { Condition } from "./condition.js";
 import { Color } from "./undym/type.js";
 export class TecType {
@@ -47,14 +47,16 @@ TecType.その他 = new class extends TecType {
     createDmg(attacker, target) { return new Dmg(); }
     ;
 };
-export class PassiveTec {
-    constructor(args) {
-        this.uniqueName = args.uniqueName;
-        this.info = args.info;
-        this.type = args.type;
-        PassiveTec._values.push(this);
+export class Tec extends Force {
+    static get empty() {
+        return this._empty ? this._empty : (this._empty = new class extends Tec {
+            constructor() {
+                super();
+                this.info = [];
+                this.type = TecType.格闘;
+            }
+        });
     }
-    static values() { return this._values; }
     //--------------------------------------------------------------------------
     //
     //Force
@@ -65,17 +67,40 @@ export class PassiveTec {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
-    //--------------------------------------------------------------------------
-    //
-    //
-    //
-    //--------------------------------------------------------------------------
-    toString() { return this.uniqueName; }
+}
+export class PassiveTec extends Tec {
+    constructor(args) {
+        super();
+        this.uniqueName = args.uniqueName;
+        this.toString = () => this.uniqueName;
+        this.info = args.info;
+        this.type = args.type;
+        PassiveTec._values.push(this);
+    }
+    static values() { return this._values; }
 }
 PassiveTec._values = [];
 //--------------------------------------------------------------------------
 //
+//格闘
 //
+//--------------------------------------------------------------------------
+PassiveTec.格闘攻撃UP = new class extends PassiveTec {
+    constructor() {
+        super({ uniqueName: "格闘攻撃UP", info: ["格闘攻撃x1.2"],
+            type: TecType.格闘,
+        });
+    }
+    beforeDoAtk(action, attacker, target, dmg) {
+        if (action instanceof ActiveTec && action.type === TecType.格闘) {
+            dmg.pow.add += 1;
+            dmg.pow.mul *= 1.2;
+        }
+    }
+};
+//--------------------------------------------------------------------------
+//
+//回復
 //
 //--------------------------------------------------------------------------
 PassiveTec.HP自動回復 = new class extends PassiveTec {
@@ -87,7 +112,6 @@ PassiveTec.HP自動回復 = new class extends PassiveTec {
     phaseStart(unit) {
         const value = (unit.prm(Prm.MAX_HP).total() * 0.01) | 0;
         unit.hp += value;
-        unit.fixPrm();
     }
 };
 PassiveTec.MP自動回復 = new class extends PassiveTec {
@@ -99,16 +123,16 @@ PassiveTec.MP自動回復 = new class extends PassiveTec {
     phaseStart(unit) {
         const value = 10;
         unit.mp += value;
-        unit.fixPrm();
     }
 };
-export class ActiveTec {
+export class ActiveTec extends Tec {
     //--------------------------------------------------------------------------
     //
     //
     //
     //--------------------------------------------------------------------------
     constructor(args) {
+        super();
         this.uniqueName = args.uniqueName;
         this.info = args.info;
         this.type = args.type;
@@ -183,13 +207,13 @@ export class ActiveTec {
     }
     runInner(attacker, target, dmg) {
         return __awaiter(this, void 0, void 0, function* () {
-            let value = dmg.calc();
-            yield target.doDmg(value);
+            yield target.doDmg(dmg);
         });
     }
     createDmg(attacker, target) {
         let dmg = this.type.createDmg(attacker, target);
-        dmg.hit = this.hit;
+        dmg.pow.mul = this.mul;
+        dmg.hit.base = this.hit;
         return dmg;
     }
     toString() { return this.uniqueName; }
@@ -226,6 +250,27 @@ ActiveTec.大いなる動き = new class extends ActiveTec {
         });
     }
 };
+ActiveTec.人狼剣 = new class extends ActiveTec {
+    constructor() {
+        super({ uniqueName: "人狼剣", info: ["一体に自分の力値分のダメージを与える"],
+            type: TecType.格闘, targetings: Targeting.SELECT,
+            mul: 1, num: 1, hit: 1,
+            tp: 10,
+        });
+    }
+    createDmg(attacker, target) {
+        return new Dmg({ absPow: attacker.prm(Prm.STR).total() });
+    }
+};
+ActiveTec.閻魔の笏 = new class extends ActiveTec {
+    constructor() {
+        super({ uniqueName: "閻魔の笏", info: ["一体に5回格闘攻撃"],
+            type: TecType.格闘, targetings: Targeting.SELECT,
+            mul: 1, num: 5, hit: 1,
+            tp: 100,
+        });
+    }
+};
 ActiveTec.マジカルパンチ = new class extends ActiveTec {
     constructor() {
         super({ uniqueName: "マジカルパンチ", info: ["マジカル格闘攻撃"],
@@ -236,7 +281,7 @@ ActiveTec.マジカルパンチ = new class extends ActiveTec {
     }
     createDmg(attacker, target) {
         let dmg = super.createDmg(attacker, target);
-        dmg.pow = attacker.prm(Prm.MAG).total();
+        dmg.pow.base = attacker.prm(Prm.MAG).total();
         return dmg;
     }
 };

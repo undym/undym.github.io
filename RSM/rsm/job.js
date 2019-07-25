@@ -2,7 +2,8 @@ import { EUnit, Prm, Unit } from "./unit.js";
 import { ActiveTec, PassiveTec } from "./tec.js";
 export class Job {
     constructor(args) {
-        this.toString = () => args.name;
+        this.uniqueName = args.uniqueName;
+        this.toString = () => this.uniqueName;
         this.appearLv = args.appearLv;
         this.lvupExp = args.lvupExp;
         this.getGrowthPrms = args.grow;
@@ -63,22 +64,35 @@ Job.DEF_LVUP_EXP = 5;
 //------------------------------------------------------------------
 Job.しんまい = new class extends Job {
     constructor() {
-        super({ name: "しんまい",
+        super({ uniqueName: "しんまい",
             appearLv: 0, lvupExp: Job.DEF_LVUP_EXP,
             grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
-            learn: () => [PassiveTec.HP自動回復, ActiveTec.二回殴る],
+            learn: () => [PassiveTec.HP自動回復, ActiveTec.二回殴る, ActiveTec.大いなる動き],
             canJobChange: (p) => true,
         });
         this.setEnemyInner = (e) => {
-            e.tecs = [ActiveTec.殴る];
+            e.tecs = [ActiveTec.殴る, ActiveTec.殴る, ActiveTec.殴る, ActiveTec.殴る, ActiveTec.練気];
+        };
+    }
+};
+Job.剣士 = new class extends Job {
+    constructor() {
+        super({ uniqueName: "剣士",
+            appearLv: 1, lvupExp: Job.DEF_LVUP_EXP,
+            grow: () => [{ prm: Prm.STR, value: 1 }],
+            learn: () => [PassiveTec.格闘攻撃UP, ActiveTec.人狼剣, ActiveTec.閻魔の笏],
+            canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+        });
+        this.setEnemyInner = (e) => {
+            e.tecs = [ActiveTec.殴る, ActiveTec.殴る, ActiveTec.殴る, ActiveTec.二回殴る, ActiveTec.人狼剣];
         };
     }
 };
 Job.魔法使い = new class extends Job {
     constructor() {
-        super({ name: "魔法使い",
-            appearLv: 1, lvupExp: Job.DEF_LVUP_EXP * 1.5,
-            grow: () => [{ prm: Prm.MAX_HP, value: 1 }],
+        super({ uniqueName: "魔法使い",
+            appearLv: 1, lvupExp: Job.DEF_LVUP_EXP,
+            grow: () => [{ prm: Prm.MAG, value: 1 }],
             learn: () => [ActiveTec.ヴァハ, PassiveTec.MP自動回復],
             canJobChange: (p) => p.isMasteredJob(Job.しんまい),
         });

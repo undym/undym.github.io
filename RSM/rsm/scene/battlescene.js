@@ -13,10 +13,10 @@ import { VariableLayout, ILayout, Layout, FlowLayout } from "../undym/layout.js"
 import { Rect, Color } from "../undym/type.js";
 import { Unit, PUnit, Prm } from "../unit.js";
 import { Battle, BattleResult, BattleType } from "../battle.js";
-import { ActiveTec, PassiveTec } from "../tec.js";
+import { Tec, ActiveTec, PassiveTec } from "../tec.js";
 import { Input } from "../undym/input.js";
 import { Btn } from "../widget/btn.js";
-import { Targeting, Action } from "../force.js";
+import { Targeting } from "../force.js";
 import { ItemScene } from "./itemscene.js";
 import { Font, Graphics } from "../graphics/graphics.js";
 export class BattleScene extends Scene {
@@ -25,17 +25,17 @@ export class BattleScene extends Scene {
         this.tecInfo = { tec: undefined, user: Unit.players[0] };
         this.btnSpace = new Layout();
     }
-    static get ins() { return this._ins != null ? this._ins : (this._ins = new BattleScene()); }
+    static get ins() { return this._ins ? this._ins : (this._ins = new BattleScene()); }
     init() {
         super.clear();
         super.add(Place.DUNGEON_DATA, new VariableLayout(() => {
-            if (this.tecInfo.tec === undefined) {
+            if (!this.tecInfo.tec || this.tecInfo.tec === Tec.empty) {
                 return DrawDungeonData.ins;
             }
             return ILayout.empty;
         }));
         super.add(Place.DUNGEON_DATA, ILayout.createDraw((bounds) => {
-            if (this.tecInfo.tec === undefined) {
+            if (!this.tecInfo.tec || this.tecInfo.tec === Tec.empty) {
                 return;
             }
             const tec = this.tecInfo.tec;
@@ -77,6 +77,7 @@ export class BattleScene extends Scene {
         super.add(Rect.FULL, ILayout.createCtrl((noUsed) => __awaiter(this, void 0, void 0, function* () {
             if (Battle.start) {
                 Battle.start = false;
+                this.btnSpace.clear();
                 yield this.phaseEnd();
                 return;
             }
@@ -109,7 +110,6 @@ export class BattleScene extends Scene {
             Util.msg.set(`${attacker.name}`, Color.ORANGE);
             Util.msg.add(`の行動`);
             attacker.prm(Prm.TP).base += 10;
-            attacker.fixPrm();
             attacker.phaseStart();
             if (attacker instanceof PUnit) {
                 this.setPlayerPhase(attacker);
@@ -150,8 +150,10 @@ export class BattleScene extends Scene {
                 }
             }
             else if (tec instanceof PassiveTec) {
-                btn = new Btn(tec.toString(), () => {
+                btn = new Btn(`-${tec}-`, () => {
                 });
+                btn.groundColor = () => Color.D_GRAY;
+                btn.stringColor = () => Color.L_GRAY;
             }
             else {
                 return ILayout.empty;
@@ -230,9 +232,13 @@ export class BattleScene extends Scene {
                 l.add(ILayout.empty);
                 return;
             }
-            l.add(new Btn(unit.name, () => {
+            const btn = new Btn(unit.name, () => {
                 chooseAction([unit]);
-            }));
+            });
+            if (unit.dead) {
+                btn.groundColor = () => Color.D_RED;
+            }
+            l.add(btn);
         };
         for (let e of Unit.enemies) {
             addBtn(e);
@@ -240,7 +246,6 @@ export class BattleScene extends Scene {
         for (let p of Unit.players) {
             addBtn(p);
         }
-        l.addFromLast(ILayout.empty);
         l.addFromLast(new Btn("<<", () => {
             Util.msg.set("＞キャンセル");
             this.setPlayerPhase(attacker);
@@ -304,8 +309,5 @@ const lose = () => __awaiter(this, void 0, void 0, function* () {
 const finish = () => __awaiter(this, void 0, void 0, function* () {
     for (let e of Unit.enemies) {
         e.exists = false;
-    }
-    for (let u of Unit.all) {
-        u.battleAction = [Action.empty, []];
     }
 });

@@ -46,8 +46,8 @@ export class Item {
         this.totalGetNum = 0;
         /**そのダンジョン内で使用した数. */
         this.usedNum = 0;
-        const name = args.name;
-        this.toString = () => name;
+        this.uniqueName = args.uniqueName;
+        this.toString = () => this.uniqueName;
         this.info = args.info;
         this.itemType = args.type;
         this.rank = args.rank;
@@ -61,26 +61,64 @@ export class Item {
         else {
             this.consumable = false;
         }
+        if (args.use) {
+            this.useInner = args.use;
+        }
         Item._values.push(this);
+        if (Item._rankValues[this.rank] === undefined) {
+            Item._rankValues[this.rank] = [];
+        }
+        Item._rankValues[this.rank].push(this);
     }
     static values() {
         return this._values;
     }
+    static rankValues(rank) {
+        return this._rankValues[rank];
+    }
     static consumableValues() {
         return this._consumableValues;
     }
-    static rndBoxItem(rank) {
+    /**
+     * 宝箱から出る指定ランクのアイテムを返す。そのランクにアイテムが存在しなければランクを一つ下げて再帰する。
+     * @param rank
+     */
+    static rndBoxRankItem(rank) {
+        const values = this.rankValues(rank);
+        if (!values) {
+            if (rank <= 0) {
+                return Item.石;
+            }
+            return this.rndBoxRankItem(rank - 1);
+        }
         for (let i = 0; i < 7; i++) {
-            let tmp = choice(Item.values());
+            let tmp = choice(values);
             if (tmp.box && tmp.rank <= rank && tmp.num < tmp.numLimit) {
                 return tmp;
             }
         }
         return Item.石;
     }
+    static fluctuateRank(baseRank, passProbability = 0.3) {
+        let add = 0;
+        while (Math.random() <= passProbability) {
+            add++;
+        }
+        if (Math.random() <= 0.5) {
+            return baseRank + add;
+        }
+        else {
+            const res = baseRank - add;
+            return res >= 0 ? res : 0;
+        }
+    }
     add(v) {
         if (this.num + v > this.numLimit) {
             v = this.numLimit - this.num;
+            if (v <= 0) {
+                Util.msg.set(`[${this}]はこれ以上入手できない`, Color.L_GRAY);
+                return;
+            }
         }
         const newItem = this.totalGetNum === 0;
         if (newItem) {
@@ -103,7 +141,7 @@ export class Item {
             if (!this.canUse()) {
                 return;
             }
-            if (this.num <= 0 || this.usedNum > this.num) {
+            if (this.num <= 0 || this.usedNum >= this.num) {
                 return;
             }
             for (let t of targets) {
@@ -128,6 +166,7 @@ export class Item {
     }
 }
 Item._values = [];
+Item._rankValues = {};
 Item._consumableValues = [];
 Item.DEF_NUM_LIMIT = 9999;
 //-----------------------------------------------------------------
@@ -137,11 +176,11 @@ Item.DEF_NUM_LIMIT = 9999;
 //-----------------------------------------------------------------
 Item.スティックパン = new class extends Item {
     constructor() {
-        super({ name: "スティックパン", info: ["HP+10"],
+        super({ uniqueName: "スティックパン", info: ["HP+10"],
             type: ItemType.HP回復, rank: 0, box: false,
             numLimit: 5, consumable: true,
+            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, 10); }),
         });
-        this.useInner = (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, 10); });
     }
 };
 //-----------------------------------------------------------------
@@ -151,11 +190,11 @@ Item.スティックパン = new class extends Item {
 //-----------------------------------------------------------------
 Item.水 = new class extends Item {
     constructor() {
-        super({ name: "水", info: ["MP+20%"],
+        super({ uniqueName: "水", info: ["MP+20%"],
             type: ItemType.MP回復, rank: 0, box: false,
             numLimit: 5, consumable: true,
+            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 20); }),
         });
-        this.useInner = (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 20); });
     }
 };
 //-----------------------------------------------------------------
@@ -165,41 +204,47 @@ Item.水 = new class extends Item {
 //-----------------------------------------------------------------
 Item.石 = new class extends Item {
     constructor() {
-        super({ name: "石", info: ["いし"],
+        super({ uniqueName: "石", info: ["いし"],
             type: ItemType.素材, rank: 0, box: true });
     }
 };
 Item.枝 = new class extends Item {
     constructor() {
-        super({ name: "枝", info: ["えだ"],
+        super({ uniqueName: "枝", info: ["えだ"],
             type: ItemType.素材, rank: 0, box: true });
     }
 };
 Item.土 = new class extends Item {
     constructor() {
-        super({ name: "土", info: ["つち"],
+        super({ uniqueName: "土", info: ["つち"],
             type: ItemType.素材, rank: 0, box: true });
     }
 };
 Item.He = new class extends Item {
     constructor() {
-        super({ name: "He", info: ["ヘェッ"],
+        super({ uniqueName: "He", info: ["ヘェッ"],
             type: ItemType.素材, rank: 2, box: true });
     }
 };
+class ItemFont {
+    static get font() {
+        if (!this._font) {
+            this._font = new Font(30, Font.BOLD);
+        }
+        return this._font;
+    }
+}
 const healHP = (target, value) => __awaiter(this, void 0, void 0, function* () {
     value = value | 0;
     target.hp += value;
-    target.fixPrm();
-    FX_Str(new Font(30, Font.BOLD), `${value}`, target.bounds.center, Color.GREEN);
+    FX_Str(ItemFont.font, `${value}`, target.bounds.center, Color.GREEN);
     Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
     yield wait();
 });
 const healMP = (target, value) => __awaiter(this, void 0, void 0, function* () {
     value = value | 0;
     target.mp += value;
-    target.fixPrm();
-    FX_Str(new Font(30, Font.BOLD), `${value}`, target.bounds.center, Color.PINK);
+    FX_Str(ItemFont.font, `${value}`, target.bounds.center, Color.PINK);
     Util.msg.set(`${target.name}のMPが${value}回復した`, Color.GREEN.bright);
     yield wait();
 });

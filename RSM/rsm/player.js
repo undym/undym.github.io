@@ -1,9 +1,13 @@
 import { PUnit, Prm, Unit } from "./unit.js";
-import { ActiveTec, PassiveTec } from "./tec.js";
+import { Tec, ActiveTec, PassiveTec } from "./tec.js";
 import { Job } from "./job.js";
 export class Player {
-    constructor(name) {
-        this.toString = () => name;
+    constructor(uniqueName) {
+        this.uniqueName = uniqueName;
+        this.toString = () => this.uniqueName;
+    }
+    static valueOf(uniqueName) {
+        return this._valueOf[uniqueName];
     }
     get ins() {
         if (!this._ins) {
@@ -27,6 +31,7 @@ export class Player {
         return res;
     }
 }
+Player._valueOf = {};
 Player.empty = new class extends Player {
     constructor() { super(""); }
     createInner(p) {
@@ -42,6 +47,8 @@ Player.ルイン = new class extends Player {
         p.tecs = [
             ActiveTec.殴る,
             PassiveTec.HP自動回復,
+            Tec.empty,
+            Tec.empty,
         ];
     }
 };
@@ -51,10 +58,12 @@ Player.ピアー = new class extends Player {
         p.job = Job.魔法使い;
         p.prm(Prm.MAX_HP).base = 20;
         p.prm(Prm.STR).base = 2;
-        p.prm(Prm.MAG).base = 4;
+        p.prm(Prm.MAG).base = 6;
         p.tecs = [
             ActiveTec.殴る,
             ActiveTec.マジカルパンチ,
+            Tec.empty,
+            Tec.empty,
         ];
     }
 };

@@ -46,3 +46,4 @@ export class PlayData {
     constructor() { }
 }
 PlayData.yen = 0;
+PlayData.jobChangeBtnIsVisible = false;

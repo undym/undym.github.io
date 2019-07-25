@@ -33,7 +33,7 @@ class DrawEvent extends InnerLayout {
             if (evBak != DungeonEvent.now) {
                 evBak = DungeonEvent.now;
                 img = evBak.getImg();
-                if (evBak.isImgZoom()) {
+                if (evBak.isZoomImg()) {
                     zoomCount = 0;
                 }
             }

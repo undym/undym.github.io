@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Scene } from "../undym/scene.js";
 import { ILayout, VariableLayout, FlowLayout } from "../undym/layout.js";
-import { Place, Util } from "../util.js";
+import { Place, Util, PlayData } from "../util.js";
 import { Btn } from "../widget/btn.js";
 import { Dungeon } from "../dungeon/dungeon.js";
 import { Color } from "../undym/type.js";
@@ -23,7 +23,7 @@ import { Item } from "../item.js";
 let choosedDungeon;
 let visibleDungeonEnterBtn = false;
 export class FieldScene extends Scene {
-    static get ins() { return this._ins != null ? this._ins : (this._ins = new FieldScene()); }
+    static get ins() { return this._ins ? this._ins : (this._ins = new FieldScene()); }
     constructor() {
         super();
     }
@@ -33,37 +33,6 @@ export class FieldScene extends Scene {
         super.add(Place.MSG, Util.msg);
         FieldBtn.reset();
         super.add(Place.BTN, new VariableLayout(() => FieldBtn.ins));
-        // super.add(Place.BTN, 
-        //     new YLayout()
-        //         .add(new Btn("ダンジョン",()=>{
-        //         }))
-        //         .add(new Btn(";技のセット",()=>{
-        //         }))
-        //         .add(new Btn(";職業",()=>{
-        //         }))
-        //         .add(new Btn("アイテム", async()=>{
-        //             Scene.load( ItemScene.ins({
-        //                 selectUser:true,
-        //                 user:Unit.players[0],
-        //                 use:async(item,user)=>{
-        //                     if(item.targetings & Targeting.SELECT){
-        //                         await item.use( user, [user] );
-        //                     }else{
-        //                         let targets = Targeting.filter( item.targetings, user, Unit.players );
-        //                         if(targets.length > 0){
-        //                             await item.use( user, targets );
-        //                         }
-        //                     }
-        //                 },
-        //                 returnScene:()=>{
-        //                    Scene.load( FieldScene.ins );
-        //                 }, 
-        //             }));
-        //         }))
-        //         .add(new Btn("OPTION",async()=>{
-        //             Scene.load(OptionScene.ins);
-        //         }))
-        // );
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
         //----------------------------------------------------
@@ -84,10 +53,12 @@ class FieldBtn {
         l.add(new Btn("ダンジョン", () => {
             this.setDungeonBtn();
         }));
-        l.add(new Btn("技のセット", () => {
-        }));
-        l.add(new Btn(";職業", () => {
-        }));
+        if (PlayData.jobChangeBtnIsVisible) {
+            l.add(new Btn("職業", () => {
+            }));
+            l.add(new Btn("技のセット", () => {
+            }));
+        }
         l.add(new Btn("アイテム", () => {
             Scene.load(ItemScene.ins({
                 selectUser: true,
@@ -138,6 +109,9 @@ class FieldBtn {
             }
         }
         const pageLim = (visibleDungeons.length - 1) / onePageDrawDungeonNum;
+        l.addFromLast(new Btn(() => "<<", () => {
+            this.reset();
+        }));
         const enter = new Btn("侵入", () => {
             if (choosedDungeon === undefined) {
                 return;
@@ -152,9 +126,6 @@ class FieldBtn {
         });
         l.addFromLast(new VariableLayout(() => {
             return visibleDungeonEnterBtn ? enter : ILayout.empty;
-        }));
-        l.addFromLast(new Btn(() => "<<", () => {
-            this.reset();
         }));
         const toNewer = new Btn(">", () => {
             this.dungeonPage++;

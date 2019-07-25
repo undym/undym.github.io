@@ -89,7 +89,7 @@ export class Condition {
                     if (action instanceof ActiveTec && action.type === TecType.格闘) {
                         Util.msg.set("＞練");
                         yield wait();
-                        dmg.mul *= (1 + this.value * 0.5);
+                        dmg.pow.mul *= (1 + this.value * 0.5);
                         this.reduceValue(attacker);
                     }
                 });
@@ -109,7 +109,7 @@ export class Condition {
                     if (action instanceof ActiveTec && action.type === TecType.格闘) {
                         Util.msg.set("＞盾");
                         yield wait();
-                        dmg.mul /= (1 + this.value * 0.5);
+                        dmg.pow.mul /= (1 + this.value * 0.5);
                         this.reduceValue(target);
                     }
                 });

@@ -106,6 +106,22 @@ export class Graphics {
         ctx.closePath();
         ctx.stroke();
     }
+    static fillPolygon(points, color) {
+        if (points.length === 0) {
+            return;
+        }
+        const ctx = this.texture.ctx;
+        const w = this.texture.pixelW;
+        const h = this.texture.pixelH;
+        ctx.fillStyle = toHTMLColorString(color);
+        ctx.beginPath();
+        ctx.moveTo(points[0].x * w, points[0].y * h);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x * w, points[i].y * h);
+        }
+        ctx.closePath();
+        ctx.stroke();
+    }
     static clip(bounds, run) {
         const ctx = this.texture.ctx;
         ctx.save();
@@ -118,15 +134,15 @@ export class Graphics {
             const arc = bounds.arc;
             ctx.arc(arc.cx, arc.cy, arc.r, arc.startRad, arc.endRad);
         }
-        // if(bounds.polygon !== undefined){
-        //     const polygon = bounds.polygon;
-        //     if(polygon.length > 0){
-        //         ctx.moveTo( polygon[0].x, polygon[0].y );
-        //         for(let i = 0; i < polygon.length; i++){
-        //             ctx.lineTo( polygon[i].x, polygon[i].y );
-        //         }
-        //     }
-        // }
+        if (bounds.polygon !== undefined) {
+            const polygon = bounds.polygon;
+            if (polygon.length > 0) {
+                ctx.moveTo(polygon[0].x, polygon[0].y);
+                for (let i = 0; i < polygon.length; i++) {
+                    ctx.lineTo(polygon[i].x, polygon[i].y);
+                }
+            }
+        }
         ctx.closePath();
         ctx.clip();
         run();

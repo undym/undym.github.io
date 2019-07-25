@@ -68,6 +68,8 @@ export class Dungeon {
     setBoss() {
         for (let e of Unit.enemies) {
             this.setEnemyInner(e);
+            e.prm(Prm.MAX_HP).base *= 3;
+            e.hp = e.prm(Prm.MAX_HP).total();
         }
         this.setBossInner();
         for (let e of Unit.enemies) {

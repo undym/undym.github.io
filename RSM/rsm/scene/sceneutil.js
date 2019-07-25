@@ -55,14 +55,8 @@ class DrawSTBox extends InnerLayout {
             .setPixelMargin(4)
             .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total(), () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}%`, () => Color.D_RED.bright(), font))
             .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total(), () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}%`, () => Color.D_CYAN.bright(), font)))
-            //good_conditions
-            .add(new Label(font, () => ConditionType.goodConditions()
-            .map(type => getUnit().getCondition(type).toString())
-            .join(""), () => Color.CYAN))
-            //bad_conditions
-            .add(new Label(font, () => ConditionType.badConditions()
-            .map(type => getUnit().getCondition(type).toString())
-            .join(""), () => Color.RED))
+            .add(createConditionLabel(font, getUnit, ConditionType.goodConditions(), Color.CYAN))
+            .add(createConditionLabel(font, getUnit, ConditionType.badConditions(), Color.RED))
             .add(ILayout.empty))
             .add(ILayout.createDraw((bounds) => {
             if (getUnit().dead) {
@@ -142,17 +136,21 @@ export class DrawUnitDetail extends InnerLayout {
             .setPixelMargin(4)
             .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total(), () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}%`, () => Color.D_RED.bright(), font))
             .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total(), () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}%`, () => Color.D_CYAN.bright(), font)))
-            .add(new Label(font, () => "")) //good_conditions
-            .add(new Label(font, () => "")) //bad_conditions
+            .add(createConditionLabel(font, getUnit, ConditionType.goodConditions(), Color.CYAN))
+            .add(createConditionLabel(font, getUnit, ConditionType.badConditions(), Color.RED))
             .add(ILayout.empty)
             .add(ILayout.empty))
             .add(new YLayout()
             .add(new Label(font, () => {
-            const nextLvExp = getUnit().getNextLvExp();
-            let percent = nextLvExp === 0
-                ? 0
-                : Math.floor(100 * getUnit().prm(Prm.EXP).base / getUnit().getNextLvExp());
-            return `EXP:${percent}%`;
+            const unit = getUnit();
+            if (unit instanceof PUnit) {
+                const nextLvExp = unit.getNextLvExp();
+                let percent = nextLvExp === 0
+                    ? 0
+                    : Math.floor(100 * getUnit().prm(Prm.EXP).base / unit.getNextLvExp());
+                return `EXP:${percent}%`;
+            }
+            return "EXP:-";
         }))
             .add(new Label(font, () => {
             let u = getUnit();
@@ -210,3 +208,18 @@ export class DrawUnitDetail extends InnerLayout {
         }));
     }
 }
+const createConditionLabel = (font, unit, types, color) => {
+    return new Label(font, () => types
+        .map(type => unit().getCondition(type).toString())
+        .filter(name => name != "")
+        .map(name => `<${name}>`)
+        .join(""), () => color);
+};
+// const createConditionsString = (unit:Unit, types:ReadonlyArray<ConditionType>)=>{
+//     return types
+//             .map(type=> unit.getCondition(type).toString())
+//             .filter(name=> name != "")
+//             .map(name=> `<${name}>`)
+//             .join("")
+//             ;
+// }

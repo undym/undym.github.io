@@ -17,6 +17,7 @@ import { Player } from "./player.js";
 import { Rect, Color } from "./undym/type.js";
 import { Page } from "./undym/page.js";
 import { Graphics, Texture } from "./graphics/graphics.js";
+import { Item } from "./item.js";
 window.onload = () => {
     console.log("start");
     Page.init();
@@ -57,5 +58,7 @@ const newGame = () => {
     //test
     Unit.setPlayer(0, Player.ルイン.ins);
     Unit.setPlayer(1, Player.ピアー.ins);
+    Item.スティックパン.num = 5;
+    Item.スティックパン.totalGetNum = Item.スティックパン.num;
     DungeonArea.now = DungeonArea.再構成トンネル;
 };

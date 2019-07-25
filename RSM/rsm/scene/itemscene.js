@@ -18,12 +18,12 @@ import { ItemParentType } from "../item.js";
 import { Input } from "../undym/input.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 export class ItemScene extends Scene {
-    static ins(actions) {
-        this._ins != null ? this._ins : (this._ins = new ItemScene());
-        this._ins.selectUser = actions.selectUser;
-        this._ins.user = actions.user;
-        this._ins.use = actions.use;
-        this._ins.returnScene = actions.returnScene;
+    static ins(args) {
+        this._ins ? this._ins : (this._ins = new ItemScene());
+        this._ins.selectUser = args.selectUser;
+        this._ins.user = args.user;
+        this._ins.use = args.use;
+        this._ins.returnScene = args.returnScene;
         return this._ins;
     }
     constructor() {
@@ -62,21 +62,19 @@ export class ItemScene extends Scene {
                     this.setList(type);
                 }));
             }
-            {
-                const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
-                    yield this.use(this.selectedItem, this.user);
-                }));
-                const cantUse = new Btn(() => "使用", () => { });
-                cantUse.stringColor = () => Color.GRAY;
-                l.addFromLast(new VariableLayout(() => {
-                    if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
-                        return cantUse;
-                    }
-                    return canUse;
-                }));
-            }
             l.addFromLast(new Btn("<<", () => {
                 this.returnScene();
+            }));
+            const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
+                yield this.use(this.selectedItem, this.user);
+            }));
+            const cantUse = new Btn(() => "使用", () => { });
+            cantUse.stringColor = () => Color.GRAY;
+            l.addFromLast(new VariableLayout(() => {
+                if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
+                    return cantUse;
+                }
+                return canUse;
             }));
             return l;
         })());
