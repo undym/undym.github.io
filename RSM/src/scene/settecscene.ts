@@ -67,10 +67,6 @@ export class SetTecScene extends Scene{
                             }else{
                                 movedP();
                             }
-                            // font.draw("成長ステータス:", movedP(), Color.WHITE);
-                            // for(let set of job.getGrowthPrms()){
-                            //     font.draw(` [${set.prm}]+${set.value}`, movedP(), Color.WHITE);
-                            // }
                 
                             for(let s of tec.info){
                                 font.draw(s, movedP(), Color.WHITE);
@@ -80,12 +76,10 @@ export class SetTecScene extends Scene{
                             const otherBtns = ["settingList", "set", "<<"];
                             const w = 2;
                             const h = (otherBtns.length + TecType.values().length) / w;
-                            // const h = (otherBtns.length + 1) / w + (TecType.values().length + 1) / w;
                             const l = new FlowLayout(w,h);
                             
                             for(let type of TecType.values()){
                                 l.add(new Btn(`${type}`, ()=>{
-                                    this.list.clear(/*keepPage*/false);
                                     this.setList( this.target, u=> type.tecs.filter(t=> u.isMasteredTec(t)) );
                                 }));
                             }
