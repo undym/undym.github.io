@@ -218,7 +218,7 @@ class AdvanceBtn {
         return this._ins;
     }
 }
-AdvanceBtn.index = 2;
+AdvanceBtn.index = 0;
 class ReturnBtn {
     static get ins() {
         if (!this._ins) {
@@ -240,7 +240,7 @@ ReturnBtn.index = 1;
 class ItemBtn {
     static get ins() {
         if (!this._ins) {
-            this._ins = new Btn(() => ";ITEM", () => __awaiter(this, void 0, void 0, function* () {
+            this._ins = new Btn(() => "アイテム", () => __awaiter(this, void 0, void 0, function* () {
                 Scene.load(ItemScene.ins({
                     selectUser: true,
                     user: Unit.players[0],
@@ -264,4 +264,4 @@ class ItemBtn {
         return this._ins;
     }
 }
-ItemBtn.index = 0;
+ItemBtn.index = 2;

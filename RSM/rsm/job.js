@@ -3,6 +3,7 @@ import { ActiveTec, PassiveTec } from "./tec.js";
 export class Job {
     constructor(args) {
         this.uniqueName = args.uniqueName;
+        this.info = args.info;
         this.toString = () => this.uniqueName;
         this.appearLv = args.appearLv;
         this.lvupExp = args.lvupExp;
@@ -64,7 +65,7 @@ Job.DEF_LVUP_EXP = 5;
 //------------------------------------------------------------------
 Job.しんまい = new class extends Job {
     constructor() {
-        super({ uniqueName: "しんまい",
+        super({ uniqueName: "しんまい", info: ["しごとのはじまり"],
             appearLv: 0, lvupExp: Job.DEF_LVUP_EXP,
             grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
             learn: () => [PassiveTec.HP自動回復, ActiveTec.二回殴る, ActiveTec.大いなる動き],
@@ -77,7 +78,7 @@ Job.しんまい = new class extends Job {
 };
 Job.剣士 = new class extends Job {
     constructor() {
-        super({ uniqueName: "剣士",
+        super({ uniqueName: "剣士", info: ["格闘攻撃を扱う職業"],
             appearLv: 1, lvupExp: Job.DEF_LVUP_EXP,
             grow: () => [{ prm: Prm.STR, value: 1 }],
             learn: () => [PassiveTec.格闘攻撃UP, ActiveTec.人狼剣, ActiveTec.閻魔の笏],
@@ -90,7 +91,7 @@ Job.剣士 = new class extends Job {
 };
 Job.魔法使い = new class extends Job {
     constructor() {
-        super({ uniqueName: "魔法使い",
+        super({ uniqueName: "魔法使い", info: ["魔法攻撃を扱う職業"],
             appearLv: 1, lvupExp: Job.DEF_LVUP_EXP,
             grow: () => [{ prm: Prm.MAG, value: 1 }],
             learn: () => [ActiveTec.ヴァハ, PassiveTec.MP自動回復],

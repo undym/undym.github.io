@@ -16,6 +16,8 @@ import { List } from "../widget/list.js";
 import { FXTest } from "../fx/fx.js";
 import { Item } from "../item.js";
 import { Graphics } from "../graphics/graphics.js";
+import { ActiveTec, PassiveTec } from "../tec.js";
+import { Player } from "../player.js";
 export const createOptionBtn = () => {
     const w = 4;
     const h = 3;
@@ -46,6 +48,17 @@ const setDebugBtn = (l) => {
             item.num = item.numLimit;
         }
         Util.msg.set("GetAllItems");
+    }));
+    l.add(new Btn("TecMaster", () => {
+        for (let p of Player.values()) {
+            for (let tec of ActiveTec.values()) {
+                p.ins.setMasteredTec(tec, true);
+            }
+            for (let tec of PassiveTec.values()) {
+                p.ins.setMasteredTec(tec, true);
+            }
+        }
+        Util.msg.set("WeAreMaster!!");
     }));
     l.add(new Btn("EffectTest", () => {
         Scene.load(new EffectTest());
@@ -111,18 +124,18 @@ class EffectTest extends Scene {
             let list = new List();
             _super.clear.call(this);
             _super.add.call(this, new Rect(0, 0.1, 0.2, 0.8), list);
-            _super.add.call(this, Rect.FULL, ILayout.createDraw((bounds) => {
-                {
-                    let w = 5 / Graphics.pixelW;
-                    let h = 5 / Graphics.pixelH;
-                    Graphics.fillRect(new Rect(FXTest.attacker.x - w / 2, FXTest.attacker.y - h / 2, w, h), Color.RED);
-                }
-                {
-                    let w = 5 / Graphics.pixelW;
-                    let h = 5 / Graphics.pixelH;
-                    Graphics.fillRect(new Rect(FXTest.target.x - w / 2, FXTest.target.y - h / 2, w, h), Color.CYAN);
-                }
-            }));
+            _super.add.call(this, Rect.FULL, ILayout.create({ draw: (bounds) => {
+                    {
+                        let w = 5 / Graphics.pixelW;
+                        let h = 5 / Graphics.pixelH;
+                        Graphics.fillRect(new Rect(FXTest.attacker.x - w / 2, FXTest.attacker.y - h / 2, w, h), Color.RED);
+                    }
+                    {
+                        let w = 5 / Graphics.pixelW;
+                        let h = 5 / Graphics.pixelH;
+                        Graphics.fillRect(new Rect(FXTest.target.x - w / 2, FXTest.target.y - h / 2, w, h), Color.CYAN);
+                    }
+                } }));
             _super.add.call(this, new Rect(0.8, 0.8, 0.2, 0.2), new Btn(() => "<-", () => {
                 Scene.load(FieldScene.ins);
             }));

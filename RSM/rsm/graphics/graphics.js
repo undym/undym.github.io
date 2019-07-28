@@ -63,6 +63,15 @@ export class Img {
         const h = Graphics.getRenderTarget().canvas.height;
         ctx.drawImage(this.image, /*sx*/ src.x * this.image.width, /*sy*/ src.y * this.image.height, /*sw*/ src.w * this.image.width, /*sh*/ src.h * this.image.height, /*dx*/ dst.x * w, /*dy*/ dst.y * h, /*dw*/ dst.w * w, /*dh*/ dst.h * h);
     }
+    loaded() { return this.loadComplete; }
+    /**読み込みが完了するまでは0を返す。 */
+    get pixelW() { return this.image.width; }
+    /**読み込みが完了するまでは0を返す。 */
+    get pixelH() { return this.image.height; }
+    /**現在のRenderTargetを基準としたサイズ比を返す。 */
+    get ratioW() { return this.image.width / Graphics.getRenderTarget().pixelW; }
+    /**現在のRenderTargetを基準としたサイズ比を返す。 */
+    get ratioH() { return this.image.height / Graphics.getRenderTarget().pixelH; }
 }
 export class Graphics {
     constructor() { }
@@ -148,6 +157,20 @@ export class Graphics {
         run();
         ctx.restore();
     }
+    static rotate(rad, center, run) {
+        const ctx = this.texture.ctx;
+        const pw = center.x * this.pixelW;
+        const ph = center.y * this.pixelH;
+        ctx.beginPath();
+        ctx.translate(pw, ph);
+        ctx.rotate(rad);
+        ctx.closePath();
+        run();
+        ctx.beginPath();
+        ctx.rotate(-rad);
+        ctx.translate(-pw, -ph);
+        ctx.closePath();
+    }
     static get pixelW() { return this.texture.pixelW; }
     static get pixelH() { return this.texture.pixelH; }
 }
@@ -167,7 +190,7 @@ export class Font {
         this.toString = () => htmlString;
     }
     static getDef() {
-        return this.DEF !== undefined ? this.DEF : (this.DEF = new Font(18));
+        return this.DEF !== undefined ? this.DEF : (this.DEF = new Font(25));
     }
     static createHTMLString(size, weight, name) {
         //一度代入することにより、HTML側の表現を得る。

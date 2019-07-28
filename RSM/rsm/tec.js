@@ -13,9 +13,24 @@ import { Force, Dmg, Targeting } from "./force.js";
 import { Condition } from "./condition.js";
 import { Color } from "./undym/type.js";
 export class TecType {
-    constructor() { }
+    constructor(name) {
+        this.toString = () => name;
+        TecType._values.push(this);
+    }
+    static values() { return this._values; }
+    get tecs() {
+        if (!this._tecs) {
+            let actives = ActiveTec.values().filter(tec => tec.type === this);
+            let passives = PassiveTec.values().filter(tec => tec.type === this);
+            let tmp = [];
+            this._tecs = tmp.concat(actives, passives);
+        }
+        return this._tecs;
+    }
 }
+TecType._values = [];
 TecType.格闘 = new class extends TecType {
+    constructor() { super("格闘"); }
     createDmg(attacker, target) {
         return new Dmg({
             pow: attacker.prm(Prm.STR).total(),
@@ -26,6 +41,7 @@ TecType.格闘 = new class extends TecType {
     ;
 };
 TecType.魔法 = new class extends TecType {
+    constructor() { super("魔法"); }
     createDmg(attacker, target) {
         return new Dmg({
             pow: attacker.prm(Prm.MAG).total(),
@@ -35,15 +51,84 @@ TecType.魔法 = new class extends TecType {
     }
     ;
 };
+TecType.神格 = new class extends TecType {
+    constructor() { super("神格"); }
+    createDmg(attacker, target) {
+        return new Dmg({
+            pow: attacker.prm(Prm.LIG).total(),
+            def: target.prm(Prm.DRK).total(),
+        });
+        ;
+    }
+    ;
+};
+TecType.暗黒 = new class extends TecType {
+    constructor() { super("暗黒"); }
+    createDmg(attacker, target) {
+        return new Dmg({
+            pow: attacker.prm(Prm.DRK).total(),
+            def: target.prm(Prm.LIG).total(),
+        });
+        ;
+    }
+    ;
+};
+TecType.練術 = new class extends TecType {
+    constructor() { super("練術"); }
+    createDmg(attacker, target) {
+        return new Dmg({
+            pow: attacker.prm(Prm.CHN).total(),
+            def: target.prm(Prm.PST).total(),
+        });
+        ;
+    }
+    ;
+};
+TecType.過去 = new class extends TecType {
+    constructor() { super("過去"); }
+    createDmg(attacker, target) {
+        return new Dmg({
+            pow: attacker.prm(Prm.PST).total(),
+            def: target.prm(Prm.CHN).total(),
+        });
+        ;
+    }
+    ;
+};
+TecType.銃術 = new class extends TecType {
+    constructor() { super("銃術"); }
+    createDmg(attacker, target) {
+        return new Dmg({
+            pow: attacker.prm(Prm.GUN).total(),
+            def: target.prm(Prm.ARR).total(),
+        });
+        ;
+    }
+    ;
+};
+TecType.弓術 = new class extends TecType {
+    constructor() { super("弓術"); }
+    createDmg(attacker, target) {
+        return new Dmg({
+            pow: attacker.prm(Prm.ARR).total(),
+            def: target.prm(Prm.GUN).total(),
+        });
+        ;
+    }
+    ;
+};
 TecType.強化 = new class extends TecType {
+    constructor() { super("強化"); }
     createDmg(attacker, target) { return new Dmg(); }
     ;
 };
 TecType.回復 = new class extends TecType {
+    constructor() { super("回復"); }
     createDmg(attacker, target) { return new Dmg(); }
     ;
 };
 TecType.その他 = new class extends TecType {
+    constructor() { super("その他"); }
     createDmg(attacker, target) { return new Dmg(); }
     ;
 };

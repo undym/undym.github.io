@@ -51,9 +51,12 @@ export class List extends ILayout {
             this.update = true;
         })));
     }
-    clear() {
+    clear(keepPage = false) {
         this.elms = [];
         this.update = true;
+        if (!keepPage) {
+            this.page = 0;
+        }
     }
     // add(left:()=>string, right:()=>string, push:()=>void, hold?:()=>void){
     //     if(hold === undefined){hold = ()=>{};}

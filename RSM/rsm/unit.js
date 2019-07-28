@@ -7,13 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Player } from "./player.js";
-import { Util } from "./util.js";
+import { Util, PlayData } from "./util.js";
 import { wait } from "./undym/scene.js";
 import { Color, Rect } from "./undym/type.js";
 import { Tec, ActiveTec, PassiveTec } from "./tec.js";
 import { Targeting } from "./force.js";
 import { Job } from "./job.js";
-import { FX_ShakeStr } from "./fx/fx.js";
+import { FX_RotateStr } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos } from "./eq.js";
 import { choice } from "./undym/random.js";
@@ -91,9 +91,11 @@ export class Unit {
     static init() {
         let player_num = 4;
         let enemy_num = 4;
+        this._players = [];
         for (let i = 0; i < player_num; i++) {
             this._players.push(Player.empty.ins);
         }
+        this._enemies = [];
         for (let i = 0; i < enemy_num; i++) {
             this._enemies.push(new EUnit());
         }
@@ -102,6 +104,15 @@ export class Unit {
     static setPlayer(index, p) {
         this._players[index] = p;
         this.resetAll();
+    }
+    /** */
+    static getFirstPlayer() {
+        for (let p of this._players) {
+            if (p.exists) {
+                return p;
+            }
+        }
+        return this._players[0];
     }
     static resetAll() {
         this._all = [];
@@ -165,12 +176,12 @@ export class Unit {
             };
             if (result.isHit) {
                 this.hp -= result.value;
-                FX_ShakeStr(new Font(30, Font.BOLD), `${result.value}`, p, Color.RED);
+                FX_RotateStr(new Font(30, Font.BOLD), `${result.value}`, p, Color.RED);
                 Util.msg.set(`${this.name}に${result.value}のダメージ`, Color.RED.bright);
                 yield wait();
             }
             else {
-                FX_ShakeStr(new Font(30, Font.BOLD), `MISS`, p, Color.RED);
+                FX_RotateStr(new Font(30, Font.BOLD), `MISS`, p, Color.RED);
                 Util.msg.set("MISS");
                 yield wait();
             }
@@ -249,9 +260,6 @@ export class Unit {
 }
 Unit.DEF_MAX_MP = 100;
 Unit.DEF_MAX_TP = 100;
-Unit._players = [];
-Unit._enemies = [];
-Unit._all = [];
 export class PUnit extends Unit {
     // private jobExps = new Map<Job,number>();
     constructor(player) {
@@ -338,6 +346,7 @@ export class PUnit extends Unit {
                 if (set.lv >= this.job.getMaxLv()) {
                     Util.msg.set(`${this.job}を極めた！`, Color.ORANGE.bright);
                     yield wait();
+                    PlayData.jobChangeBtnIsVisible = true;
                 }
             }
         });
@@ -351,7 +360,10 @@ export class PUnit extends Unit {
     //
     //---------------------------------------------------------
     setMasteredTec(tec, b) { this.masteredTecs.set(tec, b); }
-    isMasteredTec(tec) { return this.masteredTecs.get(tec); }
+    isMasteredTec(tec) {
+        const b = this.masteredTecs.get(tec);
+        return b === undefined ? false : b;
+    }
     //---------------------------------------------------------
     //
     //

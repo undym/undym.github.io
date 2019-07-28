@@ -39,18 +39,30 @@ class DrawEvent extends InnerLayout {
         let evBak = DungeonEvent.now;
         let img = Img.empty;
         let zoomCount = 0;
-        super.add(ILayout.createDraw((bounds) => {
-            if (evBak != DungeonEvent.now) {
-                evBak = DungeonEvent.now;
-                img = evBak.getImg();
-                if (evBak.isZoomImg()) {
-                    zoomCount = 0;
+        super.add(ILayout.create({ draw: (bounds) => {
+                if (evBak != DungeonEvent.now) {
+                    evBak = DungeonEvent.now;
+                    img = evBak.getImg();
+                    if (evBak.isZoomImg()) {
+                        zoomCount = 0;
+                    }
                 }
-            }
-            zoomCount++;
-            const base = bounds.w < bounds.h ? bounds.w : bounds.h;
-            const size = base * zoomCount / (zoomCount + 1);
-            img.draw(new Rect(bounds.cx - size / 2, bounds.cy - size / 2, size, size));
-        }));
+                zoomCount++;
+                if (!img.loaded) {
+                    return;
+                }
+                let sizeW = 0;
+                let sizeH = 0;
+                const zoom = zoomCount / (zoomCount + 1);
+                if (bounds.w < bounds.h) {
+                    sizeW = bounds.w * zoom;
+                    sizeH = bounds.w * zoom * img.pixelH / img.pixelW;
+                }
+                else {
+                    sizeW = bounds.h * zoom * img.pixelW / img.pixelH;
+                    sizeH = bounds.h * zoom;
+                }
+                img.draw(new Rect(bounds.cx - sizeW / 2, bounds.cy - sizeH / 2, sizeW, sizeH));
+            } }));
     }
 }

@@ -26,32 +26,20 @@ export class ILayout {
         }
         return this._empty;
     }
-    static create(_ctrl, _draw) {
+    static create(args) {
         return new class extends ILayout {
             ctrlInner(bounds) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    yield _ctrl(bounds);
+                    if (args.ctrl) {
+                        yield args.ctrl(bounds);
+                    }
                 });
             }
             drawInner(bounds) {
-                _draw(bounds);
+                if (args.draw) {
+                    args.draw(bounds);
+                }
             }
-        };
-    }
-    static createCtrl(_ctrl) {
-        return new class extends ILayout {
-            ctrlInner(bounds) {
-                return __awaiter(this, void 0, void 0, function* () { yield _ctrl(bounds); });
-            }
-            drawInner(bounds) { }
-        };
-    }
-    static createDraw(_draw) {
-        return new class extends ILayout {
-            ctrlInner(bounds) {
-                return __awaiter(this, void 0, void 0, function* () { });
-            }
-            drawInner(bounds) { _draw(bounds); }
         };
     }
     setOutsideRatioMargin(top, right, bottom, left) {

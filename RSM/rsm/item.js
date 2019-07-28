@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Util } from "./util.js";
 import { Color } from "./undym/type.js";
 import { wait } from "./undym/scene.js";
-import { FX_Str } from "./fx/fx.js";
+import { FX_RotateStr } from "./fx/fx.js";
 import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
@@ -237,14 +237,14 @@ class ItemFont {
 const healHP = (target, value) => __awaiter(this, void 0, void 0, function* () {
     value = value | 0;
     target.hp += value;
-    FX_Str(ItemFont.font, `${value}`, target.bounds.center, Color.GREEN);
+    FX_RotateStr(ItemFont.font, `${value}`, target.bounds.center, Color.GREEN);
     Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
     yield wait();
 });
 const healMP = (target, value) => __awaiter(this, void 0, void 0, function* () {
     value = value | 0;
     target.mp += value;
-    FX_Str(ItemFont.font, `${value}`, target.bounds.center, Color.PINK);
+    FX_RotateStr(ItemFont.font, `${value}`, target.bounds.center, Color.PINK);
     Util.msg.set(`${target.name}のMPが${value}回復した`, Color.GREEN.bright);
     yield wait();
 });

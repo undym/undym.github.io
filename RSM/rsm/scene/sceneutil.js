@@ -39,10 +39,10 @@ export class DrawDungeonData extends InnerLayout {
 class DrawSTBox extends InnerLayout {
     constructor(getUnit) {
         super();
-        const font = new Font(14);
-        const frame = ILayout.createDraw((bounds) => {
-            Graphics.drawRect(bounds, Color.L_GRAY);
-        });
+        const font = new Font(20);
+        const frame = ILayout.create({ draw: (bounds) => {
+                Graphics.drawRect(bounds, Color.L_GRAY);
+            } });
         const l = new Layout()
             .add(frame)
             .add(new YLayout()
@@ -58,11 +58,11 @@ class DrawSTBox extends InnerLayout {
             .add(createConditionLabel(font, getUnit, ConditionType.goodConditions(), Color.CYAN))
             .add(createConditionLabel(font, getUnit, ConditionType.badConditions(), Color.RED))
             .add(ILayout.empty))
-            .add(ILayout.createDraw((bounds) => {
-            if (getUnit().dead) {
-                Graphics.fillRect(bounds, new Color(1, 0, 0, 0.2));
-            }
-        }));
+            .add(ILayout.create({ draw: (bounds) => {
+                if (getUnit().dead) {
+                    Graphics.fillRect(bounds, new Color(1, 0, 0, 0.2));
+                }
+            } }));
         super.add(new VariableLayout(() => {
             if (getUnit().exists) {
                 return l;
@@ -89,28 +89,28 @@ export class DrawSTBoxes extends InnerLayout {
             for (let i = 0; i < len; i++) {
                 x.add(new Layout()
                     .add(new DrawSTBox(() => getUnit(i)))
-                    .add(ILayout.createDraw((bounds) => {
-                    getUnit(i).bounds = bounds;
-                })));
+                    .add(ILayout.create({ draw: (bounds) => {
+                        getUnit(i).bounds = bounds;
+                    } })));
             }
             return x;
         })())
-            .add(ILayout.createCtrl((noUsed) => {
-            if (Input.holding() < 4) {
-                return;
-            }
-            for (let i = 0; i < len; i++) {
-                const u = getUnit(i);
-                if (!u.exists) {
-                    continue;
+            .add(ILayout.create({ ctrl: (noUsed) => {
+                if (Input.holding() < 4) {
+                    return;
                 }
-                if (!u.bounds.contains(Input.point)) {
-                    continue;
+                for (let i = 0; i < len; i++) {
+                    const u = getUnit(i);
+                    if (!u.exists) {
+                        continue;
+                    }
+                    if (!u.bounds.contains(Input.point)) {
+                        continue;
+                    }
+                    DrawUnitDetail.target = u;
+                    break;
                 }
-                DrawUnitDetail.target = u;
-                break;
-            }
-        })));
+            } })));
     }
 }
 export class DrawUnitDetail extends InnerLayout {
@@ -119,9 +119,9 @@ export class DrawUnitDetail extends InnerLayout {
         super();
         const font = Font.getDef();
         const getUnit = () => DrawUnitDetail.target;
-        const frame = ILayout.createDraw((bounds) => {
-            Graphics.fillRect(bounds, Color.D_GRAY);
-        });
+        const frame = ILayout.create({ draw: (bounds) => {
+                Graphics.fillRect(bounds, Color.D_GRAY);
+            } });
         const l = new Layout()
             .add(frame)
             .add(new XLayout()
@@ -178,28 +178,28 @@ export class DrawUnitDetail extends InnerLayout {
             let y = new YLayout();
             for (let pos of EqPos.values()) {
                 y.add(new Layout()
-                    .add(ILayout.createDraw((bounds) => {
-                    if (pos === infoPos) {
-                        Graphics.fillRect(bounds, Color.YELLOW.darker().darker());
-                    }
-                }))
+                    .add(ILayout.create({ draw: (bounds) => {
+                        if (pos === infoPos) {
+                            Graphics.fillRect(bounds, Color.YELLOW.darker().darker());
+                        }
+                    } }))
                     .add(new Label(font, () => `${pos}:${getUnit().getEq(pos)}`))
-                    .add(ILayout.createCtrl((bounds) => {
-                    if (Input.holding() > 0 && bounds.contains(Input.point)) {
-                        infoPos = pos;
-                    }
-                })));
+                    .add(ILayout.create({ ctrl: (bounds) => {
+                        if (Input.holding() > 0 && bounds.contains(Input.point)) {
+                            infoPos = pos;
+                        }
+                    } })));
             }
             y.add(new Label(font, () => {
                 return getUnit().getEq(infoPos).info.join();
             }, () => Color.L_GRAY));
             return y;
         })()))
-            .add(ILayout.createCtrl((bounds) => {
-            if (DrawUnitDetail.target && !Input.holding()) {
-                DrawUnitDetail.target = undefined;
-            }
-        }));
+            .add(ILayout.create({ ctrl: (bounds) => {
+                if (DrawUnitDetail.target && !Input.holding()) {
+                    DrawUnitDetail.target = undefined;
+                }
+            } }));
         super.add(new VariableLayout(() => {
             if (DrawUnitDetail.target !== undefined && DrawUnitDetail.target.exists) {
                 return l;

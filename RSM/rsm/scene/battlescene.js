@@ -19,11 +19,12 @@ import { Btn } from "../widget/btn.js";
 import { Targeting } from "../force.js";
 import { ItemScene } from "./itemscene.js";
 import { Font, Graphics } from "../graphics/graphics.js";
+let btnSpace;
 export class BattleScene extends Scene {
     constructor() {
         super();
         this.tecInfo = { tec: undefined, user: Unit.players[0] };
-        this.btnSpace = new Layout();
+        btnSpace = new Layout();
     }
     static get ins() { return this._ins ? this._ins : (this._ins = new BattleScene()); }
     init() {
@@ -34,54 +35,53 @@ export class BattleScene extends Scene {
             }
             return ILayout.empty;
         }));
-        super.add(Place.DUNGEON_DATA, ILayout.createDraw((bounds) => {
-            if (!this.tecInfo.tec || this.tecInfo.tec === Tec.empty) {
-                return;
-            }
-            const tec = this.tecInfo.tec;
-            const f = Font.getDef();
-            let p = bounds.upperLeft;
-            f.draw(`[${tec}]`, p, Color.GREEN);
-            p = p.move(0, f.ratioH);
-            if (tec instanceof ActiveTec) {
-                let mpW = 0;
-                const user = this.tecInfo.user;
-                if (tec.mpCost > 0) {
-                    let col = tec.mpCost <= user.prm(Prm.MP).base ? Color.WHITE : Color.GRAY;
-                    const s = `MP:${tec.mpCost} `;
-                    mpW = f.measureRatioW(s);
-                    f.draw(s, p, col);
+        super.add(Place.DUNGEON_DATA, ILayout.create({ draw: (bounds) => {
+                if (!this.tecInfo.tec || this.tecInfo.tec === Tec.empty) {
+                    return;
                 }
-                if (tec.tpCost > 0) {
-                    let col = tec.tpCost <= user.prm(Prm.TP).base ? Color.WHITE : Color.GRAY;
-                    f.draw(`TP:${tec.tpCost}`, p.move(mpW, 0), col);
+                const tec = this.tecInfo.tec;
+                const f = Font.getDef();
+                let p = bounds.upperLeft;
+                f.draw(`[${tec}]`, p, Color.GREEN);
+                p = p.move(0, f.ratioH);
+                if (tec instanceof ActiveTec) {
+                    let mpW = 0;
+                    const user = this.tecInfo.user;
+                    if (tec.mpCost > 0) {
+                        let col = tec.mpCost <= user.prm(Prm.MP).base ? Color.WHITE : Color.GRAY;
+                        const s = `MP:${tec.mpCost} `;
+                        mpW = f.measureRatioW(s);
+                        f.draw(s, p, col);
+                    }
+                    if (tec.tpCost > 0) {
+                        let col = tec.tpCost <= user.prm(Prm.TP).base ? Color.WHITE : Color.GRAY;
+                        f.draw(`TP:${tec.tpCost}`, p.move(mpW, 0), col);
+                    }
                 }
-            }
-            else {
-            }
-            for (let s of tec.info) {
-                f.draw(s, p = p.move(0, f.ratioH), Color.WHITE);
-            }
-        }));
+                else {
+                }
+                for (let s of tec.info) {
+                    f.draw(s, p = p.move(0, f.ratioH), Color.WHITE);
+                }
+            } }));
         super.add(Place.MSG, Util.msg);
-        super.add(Place.BTN, this.btnSpace);
+        super.add(Place.BTN, btnSpace);
         super.add(Place.E_BOX, DrawSTBoxes.enemies);
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
-        super.add(Rect.FULL, ILayout.createDraw((noUsed) => {
-            if (!Battle.getPhaseUnit().exists) {
-                return;
-            }
-            Graphics.fillRect(Battle.getPhaseUnit().bounds, new Color(0, 1, 1, 0.2));
-        }));
-        super.add(Rect.FULL, ILayout.createCtrl((noUsed) => __awaiter(this, void 0, void 0, function* () {
-            if (Battle.start) {
-                Battle.start = false;
-                this.btnSpace.clear();
-                yield this.phaseEnd();
-                return;
-            }
-        })));
+        super.add(Rect.FULL, ILayout.create({ draw: (noUsed) => {
+                if (!Battle.getPhaseUnit().exists) {
+                    return;
+                }
+                Graphics.fillRect(Battle.getPhaseUnit().bounds, new Color(0, 1, 1, 0.2));
+            } }));
+        super.add(Rect.FULL, ILayout.create({ ctrl: (noUsed) => __awaiter(this, void 0, void 0, function* () {
+                if (Battle.start) {
+                    Battle.start = false;
+                    yield this.phaseEnd();
+                    return;
+                }
+            }) }));
     }
     phaseEnd() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -160,12 +160,12 @@ export class BattleScene extends Scene {
             }
             return new Layout()
                 .add(btn)
-                .add(ILayout.createCtrl((bounds) => {
-                if (bounds.contains(Input.point) && Input.holding() >= 4) {
-                    this.tecInfo.tec = tec;
-                    this.tecInfo.user = attacker;
-                }
-            }));
+                .add(ILayout.create({ ctrl: (bounds) => {
+                    if (bounds.contains(Input.point) && Input.holding() >= 4) {
+                        this.tecInfo.tec = tec;
+                        this.tecInfo.user = attacker;
+                    }
+                } }));
         };
         const w = 4;
         const h = 3;
@@ -222,8 +222,8 @@ export class BattleScene extends Scene {
         l.addFromLast(new VariableLayout(() => {
             return attacker.tecPage > 0 ? olderTecPage : ILayout.empty;
         }));
-        this.btnSpace.clear();
-        this.btnSpace.add(l);
+        btnSpace.clear();
+        btnSpace.add(l);
     }
     setChooseTargetBtn(attacker, chooseAction) {
         const l = new FlowLayout(4, 3);
@@ -250,8 +250,8 @@ export class BattleScene extends Scene {
             Util.msg.set("＞キャンセル");
             this.setPlayerPhase(attacker);
         }));
-        this.btnSpace.clear();
-        this.btnSpace.add(l);
+        btnSpace.clear();
+        btnSpace.add(l);
     }
 }
 const win = () => __awaiter(this, void 0, void 0, function* () {
@@ -285,11 +285,6 @@ const win = () => __awaiter(this, void 0, void 0, function* () {
         Util.msg.set(`${yen}円入手`, Color.YELLOW.bright);
         yield wait();
     }
-    // if(Battle.type === BattleType.BOSS){
-    //     await finish();
-    //     // Scene.set( FieldScene.ins );
-    //     return;
-    // }
     yield finish();
     yield Battle.battleEndAction(BattleResult.WIN);
 });
@@ -310,4 +305,5 @@ const finish = () => __awaiter(this, void 0, void 0, function* () {
     for (let e of Unit.enemies) {
         e.exists = false;
     }
+    btnSpace.clear();
 });

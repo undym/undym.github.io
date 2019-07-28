@@ -123,3 +123,36 @@ export const FX_Str = (font, str, center, color) => {
     });
 };
 FXTest.add(FX_Str.name, () => FX_Str(new Font(30, Font.BOLD), "1234", FXTest.target, Color.GREEN));
+export const FX_RotateStr = (font, str, center, color) => {
+    let strings = [];
+    let measures = [];
+    for (let i = 0; i < str.length; i++) {
+        let s = str.substring(i, i + 1);
+        strings.push(s);
+        measures.push(font.measureRatioW(s));
+    }
+    const x = center.x - font.measureRatioW(str) / 2;
+    let y = center.y - font.ratioH / 2;
+    const PI2 = Math.PI * 2;
+    FX.set((count) => {
+        const over = 30;
+        const rotateOver = 6;
+        let x2 = x;
+        let y2 = y;
+        let a = count < over / 2 ? 1 : 1 - (count - over / 2) / (over / 2);
+        let col = new Color(color.r, color.g, color.b, a);
+        for (let i = 0; i < strings.length; i++) {
+            let rad = -Math.PI - PI2 * (count - (strings.length - i)) / rotateOver;
+            if (rad < -PI2) {
+                rad = 0;
+            }
+            Graphics.rotate(/*rad*/ rad, /*center*/ { x: x2, y: y2 }, () => {
+                font.draw(strings[i], new Point(-measures[i] / 2, -font.ratioH / 2), col);
+            });
+            x2 += measures[i];
+        }
+        y -= (1 / Graphics.pixelH) / 2;
+        return count < over;
+    });
+};
+FXTest.add(FX_RotateStr.name, () => FX_RotateStr(new Font(30, Font.BOLD), "12345", FXTest.target, Color.GREEN));

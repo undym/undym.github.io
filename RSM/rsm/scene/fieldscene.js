@@ -20,6 +20,8 @@ import { createOptionBtn } from "./optionscene.js";
 import { ItemScene } from "./itemscene.js";
 import { Targeting } from "../force.js";
 import { Item } from "../item.js";
+import { JobChangeScene } from "./jobchangescene.js";
+import { SetTecScene } from "./settecscene.js";
 let choosedDungeon;
 let visibleDungeonEnterBtn = false;
 export class FieldScene extends Scene {
@@ -53,10 +55,12 @@ class FieldBtn {
         l.add(new Btn("ダンジョン", () => {
             this.setDungeonBtn();
         }));
-        if (PlayData.jobChangeBtnIsVisible) {
+        if (PlayData.jobChangeBtnIsVisible || Util.DEBUG) {
             l.add(new Btn("職業", () => {
+                Scene.load(new JobChangeScene());
             }));
             l.add(new Btn("技のセット", () => {
+                Scene.load(new SetTecScene());
             }));
         }
         l.add(new Btn("アイテム", () => {

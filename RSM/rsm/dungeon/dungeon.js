@@ -33,7 +33,7 @@ export class Dungeon {
     //
     //-----------------------------------------------------------------
     rndEvent() {
-        if (Math.random() <= 0.20) {
+        if (Math.random() <= 10.20) {
             return DungeonEvent.BOX;
         }
         if (Math.random() <= 0.20) {

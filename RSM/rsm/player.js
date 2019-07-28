@@ -5,7 +5,9 @@ export class Player {
     constructor(uniqueName) {
         this.uniqueName = uniqueName;
         this.toString = () => this.uniqueName;
+        Player._values.push(this);
     }
+    static values() { return this._values; }
     static valueOf(uniqueName) {
         return this._valueOf[uniqueName];
     }
@@ -31,6 +33,7 @@ export class Player {
         return res;
     }
 }
+Player._values = [];
 Player._valueOf = {};
 Player.empty = new class extends Player {
     constructor() { super(""); }
