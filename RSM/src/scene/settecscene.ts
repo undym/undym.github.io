@@ -49,7 +49,7 @@ export class SetTecScene extends Scene{
                             if(!this.choosedTec){return;}
 
                             const tec = this.choosedTec;
-                            let font = Font.getDef();
+                            let font = Font.def;
                             let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
                             const movedP = ()=> p = p.move(0, font.ratioH);
                             
@@ -73,9 +73,9 @@ export class SetTecScene extends Scene{
                             }
                         }}))
                         .add(btnBounds, (()=>{
-                            const otherBtns = ["settingList", "set", "<<"];
+                            const otherBtns = ["全て", "セット中", "set/unset", "<<"];
                             const w = 2;
-                            const h = (otherBtns.length + TecType.values().length) / w;
+                            const h = ((otherBtns.length + TecType.values().length + 1) / w)|0;
                             const l = new FlowLayout(w,h);
                             
                             for(let type of TecType.values()){
@@ -83,6 +83,19 @@ export class SetTecScene extends Scene{
                                     this.setList( this.target, u=> type.tecs.filter(t=> u.isMasteredTec(t)) );
                                 }));
                             }
+
+                            l.add(new Btn("全て", ()=>{
+                                this.setList( this.target,u=>{
+                                    let res:Tec[] = [];
+                                    for(let type of TecType.values()){
+                                        res = res.concat( type.tecs.filter(t=> u.isMasteredTec(t)) );
+                                    }
+                                    return res;
+                                });
+                            }));
+                            l.add(new Btn("セット中", ()=>{
+                                this.setList( this.target, u=> u.tecs );
+                            }));
                 
                             l.addFromLast(new Btn("<<", ()=>{
                                 Scene.load( FieldScene.ins );
@@ -95,14 +108,14 @@ export class SetTecScene extends Scene{
                                for(let i = 0; i < this.target.tecs.length; i++){
                                    if(this.target.tecs[i] === Tec.empty){
                                         this.target.tecs[i] = this.choosedTec;
-                                        FX_Str(Font.getDef(), `${this.choosedTec}をセットしました`, {x:0.5, y:0.5}, Color.WHITE);
+                                        FX_Str(Font.def, `${this.choosedTec}をセットしました`, {x:0.5, y:0.5}, Color.WHITE);
 
                                         this.setList(this.target, this.getListTecs ,/*keepPage*/true);
                                         return;
                                    }
                                }
                                
-                               FX_Str(Font.getDef(), `技欄に空きがありません`, {x:0.5, y:0.5}, Color.WHITE);
+                               FX_Str(Font.def, `技欄に空きがありません`, {x:0.5, y:0.5}, Color.WHITE);
                             });
                             const unset = new Btn("外す",async()=>{
                                 if(!this.choosedTec){return;}
@@ -110,7 +123,7 @@ export class SetTecScene extends Scene{
                                 for(let i = 0; i < this.target.tecs.length; i++){
                                     if(this.target.tecs[i] === this.choosedTec){
                                         this.target.tecs[i] = Tec.empty;
-                                        FX_Str(Font.getDef(), `${this.choosedTec}を外しました`, {x:0.5, y:0.5}, Color.WHITE);
+                                        FX_Str(Font.def, `${this.choosedTec}を外しました`, {x:0.5, y:0.5}, Color.WHITE);
 
                                         this.setList(this.target, this.getListTecs, /*keepPage*/true);
                                         return;
@@ -125,9 +138,6 @@ export class SetTecScene extends Scene{
                                 return set;
                             }));
 
-                            l.addFromLast(new Btn("セット中", ()=>{
-                                this.setList( this.target, u=> u.tecs );
-                            }));
                             return l;
                         })());
                 })())
@@ -167,7 +177,6 @@ export class SetTecScene extends Scene{
         this.list.clear(keepPage);
 
         getListTecs(unit)
-            // .filter(tec=> unit.isMasteredTec(tec))
             .forEach((tec)=>{
                 if(tec === Tec.empty){
                     this.list.add({

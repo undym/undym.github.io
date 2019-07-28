@@ -94,7 +94,7 @@ const setDebugBtn = (l:FlowLayout)=>{
 
 //         if(Util.DEBUG){
 //             super.add(new Rect(0, 0, 0.2, 1),new YLayout()
-//                 .add(new Label(Font.getDef(), ()=>this.info))
+//                 .add(new Label(Font.def, ()=>this.info))
 //                 .add(new Btn(()=>"ITEM+99",()=>{
 //                     for(let item of Item.values()){
 //                         item.num += 99;
@@ -116,7 +116,7 @@ const setDebugBtn = (l:FlowLayout)=>{
 //                     .add(new Btn(()=>"再読み込み",()=>{
 //                         window.location.href = window.location.href;
 //                     }))
-//                     .add(new MsgPopup("left", Font.getDef(), [
+//                     .add(new MsgPopup("left", Font.def, [
 //                         ["新しいバージョンがあれば更新されます",Color.WHITE],
 //                     ]))
 //                 )

@@ -189,8 +189,8 @@ export class Font {
         const htmlString = Font.createHTMLString(size, weight, name);
         this.toString = () => htmlString;
     }
-    static getDef() {
-        return this.DEF !== undefined ? this.DEF : (this.DEF = new Font(25));
+    static get def() {
+        return this.DEF !== undefined ? this.DEF : (this.DEF = new Font(30));
     }
     static createHTMLString(size, weight, name) {
         //一度代入することにより、HTML側の表現を得る。

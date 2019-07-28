@@ -60,7 +60,7 @@ export class FieldScene extends Scene {
             return l;
         })());
         {
-            const font = Font.getDef();
+            const font = Font.def;
             const dInfoLayout = new YLayout()
                 .add(new Label(font, () => `[${this.selectedDungeon}] Rank:${this.selectedDungeon.getRank()}`))
                 .add(new XLayout()

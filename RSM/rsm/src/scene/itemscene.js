@@ -53,7 +53,7 @@ export class ItemScene extends Scene {
                 GL.fillRect(bounds, Color.D_GRAY);
                 if (this.selectedItem !== undefined) {
                     let item = this.selectedItem;
-                    let font = Font.getDef();
+                    let font = Font.def;
                     let p = bounds.upperLeft.move(GL.pixel.w, GL.pixel.h * 2);
                     font.draw(`[${item}]`, p, Color.WHITE);
                     font.draw(`所持数:${item.num}個`, p = p.move(0, font.getSizeRatio()), Color.WHITE);

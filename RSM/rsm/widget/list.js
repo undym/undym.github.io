@@ -109,7 +109,7 @@ class Elm extends ILayout {
         this.groundColor = values.groundColor ? values.groundColor : () => Color.BLACK;
         this.frameColor = values.frameColor ? values.frameColor : () => Color.L_GRAY;
         this.stringColor = values.stringColor ? values.stringColor : () => Color.WHITE;
-        this.font = Font.getDef();
+        this.font = Font.def;
     }
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {

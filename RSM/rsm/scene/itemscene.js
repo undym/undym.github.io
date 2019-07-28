@@ -44,7 +44,7 @@ export class ItemScene extends Scene {
                     return;
                 }
                 let item = this.selectedItem;
-                let font = Font.getDef();
+                let font = Font.def;
                 let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
                 const movedP = () => p = p.move(0, font.ratioH);
                 font.draw(`[${item}]`, p, Color.WHITE);

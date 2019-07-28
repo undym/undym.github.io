@@ -17,9 +17,9 @@ export class DrawPlayInfo extends InnerLayout {
     constructor() {
         super();
         super.add(new XLayout()
-            .add(new Label(Font.getDef(), () => `Version{${Util.VERSION}}`, () => Util.DEBUG ? Color.RED : Color.WHITE)
+            .add(new Label(Font.def, () => `Version{${Util.VERSION}}`, () => Util.DEBUG ? Color.RED : Color.WHITE)
             .setBase(Font.LEFT))
-            .add(new Label(Font.getDef(), () => `${PlayData.yen | 0}円`, () => Color.YELLOW).setBase(Font.RIGHT)));
+            .add(new Label(Font.def, () => `${PlayData.yen | 0}円`, () => Color.YELLOW).setBase(Font.RIGHT)));
     }
 }
 export class DrawDungeonData extends InnerLayout {
@@ -32,8 +32,8 @@ export class DrawDungeonData extends InnerLayout {
         super.add(new YLayout()
             .setOutsidePixelMargin(1, 1, 1, 1)
             .add(ILayout.empty)
-            .add(new Label(Font.getDef(), () => `[${Dungeon.now}] Rank:${Dungeon.now.getRank()}`))
-            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.getAU(), () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.getAU()}`, () => Color.D_CYAN.bright(0), Font.getDef())));
+            .add(new Label(Font.def, () => `[${Dungeon.now}] Rank:${Dungeon.now.getRank()}`))
+            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.getAU(), () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.getAU()}`, () => Color.D_CYAN.bright(0), Font.def)));
     }
 }
 class DrawSTBox extends InnerLayout {
@@ -117,7 +117,7 @@ export class DrawUnitDetail extends InnerLayout {
     static get ins() { return this._ins !== undefined ? this._ins : (this._ins = new DrawUnitDetail()); }
     constructor() {
         super();
-        const font = Font.getDef();
+        const font = Font.def;
         const getUnit = () => DrawUnitDetail.target;
         const frame = ILayout.create({ draw: (bounds) => {
                 Graphics.fillRect(bounds, Color.D_GRAY);

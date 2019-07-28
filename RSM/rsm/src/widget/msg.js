@@ -20,7 +20,7 @@ export default class Msg extends ILayout {
         for (let i = 0; i < 30; i++) {
             this.lines.push(new Line());
         }
-        this.font = Font.getDef();
+        this.font = Font.def;
     }
     set(name, color) {
         let r = new Reserve();

@@ -21,7 +21,7 @@ export default class Msg extends ILayout{
             this.lines.push(new Line());
         }
 
-        this.font = Font.getDef();
+        this.font = Font.def;
     }
 
     set(name:string, color?:Color):void;

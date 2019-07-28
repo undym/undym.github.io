@@ -268,8 +268,8 @@ const toHTMLColorString = (color:{r:number, g:number, b:number, a:number})=>{
 
 export class Font{
     private static DEF:Font;
-    static getDef():Font{
-        return this.DEF !== undefined ? this.DEF : (this.DEF = new Font(25));
+    static get def():Font{
+        return this.DEF !== undefined ? this.DEF : (this.DEF = new Font(30));
     }
 
     static createHTMLString(size:number, weight:string, name:string){

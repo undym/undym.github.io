@@ -39,7 +39,7 @@ export class JobChangeScene extends Scene {
                 }
                 let unit = this.target;
                 let job = this.choosedJob;
-                let font = Font.getDef();
+                let font = Font.def;
                 let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
                 const movedP = () => p = p.move(0, font.ratioH);
                 font.draw(`[${job}]`, p, Color.WHITE);

@@ -52,7 +52,7 @@ export class BattleScene extends Scene{
             if(!this.tecInfo.tec || this.tecInfo.tec === Tec.empty){return;}
 
             const tec = this.tecInfo.tec;
-            const f = Font.getDef();
+            const f = Font.def;
             let p = bounds.upperLeft;
 
             f.draw( `[${tec}]`, p, Color.GREEN );

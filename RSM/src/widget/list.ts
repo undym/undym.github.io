@@ -192,7 +192,7 @@ class Elm extends ILayout{
         this.frameColor  = values.frameColor ? values.frameColor : ()=>Color.L_GRAY;
         this.stringColor = values.stringColor ? values.stringColor : ()=>Color.WHITE;
 
-        this.font = Font.getDef();
+        this.font = Font.def;
     }
 
     async ctrlInner(bounds:Rect){

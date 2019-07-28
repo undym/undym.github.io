@@ -87,7 +87,7 @@ class Elm extends ILayout {
     constructor(values) {
         super();
         this.values = values;
-        this.font = Font.getDef();
+        this.font = Font.def;
         this.groundColor = () => Color.BLACK;
         this.frameColor = () => Color.L_GRAY;
         this.stringColor = () => Color.WHITE;

@@ -48,7 +48,7 @@ export class BattleScene extends Scene {
                 return;
             }
             const tec = this.tecInfo.tec;
-            const f = Font.getDef();
+            const f = Font.def;
             let p = bounds.upperLeft;
             f.draw(`[${tec}]`, p, Color.WHITE);
             p = p.move(0, f.getSizeRatio());

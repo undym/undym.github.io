@@ -30,7 +30,7 @@ export class Btn extends ILayout{
 
         this.push = push;
 
-        this.font = Font.getDef();
+        this.font = Font.def;
 
         this.groundColor = ()=>Color.BLACK;
         this.frameColor  = ()=>Color.L_GRAY;
