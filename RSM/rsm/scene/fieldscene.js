@@ -33,11 +33,11 @@ export class FieldScene extends Scene {
         super.clear();
         super.add(Place.E_BOX, DrawPlayInfo.ins);
         super.add(Place.MSG, Util.msg);
-        FieldBtn.reset();
         super.add(Place.BTN, new VariableLayout(() => FieldBtn.ins));
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
         //----------------------------------------------------
+        FieldBtn.reset();
         fullCare();
         //----------------------------------------------------
     }

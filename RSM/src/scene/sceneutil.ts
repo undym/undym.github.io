@@ -18,7 +18,7 @@ import { Font, Graphics } from "../graphics/graphics.js";
 
 export class DrawPlayInfo extends InnerLayout{
     private static _ins:DrawPlayInfo;
-    static get ins(){return this._ins !== undefined ? this._ins
+    static get ins(){return this._ins ? this._ins
         : (this._ins = new DrawPlayInfo());}
 
     private constructor(){
@@ -35,7 +35,7 @@ export class DrawPlayInfo extends InnerLayout{
 
 export class DrawDungeonData extends InnerLayout{
     private static _ins:DrawDungeonData;
-    static get ins(){return this._ins !== undefined ? this._ins
+    static get ins(){return this._ins ? this._ins
         : (this._ins = new DrawDungeonData());}
 
     private constructor(){
@@ -123,10 +123,10 @@ class DrawSTBox extends InnerLayout{
 
 export class DrawSTBoxes extends InnerLayout{
     private static _players:DrawSTBoxes;
-    static get players(){return this._players !== undefined ? this._players 
+    static get players(){return this._players ? this._players 
         : (this._players = new DrawSTBoxes(Unit.players.length, i=>Unit.players[i]));}
     private static _enemies:DrawSTBoxes;
-    static get enemies(){return this._enemies !== undefined ? this._enemies 
+    static get enemies(){return this._enemies ? this._enemies 
         : (this._enemies = new DrawSTBoxes(Unit.enemies.length, i=>Unit.enemies[i]));}
 
 
@@ -167,7 +167,7 @@ export class DrawSTBoxes extends InnerLayout{
 
 export class DrawUnitDetail extends InnerLayout{
     private static _ins:DrawUnitDetail;
-    static get ins(){return this._ins !== undefined ? this._ins : (this._ins = new DrawUnitDetail());}
+    static get ins(){return this._ins ? this._ins : (this._ins = new DrawUnitDetail());}
 
     static target:Unit|undefined;
 
@@ -294,7 +294,7 @@ export class DrawUnitDetail extends InnerLayout{
                     }}))
                     ;
         super.add(new VariableLayout(()=>{
-            if(DrawUnitDetail.target !== undefined && DrawUnitDetail.target.exists){return l;}
+            if(DrawUnitDetail.target && DrawUnitDetail.target.exists){return l;}
             return ILayout.empty;
         }));
     }

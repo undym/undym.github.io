@@ -40,7 +40,6 @@ export class FieldScene extends Scene{
         super.add(Place.MSG, Util.msg);
 
 
-        FieldBtn.reset();
         super.add(Place.BTN,
             new VariableLayout(()=>FieldBtn.ins)
         );
@@ -52,6 +51,7 @@ export class FieldScene extends Scene{
 
         //----------------------------------------------------
 
+        FieldBtn.reset();
         fullCare();
 
         //----------------------------------------------------

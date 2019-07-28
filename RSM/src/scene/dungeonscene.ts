@@ -55,7 +55,7 @@ export default class DungeonScene extends Scene{
 
 class DrawEvent extends InnerLayout{
     private static _ins:DrawEvent;
-    static get ins():DrawEvent{return this._ins != null ? this._ins : (this._ins = new DrawEvent());}
+    static get ins():DrawEvent{return this._ins ? this._ins : (this._ins = new DrawEvent());}
 
     constructor(){
         super();
@@ -78,17 +78,17 @@ class DrawEvent extends InnerLayout{
             
             if(!img.loaded){return;}
 
-            let sizeW = 0;
-            let sizeH = 0;
-            const zoom = zoomCount / (zoomCount + 1);
-            if(bounds.w < bounds.h){
-                sizeW = bounds.w * zoom;
-                sizeH = bounds.w * zoom * img.pixelH / img.pixelW;
+            const ratio = {w:img.ratioW / bounds.w, h:img.ratioH / bounds.h};
+            let zoom = 0;
+            if(ratio.w > ratio.h){
+                zoom = zoomCount / (zoomCount + 1) * bounds.w / img.ratioW;
             }else{
-                sizeW = bounds.h * zoom * img.pixelW / img.pixelH;
-                sizeH = bounds.h * zoom;
+                zoom = zoomCount / (zoomCount + 1) * bounds.h / img.ratioH;
             }
+            const sizeW = img.ratioW * zoom;
+            const sizeH = img.ratioH * zoom;
             img.draw( new Rect(bounds.cx - sizeW / 2, bounds.cy - sizeH / 2, sizeW, sizeH) );
         }}));
+
     }
 }

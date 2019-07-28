@@ -11,7 +11,7 @@ import { EqPos } from "../eq.js";
 import { Font, Graphics } from "../graphics/graphics.js";
 export class DrawPlayInfo extends InnerLayout {
     static get ins() {
-        return this._ins !== undefined ? this._ins
+        return this._ins ? this._ins
             : (this._ins = new DrawPlayInfo());
     }
     constructor() {
@@ -24,7 +24,7 @@ export class DrawPlayInfo extends InnerLayout {
 }
 export class DrawDungeonData extends InnerLayout {
     static get ins() {
-        return this._ins !== undefined ? this._ins
+        return this._ins ? this._ins
             : (this._ins = new DrawDungeonData());
     }
     constructor() {
@@ -73,11 +73,11 @@ class DrawSTBox extends InnerLayout {
 }
 export class DrawSTBoxes extends InnerLayout {
     static get players() {
-        return this._players !== undefined ? this._players
+        return this._players ? this._players
             : (this._players = new DrawSTBoxes(Unit.players.length, i => Unit.players[i]));
     }
     static get enemies() {
-        return this._enemies !== undefined ? this._enemies
+        return this._enemies ? this._enemies
             : (this._enemies = new DrawSTBoxes(Unit.enemies.length, i => Unit.enemies[i]));
     }
     constructor(len, getUnit) {
@@ -114,7 +114,7 @@ export class DrawSTBoxes extends InnerLayout {
     }
 }
 export class DrawUnitDetail extends InnerLayout {
-    static get ins() { return this._ins !== undefined ? this._ins : (this._ins = new DrawUnitDetail()); }
+    static get ins() { return this._ins ? this._ins : (this._ins = new DrawUnitDetail()); }
     constructor() {
         super();
         const font = Font.def;
@@ -201,7 +201,7 @@ export class DrawUnitDetail extends InnerLayout {
                 }
             } }));
         super.add(new VariableLayout(() => {
-            if (DrawUnitDetail.target !== undefined && DrawUnitDetail.target.exists) {
+            if (DrawUnitDetail.target && DrawUnitDetail.target.exists) {
                 return l;
             }
             return ILayout.empty;
