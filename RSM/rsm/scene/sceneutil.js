@@ -39,7 +39,7 @@ export class DrawDungeonData extends InnerLayout {
 class DrawSTBox extends InnerLayout {
     constructor(getUnit) {
         super();
-        const font = new Font(20);
+        const font = new Font(30);
         const frame = ILayout.create({ draw: (bounds) => {
                 Graphics.drawRect(bounds, Color.L_GRAY);
             } });

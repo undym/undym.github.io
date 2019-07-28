@@ -63,7 +63,7 @@ class DrawSTBox extends InnerLayout{
     constructor(getUnit:()=>Unit){
         super();
 
-        const font = new Font(25);
+        const font = new Font(30);
         const frame = ILayout.create({draw:(bounds)=>{
             Graphics.drawRect(bounds, Color.L_GRAY);
         }});
