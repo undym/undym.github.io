@@ -1,7 +1,7 @@
 
 import { Scene } from "../undym/scene.js";
 import { RatioLayout, XLayout, YLayout, ILayout, VariableLayout, Label, FlowLayout } from "../undym/layout.js";
-import { Place, Util, PlayData } from "../util.js";
+import { Place, Util, PlayData, Debug } from "../util.js";
 import { Btn } from "../widget/btn.js";
 import { Dungeon, DungeonArea } from "../dungeon/dungeon.js";
 import { Rect, Color, Point } from "../undym/type.js";
@@ -17,15 +17,16 @@ import { Font, Graphics } from "../graphics/graphics.js";
 import { Item } from "../item.js";
 import { JobChangeScene } from "./jobchangescene.js";
 import { SetTecScene } from "./settecscene.js";
+import { MixScene } from "./mixscene.js";
 
 
 let choosedDungeon:Dungeon;
 let visibleDungeonEnterBtn = false;
 
 
-export class FieldScene extends Scene{
-    private static _ins:FieldScene;
-    static get ins():FieldScene{return this._ins ? this._ins : (this._ins = new FieldScene());}
+export class TownScene extends Scene{
+    private static _ins:TownScene;
+    static get ins():TownScene{return this._ins ? this._ins : (this._ins = new TownScene());}
 
 
     private constructor(){
@@ -41,7 +42,7 @@ export class FieldScene extends Scene{
 
 
         super.add(Place.BTN,
-            new VariableLayout(()=>FieldBtn.ins)
+            new VariableLayout(()=>TownBtn.ins)
         );
         
         super.add(Place.P_BOX, DrawSTBoxes.players);
@@ -51,7 +52,7 @@ export class FieldScene extends Scene{
 
         //----------------------------------------------------
 
-        FieldBtn.reset();
+        TownBtn.reset();
         fullCare();
 
         //----------------------------------------------------
@@ -67,7 +68,7 @@ const fullCare = ()=>{
 };
 
 
-class FieldBtn{
+class TownBtn{
     private static _ins:ILayout;
     static get ins(){return this._ins;}
 
@@ -78,7 +79,8 @@ class FieldBtn{
             l.add(new Btn("ダンジョン",()=>{
                 this.setDungeonBtn();
             }));
-            if(PlayData.jobChangeBtnIsVisible || Util.DEBUG){
+            
+            if(PlayData.jobChangeBtnIsVisible || Debug.btnIsVisible){
                 l.add(new Btn("職業",()=>{
                     Scene.load(new JobChangeScene());
                 }));
@@ -86,6 +88,11 @@ class FieldBtn{
                     Scene.load(new SetTecScene());
                 }));
             }
+
+            l.add(new Btn("合成", ()=>{
+                Scene.load(new MixScene());
+            }));
+
             l.add(new Btn("アイテム", ()=>{
                 Scene.load( ItemScene.ins({
                     selectUser:true,
@@ -102,7 +109,7 @@ class FieldBtn{
                         }
                     },
                     returnScene:()=>{
-                        Scene.load( FieldScene.ins );
+                        Scene.load( TownScene.ins );
                     }, 
                 }) );
             }));
@@ -131,7 +138,7 @@ class FieldBtn{
                 visibleDungeonEnterBtn = true;
 
                 Util.msg.set(`[${d}]`);
-                Util.msg.set(`Rank:${d.getRank()}`);
+                Util.msg.set(`Rank:${d.rank}`);
                 Util.msg.set(`攻略回数:${d.clearNum}`, d.clearNum === 0 ? Color.GRAY : Color.WHITE);
             }));
 

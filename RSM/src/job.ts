@@ -6,6 +6,17 @@ import { Tec, ActiveTec, PassiveTec } from "./tec.js";
 export abstract class Job{
     private static _values:Job[] = [];
     static values():ReadonlyArray<Job>{return this._values;}
+    private static _valueOf:Map<string,Job>;
+    static valueOf(uniqueName:string):Job|undefined{
+        if(!this._valueOf){
+            this._valueOf = new Map<string,Job>();
+
+            for(const job of this.values()){
+                this._valueOf.set( job.uniqueName, job );
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
 
     static readonly DEF_LVUP_EXP = 5;
 

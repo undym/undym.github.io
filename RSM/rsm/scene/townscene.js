@@ -25,8 +25,8 @@ import { SetTecScene } from "./settecscene.js";
 import { MixScene } from "./mixscene.js";
 let choosedDungeon;
 let visibleDungeonEnterBtn = false;
-export class FieldScene extends Scene {
-    static get ins() { return this._ins ? this._ins : (this._ins = new FieldScene()); }
+export class TownScene extends Scene {
+    static get ins() { return this._ins ? this._ins : (this._ins = new TownScene()); }
     constructor() {
         super();
     }
@@ -34,11 +34,11 @@ export class FieldScene extends Scene {
         super.clear();
         super.add(Place.E_BOX, DrawPlayInfo.ins);
         super.add(Place.MSG, Util.msg);
-        super.add(Place.BTN, new VariableLayout(() => FieldBtn.ins));
+        super.add(Place.BTN, new VariableLayout(() => TownBtn.ins));
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
         //----------------------------------------------------
-        FieldBtn.reset();
+        TownBtn.reset();
         fullCare();
         //----------------------------------------------------
     }
@@ -49,14 +49,14 @@ const fullCare = () => {
         u.prm(Prm.MP).base = u.prm(Prm.MAX_MP).total();
     }
 };
-class FieldBtn {
+class TownBtn {
     static get ins() { return this._ins; }
     static reset() {
         const l = new FlowLayout(4, 3);
         l.add(new Btn("ダンジョン", () => {
             this.setDungeonBtn();
         }));
-        if (PlayData.jobChangeBtnIsVisible || Debug.btnIsVisible) {
+        if (PlayData.masteredAnyJob || Debug.btnIsVisible) {
             l.add(new Btn("職業", () => {
                 Scene.load(new JobChangeScene());
             }));
@@ -83,7 +83,7 @@ class FieldBtn {
                     }
                 }),
                 returnScene: () => {
-                    Scene.load(FieldScene.ins);
+                    Scene.load(TownScene.ins);
                 },
             }));
         }));
@@ -153,4 +153,4 @@ class FieldBtn {
         this._ins = l;
     }
 }
-FieldBtn.dungeonPage = 0;
+TownBtn.dungeonPage = 0;

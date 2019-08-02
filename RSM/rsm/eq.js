@@ -1,9 +1,18 @@
+import { Num, Mix } from "./mix.js";
+import { Item } from "./item.js";
+import { SaveData } from "./savedata.js";
 export class EqPos {
     constructor(name) {
         this.toString = () => name;
         EqPos._values.push(this);
     }
     static values() { return this._values; }
+    get eqs() {
+        if (!this._eqs) {
+            this._eqs = Eq.values().filter(eq => eq.pos === this);
+        }
+        return this._eqs;
+    }
 }
 EqPos._values = [];
 EqPos.頭 = new EqPos("頭");
@@ -21,15 +30,29 @@ export class Eq {
     //
     //
     //--------------------------------------------------------------------------
-    constructor(name, info, pos, appearLv) {
-        this.toString = () => name;
-        this.info = info;
-        this.pos = pos;
+    constructor(args) {
+        this.num = 0;
+        this.totalGetNum = 0;
+        // private constructor(name:string, info:string[], pos:EqPos, appearLv:number){
+        this.uniqueName = args.uniqueName;
+        this.toString = () => this.uniqueName;
+        this.info = args.info;
+        this.pos = args.pos;
+        this.appearLv = args.lv;
         Eq._values.push(this);
     }
     static values() { return this._values; }
+    static valueOf(uniqueName) {
+        if (!this._valueOf) {
+            this._valueOf = new Map();
+            for (let eq of this.values()) {
+                this._valueOf.set(eq.uniqueName, eq);
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
     static posValues(pos) {
-        if (this._posValues === undefined) {
+        if (!this._posValues) {
             this._posValues = new Map();
             for (let p of EqPos.values()) {
                 this._posValues.set(p, []);
@@ -71,6 +94,8 @@ export class Eq {
         }
         return this.髪;
     }
+    get mix() { return this._mix ? this._mix : (this._mix = this.createMix()); }
+    createMix() { return undefined; }
     //--------------------------------------------------------------------------
     //
     //
@@ -81,8 +106,21 @@ export class Eq {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    add(v) {
+        Num.add(this, v);
+        SaveData.eq.save(this);
+    }
+    reduce(v) {
+        this.num -= v;
+        SaveData.eq.save(this);
+    }
 }
 Eq._values = [];
+//--------------------------------------------------------------------------
+//
+//
+//
+//--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //
 //頭
@@ -90,7 +128,8 @@ Eq._values = [];
 //--------------------------------------------------------------------------
 Eq.髪 = new class extends Eq {
     constructor() {
-        super("髪", ["髪a", "髪b"], EqPos.頭, /*lv*/ 0);
+        super({ uniqueName: "髪", info: ["髪a", "髪b"],
+            pos: EqPos.頭, lv: 0 });
     }
 };
 //--------------------------------------------------------------------------
@@ -100,7 +139,20 @@ Eq.髪 = new class extends Eq {
 //--------------------------------------------------------------------------
 Eq.恋人 = new class extends Eq {
     constructor() {
-        super("恋人", ["恋人info"], EqPos.武, /*lv*/ 0);
+        super({ uniqueName: "恋人", info: ["恋人info"],
+            pos: EqPos.武, lv: 0 });
+    }
+};
+Eq.忍者刀 = new class extends Eq {
+    constructor() {
+        super({ uniqueName: "忍者刀", info: ["格闘攻撃時稀に追加攻撃"],
+            pos: EqPos.武, lv: 99 });
+    }
+    createMix() {
+        return new Mix({
+            result: [this, 1],
+            materials: [[Item.石, 1]],
+        });
     }
 };
 //--------------------------------------------------------------------------
@@ -110,7 +162,8 @@ Eq.恋人 = new class extends Eq {
 //--------------------------------------------------------------------------
 Eq.板 = new class extends Eq {
     constructor() {
-        super("板", [], EqPos.盾, /*lv*/ 0);
+        super({ uniqueName: "板", info: [],
+            pos: EqPos.盾, lv: 0 });
     }
 };
 //--------------------------------------------------------------------------
@@ -120,7 +173,8 @@ Eq.板 = new class extends Eq {
 //--------------------------------------------------------------------------
 Eq.襤褸切れ = new class extends Eq {
     constructor() {
-        super("襤褸切れ", [], EqPos.体, /*lv*/ 0);
+        super({ uniqueName: "襤褸切れ", info: [],
+            pos: EqPos.体, lv: 0 });
     }
 };
 //--------------------------------------------------------------------------
@@ -130,7 +184,8 @@ Eq.襤褸切れ = new class extends Eq {
 //--------------------------------------------------------------------------
 Eq.ひも = new class extends Eq {
     constructor() {
-        super("ひも", [], EqPos.腰, /*lv*/ 0);
+        super({ uniqueName: "ひも", info: [],
+            pos: EqPos.腰, lv: 0 });
     }
 };
 //--------------------------------------------------------------------------
@@ -140,7 +195,8 @@ Eq.ひも = new class extends Eq {
 //--------------------------------------------------------------------------
 Eq.腕 = new class extends Eq {
     constructor() {
-        super("腕", [], EqPos.腕, /*lv*/ 0);
+        super({ uniqueName: "腕", info: [],
+            pos: EqPos.腕, lv: 0 });
     }
 };
 //--------------------------------------------------------------------------
@@ -150,7 +206,8 @@ Eq.腕 = new class extends Eq {
 //--------------------------------------------------------------------------
 Eq.手 = new class extends Eq {
     constructor() {
-        super("手", [], EqPos.手, /*lv*/ 0);
+        super({ uniqueName: "手", info: [],
+            pos: EqPos.手, lv: 0 });
     }
 };
 //--------------------------------------------------------------------------
@@ -160,7 +217,8 @@ Eq.手 = new class extends Eq {
 //--------------------------------------------------------------------------
 Eq.肩身の指輪 = new class extends Eq {
     constructor() {
-        super("肩身の指輪", [], EqPos.指, /*lv*/ 0);
+        super({ uniqueName: "肩身の指輪", info: [],
+            pos: EqPos.指, lv: 0 });
     }
 };
 //--------------------------------------------------------------------------
@@ -170,6 +228,7 @@ Eq.肩身の指輪 = new class extends Eq {
 //--------------------------------------------------------------------------
 Eq.きれいな靴 = new class extends Eq {
     constructor() {
-        super("きれいな靴", [], EqPos.脚, /*lv*/ 0);
+        super({ uniqueName: "きれいな靴", info: [],
+            pos: EqPos.脚, lv: 0 });
     }
 };

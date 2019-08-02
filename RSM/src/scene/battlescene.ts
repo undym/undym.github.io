@@ -14,7 +14,7 @@ import DungeonScene from "./dungeonscene.js";
 import DungeonEvent from "../dungeon/dungeonevent.js";
 import { FX } from "../fx/fx.js";
 import { Dungeon } from "../dungeon/dungeon.js";
-import { FieldScene } from "./fieldscene.js";
+import { TownScene } from "./townscene.js";
 import { List } from "../widget/list.js";
 import { randomInt } from "../undym/random.js";
 import { Item } from "../item.js";

@@ -6,7 +6,7 @@ import { Place, Util } from "../util.js";
 import { DrawSTBoxes, DrawUnitDetail, DrawDungeonData, DrawPlayInfo } from "./sceneutil.js";
 import { Unit } from "../unit.js";
 import { Dungeon } from "../dungeon/dungeon.js";
-import { FieldScene } from "./fieldscene.js";
+import { TownScene } from "./townscene.js";
 import { Img } from "../graphics/graphics.js";
 
 
@@ -36,7 +36,6 @@ export default class DungeonScene extends Scene{
         let dungeonEventBak:DungeonEvent;
         let btnLayout:ILayout;
         super.add(Place.BTN,
-            // new VariableLayout(()=>DungeonEvent.now.getBtnLayout())
             new VariableLayout(()=>{
                 if(dungeonEventBak != DungeonEvent.now){
                     dungeonEventBak = DungeonEvent.now;
@@ -78,9 +77,8 @@ class DrawEvent extends InnerLayout{
             
             if(!img.loaded){return;}
 
-            const ratio = {w:img.ratioW / bounds.w, h:img.ratioH / bounds.h};
             let zoom = 0;
-            if(ratio.w > ratio.h){
+            if(img.ratioW / bounds.w > img.ratioH / bounds.h){
                 zoom = zoomCount / (zoomCount + 1) * bounds.w / img.ratioW;
             }else{
                 zoom = zoomCount / (zoomCount + 1) * bounds.h / img.ratioH;

@@ -2,7 +2,7 @@ import { Util, Place, PlayData } from "../util.js";
 import { Btn } from "../widget/btn.js";
 import { Dungeon } from "./dungeon.js";
 import { Scene, cwait, wait } from "../undym/scene.js";
-import { FieldScene } from "../scene/fieldscene.js";
+import { TownScene } from "../scene/townscene.js";
 import { Item } from "../item.js";
 import { ILayout, YLayout, XLayout, VariableLayout, FlowLayout } from "../undym/layout.js";
 import { Color } from "../undym/type.js";
@@ -63,7 +63,7 @@ export default abstract class DungeonEvent{
                 openNum++;
                 openBoost /= 2;
             }
-            let dungeonRank = Dungeon.now.getRank();
+            let dungeonRank = Dungeon.now.au;
             for(let i = 0; i < openNum; i++){
                 const itemRank = Item.fluctuateRank( dungeonRank );
                 let item = Item.rndBoxRankItem( itemRank );
@@ -154,13 +154,13 @@ export default abstract class DungeonEvent{
     static readonly ESCAPE_DUNGEON:DungeonEvent = new class extends DungeonEvent{
         happenInner = async()=>{
             Util.msg.set(`${Dungeon.now.toString()}を脱出します...`); await cwait();
-            Scene.load( FieldScene.ins );
+            Scene.load( TownScene.ins );
         };
         createBtnLayout = ()=> ILayout.empty;
     };
     static readonly CLEAR_DUNGEON:DungeonEvent = new class extends DungeonEvent{
         happenInner = async()=>{
-            let yen = (Dungeon.now.getRank() + 1) * Dungeon.now.getAU() / 10 * (1 + Dungeon.now.clearNum * 0.02);
+            let yen = (Dungeon.now.au + 1) * Dungeon.now.au / 10 * (1 + Dungeon.now.clearNum * 0.02);
     
             Dungeon.now.clearNum++;
             Util.msg.set(`[${Dungeon.now}]を踏破した！`, Color.WHITE.bright); await cwait();
@@ -170,7 +170,7 @@ export default abstract class DungeonEvent{
     
             Util.msg.set(`[${Dungeon.now}]を脱出します...`); await cwait();
 
-            Scene.load( FieldScene.ins );
+            Scene.load( TownScene.ins );
         };
         createBtnLayout = ()=> ILayout.empty;
     };
@@ -197,8 +197,8 @@ class AdvanceBtn{
                 FX_Advance( Place.MAIN );
 
                 Dungeon.auNow += 1;
-                if(Dungeon.auNow >= Dungeon.now.getAU()){
-                    Dungeon.auNow = Dungeon.now.getAU();
+                if(Dungeon.auNow >= Dungeon.now.au){
+                    Dungeon.auNow = Dungeon.now.au;
 
                     await DungeonEvent.BOSS_BATTLE.happen();
                     return;

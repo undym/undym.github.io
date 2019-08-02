@@ -123,6 +123,7 @@ export abstract class Tec extends Force{
     private static _empty:Tec;
     static get empty():Tec{
         return this._empty ? this._empty : (this._empty = new class extends Tec{
+            uniqueName:string = "empty";
             info:string[] = [];
             type:TecType = TecType.格闘;
             constructor(){
@@ -131,7 +132,7 @@ export abstract class Tec extends Force{
         });
     }
 
-
+    abstract uniqueName:string;
     abstract info:string[];
     abstract type:TecType;
     //--------------------------------------------------------------------------
@@ -151,6 +152,16 @@ export abstract class Tec extends Force{
 export abstract class PassiveTec extends Tec{
     private static _values:PassiveTec[] = [];
     static values():ReadonlyArray<PassiveTec>{return this._values;}
+    private static _valueOf:Map<string,PassiveTec>;
+    static valueOf(uniqueName:string):PassiveTec|undefined{
+        if(!this._valueOf){
+            this._valueOf = new Map<string,PassiveTec>();
+            for(const tec of this.values()){
+                this._valueOf.set( tec.uniqueName, tec );
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
     
     readonly uniqueName:string;
     readonly info:string[];
@@ -215,7 +226,16 @@ export abstract class PassiveTec extends Tec{
 export abstract class ActiveTec extends Tec implements Action{
     private static _values:ActiveTec[] = [];
     static values():ReadonlyArray<ActiveTec>{return this._values;}
-
+    private static _valueOf:Map<string,ActiveTec>;
+    static valueOf(uniqueName:string):ActiveTec|undefined{
+        if(!this._valueOf){
+            this._valueOf = new Map<string,ActiveTec>();
+            for(const tec of this.values()){
+                this._valueOf.set( tec.uniqueName, tec );
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
     
     //--------------------------------------------------------------------------
     //
@@ -427,7 +447,8 @@ export abstract class ActiveTec extends Tec implements Action{
                               mul:1, num:1, hit:1,
         });}
         async run(attacker:Unit, target:Unit){
-            setCondition(target, Condition.create練(1));
+            const value = target.getConditionValue(Condition.練);
+            setCondition(target, Condition.練, value+1);
         }
     }
     static readonly                       グレートウォール = new class extends ActiveTec{
@@ -436,7 +457,8 @@ export abstract class ActiveTec extends Tec implements Action{
                               mul:1, num:1, hit:1,
         });}
         async run(attacker:Unit, target:Unit){
-            setCondition(target, Condition.create盾(1));
+            const value = target.getConditionValue(Condition.盾);
+            setCondition(target, Condition.盾, value+1);
         }
     }
     //--------------------------------------------------------------------------
@@ -461,7 +483,7 @@ export abstract class ActiveTec extends Tec implements Action{
 }
 
 
-const setCondition = (target:Unit, condition:Condition):void=>{
-    target.setCondition(condition);
-    Util.msg.set(`${target.name}は＜${condition}＞になった`, Color.CYAN.bright);
+const setCondition = (target:Unit, condition:Condition, value:number):void=>{
+    target.setCondition(condition, value);
+    Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
 };

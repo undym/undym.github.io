@@ -3,7 +3,7 @@ import { YLayout } from "../undym/layout.js";
 import Gage from "../widget/gage.js";
 import { Dungeon } from "../dungeon/dungeon.js";
 import { Color } from "../undym/type.js";
-import { PlayData, Util } from "../util.js";
+import { PlayData, Util, Debug } from "../util.js";
 import { Unit, Prm, PUnit } from "../unit.js";
 import { Input } from "../undym/input.js";
 import { ConditionType } from "../condition.js";
@@ -17,7 +17,7 @@ export class DrawPlayInfo extends InnerLayout {
     constructor() {
         super();
         super.add(new XLayout()
-            .add(new Label(Font.def, () => `Version{${Util.VERSION}}`, () => Util.DEBUG ? Color.RED : Color.WHITE)
+            .add(new Label(Font.def, () => `Version{${Util.VERSION}}`, () => Debug.DEBUG ? Color.RED : Color.WHITE)
             .setBase(Font.LEFT))
             .add(new Label(Font.def, () => `${PlayData.yen | 0}円`, () => Color.YELLOW).setBase(Font.RIGHT)));
     }
@@ -32,8 +32,8 @@ export class DrawDungeonData extends InnerLayout {
         super.add(new YLayout()
             .setOutsidePixelMargin(1, 1, 1, 1)
             .add(ILayout.empty)
-            .add(new Label(Font.def, () => `[${Dungeon.now}] Rank:${Dungeon.now.getRank()}`))
-            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.getAU(), () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.getAU()}`, () => Color.D_CYAN.bright(0), Font.def)));
+            .add(new Label(Font.def, () => `[${Dungeon.now}] Rank:${Dungeon.now.rank}`))
+            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.au, () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.au}`, () => Color.D_CYAN.bright(0), Font.def)));
     }
 }
 class DrawSTBox extends InnerLayout {
@@ -53,8 +53,8 @@ class DrawSTBox extends InnerLayout {
             .add(new Gage(() => getUnit().hp, () => getUnit().prm(Prm.MAX_HP).total(), () => "HP", () => `${getUnit().hp | 0}`, () => Color.D_GREEN.bright(), font))
             .add(new XLayout()
             .setPixelMargin(4)
-            .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total(), () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}%`, () => Color.D_RED.bright(), font))
-            .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total(), () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}%`, () => Color.D_CYAN.bright(), font)))
+            .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total(), () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}`, () => Color.D_RED.bright(), font))
+            .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total(), () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}`, () => Color.D_CYAN.bright(), font)))
             .add(createConditionLabel(font, getUnit, ConditionType.goodConditions(), Color.CYAN))
             .add(createConditionLabel(font, getUnit, ConditionType.badConditions(), Color.RED))
             .add(ILayout.empty))
@@ -134,8 +134,8 @@ export class DrawUnitDetail extends InnerLayout {
             .add(new Gage(() => getUnit().hp, () => getUnit().prm(Prm.MAX_HP).total(), () => "HP", () => `${getUnit().hp | 0}`, () => Color.D_GREEN.bright(), font))
             .add(new XLayout()
             .setPixelMargin(4)
-            .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total(), () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}%`, () => Color.D_RED.bright(), font))
-            .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total(), () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}%`, () => Color.D_CYAN.bright(), font)))
+            .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total(), () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}`, () => Color.D_RED.bright(), font))
+            .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total(), () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}`, () => Color.D_CYAN.bright(), font)))
             .add(createConditionLabel(font, getUnit, ConditionType.goodConditions(), Color.CYAN))
             .add(createConditionLabel(font, getUnit, ConditionType.badConditions(), Color.RED))
             .add(ILayout.empty)
@@ -210,16 +210,8 @@ export class DrawUnitDetail extends InnerLayout {
 }
 const createConditionLabel = (font, unit, types, color) => {
     return new Label(font, () => types
-        .map(type => unit().getCondition(type).toString())
-        .filter(name => name != "")
-        .map(name => `<${name}>`)
+        .filter(type => unit().existsCondition(type))
+        .map(type => unit().getConditionSet(type))
+        .map(set => `<${set.condition}${set.value}>`)
         .join(""), () => color);
 };
-// const createConditionsString = (unit:Unit, types:ReadonlyArray<ConditionType>)=>{
-//     return types
-//             .map(type=> unit.getCondition(type).toString())
-//             .filter(name=> name != "")
-//             .map(name=> `<${name}>`)
-//             .join("")
-//             ;
-// }

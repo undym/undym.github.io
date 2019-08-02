@@ -8,25 +8,31 @@ import { wait } from "./undym/scene.js";
 
 export class ConditionType{
     private static _values:ConditionType[] = [];
-    static readonly values = ():ReadonlyArray<ConditionType>=> ConditionType._values;
+    static values():ReadonlyArray<ConditionType>{
+        return ConditionType._values;
+    }
 
     private static _goodConditions:ConditionType[];
-    static readonly goodConditions = ():ReadonlyArray<ConditionType>=>{
-        if(ConditionType._goodConditions !== undefined){return ConditionType._goodConditions;}
-        return (ConditionType._goodConditions = [
-                                                    ConditionType.GOOD_LV1,
-                                                    ConditionType.GOOD_LV2,
-                                                    ConditionType.GOOD_LV3,
-                                                ]);
+    static goodConditions():ReadonlyArray<ConditionType>{
+        if(!this._goodConditions){
+            this._goodConditions = [
+                this.GOOD_LV1,
+                this.GOOD_LV2,
+                this.GOOD_LV3,
+            ];
+        }
+        return this._goodConditions;                        
     }
     private static _badConditions:ConditionType[];
-    static readonly badConditions = ():ReadonlyArray<ConditionType>=>{
-        if(ConditionType._badConditions !== undefined){return ConditionType._badConditions;}
-        return (ConditionType._badConditions = [
-                                                    ConditionType.BAD_LV1,
-                                                    ConditionType.BAD_LV2,
-                                                    ConditionType.BAD_LV3,
-                                                ]);
+    static badConditions():ReadonlyArray<ConditionType>{
+        if(!this._badConditions){
+            this._badConditions = [
+                this.BAD_LV1,
+                this.BAD_LV2,
+                this.BAD_LV3,
+            ];
+        }
+        return this._badConditions;
     }
 
     private constructor(){
@@ -44,27 +50,28 @@ export class ConditionType{
 
 
 export abstract class Condition implements Force{
+    private static _values:Condition[] = [];
+    static values():ReadonlyArray<Condition>{return this._values;}
+    private static _valueOf:Map<string,Condition>;
+    static valueOf(uniqueName:string):Condition|undefined{
+        if(!this._valueOf){
+            this._valueOf = new Map<string,Condition>();
 
-
-    readonly type:ConditionType;
-    readonly name:string;
-
-    value:number;
-
-    constructor(name:string, type:ConditionType, value:number){
-        this.name = name;
-        this.type = type;
-        this.value = value;
-    }
-
-    toString():string{return `${this.name}${this.value}`;}
-
-    reduceValue(unit:Unit, v:number = 1){
-        this.value = v;
-        if(this.value <= 0){
-            unit.clearCondition(this);
+            for(let condition of this.values()){
+                this._valueOf.set( condition.uniqueName, condition );
+            }
         }
+        return this._valueOf.get(uniqueName);
     }
+
+    constructor(
+        public readonly uniqueName:string,
+        public readonly type:ConditionType
+    ){
+        Condition._values.push(this);
+    }
+
+    toString():string{return `${this.uniqueName}`;}
     //--------------------------------------------------------------------------
     //
     //Force
@@ -81,7 +88,7 @@ export abstract class Condition implements Force{
     //
     //--------------------------------------------------------------------------
     static readonly empty = new class extends Condition{
-        constructor(){super("", ConditionType.GOOD_LV1, 0);}
+        constructor(){super("empty", ConditionType.GOOD_LV1);}
         toString():string{return "";}
     };
     //--------------------------------------------------------------------------
@@ -89,63 +96,35 @@ export abstract class Condition implements Force{
     //GOOD_LV1
     //
     //--------------------------------------------------------------------------
-    // static readonly          練 = new class extends Condition{
-    //     constructor(){super("練", ConditionType.GOOD_LV1);}
-    //     async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-    //         if(action instanceof ActiveTec && action.type === TecType.格闘){
+    static readonly          練 = new class extends Condition{
+        constructor(){super("練", ConditionType.GOOD_LV1);}
+        async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type === TecType.格闘){
                 
-    //             Util.msg.set("＞練"); await wait();
-    //             dmg.mul *= (1 + attacker.getConditionValue(this.type) * 0.5);
+                Util.msg.set("＞練"); await wait();
+                dmg.pow.mul *= (1 + attacker.getConditionValue(this) * 0.5)
 
-    //             attacker.addCondition(this.type, -1);
-    //         }
-    //     }
-    // };
-    static create練(_value:number){
-        return new class extends Condition{
-            constructor(){super("練", ConditionType.GOOD_LV1, _value);}
-            async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-                if(action instanceof ActiveTec && action.type === TecType.格闘){
-                    
-                    Util.msg.set("＞練"); await wait();
-                    dmg.pow.mul *= (1 + this.value * 0.5);
-                    
-                    this.reduceValue(attacker);
-                }
+                attacker.addConditionValue(this, -1);
             }
         }
-    }
+    };
     //--------------------------------------------------------------------------
     //
     //
     //
     //--------------------------------------------------------------------------
-    static create盾(_value:number){
-        return new class extends Condition{
-            constructor(){super("盾", ConditionType.GOOD_LV2, _value);}
-            async beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-                if(action instanceof ActiveTec && action.type === TecType.格闘){
-                    
-                    Util.msg.set("＞盾"); await wait();
-                    dmg.pow.mul /= (1 + this.value * 0.5);
-    
-                    this.reduceValue(target);
-                }
-            }
-        };
-    }
-    // static readonly          盾 = new class extends Condition{
-    //     constructor(){super("盾", ConditionType.GOOD_LV2);}
-    //     async beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-    //         if(action instanceof ActiveTec && action.type === TecType.格闘){
+    static readonly          盾 = new class extends Condition{
+        constructor(){super("盾", ConditionType.GOOD_LV2);}
+        async beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type === TecType.格闘){
                 
-    //             Util.msg.set("＞盾"); await wait();
-    //             dmg.mul /= (1 + target.getConditionValue(this.type) * 0.5);
+                Util.msg.set("＞盾"); await wait();
+                dmg.pow.mul *= (1 + target.getConditionValue(this) * 0.5);
 
-    //             target.addCondition(this.type, -1);
-    //         }
-    //     }
-    // };
+                target.addConditionValue(this, -1);
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //

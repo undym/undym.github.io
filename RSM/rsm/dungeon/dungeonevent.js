@@ -10,7 +10,7 @@ import { Util, Place, PlayData } from "../util.js";
 import { Btn } from "../widget/btn.js";
 import { Dungeon } from "./dungeon.js";
 import { Scene, cwait, wait } from "../undym/scene.js";
-import { FieldScene } from "../scene/fieldscene.js";
+import { TownScene } from "../scene/townscene.js";
 import { Item } from "../item.js";
 import { ILayout, FlowLayout } from "../undym/layout.js";
 import { Color } from "../undym/type.js";
@@ -22,6 +22,7 @@ import DungeonScene from "../scene/dungeonscene.js";
 import { ItemScene } from "../scene/itemscene.js";
 import { Targeting, Dmg } from "../force.js";
 import { Img } from "../graphics/graphics.js";
+import { SaveData } from "../savedata.js";
 export default class DungeonEvent {
     constructor() {
     }
@@ -65,7 +66,7 @@ DungeonEvent.BOX_OPENED = new class extends DungeonEvent {
                 openNum++;
                 openBoost /= 2;
             }
-            let dungeonRank = Dungeon.now.getRank();
+            let dungeonRank = Dungeon.now.au;
             for (let i = 0; i < openNum; i++) {
                 const itemRank = Item.fluctuateRank(dungeonRank);
                 let item = Item.rndBoxRankItem(itemRank);
@@ -170,7 +171,7 @@ DungeonEvent.ESCAPE_DUNGEON = new class extends DungeonEvent {
         this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
             Util.msg.set(`${Dungeon.now.toString()}を脱出します...`);
             yield cwait();
-            Scene.load(FieldScene.ins);
+            Scene.load(TownScene.ins);
         });
         this.createBtnLayout = () => ILayout.empty;
     }
@@ -179,7 +180,7 @@ DungeonEvent.CLEAR_DUNGEON = new class extends DungeonEvent {
     constructor() {
         super(...arguments);
         this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            let yen = (Dungeon.now.getRank() + 1) * Dungeon.now.getAU() / 10 * (1 + Dungeon.now.clearNum * 0.02);
+            let yen = (Dungeon.now.au + 1) * Dungeon.now.au / 10 * (1 + Dungeon.now.clearNum * 0.02);
             Dungeon.now.clearNum++;
             Util.msg.set(`[${Dungeon.now}]を踏破した！`, Color.WHITE.bright);
             yield cwait();
@@ -188,7 +189,8 @@ DungeonEvent.CLEAR_DUNGEON = new class extends DungeonEvent {
             yield cwait();
             Util.msg.set(`[${Dungeon.now}]を脱出します...`);
             yield cwait();
-            Scene.load(FieldScene.ins);
+            SaveData.dungeon.save(Dungeon.now);
+            Scene.load(TownScene.ins);
         });
         this.createBtnLayout = () => ILayout.empty;
     }
@@ -207,8 +209,8 @@ class AdvanceBtn {
             this._ins = new Btn(() => "進む", () => __awaiter(this, void 0, void 0, function* () {
                 FX_Advance(Place.MAIN);
                 Dungeon.auNow += 1;
-                if (Dungeon.auNow >= Dungeon.now.getAU()) {
-                    Dungeon.auNow = Dungeon.now.getAU();
+                if (Dungeon.auNow >= Dungeon.now.au) {
+                    Dungeon.auNow = Dungeon.now.au;
                     yield DungeonEvent.BOSS_BATTLE.happen();
                     return;
                 }

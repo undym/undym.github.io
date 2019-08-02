@@ -20,7 +20,7 @@ export abstract class Player{
         return this._ins;
     }
 
-    constructor(public uniqueName:string){
+    constructor(public readonly uniqueName:string){
         this.toString = ()=>this.uniqueName;
 
         Player._values.push(this);

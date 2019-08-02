@@ -1,11 +1,21 @@
 import { Force, Dmg, Action } from "./force.js";
 import { Unit } from "./unit.js";
+import { Num, Mix } from "./mix.js";
+import { Item } from "./item.js";
+import { SaveData } from "./savedata.js";
 
 
 export class EqPos{
     private static _values:EqPos[] = [];
     static values(){return this._values;}
 
+    private _eqs:Eq[];
+    get eqs():ReadonlyArray<Eq>{
+        if(!this._eqs){
+            this._eqs = Eq.values().filter(eq=> eq.pos === this);
+        }
+        return this._eqs;
+    }
 
     private constructor(name:string){
         this.toString = ()=>name;
@@ -24,13 +34,25 @@ export class EqPos{
 }
 
 
-export abstract class Eq implements Force{
+export abstract class Eq implements Force, Num{
     private static _values:Eq[] = [];
     static values(){return this._values;}
 
+    private static _valueOf:Map<string,Eq>;
+    static valueOf(uniqueName:string):Eq|undefined{
+        if(!this._valueOf){
+            this._valueOf = new Map<string,Eq>();
+
+            for(let eq of this.values()){
+                this._valueOf.set(eq.uniqueName, eq);
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
+
     private static _posValues:Map<EqPos,Eq[]>;
     static posValues(pos:EqPos):ReadonlyArray<Eq>{
-        if(this._posValues === undefined){
+        if(!this._posValues){
             this._posValues = new Map<EqPos,Eq[]>();
 
             for(let p of EqPos.values()){
@@ -59,20 +81,35 @@ export abstract class Eq implements Force{
         return this.髪;
     }
 
-
+    readonly uniqueName:string;
     readonly info:string[];
     readonly pos:EqPos;
     /**敵が装備し始めるレベル. */
     readonly appearLv:number;
+    
+    get mix():Mix|undefined{return this._mix ? this._mix : (this._mix = this.createMix());}
+    private _mix:Mix|undefined;
+    protected createMix():Mix|undefined{return undefined;}
+
+    num = 0;
+    totalGetNum = 0;
     //--------------------------------------------------------------------------
     //
     //
     //
     //--------------------------------------------------------------------------
-    private constructor(name:string, info:string[], pos:EqPos, appearLv:number){
-        this.toString = ()=>name;
-        this.info = info;
-        this.pos = pos;
+    private constructor(args:{
+        uniqueName:string,
+        info:string[],
+        pos:EqPos,
+        lv:number,
+    }){
+    // private constructor(name:string, info:string[], pos:EqPos, appearLv:number){
+        this.uniqueName = args.uniqueName;
+        this.toString = ()=>this.uniqueName;
+        this.info = args.info;
+        this.pos = args.pos;
+        this.appearLv = args.lv;
 
         Eq._values.push(this);
     }
@@ -86,86 +123,110 @@ export abstract class Eq implements Force{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+
+    add(v:number){
+        Num.add(this, v);
+
+        SaveData.eq.save(this);
+    }
+
+    reduce(v:number){
+        this.num -= v;
+        SaveData.eq.save(this);
+    }
+    //--------------------------------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
     //
     //頭
     //
     //--------------------------------------------------------------------------
-    static readonly          髪 = new class extends Eq{
-        constructor(){super("髪", ["髪a","髪b"], 
-            EqPos.頭,/*lv*/0);}
+    static readonly                      髪 = new class extends Eq{
+        constructor(){super({uniqueName:"髪", info:["髪a","髪b"], 
+                                pos:EqPos.頭, lv:0});}
     }
     //--------------------------------------------------------------------------
     //
     //武
     //
     //--------------------------------------------------------------------------
-    static readonly          恋人 = new class extends Eq{
-        constructor(){super("恋人", ["恋人info"],
-            EqPos.武,/*lv*/0);}
+    static readonly                      恋人 = new class extends Eq{
+        constructor(){super({uniqueName:"恋人", info:["恋人info"],
+                                pos:EqPos.武, lv:0});}
+    }
+    static readonly                      忍者刀 = new class extends Eq{
+        constructor(){super({uniqueName:"忍者刀", info:["格闘攻撃時稀に追加攻撃"],
+                                pos:EqPos.武, lv:99});}
+        createMix(){return new Mix({
+            result:[this,1],
+            materials:[[Item.石, 1]],
+        });}
     }
     //--------------------------------------------------------------------------
     //
     //盾
     //
     //--------------------------------------------------------------------------
-    static readonly          板 = new class extends Eq{
-        constructor(){super("板", [],
-            EqPos.盾,/*lv*/0);}
+    static readonly                      板 = new class extends Eq{
+        constructor(){super({uniqueName:"板", info:[],
+                                pos:EqPos.盾, lv:0});}
     }
     //--------------------------------------------------------------------------
     //
     //体
     //
     //--------------------------------------------------------------------------
-    static readonly          襤褸切れ = new class extends Eq{
-        constructor(){super("襤褸切れ", [],
-            EqPos.体,/*lv*/0);}
+    static readonly                      襤褸切れ = new class extends Eq{
+        constructor(){super({uniqueName:"襤褸切れ", info:[],
+                                pos:EqPos.体, lv:0});}
     }
     //--------------------------------------------------------------------------
     //
     //腰
     //
     //--------------------------------------------------------------------------
-    static readonly          ひも = new class extends Eq{
-        constructor(){super("ひも", [],
-            EqPos.腰,/*lv*/0);}
+    static readonly                      ひも = new class extends Eq{
+        constructor(){super({uniqueName:"ひも", info:[],
+                                pos:EqPos.腰, lv:0});}
     }
     //--------------------------------------------------------------------------
     //
     //腕
     //
     //--------------------------------------------------------------------------
-    static readonly          腕 = new class extends Eq{
-        constructor(){super("腕", [],
-            EqPos.腕,/*lv*/0);}
+    static readonly                      腕 = new class extends Eq{
+        constructor(){super({uniqueName:"腕", info:[],
+                                pos:EqPos.腕, lv:0});}
     }
     //--------------------------------------------------------------------------
     //
     //手
     //
     //--------------------------------------------------------------------------
-    static readonly          手 = new class extends Eq{
-        constructor(){super("手", [],
-            EqPos.手,/*lv*/0);}
+    static readonly                          手 = new class extends Eq{
+            constructor(){super({uniqueName:"手", info:[],
+                                    pos:EqPos.手, lv:0});}
     }
     //--------------------------------------------------------------------------
     //
     //指
     //
     //--------------------------------------------------------------------------
-    static readonly          肩身の指輪 = new class extends Eq{
-        constructor(){super("肩身の指輪", [],
-            EqPos.指,/*lv*/0);}
+    static readonly                      肩身の指輪 = new class extends Eq{
+        constructor(){super({uniqueName:"肩身の指輪", info:[],
+                                pos:EqPos.指, lv:0});}
     }
     //--------------------------------------------------------------------------
     //
     //脚
     //
     //--------------------------------------------------------------------------
-    static readonly          きれいな靴 = new class extends Eq{
-        constructor(){super("きれいな靴", [],
-            EqPos.脚,/*lv*/0);}
+    static readonly                      きれいな靴 = new class extends Eq{
+        constructor(){super({uniqueName:"きれいな靴", info:[],
+                                pos:EqPos.脚, lv:0});}
     }
     //--------------------------------------------------------------------------
     //

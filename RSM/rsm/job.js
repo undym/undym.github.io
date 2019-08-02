@@ -13,6 +13,15 @@ export class Job {
         Job._values.push(this);
     }
     static values() { return this._values; }
+    static valueOf(uniqueName) {
+        if (!this._valueOf) {
+            this._valueOf = new Map();
+            for (const job of this.values()) {
+                this._valueOf.set(job.uniqueName, job);
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
     static rndJob(lv) {
         for (let job of Job.values()) {
             if (job.appearLv <= lv) {

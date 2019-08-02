@@ -13,29 +13,31 @@ export class ConditionType {
     constructor() {
         ConditionType._values.push(this);
     }
+    static values() {
+        return ConditionType._values;
+    }
+    static goodConditions() {
+        if (!this._goodConditions) {
+            this._goodConditions = [
+                this.GOOD_LV1,
+                this.GOOD_LV2,
+                this.GOOD_LV3,
+            ];
+        }
+        return this._goodConditions;
+    }
+    static badConditions() {
+        if (!this._badConditions) {
+            this._badConditions = [
+                this.BAD_LV1,
+                this.BAD_LV2,
+                this.BAD_LV3,
+            ];
+        }
+        return this._badConditions;
+    }
 }
 ConditionType._values = [];
-ConditionType.values = () => ConditionType._values;
-ConditionType.goodConditions = () => {
-    if (ConditionType._goodConditions !== undefined) {
-        return ConditionType._goodConditions;
-    }
-    return (ConditionType._goodConditions = [
-        ConditionType.GOOD_LV1,
-        ConditionType.GOOD_LV2,
-        ConditionType.GOOD_LV3,
-    ]);
-};
-ConditionType.badConditions = () => {
-    if (ConditionType._badConditions !== undefined) {
-        return ConditionType._badConditions;
-    }
-    return (ConditionType._badConditions = [
-        ConditionType.BAD_LV1,
-        ConditionType.BAD_LV2,
-        ConditionType.BAD_LV3,
-    ]);
-};
 ConditionType.GOOD_LV1 = new ConditionType();
 ConditionType.GOOD_LV2 = new ConditionType();
 ConditionType.GOOD_LV3 = new ConditionType();
@@ -44,18 +46,22 @@ ConditionType.BAD_LV2 = new ConditionType();
 ConditionType.BAD_LV3 = new ConditionType();
 ConditionType.INVISIBLE = new ConditionType();
 export class Condition {
-    constructor(name, type, value) {
-        this.name = name;
+    constructor(uniqueName, type) {
+        this.uniqueName = uniqueName;
         this.type = type;
-        this.value = value;
+        Condition._values.push(this);
     }
-    toString() { return `${this.name}${this.value}`; }
-    reduceValue(unit, v = 1) {
-        this.value = v;
-        if (this.value <= 0) {
-            unit.clearCondition(this);
+    static values() { return this._values; }
+    static valueOf(uniqueName) {
+        if (!this._valueOf) {
+            this._valueOf = new Map();
+            for (let condition of this.values()) {
+                this._valueOf.set(condition.uniqueName, condition);
+            }
         }
+        return this._valueOf.get(uniqueName);
     }
+    toString() { return `${this.uniqueName}`; }
     //--------------------------------------------------------------------------
     //
     //Force
@@ -66,63 +72,50 @@ export class Condition {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
-    //--------------------------------------------------------------------------
-    //
-    //GOOD_LV1
-    //
-    //--------------------------------------------------------------------------
-    // static readonly          練 = new class extends Condition{
-    //     constructor(){super("練", ConditionType.GOOD_LV1);}
-    //     async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-    //         if(action instanceof ActiveTec && action.type === TecType.格闘){
-    //             Util.msg.set("＞練"); await wait();
-    //             dmg.mul *= (1 + attacker.getConditionValue(this.type) * 0.5);
-    //             attacker.addCondition(this.type, -1);
-    //         }
-    //     }
-    // };
-    static create練(_value) {
-        return new class extends Condition {
-            constructor() { super("練", ConditionType.GOOD_LV1, _value); }
-            beforeDoAtk(action, attacker, target, dmg) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    if (action instanceof ActiveTec && action.type === TecType.格闘) {
-                        Util.msg.set("＞練");
-                        yield wait();
-                        dmg.pow.mul *= (1 + this.value * 0.5);
-                        this.reduceValue(attacker);
-                    }
-                });
-            }
-        };
-    }
-    //--------------------------------------------------------------------------
-    //
-    //
-    //
-    //--------------------------------------------------------------------------
-    static create盾(_value) {
-        return new class extends Condition {
-            constructor() { super("盾", ConditionType.GOOD_LV2, _value); }
-            beforeBeAtk(action, attacker, target, dmg) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    if (action instanceof ActiveTec && action.type === TecType.格闘) {
-                        Util.msg.set("＞盾");
-                        yield wait();
-                        dmg.pow.mul /= (1 + this.value * 0.5);
-                        this.reduceValue(target);
-                    }
-                });
-            }
-        };
-    }
 }
+Condition._values = [];
 //--------------------------------------------------------------------------
 //
 //
 //
 //--------------------------------------------------------------------------
 Condition.empty = new class extends Condition {
-    constructor() { super("", ConditionType.GOOD_LV1, 0); }
+    constructor() { super("empty", ConditionType.GOOD_LV1); }
     toString() { return ""; }
+};
+//--------------------------------------------------------------------------
+//
+//GOOD_LV1
+//
+//--------------------------------------------------------------------------
+Condition.練 = new class extends Condition {
+    constructor() { super("練", ConditionType.GOOD_LV1); }
+    beforeDoAtk(action, attacker, target, dmg) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (action instanceof ActiveTec && action.type === TecType.格闘) {
+                Util.msg.set("＞練");
+                yield wait();
+                dmg.pow.mul *= (1 + attacker.getConditionValue(this) * 0.5);
+                attacker.addConditionValue(this, -1);
+            }
+        });
+    }
+};
+//--------------------------------------------------------------------------
+//
+//
+//
+//--------------------------------------------------------------------------
+Condition.盾 = new class extends Condition {
+    constructor() { super("盾", ConditionType.GOOD_LV2); }
+    beforeBeAtk(action, attacker, target, dmg) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (action instanceof ActiveTec && action.type === TecType.格闘) {
+                Util.msg.set("＞盾");
+                yield wait();
+                dmg.pow.mul *= (1 + target.getConditionValue(this) * 0.5);
+                target.addConditionValue(this, -1);
+            }
+        });
+    }
 };

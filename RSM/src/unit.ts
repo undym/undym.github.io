@@ -128,8 +128,7 @@ export abstract class Unit{
 
     job:Job;
 
-    // protected conditions = new Map<ConditionType,Condition>();
-    protected conditions:Condition[] = [];
+    protected conditions = new Map<ConditionType,{condition:Condition, value:number}>();
     //---------------------------------------------------------
     //
     //
@@ -144,9 +143,9 @@ export abstract class Unit{
 
         this.job = Job.しんまい;
         
-        // for(let type of ConditionType.values()){
-        //     this.conditionSets.set(type, {condition:Condition.empty, value:0});
-        // }
+        for(let type of ConditionType.values()){
+            this.conditions.set(type, {condition:Condition.empty, value:0});
+        }
 
         for(let pos of EqPos.values()){
             this.equips.set(pos, Eq.getDef(pos));
@@ -252,40 +251,93 @@ export abstract class Unit{
     //Condition
     //
     //---------------------------------------------------------
-    existsCondition(type:ConditionType):boolean;
-    existsCondition(c:Condition):boolean;
-    existsCondition(a:any):boolean{
-        if(a instanceof ConditionType){
-            return this.conditions.some(c=> c.type === a);
+    existsCondition(condition:Condition|ConditionType){
+        if(condition instanceof Condition){
+            const set= this.conditions.get(condition.type);
+            if(set){return set.condition === condition;}
         }
-        if(a instanceof Condition){
-            return this.conditions.some(c=> c.name === a.name);
+        if(condition instanceof ConditionType){
+            const set= this.conditions.get(condition);
+            if(set){return set.condition !== Condition.empty;}
         }
         return false;
     }
-    clearCondition(type:ConditionType):void;
-    clearCondition(c:Condition):void;
-    clearCondition(a:any):void{
-        if(a instanceof ConditionType){
-            this.conditions = this.conditions.filter(c=> c.type !== a);
-        }
-        if(a instanceof Condition){
-            this.conditions = this.conditions.filter(c=> c.name !== a.name);
-        }
-    }
-    setCondition(condition:Condition){
-        if(condition.type === ConditionType.INVISIBLE){
-            this.conditions.push(condition);
+    clearCondition(condition:Condition|ConditionType){
+        if(condition instanceof Condition){
+            const set = this.conditions.get(condition.type);
+            if(set && set.condition === condition){
+                set.condition = Condition.empty;
+            }
             return;
         }
-
-        this.conditions = this.conditions.filter(c=> c.type !== condition.type);
-        this.conditions.push( condition );
+        if(condition instanceof ConditionType){
+            const set = this.conditions.get(condition);
+            if(set){set.condition = Condition.empty;}
+            return;
+        }
     }
-    getCondition(type:ConditionType):Condition  {
-        let res = this.conditions.find(c=> c.type === type);
-        if(res === undefined){return Condition.empty;}
-        return res;
+    clearAllCondition(){
+        for(const type of ConditionType.values()){
+            const set = this.conditions.get(type);
+            if(set){
+                set.condition = Condition.empty;
+            }
+        }
+    }
+
+    setCondition(condition:Condition, value:number){
+        this.conditions.set(condition.type, {condition:condition, value:value});
+    }
+
+    getCondition(type:ConditionType):Condition{
+        const set = this.conditions.get(type);
+        if(set){return set.condition;}
+        return Condition.empty;
+    }
+    
+    getConditionValue(condition:Condition|ConditionType):number{
+        if(condition instanceof Condition){
+            const set = this.conditions.get(condition.type);
+            if(set && set.condition === condition){
+                return set.value;
+            }
+        }
+        if(condition instanceof ConditionType){
+            const set = this.conditions.get(condition);
+            if(set){
+                return set.value;
+            }
+        }
+        return 0;
+    }
+    /**返り値は変更しても影響なし。 */
+    getConditionSet(type:ConditionType):{condition:Condition, value:number}{
+        const set = this.conditions.get(type);
+        if(set){
+            return {condition:set.condition, value:set.value};
+        }
+        return {condition:Condition.empty, value:0};
+    }
+
+    addConditionValue(condition:Condition|ConditionType, value:number){
+        if(condition instanceof Condition){
+            const set = this.conditions.get(condition.type);
+            if(set && set.condition === condition){
+                set.value += value;
+                if(set.value <= 0){
+                    set.condition = Condition.empty;
+                }
+            }
+        }
+        if(condition instanceof ConditionType){
+            const set = this.conditions.get(condition);
+            if(set){
+                set.value += value;
+                if(set.value <= 0){
+                    set.condition = Condition.empty;
+                }
+            }
+        }
     }
     //---------------------------------------------------------
     //
@@ -392,7 +444,7 @@ export class PUnit extends Unit{
 
             if(set.lv >= this.job.getMaxLv()){
                 Util.msg.set(`${this.job}を極めた！`, Color.ORANGE.bright); await wait();
-                PlayData.jobChangeBtnIsVisible = true;
+                PlayData.masteredAnyJob = true;
             }
         }
     }

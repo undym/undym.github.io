@@ -7,17 +7,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Scene } from "../undym/scene.js";
-import { Util } from "../util.js";
+import { Util, Debug } from "../util.js";
 import { Rect, Color } from "../undym/type.js";
 import { ILayout, FlowLayout } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
-import { FieldScene } from "./fieldscene.js";
+import { TownScene } from "./townscene.js";
 import { List } from "../widget/list.js";
 import { FXTest } from "../fx/fx.js";
-import { Item } from "../item.js";
+import { Item, ItemType } from "../item.js";
 import { Graphics } from "../graphics/graphics.js";
 import { ActiveTec, PassiveTec } from "../tec.js";
 import { Player } from "../player.js";
+import { SaveData } from "../savedata.js";
 export const createOptionBtn = () => {
     const w = 4;
     const h = 3;
@@ -27,19 +28,50 @@ export const createOptionBtn = () => {
 };
 const setOptionBtn = (l) => {
     l.clear();
-    l.add(new Btn("再読み込み", () => {
-        window.location.href = window.location.href;
+    // l.add(new Btn("再読み込み", ()=>{
+    //     window.location.href = window.location.href;
+    // }));
+    l.add(new Btn("データ削除", () => {
+        setSaveDataDeleteBtn(l);
     }));
-    if (Util.DEBUG) {
-    }
     l.addFromLast(new Btn("<<", () => {
-        Scene.load(FieldScene.ins);
+        Scene.load(TownScene.ins);
     }));
-    if (Util.DEBUG) {
+    if (Debug.DEBUG) {
         l.addFromLast(new Btn("Debug", () => {
             setDebugBtn(l);
         }));
     }
+};
+const setSaveDataDeleteBtn = (l) => {
+    Util.msg.set("セーブデータを削除しますか？");
+    l.clear();
+    l.add(new Btn("はい", () => {
+        Util.msg.set("＞はい");
+        setSaveDataDeleteBtn2(l);
+    }));
+    l.add(new Btn("いいえ", () => {
+        Util.msg.set("＞いいえ");
+        setOptionBtn(l);
+    }));
+    l.add(new Btn("どちらともいえない", () => {
+        Util.msg.set("＞はっきりしなさい");
+    }));
+    l.addFromLast(new Btn("<<", () => {
+        Util.msg.set("やめた");
+        setOptionBtn(l);
+    }));
+};
+const setSaveDataDeleteBtn2 = (l) => {
+    l.clear();
+    l.add(new Btn("削除実行", () => {
+        SaveData.delete();
+        window.location.href = window.location.href;
+    }));
+    l.addFromLast(new Btn("<<", () => {
+        Util.msg.set("やめた");
+        setOptionBtn(l);
+    }));
 };
 const setDebugBtn = (l) => {
     l.clear();
@@ -48,6 +80,12 @@ const setDebugBtn = (l) => {
             item.num = item.numLimit;
         }
         Util.msg.set("GetAllItems");
+    }));
+    l.add(new Btn("GetMaterials", () => {
+        for (let item of ItemType.素材.values()) {
+            item.num = item.numLimit;
+        }
+        Util.msg.set("GetMaterials");
     }));
     l.add(new Btn("TecMaster", () => {
         for (let p of Player.values()) {
@@ -58,13 +96,17 @@ const setDebugBtn = (l) => {
                 p.ins.setMasteredTec(tec, true);
             }
         }
-        Util.msg.set("WeAreMaster!!");
+        Util.msg.set("TecMaster");
+    }));
+    l.add(new Btn("btnIsVisible", () => {
+        Debug.btnIsVisible = !Debug.btnIsVisible;
+        Util.msg.set(`Debug.btnIsVisible:${Debug.btnIsVisible}`);
     }));
     l.add(new Btn("EffectTest", () => {
         Scene.load(new EffectTest());
     }));
     l.addFromLast(new Btn("<<", () => {
-        Scene.load(FieldScene.ins);
+        Scene.load(TownScene.ins);
     }));
     l.addFromLast(new Btn("Option", () => {
         setOptionBtn(l);
@@ -137,7 +179,7 @@ class EffectTest extends Scene {
                     }
                 } }));
             _super.add.call(this, new Rect(0.8, 0.8, 0.2, 0.2), new Btn(() => "<-", () => {
-                Scene.load(FieldScene.ins);
+                Scene.load(TownScene.ins);
             }));
             for (let v of FXTest.values()) {
                 list.add({

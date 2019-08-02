@@ -19,9 +19,7 @@ export default class DungeonScene extends Scene {
         super.add(Place.MSG, Util.msg);
         let dungeonEventBak;
         let btnLayout;
-        super.add(Place.BTN, 
-        // new VariableLayout(()=>DungeonEvent.now.getBtnLayout())
-        new VariableLayout(() => {
+        super.add(Place.BTN, new VariableLayout(() => {
             if (dungeonEventBak != DungeonEvent.now) {
                 dungeonEventBak = DungeonEvent.now;
                 btnLayout = dungeonEventBak.createBtnLayout();
@@ -51,9 +49,8 @@ class DrawEvent extends InnerLayout {
                 if (!img.loaded) {
                     return;
                 }
-                const ratio = { w: img.ratioW / bounds.w, h: img.ratioH / bounds.h };
                 let zoom = 0;
-                if (ratio.w > ratio.h) {
+                if (img.ratioW / bounds.w > img.ratioH / bounds.h) {
                     zoom = zoomCount / (zoomCount + 1) * bounds.w / img.ratioW;
                 }
                 else {

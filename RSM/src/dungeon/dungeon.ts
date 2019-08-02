@@ -24,17 +24,29 @@ export abstract class Dungeon{
 
     clearNum:number = 0;
 
-    getRank()   {return this.rank;}
-    getAU()     {return this.au;}
-    getEnemyLv(){return this.enemyLv;}
+    readonly uniqueName:string;
+    readonly rank:number;
+    readonly enemyLv:number;
+    readonly au:number;
 
     //-----------------------------------------------------------------
     //
     //
     //
     //-----------------------------------------------------------------
-    private constructor(name:string, protected rank:number, protected enemyLv:number, protected au:number){
-        this.toString = ()=>name;
+    // private constructor(name:string, protected rank:number, protected enemyLv:number, protected au:number){
+    private constructor(args:{
+        uniqueName:string,
+        rank:number,
+        enemyLv:number,
+        au:number,
+    }){
+        this.uniqueName = args.uniqueName;
+        this.toString = ()=>this.uniqueName;
+
+        this.rank       = args.rank;
+        this.enemyLv    = args.enemyLv;
+        this.au         = args.au;
 
         Dungeon._values.push(this);
     }
@@ -61,7 +73,7 @@ export abstract class Dungeon{
     }
 
     rndEnemyNum():number{
-        const prob = 1.0 - (this.getRank() + 4) / (this.getRank() * this.getRank() + 5);
+        const prob = 1.0 - (this.rank + 4) / (this.rank * this.rank + 5);
         let num = 0;
         for(let i = 0; i < Unit.enemies.length; i++){
             if(Math.random() <= prob){
@@ -79,7 +91,7 @@ export abstract class Dungeon{
     }
 
     setEnemyInner(e:EUnit){
-        let lv = (Math.random() * 0.5 + 0.75) * this.getEnemyLv();
+        let lv = (Math.random() * 0.5 + 0.75) * this.enemyLv;
         let job = Job.rndJob(lv);
         job.setEnemy( e, lv );
     }
@@ -105,8 +117,10 @@ export abstract class Dungeon{
     //
     //
     //-----------------------------------------------------------------
-    static readonly          はじまりの丘:Dungeon = new class extends Dungeon{
-        constructor(){super("はじまりの丘",/*rank*/0,/*lv*/1,/*au*/50);}
+    static readonly                      はじまりの丘:Dungeon = new class extends Dungeon{
+        constructor(){super({uniqueName:"はじまりの丘",
+                                rank:0, enemyLv:1, au:50,
+        });}
         getArea   = ()=>DungeonArea.再構成トンネル;
         getBounds = ()=>new Rect(0.35, 0.4, 0.3, 0.2);
         isVisible = ()=>true;
@@ -116,6 +130,21 @@ export abstract class Dungeon{
             e.name = "ボス";
             e.prm(Prm.MAX_HP).base = 30;
             e.prm(Prm.STR).base = 7;
+        };
+    };
+    static readonly                      丘の上:Dungeon = new class extends Dungeon{
+        constructor(){super({uniqueName:"丘の上",
+                                rank:1, enemyLv:3, au:100,
+        });}
+        getArea   = ()=>DungeonArea.再構成トンネル;
+        getBounds = ()=>new Rect(0.55, 0.15, 0.3, 0.2);
+        isVisible = ()=>Dungeon.はじまりの丘.clearNum > 0;
+        setBossInner = ()=>{
+            let e = Unit.enemies[0];
+            Job.剣士.setEnemy(e, e.prm(Prm.LV).base);
+            e.name = "ボス";
+            e.prm(Prm.MAX_HP).base = 50;
+            e.prm(Prm.STR).base = 10;
         };
     };
     

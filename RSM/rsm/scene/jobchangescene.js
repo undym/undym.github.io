@@ -16,7 +16,7 @@ import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
 import { Place } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 import { List } from "../widget/list.js";
-import { FieldScene } from "./fieldscene.js";
+import { TownScene } from "./townscene.js";
 import { Job } from "../job.js";
 export class JobChangeScene extends Scene {
     constructor() {
@@ -57,7 +57,7 @@ export class JobChangeScene extends Scene {
             .add(btnBounds, (() => {
             const l = new FlowLayout(2, 1);
             l.addFromLast(new Btn("<<", () => {
-                Scene.load(FieldScene.ins);
+                Scene.load(TownScene.ins);
             }));
             const checkCanChange = () => {
                 if (!this.target || !this.choosedJob) {

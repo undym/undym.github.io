@@ -9,10 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Util } from "./util.js";
 import { Color } from "./undym/type.js";
 import { wait } from "./undym/scene.js";
+import { Prm } from "./unit.js";
 import { FX_RotateStr } from "./fx/fx.js";
 import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
+import { Num, Mix } from "./mix.js";
+import { SaveData } from "./savedata.js";
 export class ItemType {
     constructor(name) {
         this.toString = () => name;
@@ -112,6 +115,8 @@ export class Item {
             return res >= 0 ? res : 0;
         }
     }
+    get mix() { return this._mix ? this._mix : (this._mix = this.createMix()); }
+    createMix() { return undefined; }
     add(v) {
         if (this.num + v > this.numLimit) {
             v = this.numLimit - this.num;
@@ -120,21 +125,12 @@ export class Item {
                 return;
             }
         }
-        const newItem = this.totalGetNum === 0;
-        if (newItem) {
-            Util.msg.set("new", Color.rainbow);
-        }
-        else {
-            Util.msg.set("");
-        }
-        this.num += v;
-        this.totalGetNum += v;
-        Util.msg.add(`[${this}]を${v}個手に入れた(${this.num})`, Color.D_GREEN.bright);
-        if (newItem) {
-            for (let str of this.info) {
-                Util.msg.set(`"${str}"`, Color.GREEN);
-            }
-        }
+        Num.add(this, v);
+        SaveData.item.save(this);
+    }
+    reduce(v) {
+        this.num -= v;
+        SaveData.item.save(this);
     }
     use(user, targets) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -153,6 +149,7 @@ export class Item {
             else {
                 this.num--;
             }
+            SaveData.item.save(this);
         });
     }
     canUse() {
@@ -183,6 +180,22 @@ Item.スティックパン = new class extends Item {
         });
     }
 };
+Item.硬化スティックパン = new class extends Item {
+    constructor() {
+        super({ uniqueName: "硬化スティックパン", info: ["HP+10%"],
+            type: ItemType.HP回復, rank: 0, box: false,
+            numLimit: 5, consumable: true,
+            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, target.prm(Prm.MAX_HP).total() / 10); }),
+        });
+    }
+    createMix() {
+        return new Mix({
+            result: [this, 1],
+            limit: this.numLimit,
+            materials: [[Item.石, 10]],
+        });
+    }
+};
 //-----------------------------------------------------------------
 //
 //MP回復
@@ -190,7 +203,7 @@ Item.スティックパン = new class extends Item {
 //-----------------------------------------------------------------
 Item.水 = new class extends Item {
     constructor() {
-        super({ uniqueName: "水", info: ["MP+20%"],
+        super({ uniqueName: "水", info: ["MP+20"],
             type: ItemType.MP回復, rank: 0, box: false,
             numLimit: 5, consumable: true,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 20); }),
@@ -224,6 +237,12 @@ Item.He = new class extends Item {
     constructor() {
         super({ uniqueName: "He", info: ["ヘェッ"],
             type: ItemType.素材, rank: 2, box: true });
+    }
+};
+Item.人影 = new class extends Item {
+    constructor() {
+        super({ uniqueName: "人影", info: ["あやしい影"],
+            type: ItemType.素材, rank: 0, box: false });
     }
 };
 class ItemFont {

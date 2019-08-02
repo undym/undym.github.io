@@ -137,6 +137,7 @@ export class Tec extends Force {
         return this._empty ? this._empty : (this._empty = new class extends Tec {
             constructor() {
                 super();
+                this.uniqueName = "empty";
                 this.info = [];
                 this.type = TecType.格闘;
             }
@@ -163,6 +164,15 @@ export class PassiveTec extends Tec {
         PassiveTec._values.push(this);
     }
     static values() { return this._values; }
+    static valueOf(uniqueName) {
+        if (!this._valueOf) {
+            this._valueOf = new Map();
+            for (const tec of this.values()) {
+                this._valueOf.set(tec.uniqueName, tec);
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
 }
 PassiveTec._values = [];
 //--------------------------------------------------------------------------
@@ -231,6 +241,15 @@ export class ActiveTec extends Tec {
         ActiveTec._values.push(this);
     }
     static values() { return this._values; }
+    static valueOf(uniqueName) {
+        if (!this._valueOf) {
+            this._valueOf = new Map();
+            for (const tec of this.values()) {
+                this._valueOf.set(tec.uniqueName, tec);
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
     //--------------------------------------------------------------------------
     //
     //
@@ -404,7 +423,8 @@ ActiveTec.練気 = new class extends ActiveTec {
     }
     run(attacker, target) {
         return __awaiter(this, void 0, void 0, function* () {
-            setCondition(target, Condition.create練(1));
+            const value = target.getConditionValue(Condition.練);
+            setCondition(target, Condition.練, value + 1);
         });
     }
 };
@@ -417,7 +437,8 @@ ActiveTec.グレートウォール = new class extends ActiveTec {
     }
     run(attacker, target) {
         return __awaiter(this, void 0, void 0, function* () {
-            setCondition(target, Condition.create盾(1));
+            const value = target.getConditionValue(Condition.盾);
+            setCondition(target, Condition.盾, value + 1);
         });
     }
 };
@@ -440,7 +461,7 @@ ActiveTec.何もしない = new class extends ActiveTec {
         });
     }
 };
-const setCondition = (target, condition) => {
-    target.setCondition(condition);
-    Util.msg.set(`${target.name}は＜${condition}＞になった`, Color.CYAN.bright);
+const setCondition = (target, condition, value) => {
+    target.setCondition(condition, value);
+    Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
 };

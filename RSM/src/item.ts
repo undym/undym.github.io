@@ -7,6 +7,8 @@ import { FX_Str, FX_RotateStr } from "./fx/fx.js";
 import { Targeting, Action } from "./force.js";
 import { randomInt, choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
+import { Num, Mix } from "./mix.js";
+import { SaveData } from "./savedata.js";
 
 
 
@@ -52,7 +54,7 @@ export class ItemParentType{
 }
 
 
-export class Item implements Action{
+export class Item implements Action, Num{
     private static _values:Item[] = [];
     static values():ReadonlyArray<Item>{
         return this._values;
@@ -120,7 +122,13 @@ export class Item implements Action{
     readonly box:boolean;
     readonly targetings:number;
     readonly consumable:boolean;
+
     protected useInner:(user:Unit, target:Unit)=>void;
+
+    
+    get mix():Mix|undefined{return this._mix ? this._mix : (this._mix = this.createMix());}
+    private _mix:Mix|undefined;
+    protected createMix():Mix|undefined{return undefined;}
     
     constructor(args:{
         uniqueName:string,
@@ -170,24 +178,15 @@ export class Item implements Action{
             }
         }
 
-        const newItem = this.totalGetNum === 0;
-        if(newItem){
-            Util.msg.set("new", Color.rainbow);
-        }else{
-            Util.msg.set("");
-        }
-
-        this.num += v;
-        this.totalGetNum += v;
-        Util.msg.add(`[${this}]を${v}個手に入れた(${this.num})`, Color.D_GREEN.bright);
-
-        if(newItem){
-            for(let str of this.info){
-                Util.msg.set(`"${str}"`, Color.GREEN);
-            }
-        }
+        Num.add(this, v);
+        
+        SaveData.item.save(this);
     }
 
+    reduce(v:number){
+        this.num -= v;
+        SaveData.item.save(this);
+    }
 
     async use(user:Unit, targets:Unit[]){
         if(!this.canUse()){return;}
@@ -199,6 +198,8 @@ export class Item implements Action{
         
         if(this.consumable) {this.usedNum++;}
         else                {this.num--;}
+
+        SaveData.item.save(this);
     }
 
     canUse(){
@@ -218,13 +219,25 @@ export class Item implements Action{
                                 use:async(user,target)=> await healHP(target, 10),
         })}
     };
+    static readonly                      硬化スティックパン = new class extends Item{
+        constructor(){super({uniqueName:"硬化スティックパン", info:["HP+10%"],
+                                type:ItemType.HP回復, rank:0, box:false,
+                                numLimit:5, consumable:true,
+                                use:async(user,target)=>await healHP(target, target.prm(Prm.MAX_HP).total() / 10),
+        })}
+        createMix(){return new Mix({
+            result:[this, 1],
+            limit:this.numLimit,
+            materials:[[Item.石, 10]],
+        });}
+    };
     //-----------------------------------------------------------------
     //
     //MP回復
     //
     //-----------------------------------------------------------------
     static readonly                      水 = new class extends Item{
-        constructor(){super({uniqueName:"水", info:["MP+20%"],
+        constructor(){super({uniqueName:"水", info:["MP+20"],
                                 type:ItemType.MP回復, rank:0, box:false,
                                 numLimit:5, consumable:true,
                                 use:async(user,target)=> await healMP(target, 20),
@@ -250,6 +263,10 @@ export class Item implements Action{
     static readonly                      He = new class extends Item{
         constructor(){super({uniqueName:"He", info:["ヘェッ"],
                                 type:ItemType.素材, rank:2, box:true})}
+    };
+    static readonly                      人影 = new class extends Item{
+        constructor(){super({uniqueName:"人影", info:["あやしい影"],
+                                type:ItemType.素材, rank:0, box:false})}
     };
     //-----------------------------------------------------------------
     //

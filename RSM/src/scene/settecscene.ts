@@ -8,8 +8,7 @@ import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
 import { Place } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 import { List } from "../widget/list.js";
-import { FieldScene } from "./fieldscene.js";
-import { Job } from "../job.js";
+import { TownScene } from "./townscene.js";
 import { TecType, Tec, ActiveTec } from "../tec.js";
 import { FX_Str } from "../fx/fx.js";
 
@@ -98,7 +97,7 @@ export class SetTecScene extends Scene{
                             }));
                 
                             l.addFromLast(new Btn("<<", ()=>{
-                                Scene.load( FieldScene.ins );
+                                Scene.load( TownScene.ins );
                             }));
                 
                             const choosedTecIsSetting = ()=> this.target.tecs.some(t=> t === this.choosedTec)
@@ -110,7 +109,7 @@ export class SetTecScene extends Scene{
                                         this.target.tecs[i] = this.choosedTec;
                                         FX_Str(Font.def, `${this.choosedTec}をセットしました`, {x:0.5, y:0.5}, Color.WHITE);
 
-                                        this.setList(this.target, this.getListTecs ,/*keepPage*/true);
+                                        // this.setList(this.target, this.getListTecs ,/*keepPage*/true);
                                         return;
                                    }
                                }
@@ -125,7 +124,7 @@ export class SetTecScene extends Scene{
                                         this.target.tecs[i] = Tec.empty;
                                         FX_Str(Font.def, `${this.choosedTec}を外しました`, {x:0.5, y:0.5}, Color.WHITE);
 
-                                        this.setList(this.target, this.getListTecs, /*keepPage*/true);
+                                        // this.setList(this.target, this.getListTecs, /*keepPage*/true);
                                         return;
                                     }
                                 }
@@ -155,7 +154,6 @@ export class SetTecScene extends Scene{
 
             for(let p of Unit.players.filter(p=> p.exists)){
                 if(p.bounds.contains( Input.point )){
-                    this.list.clear(/*keepPage*/false);
                     this.setList(p, this.getListTecs);
                     break;
                 }
