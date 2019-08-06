@@ -35,17 +35,17 @@ export class ConditionType{
         return this._badConditions;
     }
 
-    private constructor(){
+    private constructor(public readonly uniqueName:string){
         ConditionType._values.push(this);
     }
 
-    static readonly GOOD_LV1 = new ConditionType();
-    static readonly GOOD_LV2 = new ConditionType();
-    static readonly GOOD_LV3 = new ConditionType();
-    static readonly BAD_LV1  = new ConditionType();
-    static readonly BAD_LV2  = new ConditionType();
-    static readonly BAD_LV3  = new ConditionType();
-    static readonly INVISIBLE = new ConditionType();
+    static readonly GOOD_LV1 = new ConditionType("GOOD_LV1");
+    static readonly GOOD_LV2 = new ConditionType("GOOD_LV2");
+    static readonly GOOD_LV3 = new ConditionType("GOOD_LV3");
+    static readonly BAD_LV1  = new ConditionType("BAD_LV1");
+    static readonly BAD_LV2  = new ConditionType("BAD_LV2");
+    static readonly BAD_LV3  = new ConditionType("BAD_LV3");
+    static readonly INVISIBLE= new ConditionType("INVISIBLE");
 }
 
 

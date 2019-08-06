@@ -171,6 +171,8 @@ DungeonEvent.ESCAPE_DUNGEON = new class extends DungeonEvent {
         this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
             Util.msg.set(`${Dungeon.now.toString()}を脱出します...`);
             yield cwait();
+            SaveData.save();
+            yield cwait();
             Scene.load(TownScene.ins);
         });
         this.createBtnLayout = () => ILayout.empty;
@@ -187,10 +189,9 @@ DungeonEvent.CLEAR_DUNGEON = new class extends DungeonEvent {
             PlayData.yen += yen | 0;
             Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright);
             yield cwait();
-            Util.msg.set(`[${Dungeon.now}]を脱出します...`);
+            Dungeon.now.clearItem().add(1);
             yield cwait();
-            SaveData.dungeon.save(Dungeon.now);
-            Scene.load(TownScene.ins);
+            DungeonEvent.ESCAPE_DUNGEON.happen();
         });
         this.createBtnLayout = () => ILayout.empty;
     }

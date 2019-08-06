@@ -2,7 +2,6 @@ import { Force, Dmg, Action } from "./force.js";
 import { Unit } from "./unit.js";
 import { Num, Mix } from "./mix.js";
 import { Item } from "./item.js";
-import { SaveData } from "./savedata.js";
 
 
 export class EqPos{
@@ -126,13 +125,6 @@ export abstract class Eq implements Force, Num{
 
     add(v:number){
         Num.add(this, v);
-
-        SaveData.eq.save(this);
-    }
-
-    reduce(v:number){
-        this.num -= v;
-        SaveData.eq.save(this);
     }
     //--------------------------------------------------------------------------
     //
@@ -157,14 +149,14 @@ export abstract class Eq implements Force, Num{
         constructor(){super({uniqueName:"恋人", info:["恋人info"],
                                 pos:EqPos.武, lv:0});}
     }
-    static readonly                      忍者刀 = new class extends Eq{
-        constructor(){super({uniqueName:"忍者刀", info:["格闘攻撃時稀に追加攻撃"],
-                                pos:EqPos.武, lv:99});}
-        createMix(){return new Mix({
-            result:[this,1],
-            materials:[[Item.石, 1]],
-        });}
-    }
+    // static readonly                      忍者刀 = new class extends Eq{
+    //     constructor(){super({uniqueName:"忍者刀", info:["格闘攻撃時稀に追加攻撃"],
+    //                             pos:EqPos.武, lv:99});}
+    //     createMix(){return new Mix({
+    //         result:[this,1],
+    //         materials:[[Item.石, 1]],
+    //     });}
+    // }
     //--------------------------------------------------------------------------
     //
     //盾

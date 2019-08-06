@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Scene } from "../undym/scene.js";
 import { ILayout, VariableLayout, FlowLayout } from "../undym/layout.js";
-import { Place, Util, PlayData, Debug } from "../util.js";
+import { Place, Util, PlayData, Debug, SceneType } from "../util.js";
 import { Btn } from "../widget/btn.js";
 import { Dungeon } from "../dungeon/dungeon.js";
 import { Color } from "../undym/type.js";
@@ -38,6 +38,7 @@ export class TownScene extends Scene {
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
         //----------------------------------------------------
+        SceneType.TOWN.set();
         TownBtn.reset();
         fullCare();
         //----------------------------------------------------
@@ -64,9 +65,11 @@ class TownBtn {
                 Scene.load(new SetTecScene());
             }));
         }
-        l.add(new Btn("合成", () => {
-            Scene.load(new MixScene());
-        }));
+        if (Dungeon.はじまりの丘.clearNum > 0 || Debug.btnIsVisible) {
+            l.add(new Btn("合成", () => {
+                Scene.load(new MixScene());
+            }));
+        }
         l.add(new Btn("アイテム", () => {
             Scene.load(ItemScene.ins({
                 selectUser: true,

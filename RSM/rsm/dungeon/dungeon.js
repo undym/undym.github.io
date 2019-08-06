@@ -1,7 +1,7 @@
 import DungeonEvent from "./dungeonevent.js";
-import { Rect } from "../undym/type.js";
 import { Job } from "../job.js";
 import { Unit, Prm } from "../unit.js";
+import { Item } from "../item.js";
 export class Dungeon {
     //-----------------------------------------------------------------
     //
@@ -21,10 +21,20 @@ export class Dungeon {
         this.rank = args.rank;
         this.enemyLv = args.enemyLv;
         this.au = args.au;
+        this.clearItem = args.clearItem;
         Dungeon._values.push(this);
     }
     static values() {
         return this._values;
+    }
+    static valueOf(uniqueName) {
+        if (!this._valueOf) {
+            this._valueOf = new Map();
+            for (const d of this.values()) {
+                this._valueOf.set(d.uniqueName, d);
+            }
+        }
+        return this._valueOf.get(uniqueName);
     }
     //-----------------------------------------------------------------
     //
@@ -32,7 +42,7 @@ export class Dungeon {
     //
     //-----------------------------------------------------------------
     rndEvent() {
-        if (Math.random() <= 10.20) {
+        if (Math.random() <= 0.20) {
             return DungeonEvent.BOX;
         }
         if (Math.random() <= 0.20) {
@@ -76,8 +86,8 @@ export class Dungeon {
         }
     }
 }
-Dungeon.auNow = 0;
 Dungeon._values = [];
+Dungeon.auNow = 0;
 //-----------------------------------------------------------------
 //
 //
@@ -87,9 +97,8 @@ Dungeon.はじまりの丘 = new class extends Dungeon {
     constructor() {
         super({ uniqueName: "はじまりの丘",
             rank: 0, enemyLv: 1, au: 50,
+            clearItem: () => Item.勾玉,
         });
-        this.getArea = () => DungeonArea.再構成トンネル;
-        this.getBounds = () => new Rect(0.35, 0.4, 0.3, 0.2);
         this.isVisible = () => true;
         this.setBossInner = () => {
             let e = Unit.enemies[0];
@@ -104,9 +113,8 @@ Dungeon.丘の上 = new class extends Dungeon {
     constructor() {
         super({ uniqueName: "丘の上",
             rank: 1, enemyLv: 3, au: 100,
+            clearItem: () => Item.石,
         });
-        this.getArea = () => DungeonArea.再構成トンネル;
-        this.getBounds = () => new Rect(0.55, 0.15, 0.3, 0.2);
         this.isVisible = () => Dungeon.はじまりの丘.clearNum > 0;
         this.setBossInner = () => {
             let e = Unit.enemies[0];
@@ -114,51 +122,6 @@ Dungeon.丘の上 = new class extends Dungeon {
             e.name = "ボス";
             e.prm(Prm.MAX_HP).base = 50;
             e.prm(Prm.STR).base = 10;
-        };
-    }
-};
-export class DungeonArea {
-    //-----------------------------------------------------------------
-    //
-    //
-    //
-    //-----------------------------------------------------------------
-    constructor(name) {
-        //-----------------------------------------------------------------
-        //
-        //
-        //
-        //-----------------------------------------------------------------
-        this.getDungeons = () => Dungeon.values()
-            .filter(d => d.getArea() === this)
-            .filter(d => d.isVisible());
-        this.toString = () => name;
-    }
-}
-//-----------------------------------------------------------------
-//
-//
-//
-//-----------------------------------------------------------------
-DungeonArea.再構成トンネル = new class extends DungeonArea {
-    constructor() {
-        super("再構成トンネル");
-        this.getAreaMoveBtns = () => {
-            let res = [
-                { area: DungeonArea.黒地域, bounds: new Rect(0.7, 0.2, 0.3, 0.2) }
-            ];
-            return res;
-        };
-    }
-};
-DungeonArea.黒地域 = new class extends DungeonArea {
-    constructor() {
-        super("黒地域");
-        this.getAreaMoveBtns = () => {
-            let res = [
-                { area: DungeonArea.再構成トンネル, bounds: new Rect(0.0, 0.2, 0.3, 0.2) }
-            ];
-            return res;
         };
     }
 };

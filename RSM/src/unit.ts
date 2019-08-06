@@ -94,8 +94,8 @@ export abstract class Unit{
         this.resetAll();
     }
 
-    static setPlayer(index:number, p:PUnit){
-        this._players[index] = p;
+    static setPlayer(index:number, p:Player){
+        this._players[index] = p.ins;
         this.resetAll();
     }
     /** */

@@ -112,7 +112,7 @@ export abstract class Job{
     //
     //------------------------------------------------------------------
     static readonly                      しんまい = new class extends Job{
-        constructor(){super({uniqueName:"しんまい", info:["しごとのはじまり"],
+        constructor(){super({uniqueName:"しんまい", info:["ぺーぺー"],
                                 appearLv:0, lvupExp:Job.DEF_LVUP_EXP,
                                 grow:()=> [{prm:Prm.MAX_HP, value:2}],
                                 learn:()=> [PassiveTec.HP自動回復, ActiveTec.二回殴る, ActiveTec.大いなる動き],
@@ -138,7 +138,7 @@ export abstract class Job{
         constructor(){super({uniqueName:"魔法使い", info:["魔法攻撃を扱う職業"],
                                 appearLv:1, lvupExp:Job.DEF_LVUP_EXP,
                                 grow:()=> [{prm:Prm.MAG, value:1}],
-                                learn:()=> [ActiveTec.ヴァハ, PassiveTec.MP自動回復],
+                                learn:()=> [ActiveTec.ヴァハ, PassiveTec.MP自動回復, ActiveTec.エヴィン,],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{

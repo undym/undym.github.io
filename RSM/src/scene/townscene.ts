@@ -1,9 +1,9 @@
 
 import { Scene } from "../undym/scene.js";
 import { RatioLayout, XLayout, YLayout, ILayout, VariableLayout, Label, FlowLayout } from "../undym/layout.js";
-import { Place, Util, PlayData, Debug } from "../util.js";
+import { Place, Util, PlayData, Debug, SceneType } from "../util.js";
 import { Btn } from "../widget/btn.js";
-import { Dungeon, DungeonArea } from "../dungeon/dungeon.js";
+import { Dungeon } from "../dungeon/dungeon.js";
 import { Rect, Color, Point } from "../undym/type.js";
 import DungeonScene from "./dungeonscene.js";
 import DungeonEvent from "../dungeon/dungeonevent.js";
@@ -52,6 +52,7 @@ export class TownScene extends Scene{
 
         //----------------------------------------------------
 
+        SceneType.TOWN.set();
         TownBtn.reset();
         fullCare();
 
@@ -80,7 +81,7 @@ class TownBtn{
                 this.setDungeonBtn();
             }));
             
-            if(PlayData.jobChangeBtnIsVisible || Debug.btnIsVisible){
+            if(PlayData.masteredAnyJob || Debug.btnIsVisible){
                 l.add(new Btn("職業",()=>{
                     Scene.load(new JobChangeScene());
                 }));
@@ -89,9 +90,11 @@ class TownBtn{
                 }));
             }
 
-            l.add(new Btn("合成", ()=>{
-                Scene.load(new MixScene());
-            }));
+            if(Dungeon.はじまりの丘.clearNum > 0 || Debug.btnIsVisible){
+                l.add(new Btn("合成", ()=>{
+                    Scene.load(new MixScene());
+                }));
+            }
 
             l.add(new Btn("アイテム", ()=>{
                 Scene.load( ItemScene.ins({

@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Scene, wait } from "../undym/scene.js";
-import { Place, Util, PlayData } from "../util.js";
+import { Place, Util, PlayData, SceneType } from "../util.js";
 import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail } from "./sceneutil.js";
 import { VariableLayout, ILayout, Layout, FlowLayout } from "../undym/layout.js";
 import { Rect, Color } from "../undym/type.js";
@@ -78,6 +78,7 @@ export class BattleScene extends Scene {
         super.add(Rect.FULL, ILayout.create({ ctrl: (noUsed) => __awaiter(this, void 0, void 0, function* () {
                 if (Battle.start) {
                     Battle.start = false;
+                    SceneType.BATTLE.set();
                     yield this.phaseEnd();
                     return;
                 }

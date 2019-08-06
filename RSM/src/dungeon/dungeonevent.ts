@@ -14,6 +14,7 @@ import DungeonScene from "../scene/dungeonscene.js";
 import { ItemScene } from "../scene/itemscene.js";
 import { Targeting, Dmg } from "../force.js";
 import { Img } from "../graphics/graphics.js";
+import { SaveData } from "../savedata.js";
 
 
 export default abstract class DungeonEvent{
@@ -153,7 +154,11 @@ export default abstract class DungeonEvent{
     };
     static readonly ESCAPE_DUNGEON:DungeonEvent = new class extends DungeonEvent{
         happenInner = async()=>{
+
             Util.msg.set(`${Dungeon.now.toString()}を脱出します...`); await cwait();
+            
+            SaveData.save(); await cwait();
+
             Scene.load( TownScene.ins );
         };
         createBtnLayout = ()=> ILayout.empty;
@@ -167,10 +172,10 @@ export default abstract class DungeonEvent{
     
             PlayData.yen += yen|0;
             Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright); await cwait();
-    
-            Util.msg.set(`[${Dungeon.now}]を脱出します...`); await cwait();
 
-            Scene.load( TownScene.ins );
+            Dungeon.now.clearItem().add(1); await cwait();
+            
+            DungeonEvent.ESCAPE_DUNGEON.happen();
         };
         createBtnLayout = ()=> ILayout.empty;
     };

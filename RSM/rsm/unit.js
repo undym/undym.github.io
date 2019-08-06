@@ -101,7 +101,7 @@ export class Unit {
         this.resetAll();
     }
     static setPlayer(index, p) {
-        this._players[index] = p;
+        this._players[index] = p.ins;
         this.resetAll();
     }
     /** */

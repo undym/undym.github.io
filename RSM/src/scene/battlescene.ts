@@ -1,5 +1,5 @@
 import { Scene, wait, cwait } from "../undym/scene.js";
-import { Place, Util, PlayData } from "../util.js";
+import { Place, Util, PlayData, SceneType } from "../util.js";
 import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail } from "./sceneutil.js";
 import { VariableLayout, ILayout, Layout, YLayout, RatioLayout, FlowLayout } from "../undym/layout.js";
 import { Rect, Color, Point } from "../undym/type.js";
@@ -98,6 +98,8 @@ export class BattleScene extends Scene{
         super.add(Rect.FULL, ILayout.create({ctrl:async(noUsed)=>{
             if(Battle.start){
                 Battle.start = false;
+                
+                SceneType.BATTLE.set();
 
                 await this.phaseEnd();
                 return;

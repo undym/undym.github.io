@@ -3,6 +3,10 @@ import Msg from "./widget/msg.js";
 import { XLayout } from "./undym/layout.js";
 import { Unit } from "./unit.js";
 import { Graphics } from "./graphics/graphics.js";
+import { Scene } from "./undym/scene.js";
+import { TownScene } from "./scene/townscene.js";
+import DungeonScene from "./scene/dungeonscene.js";
+import { Dungeon } from "./dungeon/dungeon.js";
 
 
 export class Debug{
@@ -65,4 +69,43 @@ export class PlayData{
     static yen:number = 0;
     /**職業変更ボタンの出現フラグ。 */
     static masteredAnyJob = false;
+}
+
+
+export class SceneType{
+    private static _valueOf:Map<string,SceneType>;
+    static valueOf(uniqueName:string){
+        return this._valueOf.get(uniqueName);
+    }
+
+    static now:SceneType;
+
+    /**
+     * actionLoadSaveData: 読み込み時の処理。
+     */
+    private constructor(
+        public readonly uniqueName:string,
+        public readonly loadAction:()=>void,
+    ){
+        if(!SceneType._valueOf){
+            SceneType._valueOf = new Map<string,SceneType>();
+        }
+
+        SceneType._valueOf.set( uniqueName, this );
+    }
+
+    set(){
+        SceneType.now = this;
+    }
+
+    static TOWN = new SceneType("TOWN", ()=> Scene.load( TownScene.ins ));
+    static DUNGEON = new SceneType("DUNGEON", ()=>{
+        Scene.load( DungeonScene.ins )
+    });
+    static BATTLE = new SceneType("BATTLE", ()=>{
+        const lost = (PlayData.yen / 4)|0;
+        PlayData.yen -= lost;
+        Util.msg.set(`---強制終了ペナルティ-${lost}円---`, Color.RED.bright);
+        Scene.load( DungeonScene.ins );
+    });
 }

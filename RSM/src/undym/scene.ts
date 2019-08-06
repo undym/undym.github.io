@@ -68,13 +68,12 @@ export abstract class Scene{
 }
 
 
-export const wait = async(frame:number = 6)=>{
+export const wait = async(frame:number = 5)=>{
     let count = 0;
     await Scene.wait(()=> count++ < frame);
 };
-// export const pwait = (ms:number = 120) => new Promise(resolve => setTimeout(resolve, ms));
+
 export const cwait = async()=>{
-    console.log("cwait");
     let canPush = false;
     await Scene.wait(()=>{
         if(canPush && Input.holding() > 0){
@@ -85,14 +84,4 @@ export const cwait = async()=>{
         }
         return true;
     });
-    // let canPush = false;
-    // await Scene.wait(()=>{
-    //     if(canPush && Input.pushed()){
-    //         return false;
-    //     }
-    //     if(!Input.holding()){
-    //         canPush = true;
-    //     }
-    //     return true;
-    // });
 };

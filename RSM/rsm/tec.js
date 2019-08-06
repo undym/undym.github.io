@@ -12,6 +12,8 @@ import { wait } from "./undym/scene.js";
 import { Force, Dmg, Targeting } from "./force.js";
 import { Condition } from "./condition.js";
 import { Color } from "./undym/type.js";
+import { FX_Str } from "./fx/fx.js";
+import { Font } from "./graphics/graphics.js";
 export class TecType {
     constructor(name) {
         this.toString = () => name;
@@ -211,7 +213,7 @@ PassiveTec.HP自動回復 = new class extends PassiveTec {
 };
 PassiveTec.MP自動回復 = new class extends PassiveTec {
     constructor() {
-        super({ uniqueName: "MP自動回復", info: ["行動開始時MP+10%"],
+        super({ uniqueName: "MP自動回復", info: ["行動開始時MP+10"],
             type: TecType.回復,
         });
     }
@@ -358,12 +360,15 @@ ActiveTec.人狼剣 = new class extends ActiveTec {
     constructor() {
         super({ uniqueName: "人狼剣", info: ["一体に自分の力値分のダメージを与える"],
             type: TecType.格闘, targetings: Targeting.SELECT,
-            mul: 1, num: 1, hit: 1,
+            mul: 1, num: 1, hit: 3,
             tp: 10,
         });
     }
     createDmg(attacker, target) {
-        return new Dmg({ absPow: attacker.prm(Prm.STR).total() });
+        return new Dmg({
+            absPow: attacker.prm(Prm.STR).total(),
+            hit: this.hit,
+        });
     }
 };
 ActiveTec.閻魔の笏 = new class extends ActiveTec {
@@ -404,8 +409,17 @@ ActiveTec.ヴァハ = new class extends ActiveTec {
     constructor() {
         super({ uniqueName: "ヴァハ", info: ["一体に魔法攻撃"],
             type: TecType.魔法, targetings: Targeting.SELECT,
-            mul: 1, num: 1, hit: 1,
+            mul: 1, num: 1, hit: 1.5,
             mp: 20,
+        });
+    }
+};
+ActiveTec.エヴィン = new class extends ActiveTec {
+    constructor() {
+        super({ uniqueName: "エヴィン", info: ["一体に魔法攻撃x2"],
+            type: TecType.魔法, targetings: Targeting.SELECT,
+            mul: 2, num: 1, hit: 1.5,
+            mp: 40,
         });
     }
 };
@@ -463,5 +477,6 @@ ActiveTec.何もしない = new class extends ActiveTec {
 };
 const setCondition = (target, condition, value) => {
     target.setCondition(condition, value);
+    FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
     Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
 };

@@ -6,15 +6,31 @@ import { Unit, EUnit, Prm } from "../unit.js";
 import { Btn } from "../widget/btn.js";
 import { Tec } from "../tec.js";
 import { Item } from "../item.js";
+import { Num } from "../mix.js";
+
 
 export abstract class Dungeon{
-    static now:Dungeon;
-    static auNow:number = 0;
-
     private static _values:Dungeon[] = [];
     static values():ReadonlyArray<Dungeon>{
         return this._values;
     }
+
+    private static _valueOf:Map<string,Dungeon>;
+    static valueOf(uniqueName:string){
+        if(!this._valueOf){
+            this._valueOf = new Map<string,Dungeon>();
+
+            for(const d of this.values()){
+                this._valueOf.set( d.uniqueName, d );
+            }
+        }
+        return this._valueOf.get(uniqueName);
+    }
+
+
+    static now:Dungeon;
+    static auNow:number = 0;
+
     //-----------------------------------------------------------------
     //
     //
@@ -28,7 +44,7 @@ export abstract class Dungeon{
     readonly rank:number;
     readonly enemyLv:number;
     readonly au:number;
-
+    readonly clearItem:()=>Num;
     //-----------------------------------------------------------------
     //
     //
@@ -40,6 +56,7 @@ export abstract class Dungeon{
         rank:number,
         enemyLv:number,
         au:number,
+        clearItem:()=>Num,
     }){
         this.uniqueName = args.uniqueName;
         this.toString = ()=>this.uniqueName;
@@ -47,6 +64,7 @@ export abstract class Dungeon{
         this.rank       = args.rank;
         this.enemyLv    = args.enemyLv;
         this.au         = args.au;
+        this.clearItem = args.clearItem;
 
         Dungeon._values.push(this);
     }
@@ -56,8 +74,6 @@ export abstract class Dungeon{
     //
     //
     //-----------------------------------------------------------------
-    abstract getArea():DungeonArea;
-    abstract getBounds():Rect;
     abstract isVisible():boolean;
     abstract setBossInner():void;
     //-----------------------------------------------------------------
@@ -66,7 +82,7 @@ export abstract class Dungeon{
     //
     //-----------------------------------------------------------------
     rndEvent():DungeonEvent{
-        if(Math.random() <= 10.20){return DungeonEvent.BOX;}
+        if(Math.random() <= 0.20){return DungeonEvent.BOX;}
         if(Math.random() <= 0.20){return DungeonEvent.BATTLE;}
         if(Math.random() <= 0.04){return DungeonEvent.TRAP;}
         return DungeonEvent.empty;
@@ -120,9 +136,8 @@ export abstract class Dungeon{
     static readonly                      はじまりの丘:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"はじまりの丘",
                                 rank:0, enemyLv:1, au:50,
+                                clearItem:()=>Item.勾玉,
         });}
-        getArea   = ()=>DungeonArea.再構成トンネル;
-        getBounds = ()=>new Rect(0.35, 0.4, 0.3, 0.2);
         isVisible = ()=>true;
         setBossInner = ()=>{
             let e = Unit.enemies[0];
@@ -135,9 +150,8 @@ export abstract class Dungeon{
     static readonly                      丘の上:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"丘の上",
                                 rank:1, enemyLv:3, au:100,
+                                clearItem:()=>Item.石,
         });}
-        getArea   = ()=>DungeonArea.再構成トンネル;
-        getBounds = ()=>new Rect(0.55, 0.15, 0.3, 0.2);
         isVisible = ()=>Dungeon.はじまりの丘.clearNum > 0;
         setBossInner = ()=>{
             let e = Unit.enemies[0];
@@ -174,60 +188,3 @@ export abstract class Dungeon{
     //-----------------------------------------------------------------
 }
 
-
-export abstract class DungeonArea{
-    static now:DungeonArea;
-
-    //-----------------------------------------------------------------
-    //
-    //
-    //
-    //-----------------------------------------------------------------
-    private constructor(name:string){
-        this.toString = ()=>name;
-    }
-
-    //-----------------------------------------------------------------
-    //
-    //
-    //
-    //-----------------------------------------------------------------
-    abstract getAreaMoveBtns():{area:DungeonArea, bounds:Rect}[];
-    //-----------------------------------------------------------------
-    //
-    //
-    //
-    //-----------------------------------------------------------------
-
-    getDungeons = ()=> Dungeon.values()
-                                .filter(d=> d.getArea() === this)
-                                .filter(d=> d.isVisible())
-                                ;
-
-    //-----------------------------------------------------------------
-    //
-    //
-    //
-    //-----------------------------------------------------------------
-    static readonly          再構成トンネル:DungeonArea = new class extends DungeonArea{
-        constructor(){super("再構成トンネル");}
-
-        getAreaMoveBtns = ()=>{
-            let res = [
-                {area:DungeonArea.黒地域, bounds:new Rect(0.7, 0.2, 0.3, 0.2)}
-            ];
-            return res;
-        }
-
-    };
-    static readonly          黒地域:DungeonArea = new class extends DungeonArea{
-        constructor(){super("黒地域");}
-
-        getAreaMoveBtns = ()=>{
-            let res = [
-                {area:DungeonArea.再構成トンネル, bounds:new Rect(0.0, 0.2, 0.3, 0.2)}
-            ];
-            return res;
-        }
-    };
-}

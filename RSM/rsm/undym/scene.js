@@ -55,13 +55,11 @@ export class Scene {
     }
 }
 Scene.waiting = false;
-export const wait = (frame = 6) => __awaiter(this, void 0, void 0, function* () {
+export const wait = (frame = 5) => __awaiter(this, void 0, void 0, function* () {
     let count = 0;
     yield Scene.wait(() => count++ < frame);
 });
-// export const pwait = (ms:number = 120) => new Promise(resolve => setTimeout(resolve, ms));
 export const cwait = () => __awaiter(this, void 0, void 0, function* () {
-    console.log("cwait");
     let canPush = false;
     yield Scene.wait(() => {
         if (canPush && Input.holding() > 0) {
@@ -72,14 +70,4 @@ export const cwait = () => __awaiter(this, void 0, void 0, function* () {
         }
         return true;
     });
-    // let canPush = false;
-    // await Scene.wait(()=>{
-    //     if(canPush && Input.pushed()){
-    //         return false;
-    //     }
-    //     if(!Input.holding()){
-    //         canPush = true;
-    //     }
-    //     return true;
-    // });
 });

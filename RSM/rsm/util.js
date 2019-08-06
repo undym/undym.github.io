@@ -1,6 +1,9 @@
-import { Rect } from "./undym/type.js";
+import { Rect, Color } from "./undym/type.js";
 import Msg from "./widget/msg.js";
 import { Graphics } from "./graphics/graphics.js";
+import { Scene } from "./undym/scene.js";
+import { TownScene } from "./scene/townscene.js";
+import DungeonScene from "./scene/dungeonscene.js";
 export class Debug {
 }
 Debug.DEBUG = true;
@@ -48,3 +51,32 @@ export class PlayData {
 PlayData.yen = 0;
 /**職業変更ボタンの出現フラグ。 */
 PlayData.masteredAnyJob = false;
+export class SceneType {
+    /**
+     * actionLoadSaveData: 読み込み時の処理。
+     */
+    constructor(uniqueName, loadAction) {
+        this.uniqueName = uniqueName;
+        this.loadAction = loadAction;
+        if (!SceneType._valueOf) {
+            SceneType._valueOf = new Map();
+        }
+        SceneType._valueOf.set(uniqueName, this);
+    }
+    static valueOf(uniqueName) {
+        return this._valueOf.get(uniqueName);
+    }
+    set() {
+        SceneType.now = this;
+    }
+}
+SceneType.TOWN = new SceneType("TOWN", () => Scene.load(TownScene.ins));
+SceneType.DUNGEON = new SceneType("DUNGEON", () => {
+    Scene.load(DungeonScene.ins);
+});
+SceneType.BATTLE = new SceneType("BATTLE", () => {
+    const lost = (PlayData.yen / 4) | 0;
+    PlayData.yen -= lost;
+    Util.msg.set(`---強制終了ペナルティ-${lost}円---`, Color.RED.bright);
+    Scene.load(DungeonScene.ins);
+});

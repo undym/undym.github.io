@@ -4,21 +4,27 @@ import { Color } from "./undym/type.js";
 
 export class Num{
     static add(obj:Num, v:number){
-        const newItem = obj.totalGetNum === 0;
-        if(newItem){
-            Util.msg.set("new", Color.rainbow);
-        }else{
-            Util.msg.set("");
-        }
-
-        obj.num += v;
-        obj.totalGetNum += v;
-        Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, Color.D_GREEN.bright);
-
-        if(newItem){
-            for(let str of obj.info){
-                Util.msg.set(`"${str}"`, Color.GREEN);
+        v = v|0;
+        if(v > 0){    
+            const newItem = obj.totalGetNum === 0;
+            if(newItem){
+                Util.msg.set("new", Color.rainbow);
+            }else{
+                Util.msg.set("");
             }
+
+            obj.num += v;
+            obj.totalGetNum += v;
+            Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, Color.D_GREEN.bright);
+
+            if(newItem){
+                for(let str of obj.info){
+                    Util.msg.set(`"${str}"`, Color.GREEN);
+                }
+            }
+        }
+        if(v < 0){
+            obj.num -= v;
         }
     }
 
@@ -27,7 +33,6 @@ export class Num{
     num:number;
     totalGetNum:number;
     add:(v:number)=>void;
-    reduce:(v:number)=>void;
 }
 
 export class Mix{
@@ -96,7 +101,7 @@ export class Mix{
         this.count++;
         
         for(let m of this.materials){
-            m.object.reduce(m.num);
+            m.object.add(-m.num);
         }
 
         if(this.result){

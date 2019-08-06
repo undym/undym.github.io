@@ -18,9 +18,13 @@ import { TownScene } from "./townscene.js";
 import { Item } from "../item.js";
 import { Mix } from "../mix.js";
 import { Eq } from "../eq.js";
+import { SaveData } from "../savedata.js";
+import { Building } from "../building.js";
 export class MixScene extends Scene {
     constructor() {
         super();
+        /**セーブフラグ. */
+        this.runAnyMix = false;
         this.list = new List();
     }
     init() {
@@ -83,6 +87,9 @@ export class MixScene extends Scene {
                 } }))
                 .add(btnBounds, (() => {
                 const l = new FlowLayout(2, 2);
+                l.add(new Btn("建築", () => {
+                    this.setBuildingList();
+                }));
                 l.add(new Btn("アイテム", () => {
                     this.setItemList();
                 }));
@@ -90,6 +97,7 @@ export class MixScene extends Scene {
                     this.setEqList();
                 }));
                 l.addFromLast(new Btn("<<", () => {
+                    SaveData.save();
                     Scene.load(TownScene.ins);
                 }));
                 const canMix = () => {
@@ -103,6 +111,7 @@ export class MixScene extends Scene {
                         return;
                     }
                     this.choosedMix.run();
+                    this.runAnyMix = true;
                 }));
                 const noRun = new Btn("合成", () => __awaiter(this, void 0, void 0, function* () {
                 }));
@@ -117,6 +126,39 @@ export class MixScene extends Scene {
         const pboxBounds = new Rect(0, mainBounds.yh, 1, 1 - mainBounds.yh);
         super.add(pboxBounds, DrawSTBoxes.players);
         super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
+    }
+    setBuildingList() {
+        this.list.clear();
+        this.list.add({
+            center: () => "建築",
+            groundColor: () => Color.D_GRAY,
+        });
+        Building.values()
+            .forEach(b => {
+            if (!b.mix || !b.mix.isVisible()) {
+                return;
+            }
+            const mix = b.mix;
+            const color = () => {
+                if (b === this.choosedObj) {
+                    return Color.CYAN;
+                }
+                if (!mix.canRun()) {
+                    return Color.GRAY;
+                }
+                return Color.WHITE;
+            };
+            this.list.add({
+                left: () => `${mix.count}`,
+                leftColor: color,
+                right: () => b.toString(),
+                rightColor: color,
+                push: (elm) => {
+                    this.choosedObj = b;
+                    this.choosedMix = b.mix;
+                },
+            });
+        });
     }
     setItemList() {
         this.list.clear();

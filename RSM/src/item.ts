@@ -1,5 +1,5 @@
 import { Dungeon } from "./dungeon/dungeon.js";
-import { Util } from "./util.js";
+import { Util, SceneType } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Scene, wait } from "./undym/scene.js";
 import { Unit, Prm } from "./unit.js";
@@ -8,6 +8,7 @@ import { Targeting, Action } from "./force.js";
 import { randomInt, choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
 import { Num, Mix } from "./mix.js";
+import DungeonEvent from "./dungeon/dungeonevent.js";
 import { SaveData } from "./savedata.js";
 
 
@@ -30,6 +31,8 @@ export class ItemType{
 
     static readonly HP回復 = new ItemType("HP回復");
     static readonly MP回復 = new ItemType("MP回復");
+    
+    static readonly その他 = new ItemType("その他");
 
     static readonly 素材 = new ItemType("素材");
 }
@@ -50,6 +53,7 @@ export class ItemParentType{
     }
 
     static readonly 回復 = new ItemParentType("回復", [ItemType.HP回復, ItemType.MP回復]);
+    static readonly その他 = new ItemParentType("その他", [ItemType.その他]);
     static readonly 素材 = new ItemParentType("素材", [ItemType.素材]);
 }
 
@@ -105,7 +109,7 @@ export class Item implements Action, Num{
         }
     }
 
-    static readonly DEF_NUM_LIMIT = 9999;
+    static readonly DEF_NUM_LIMIT = 999;
 
     num:number = 0;
     totalGetNum:number = 0;
@@ -170,22 +174,17 @@ export class Item implements Action, Num{
     }
 
     add(v:number){
-        if(this.num + v > this.numLimit){
-            v = this.numLimit - this.num;
-            if(v <= 0){
-                Util.msg.set(`[${this}]はこれ以上入手できない`, Color.L_GRAY);
-                return;
+        if(v > 0){       
+            if(this.num + v > this.numLimit){
+                v = this.numLimit - this.num;
+                if(v <= 0){
+                    Util.msg.set(`[${this}]はこれ以上入手できない`, Color.L_GRAY);
+                    return;
+                }
             }
         }
 
         Num.add(this, v);
-        
-        SaveData.item.save(this);
-    }
-
-    reduce(v:number){
-        this.num -= v;
-        SaveData.item.save(this);
     }
 
     async use(user:Unit, targets:Unit[]){
@@ -198,8 +197,6 @@ export class Item implements Action, Num{
         
         if(this.consumable) {this.usedNum++;}
         else                {this.num--;}
-
-        SaveData.item.save(this);
     }
 
     canUse(){
@@ -215,14 +212,14 @@ export class Item implements Action, Num{
     static readonly                      スティックパン = new class extends Item{
         constructor(){super({uniqueName:"スティックパン", info:["HP+10"],
                                 type:ItemType.HP回復, rank:0, box:false,
-                                numLimit:5, consumable:true,
+                                consumable:true,
                                 use:async(user,target)=> await healHP(target, 10),
         })}
     };
     static readonly                      硬化スティックパン = new class extends Item{
         constructor(){super({uniqueName:"硬化スティックパン", info:["HP+10%"],
                                 type:ItemType.HP回復, rank:0, box:false,
-                                numLimit:5, consumable:true,
+                                consumable:true,
                                 use:async(user,target)=>await healHP(target, target.prm(Prm.MAX_HP).total() / 10),
         })}
         createMix(){return new Mix({
@@ -239,9 +236,38 @@ export class Item implements Action, Num{
     static readonly                      水 = new class extends Item{
         constructor(){super({uniqueName:"水", info:["MP+20"],
                                 type:ItemType.MP回復, rank:0, box:false,
-                                numLimit:5, consumable:true,
+                                consumable:true,
                                 use:async(user,target)=> await healMP(target, 20),
         })}
+    };
+    //-----------------------------------------------------------------
+    //
+    //その他
+    //
+    //-----------------------------------------------------------------
+    static readonly                      脱出ポッド = new class extends Item{
+        constructor(){super({uniqueName:"脱出ポッド", info:["ダンジョンから脱出する"],
+                                type:ItemType.その他, rank:0, box:false,
+                                consumable:true,
+                                use:async(user,target)=>{
+                                    await DungeonEvent.ESCAPE_DUNGEON.happen();
+                                },
+        })}
+        canUse(){
+            return super.canUse() && SceneType.now === SceneType.DUNGEON;
+        }
+    };
+    static readonly                      記録用粘土板 = new class extends Item{
+        constructor(){super({uniqueName:"記録用粘土板", info:["ダンジョン内でセーブする"],
+                                type:ItemType.その他, rank:0, box:false,
+                                consumable:true,
+                                use:async(user,target)=>{
+                                    SaveData.save();
+                                },
+        })}
+        canUse(){
+            return super.canUse() && SceneType.now === SceneType.DUNGEON;
+        }
     };
     //-----------------------------------------------------------------
     //
@@ -264,8 +290,12 @@ export class Item implements Action, Num{
         constructor(){super({uniqueName:"He", info:["ヘェッ"],
                                 type:ItemType.素材, rank:2, box:true})}
     };
-    static readonly                      人影 = new class extends Item{
-        constructor(){super({uniqueName:"人影", info:["あやしい影"],
+    static readonly                      勾玉 = new class extends Item{
+        constructor(){super({uniqueName:"勾玉", info:[""],
+                                type:ItemType.素材, rank:0, box:false})}
+    };
+    static readonly                      しいたけ = new class extends Item{
+        constructor(){super({uniqueName:"しいたけ", info:[""],
                                 type:ItemType.素材, rank:0, box:false})}
     };
     //-----------------------------------------------------------------

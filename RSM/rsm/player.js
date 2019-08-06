@@ -4,12 +4,19 @@ import { Job } from "./job.js";
 export class Player {
     constructor(uniqueName) {
         this.uniqueName = uniqueName;
+        this.member = false;
         this.toString = () => this.uniqueName;
         Player._values.push(this);
     }
     static values() { return this._values; }
     static valueOf(uniqueName) {
-        return this._valueOf[uniqueName];
+        if (!this._valueOf) {
+            this._valueOf = new Map();
+            for (const p of this.values()) {
+                this._valueOf.set(p.uniqueName, p);
+            }
+        }
+        return this._valueOf.get(uniqueName);
     }
     get ins() {
         if (!this._ins) {
@@ -32,17 +39,26 @@ export class Player {
         res.setJobLv(res.job, 1);
         return res;
     }
+    /**合成等でのプレイヤーの加入処理。 */
+    join() {
+        this.member = true;
+        for (let i = 0; i < Unit.players.length; i++) {
+            if (Unit.players[i].player === Player.empty) {
+                Unit.setPlayer(i, this);
+                break;
+            }
+        }
+    }
 }
 Player._values = [];
-Player._valueOf = {};
 Player.empty = new class extends Player {
     constructor() { super(""); }
     createInner(p) {
         p.exists = false;
     }
 };
-Player.ルイン = new class extends Player {
-    constructor() { super("ルイン"); }
+Player.スメラギ = new class extends Player {
+    constructor() { super("スメラギ"); }
     createInner(p) {
         p.job = Job.しんまい;
         p.prm(Prm.MAX_HP).base = 30;
@@ -55,8 +71,8 @@ Player.ルイン = new class extends Player {
         ];
     }
 };
-Player.ピアー = new class extends Player {
-    constructor() { super("ピアー"); }
+Player.よしこ = new class extends Player {
+    constructor() { super("よしこ"); }
     createInner(p) {
         p.job = Job.魔法使い;
         p.prm(Prm.MAX_HP).base = 20;

@@ -304,18 +304,10 @@ const createConditionLabel = (font:Font, unit:()=>Unit, types:ReadonlyArray<Cond
     return new Label(
          font
         ,()=>types
-                .map(type=> unit().getCondition(type).toString())
-                .filter(name=> name != "")
-                .map(name=> `<${name}>`)
+                .filter(type=> unit().existsCondition(type))
+                .map(type=> unit().getConditionSet(type))
+                .map(set=> `<${set.condition}${set.value}>`)
                 .join("")
         ,()=>color
     );
 };
-// const createConditionsString = (unit:Unit, types:ReadonlyArray<ConditionType>)=>{
-//     return types
-//             .map(type=> unit.getCondition(type).toString())
-//             .filter(name=> name != "")
-//             .map(name=> `<${name}>`)
-//             .join("")
-//             ;
-// }

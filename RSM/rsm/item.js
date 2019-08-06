@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Util } from "./util.js";
+import { Util, SceneType } from "./util.js";
 import { Color } from "./undym/type.js";
 import { wait } from "./undym/scene.js";
 import { Prm } from "./unit.js";
@@ -15,6 +15,7 @@ import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
 import { Num, Mix } from "./mix.js";
+import DungeonEvent from "./dungeon/dungeonevent.js";
 import { SaveData } from "./savedata.js";
 export class ItemType {
     constructor(name) {
@@ -31,6 +32,7 @@ export class ItemType {
 }
 ItemType.HP回復 = new ItemType("HP回復");
 ItemType.MP回復 = new ItemType("MP回復");
+ItemType.その他 = new ItemType("その他");
 ItemType.素材 = new ItemType("素材");
 export class ItemParentType {
     constructor(name, children) {
@@ -42,6 +44,7 @@ export class ItemParentType {
 }
 ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.HP回復, ItemType.MP回復]);
+ItemParentType.その他 = new ItemParentType("その他", [ItemType.その他]);
 ItemParentType.素材 = new ItemParentType("素材", [ItemType.素材]);
 export class Item {
     constructor(args) {
@@ -118,19 +121,16 @@ export class Item {
     get mix() { return this._mix ? this._mix : (this._mix = this.createMix()); }
     createMix() { return undefined; }
     add(v) {
-        if (this.num + v > this.numLimit) {
-            v = this.numLimit - this.num;
-            if (v <= 0) {
-                Util.msg.set(`[${this}]はこれ以上入手できない`, Color.L_GRAY);
-                return;
+        if (v > 0) {
+            if (this.num + v > this.numLimit) {
+                v = this.numLimit - this.num;
+                if (v <= 0) {
+                    Util.msg.set(`[${this}]はこれ以上入手できない`, Color.L_GRAY);
+                    return;
+                }
             }
         }
         Num.add(this, v);
-        SaveData.item.save(this);
-    }
-    reduce(v) {
-        this.num -= v;
-        SaveData.item.save(this);
     }
     use(user, targets) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -149,7 +149,6 @@ export class Item {
             else {
                 this.num--;
             }
-            SaveData.item.save(this);
         });
     }
     canUse() {
@@ -165,7 +164,7 @@ export class Item {
 Item._values = [];
 Item._rankValues = {};
 Item._consumableValues = [];
-Item.DEF_NUM_LIMIT = 9999;
+Item.DEF_NUM_LIMIT = 999;
 //-----------------------------------------------------------------
 //
 //HP回復
@@ -175,7 +174,7 @@ Item.スティックパン = new class extends Item {
     constructor() {
         super({ uniqueName: "スティックパン", info: ["HP+10"],
             type: ItemType.HP回復, rank: 0, box: false,
-            numLimit: 5, consumable: true,
+            consumable: true,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, 10); }),
         });
     }
@@ -184,7 +183,7 @@ Item.硬化スティックパン = new class extends Item {
     constructor() {
         super({ uniqueName: "硬化スティックパン", info: ["HP+10%"],
             type: ItemType.HP回復, rank: 0, box: false,
-            numLimit: 5, consumable: true,
+            consumable: true,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, target.prm(Prm.MAX_HP).total() / 10); }),
         });
     }
@@ -205,9 +204,42 @@ Item.水 = new class extends Item {
     constructor() {
         super({ uniqueName: "水", info: ["MP+20"],
             type: ItemType.MP回復, rank: 0, box: false,
-            numLimit: 5, consumable: true,
+            consumable: true,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 20); }),
         });
+    }
+};
+//-----------------------------------------------------------------
+//
+//その他
+//
+//-----------------------------------------------------------------
+Item.脱出ポッド = new class extends Item {
+    constructor() {
+        super({ uniqueName: "脱出ポッド", info: ["ダンジョンから脱出する"],
+            type: ItemType.その他, rank: 0, box: false,
+            consumable: true,
+            use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                yield DungeonEvent.ESCAPE_DUNGEON.happen();
+            }),
+        });
+    }
+    canUse() {
+        return super.canUse() && SceneType.now === SceneType.DUNGEON;
+    }
+};
+Item.記録用粘土板 = new class extends Item {
+    constructor() {
+        super({ uniqueName: "記録用粘土板", info: ["ダンジョン内でセーブする"],
+            type: ItemType.その他, rank: 0, box: false,
+            consumable: true,
+            use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                SaveData.save();
+            }),
+        });
+    }
+    canUse() {
+        return super.canUse() && SceneType.now === SceneType.DUNGEON;
     }
 };
 //-----------------------------------------------------------------
@@ -239,9 +271,15 @@ Item.He = new class extends Item {
             type: ItemType.素材, rank: 2, box: true });
     }
 };
-Item.人影 = new class extends Item {
+Item.勾玉 = new class extends Item {
     constructor() {
-        super({ uniqueName: "人影", info: ["あやしい影"],
+        super({ uniqueName: "勾玉", info: [""],
+            type: ItemType.素材, rank: 0, box: false });
+    }
+};
+Item.しいたけ = new class extends Item {
+    constructor() {
+        super({ uniqueName: "しいたけ", info: [""],
             type: ItemType.素材, rank: 0, box: false });
     }
 };

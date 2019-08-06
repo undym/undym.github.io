@@ -74,7 +74,7 @@ Job.DEF_LVUP_EXP = 5;
 //------------------------------------------------------------------
 Job.しんまい = new class extends Job {
     constructor() {
-        super({ uniqueName: "しんまい", info: ["しごとのはじまり"],
+        super({ uniqueName: "しんまい", info: ["ぺーぺー"],
             appearLv: 0, lvupExp: Job.DEF_LVUP_EXP,
             grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
             learn: () => [PassiveTec.HP自動回復, ActiveTec.二回殴る, ActiveTec.大いなる動き],
@@ -103,7 +103,7 @@ Job.魔法使い = new class extends Job {
         super({ uniqueName: "魔法使い", info: ["魔法攻撃を扱う職業"],
             appearLv: 1, lvupExp: Job.DEF_LVUP_EXP,
             grow: () => [{ prm: Prm.MAG, value: 1 }],
-            learn: () => [ActiveTec.ヴァハ, PassiveTec.MP自動回復],
+            learn: () => [ActiveTec.ヴァハ, PassiveTec.MP自動回復, ActiveTec.エヴィン,],
             canJobChange: (p) => p.isMasteredJob(Job.しんまい),
         });
         this.setEnemyInner = (e) => {

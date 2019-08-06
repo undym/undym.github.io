@@ -10,7 +10,8 @@ import { TecType, ActiveTec } from "./tec.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
 export class ConditionType {
-    constructor() {
+    constructor(uniqueName) {
+        this.uniqueName = uniqueName;
         ConditionType._values.push(this);
     }
     static values() {
@@ -38,13 +39,13 @@ export class ConditionType {
     }
 }
 ConditionType._values = [];
-ConditionType.GOOD_LV1 = new ConditionType();
-ConditionType.GOOD_LV2 = new ConditionType();
-ConditionType.GOOD_LV3 = new ConditionType();
-ConditionType.BAD_LV1 = new ConditionType();
-ConditionType.BAD_LV2 = new ConditionType();
-ConditionType.BAD_LV3 = new ConditionType();
-ConditionType.INVISIBLE = new ConditionType();
+ConditionType.GOOD_LV1 = new ConditionType("GOOD_LV1");
+ConditionType.GOOD_LV2 = new ConditionType("GOOD_LV2");
+ConditionType.GOOD_LV3 = new ConditionType("GOOD_LV3");
+ConditionType.BAD_LV1 = new ConditionType("BAD_LV1");
+ConditionType.BAD_LV2 = new ConditionType("BAD_LV2");
+ConditionType.BAD_LV3 = new ConditionType("BAD_LV3");
+ConditionType.INVISIBLE = new ConditionType("INVISIBLE");
 export class Condition {
     constructor(uniqueName, type) {
         this.uniqueName = uniqueName;

@@ -2,7 +2,7 @@ import { Scene } from "../undym/scene.js";
 import { ILayout, VariableLayout, InnerLayout } from "../undym/layout.js";
 import { Rect } from "../undym/type.js";
 import DungeonEvent from "../dungeon/dungeonevent.js";
-import { Place, Util } from "../util.js";
+import { Place, Util, SceneType } from "../util.js";
 import { DrawSTBoxes, DrawUnitDetail, DrawDungeonData, DrawPlayInfo } from "./sceneutil.js";
 import { Img } from "../graphics/graphics.js";
 export default class DungeonScene extends Scene {
@@ -28,6 +28,7 @@ export default class DungeonScene extends Scene {
         }));
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
+        SceneType.DUNGEON.set();
     }
 }
 class DrawEvent extends InnerLayout {

@@ -1,11 +1,11 @@
 
 import { TownScene } from "./scene/townscene.js";
 import { Scene, wait } from "./undym/scene.js";
-import {Util} from "./util.js";
+import {Util, SceneType} from "./util.js";
 import { Input } from "./undym/input.js";
 import { Unit } from "./unit.js";
 import { FX, FXTest } from "./fx/fx.js";
-import { DungeonArea } from "./dungeon/dungeon.js";
+import { Dungeon } from "./dungeon/dungeon.js";
 import { Player } from "./player.js";
 import { Rect, Color, Point } from "./undym/type.js";
 import { Page } from "./undym/page.js";
@@ -106,21 +106,22 @@ const draw = ()=>{
 };
 
 const init = ()=>{
-    DungeonArea.now = DungeonArea.再構成トンネル;
+    SceneType.now = SceneType.TOWN;
+    Dungeon.now = Dungeon.はじまりの丘;
 };
 
 const newGame = ()=>{
     Util.msg.set("NEW GAME");
 
-    //test
-    Unit.setPlayer(0, Player.ルイン.ins);
-    Unit.setPlayer(1, Player.ピアー.ins);
+    Player.スメラギ.join();
 
-    Item.スティックパン.num = 5;
-    Item.スティックパン.totalGetNum = Item.スティックパン.num;
-    SaveData.item.save(Item.スティックパン);
-
-    SaveData.setExists();
+    const setItemNum = (item:Item, num:number)=>{
+        item.num = num;
+        item.totalGetNum = num;
+    }
+    
+    setItemNum(Item.スティックパン, 5);
+    setItemNum(Item.脱出ポッド, 1);
 };
 
 const continueGame = ()=>{
