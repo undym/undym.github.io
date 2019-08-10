@@ -66,11 +66,11 @@ export class Unit {
         this.name = "";
         this.exists = false;
         this.dead = false;
-        this.prmSets = new Map();
-        this.equips = new Map();
         this.tecs = [];
         /**戦闘時の技ページ。 */
         this.tecPage = 0;
+        this.prmSets = new Map();
+        this.equips = new Map();
         this.conditions = new Map();
         this.bounds = Rect.ZERO;
         for (let prm of Prm.values()) {
@@ -320,7 +320,7 @@ export class Unit {
     //
     //---------------------------------------------------------
     getEq(pos) { return this.equips.get(pos); }
-    setEq(eq) { this.equips.set(eq.pos, eq); }
+    setEq(pos, eq) { this.equips.set(pos, eq); }
 }
 Unit.DEF_MAX_MP = 100;
 Unit.DEF_MAX_TP = 100;

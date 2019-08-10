@@ -7,7 +7,7 @@ import DungeonScene from "./scene/dungeonscene.js";
 export class Debug {
 }
 Debug.DEBUG = true;
-Debug.btnIsVisible = false;
+Debug.debugMode = false;
 export class Util {
     constructor() { }
     static init() {
@@ -19,13 +19,17 @@ export class Place {
     constructor() { }
     static get dotW() { return 1 / Graphics.pixelW; }
     static get dotH() { return 1 / Graphics.pixelH; }
+    static get TOP() {
+        return this.top ? this.top :
+            (this.top = new Rect(this.dotW, this.dotH, 1 - this.dotW * 2, 0.03));
+    }
     static get E_BOX() {
         return this.e_box ? this.e_box :
-            (this.e_box = new Rect(this.dotW, this.dotH, 1 - this.dotW * 2, this.ST_H));
+            (this.e_box = new Rect(this.dotW, this.TOP.yh + this.dotH, 1 - this.dotW * 2, this.ST_H));
     }
     static get MAIN() {
         return this.main ? this.main :
-            (this.main = new Rect(this.dotW, this.E_BOX.yh, 1 - this.dotW * 2, 0.35));
+            (this.main = new Rect(this.dotW, this.E_BOX.yh, 1 - this.dotW * 2, 0.345));
     }
     static get MSG() {
         return this.msg ? this.msg :
@@ -51,6 +55,8 @@ export class PlayData {
 PlayData.yen = 0;
 /**職業変更ボタンの出現フラグ。 */
 PlayData.masteredAnyJob = false;
+/**装備ボタンの出現フラグ. */
+PlayData.gotAnyEq = false;
 export class SceneType {
     /**
      * actionLoadSaveData: 読み込み時の処理。

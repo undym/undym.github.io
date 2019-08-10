@@ -33,6 +33,8 @@ export class ItemType {
 ItemType.HP回復 = new ItemType("HP回復");
 ItemType.MP回復 = new ItemType("MP回復");
 ItemType.その他 = new ItemType("その他");
+ItemType.鍵 = new ItemType("鍵");
+ItemType.玉 = new ItemType("玉");
 ItemType.素材 = new ItemType("素材");
 export class ItemParentType {
     constructor(name, children) {
@@ -45,7 +47,7 @@ export class ItemParentType {
 ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.HP回復, ItemType.MP回復]);
 ItemParentType.その他 = new ItemParentType("その他", [ItemType.その他]);
-ItemParentType.素材 = new ItemParentType("素材", [ItemType.素材]);
+ItemParentType.素材 = new ItemParentType("素材", [ItemType.鍵, ItemType.玉, ItemType.素材]);
 export class Item {
     constructor(args) {
         this.num = 0;
@@ -190,8 +192,8 @@ Item.硬化スティックパン = new class extends Item {
     createMix() {
         return new Mix({
             result: [this, 1],
-            limit: this.numLimit,
-            materials: [[Item.石, 10]],
+            limit: () => 5,
+            materials: [[Item.石, 5], [Item.土, 5]],
         });
     }
 };
@@ -200,12 +202,19 @@ Item.硬化スティックパン = new class extends Item {
 //MP回復
 //
 //-----------------------------------------------------------------
-Item.水 = new class extends Item {
+Item.赤い水 = new class extends Item {
     constructor() {
-        super({ uniqueName: "水", info: ["MP+20"],
+        super({ uniqueName: "赤い水", info: ["MP+10"],
             type: ItemType.MP回復, rank: 0, box: false,
             consumable: true,
-            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 20); }),
+            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 10); }),
+        });
+    }
+    createMix() {
+        return new Mix({
+            result: [this, 1],
+            limit: () => 5,
+            materials: [[Item.水, 5], [Item.土, 1]],
         });
     }
 };
@@ -238,8 +247,49 @@ Item.記録用粘土板 = new class extends Item {
             }),
         });
     }
+    createMix() {
+        return new Mix({
+            result: [this, 1],
+            limit: () => 1,
+            materials: [[Item.石, 3], [Item.土, 3], [Item.枝, 3]],
+        });
+    }
     canUse() {
         return super.canUse() && SceneType.now === SceneType.DUNGEON;
+    }
+};
+//-----------------------------------------------------------------
+//
+//鍵
+//
+//-----------------------------------------------------------------
+Item.はじまりの丘の鍵 = new class extends Item {
+    constructor() {
+        super({ uniqueName: "はじまりの丘の鍵", info: [""],
+            type: ItemType.鍵, rank: 0, box: false });
+    }
+};
+Item.丘の上の鍵 = new class extends Item {
+    constructor() {
+        super({ uniqueName: "丘の上の鍵", info: [""],
+            type: ItemType.鍵, rank: 0, box: false });
+    }
+};
+//-----------------------------------------------------------------
+//
+//玉
+//
+//-----------------------------------------------------------------
+Item.はじまりの丘の玉 = new class extends Item {
+    constructor() {
+        super({ uniqueName: "はじまりの丘の玉", info: [""],
+            type: ItemType.玉, rank: 0, box: false });
+    }
+};
+Item.丘の上の玉 = new class extends Item {
+    constructor() {
+        super({ uniqueName: "丘の上の玉", info: [""],
+            type: ItemType.玉, rank: 0, box: false });
     }
 };
 //-----------------------------------------------------------------
@@ -265,16 +315,22 @@ Item.土 = new class extends Item {
             type: ItemType.素材, rank: 0, box: true });
     }
 };
+Item.水 = new class extends Item {
+    constructor() {
+        super({ uniqueName: "水", info: ["水"],
+            type: ItemType.素材, rank: 0, box: true });
+    }
+};
 Item.He = new class extends Item {
     constructor() {
         super({ uniqueName: "He", info: ["ヘェッ"],
             type: ItemType.素材, rank: 2, box: true });
     }
 };
-Item.勾玉 = new class extends Item {
+Item.少女の心を持ったおっさん = new class extends Item {
     constructor() {
-        super({ uniqueName: "勾玉", info: [""],
-            type: ItemType.素材, rank: 0, box: false });
+        super({ uniqueName: "少女の心を持ったおっさん", info: ["いつもプリキュアの話をしている"],
+            type: ItemType.素材, rank: 5, box: true });
     }
 };
 Item.しいたけ = new class extends Item {

@@ -13,7 +13,7 @@ export default class DungeonScene extends Scene {
     }
     init() {
         super.clear();
-        super.add(Place.E_BOX, DrawPlayInfo.ins);
+        super.add(Place.TOP, DrawPlayInfo.ins);
         super.add(Place.DUNGEON_DATA, DrawDungeonData.ins);
         super.add(Place.MAIN, DrawEvent.ins);
         super.add(Place.MSG, Util.msg);

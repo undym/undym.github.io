@@ -25,7 +25,11 @@ export class DrawPlayInfo extends InnerLayout{
         super();
 
         super.add(new XLayout()
-            .add(new Label(Font.def, ()=>`Version{${Util.VERSION}}`, ()=>Debug.DEBUG ? Color.RED : Color.WHITE)
+            .add(ILayout.empty)
+            .add(new Label(Font.def, ()=>{
+                if(Debug.debugMode) {return `Debug{${Util.VERSION}}`;}
+                else                {return `Version{${Util.VERSION}}`;}
+            }, ()=>Debug.DEBUG ? Color.RED : Color.WHITE)
                 .setBase(Font.LEFT))
             .add(new Label(Font.def, ()=>`${PlayData.yen|0}円`, ()=>Color.YELLOW).setBase(Font.RIGHT))
         );

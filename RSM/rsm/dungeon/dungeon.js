@@ -2,6 +2,7 @@ import DungeonEvent from "./dungeonevent.js";
 import { Job } from "../job.js";
 import { Unit, Prm } from "../unit.js";
 import { Item } from "../item.js";
+import { Eq } from "../eq.js";
 export class Dungeon {
     //-----------------------------------------------------------------
     //
@@ -16,12 +17,16 @@ export class Dungeon {
         //
         //-----------------------------------------------------------------
         this.clearNum = 0;
+        this.treasureOpenNum = 0;
         this.uniqueName = args.uniqueName;
         this.toString = () => this.uniqueName;
         this.rank = args.rank;
         this.enemyLv = args.enemyLv;
         this.au = args.au;
         this.clearItem = args.clearItem;
+        this._treasure = args.treasure;
+        this._treasureKey = args.treasureKey;
+        this.trendItems = args.trendItems;
         Dungeon._values.push(this);
     }
     static values() {
@@ -36,19 +41,27 @@ export class Dungeon {
         }
         return this._valueOf.get(uniqueName);
     }
+    get treasure() { return this._treasure(); }
+    get treasureKey() { return this._treasureKey(); }
     //-----------------------------------------------------------------
     //
     //
     //
     //-----------------------------------------------------------------
     rndEvent() {
-        if (Math.random() <= 0.20) {
+        if (Math.random() < 0.001) {
+            return DungeonEvent.TREASURE;
+        }
+        if (Math.random() < 0.001) {
+            return DungeonEvent.GET_TREASURE_KEY;
+        }
+        if (Math.random() < 0.20) {
             return DungeonEvent.BOX;
         }
-        if (Math.random() <= 0.20) {
+        if (Math.random() < 0.20) {
             return DungeonEvent.BATTLE;
         }
-        if (Math.random() <= 0.04) {
+        if (Math.random() < 0.04) {
             return DungeonEvent.TRAP;
         }
         return DungeonEvent.empty;
@@ -97,7 +110,10 @@ Dungeon.はじまりの丘 = new class extends Dungeon {
     constructor() {
         super({ uniqueName: "はじまりの丘",
             rank: 0, enemyLv: 1, au: 50,
-            clearItem: () => Item.勾玉,
+            clearItem: () => Item.はじまりの丘の玉,
+            treasure: () => Eq.棒,
+            treasureKey: () => Item.はじまりの丘の鍵,
+            trendItems: () => [Item.石, Item.土, Item.枝,],
         });
         this.isVisible = () => true;
         this.setBossInner = () => {
@@ -106,6 +122,10 @@ Dungeon.はじまりの丘 = new class extends Dungeon {
             e.name = "ボス";
             e.prm(Prm.MAX_HP).base = 30;
             e.prm(Prm.STR).base = 7;
+            //ボス以外の雑魚は0体
+            for (let i = 1; i < Unit.enemies.length; i++) {
+                Unit.enemies[i].exists = false;
+            }
         };
     }
 };
@@ -113,7 +133,10 @@ Dungeon.丘の上 = new class extends Dungeon {
     constructor() {
         super({ uniqueName: "丘の上",
             rank: 1, enemyLv: 3, au: 100,
-            clearItem: () => Item.石,
+            clearItem: () => Item.丘の上の玉,
+            treasure: () => Eq.安全靴,
+            treasureKey: () => Item.丘の上の鍵,
+            trendItems: () => [Item.水],
         });
         this.isVisible = () => Dungeon.はじまりの丘.clearNum > 0;
         this.setBossInner = () => {
@@ -122,6 +145,10 @@ Dungeon.丘の上 = new class extends Dungeon {
             e.name = "ボス";
             e.prm(Prm.MAX_HP).base = 50;
             e.prm(Prm.STR).base = 10;
+            //ボス以外の雑魚は1体
+            for (let i = 2; i < Unit.enemies.length; i++) {
+                Unit.enemies[i].exists = false;
+            }
         };
     }
 };

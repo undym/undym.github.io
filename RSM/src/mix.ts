@@ -42,7 +42,7 @@ export class Mix{
     readonly materials:{object:Num, num:number}[] = [];
     readonly result:{object:Num, num:number}|undefined;
     /**合成回数上限. */
-    readonly countLimit:number;
+    readonly countLimit:()=>number;
     private readonly action:()=>void;
     /**合成回数. */
     count = 0;
@@ -54,7 +54,7 @@ export class Mix{
      */
     constructor(args:{
         materials:[Num, number][];
-        limit?:number;
+        limit?:()=>number;
         result?:[Num, number];
         action?:()=>void;
     }){
@@ -65,7 +65,7 @@ export class Mix{
         if(args.limit){
             this.countLimit = args.limit;
         }else{
-            this.countLimit = Mix.LIMIT_INF;
+            this.countLimit = ()=>Mix.LIMIT_INF;
         }
 
         if(args.result){
@@ -80,11 +80,11 @@ export class Mix{
 
     isVisible():boolean{
         if(!this.materials){return false;}
-        return this.materials[0].object.num > 0 && this.count < this.countLimit;
+        return this.materials[0].object.num > 0 && this.count < this.countLimit();
     }
 
     canRun(){
-        if(this.count >= this.countLimit){return false;}
+        if(this.count >= this.countLimit()){return false;}
 
         for(let m of this.materials){
             if(m.object.num < m.num){

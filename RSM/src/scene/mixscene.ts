@@ -42,7 +42,7 @@ export class MixScene extends Scene{
         super.clear();
         
         const mainBounds = new Rect(0, 0, 1, 0.8);
-
+        
         super.add(mainBounds, 
             new XLayout()
                 .add(this.list)
@@ -59,10 +59,10 @@ export class MixScene extends Scene{
                             let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
                             const movedP = ()=> p = p.move(0, font.ratioH);
 
-                            if(mix.countLimit === Mix.LIMIT_INF){
+                            if(mix.countLimit() === Mix.LIMIT_INF){
                                 font.draw(`合成回数(${mix.count}/-)`, p, Color.WHITE);
                             }else{
-                                font.draw(`合成回数(${mix.count}/${mix.countLimit})`, p, Color.WHITE);
+                                font.draw(`合成回数(${mix.count}/${mix.countLimit()})`, p, Color.WHITE);
                             }
 
                             for(let m of mix.materials){

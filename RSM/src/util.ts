@@ -12,7 +12,7 @@ import { Dungeon } from "./dungeon/dungeon.js";
 export class Debug{
     static readonly DEBUG = true;
 
-    static btnIsVisible = false;
+    static debugMode = false;
 }
 
 
@@ -37,13 +37,16 @@ export class Place{
     private static get dotW(){return 1 / Graphics.pixelW;}
     private static get dotH(){return 1 / Graphics.pixelH;}
 
+    private static top:Rect;
+    static get TOP(){return this.top ? this.top :
+        (this.top = new Rect(this.dotW, this.dotH, 1 - this.dotW * 2, 0.03));}
     
     private static e_box:Rect;
     static get E_BOX(){return this.e_box ? this.e_box : 
-        (this.e_box = new Rect(this.dotW, this.dotH, 1 - this.dotW * 2, this.ST_H));}
+        (this.e_box = new Rect(this.dotW, this.TOP.yh + this.dotH, 1 - this.dotW * 2, this.ST_H));}
     private static main:Rect;
     static get MAIN(){return this.main ? this.main : 
-        (this.main = new Rect(this.dotW, this.E_BOX.yh, 1 - this.dotW * 2, 0.35 ))}
+        (this.main = new Rect(this.dotW, this.E_BOX.yh, 1 - this.dotW * 2, 0.345 ))}
     private static msg:Rect;
     static get MSG(){return this.msg ? this.msg : 
         (this.msg = new Rect(this.MAIN.x, this.MAIN.y + 1 / Graphics.pixelW, this.MAIN.w, this.MAIN.h * 0.7));}
@@ -69,6 +72,8 @@ export class PlayData{
     static yen:number = 0;
     /**職業変更ボタンの出現フラグ。 */
     static masteredAnyJob = false;
+    /**装備ボタンの出現フラグ. */
+    static gotAnyEq = false;
 }
 
 

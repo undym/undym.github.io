@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Scene, wait } from "../undym/scene.js";
 import { Place, Util, PlayData, SceneType } from "../util.js";
-import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail } from "./sceneutil.js";
+import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
 import { VariableLayout, ILayout, Layout, FlowLayout } from "../undym/layout.js";
 import { Rect, Color } from "../undym/type.js";
 import { Unit, PUnit, Prm } from "../unit.js";
@@ -29,6 +29,7 @@ export class BattleScene extends Scene {
     static get ins() { return this._ins ? this._ins : (this._ins = new BattleScene()); }
     init() {
         super.clear();
+        super.add(Place.TOP, DrawPlayInfo.ins);
         super.add(Place.DUNGEON_DATA, new VariableLayout(() => {
             if (!this.tecInfo.tec || this.tecInfo.tec === Tec.empty) {
                 return DrawDungeonData.ins;
@@ -272,8 +273,12 @@ const win = () => __awaiter(this, void 0, void 0, function* () {
         }
     }
     {
+        let exp = 0;
+        Unit.enemies
+            .filter(e => e.exists)
+            .forEach(e => exp += 1);
         for (let p of Unit.players.filter(p => p.exists)) {
-            yield p.addJobExp(1);
+            yield p.addJobExp(exp);
         }
     }
     {

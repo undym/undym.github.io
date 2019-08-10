@@ -119,12 +119,12 @@ export abstract class Unit{
     name:string = "";
     exists:boolean = false;
     dead:boolean = false;
-    prmSets = new Map<Prm,PrmSet>();
     bounds:Rect;
-    equips = new Map<EqPos,Eq>();
     tecs:Tec[] = [];
     /**戦闘時の技ページ。 */
     tecPage = 0;
+    protected prmSets = new Map<Prm,PrmSet>();
+    protected equips = new Map<EqPos,Eq>();
 
     job:Job;
 
@@ -344,8 +344,8 @@ export abstract class Unit{
     //Eq
     //
     //---------------------------------------------------------
-    getEq(pos:EqPos):Eq {return this.equips.get(pos) as Eq;}
-    setEq(eq:Eq):void   {this.equips.set(eq.pos, eq);}
+    getEq(pos:EqPos):Eq            {return this.equips.get(pos) as Eq;}
+    setEq(pos:EqPos, eq:Eq):void   {this.equips.set(pos, eq);}
     //---------------------------------------------------------
     //
     //

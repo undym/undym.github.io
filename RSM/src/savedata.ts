@@ -78,7 +78,6 @@ const ioStr = (save:boolean, key:string, value:string, loadAction:(load:string)=
         window.localStorage.setItem(key, value);
     }else{
         const strage = window.localStorage.getItem(key);
-        console.log(key, strage);
         if(strage){
             loadAction(strage);
         }
@@ -114,7 +113,7 @@ const strageEq = (save:boolean, eq:Eq)=>{
 const strageDungeon = (save:boolean, d:Dungeon)=>{
     const name = `${strageDungeon.name}_${d.uniqueName}`;
     ioInt(save, `${name}_clearNum`,         d.clearNum,         load=> d.clearNum = load);
-
+    ioInt(save, `${name}_treasureOpenNum`,  d.treasureOpenNum,  load=> d.treasureOpenNum = load);
 };
 
 
@@ -134,7 +133,7 @@ const stragePlayer = (save:boolean, p:Player)=>{
     for(const pos of EqPos.values()){
         ioStr(save, `${name}_eq_${pos}`, u.getEq(pos).uniqueName, load=>{
             const eq = Eq.valueOf(load);
-            if(eq){u.setEq(eq);}
+            if(eq){u.setEq(pos, eq);}
         })
     }
 
@@ -236,6 +235,7 @@ const stragePlayData = (save:boolean)=>{
     const name = `${stragePlayData.name}`;
     ioInt(save, `${name}_yen`, PlayData.yen, load=> PlayData.yen = load);
     ioBool(save, `${name}_masteredAnyJob`, PlayData.masteredAnyJob, load=> PlayData.masteredAnyJob = load);
+    ioBool(save, `${name}_gotAnyEq`, PlayData.gotAnyEq, load=> PlayData.gotAnyEq = load);
     ioStr(save, `${name}_dungeonNow`, Dungeon.now.uniqueName, load=>{
         const dungeon = Dungeon.valueOf(load);
         if(dungeon){

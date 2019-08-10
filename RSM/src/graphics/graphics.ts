@@ -65,7 +65,7 @@ export class Img{
     constructor(src:string){
         this.image = new Image();
         this.image.crossOrigin = 'anonymous';
-        if(src == ""){return;}
+        if(src === ""){return;}
 
         this.image.onload = ()=>{
             this.loadComplete = true;

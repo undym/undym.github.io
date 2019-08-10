@@ -52,7 +52,7 @@ export class Player {
 }
 Player._values = [];
 Player.empty = new class extends Player {
-    constructor() { super(""); }
+    constructor() { super("empty"); }
     createInner(p) {
         p.exists = false;
     }

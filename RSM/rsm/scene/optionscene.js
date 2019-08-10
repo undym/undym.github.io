@@ -37,7 +37,7 @@ const setOptionBtn = (l) => {
     l.addFromLast(new Btn("<<", () => {
         Scene.load(TownScene.ins);
     }));
-    if (Debug.DEBUG) {
+    if (Debug.debugMode) {
         l.addFromLast(new Btn("Debug", () => {
             setDebugBtn(l);
         }));
@@ -97,10 +97,6 @@ const setDebugBtn = (l) => {
             }
         }
         Util.msg.set("TecMaster");
-    }));
-    l.add(new Btn("btnIsVisible", () => {
-        Debug.btnIsVisible = !Debug.btnIsVisible;
-        Util.msg.set(`Debug.btnIsVisible:${Debug.btnIsVisible}`);
     }));
     l.add(new Btn("EffectTest", () => {
         Scene.load(new EffectTest());

@@ -18,6 +18,7 @@ import { Item } from "../item.js";
 import { JobChangeScene } from "./jobchangescene.js";
 import { SetTecScene } from "./settecscene.js";
 import { MixScene } from "./mixscene.js";
+import { EqScene } from "./eqscene.js";
 
 
 let choosedDungeon:Dungeon;
@@ -36,7 +37,7 @@ export class TownScene extends Scene{
     init(){
         super.clear();
         
-        super.add(Place.E_BOX, DrawPlayInfo.ins);
+        super.add(Place.TOP, DrawPlayInfo.ins);
         
         super.add(Place.MSG, Util.msg);
 
@@ -81,7 +82,7 @@ class TownBtn{
                 this.setDungeonBtn();
             }));
             
-            if(PlayData.masteredAnyJob || Debug.btnIsVisible){
+            if(PlayData.masteredAnyJob || Debug.debugMode){
                 l.add(new Btn("職業",()=>{
                     Scene.load(new JobChangeScene());
                 }));
@@ -89,8 +90,12 @@ class TownBtn{
                     Scene.load(new SetTecScene());
                 }));
             }
-
-            if(Dungeon.はじまりの丘.clearNum > 0 || Debug.btnIsVisible){
+            if(PlayData.gotAnyEq || Debug.debugMode){
+                l.add(new Btn("装備",()=>{
+                    Scene.load(new EqScene());
+                }));
+            }
+            if(Dungeon.はじまりの丘.clearNum > 0 || Debug.debugMode){
                 l.add(new Btn("合成", ()=>{
                     Scene.load(new MixScene());
                 }));

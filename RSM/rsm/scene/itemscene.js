@@ -63,7 +63,10 @@ export class ItemScene extends Scene {
                 }
             } }));
         super.add(btnBounds, (() => {
-            const l = new FlowLayout(2, 4);
+            const otherBtns = ["使用", "<<"];
+            const w = 2;
+            const h = ((otherBtns.length + ItemParentType.values().length + 1) / w) | 0;
+            const l = new FlowLayout(w, h);
             for (let type of ItemParentType.values()) {
                 l.add(new Btn(type.toString(), () => {
                     this.setList(type);
@@ -75,7 +78,7 @@ export class ItemScene extends Scene {
             const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
                 yield this.use(this.selectedItem, this.user);
             }));
-            const cantUse = new Btn(() => "使用", () => { });
+            const cantUse = new Btn(() => "-", () => { });
             cantUse.stringColor = () => Color.GRAY;
             l.addFromLast(new VariableLayout(() => {
                 if (this.selectedItem === undefined || !this.selectedItem.canUse()) {

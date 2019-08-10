@@ -3,7 +3,7 @@ import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout } from "../un
 import { Btn } from "../widget/btn.js";
 import { Unit, PUnit } from "../unit.js";
 import { Input } from "../undym/input.js";
-import { Rect, Color } from "../undym/type.js";
+import { Rect, Color, Point } from "../undym/type.js";
 import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
 import { Place } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
@@ -46,36 +46,25 @@ export class EqScene extends Scene{
                     return new RatioLayout()
                         .add(infoBounds, ILayout.create({draw:(bounds)=>{
                             Graphics.fillRect(bounds, Color.D_GRAY);
-                            // if(!this.choosedTec){return;}
+                            if(!this.choosedEq){return;}
 
-                            // const tec = this.choosedTec;
-                            // let font = Font.def;
-                            // let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                            // const movedP = ()=> p = p.move(0, font.ratioH);
+                            const eq = this.choosedEq;
+                            let font = Font.def;
+                            let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
+                            const movedP = ()=> p = p.move(0, font.ratioH);
                             
-                            // font.draw(`[${tec}]`, p, Color.WHITE);
-                            // font.draw(`<${tec.type}>`, movedP(), Color.WHITE);
-                            
-                            // if(tec instanceof ActiveTec){
-                            //     let _p = movedP();
-                            //     if(tec.mpCost > 0){
-                            //         font.draw(`MP:${tec.mpCost}`, _p, Color.WHITE);
-                            //     }
-                            //     if(tec.tpCost > 0){
-                            //         font.draw(`TP:${tec.tpCost}`, _p.move(bounds.w / 2, 0), Color.WHITE);
-                            //     }
-                            // }else{
-                            //     movedP();
-                            // }
+                            font.draw(`[${eq}]`, p, Color.WHITE);
+                            font.draw(`<${eq.pos}>`, movedP(), Color.WHITE);
+                            font.draw(`${eq.num}個`, movedP(), Color.WHITE);
                 
-                            // for(let s of tec.info){
-                            //     font.draw(s, movedP(), Color.WHITE);
-                            // }
+                            for(let s of eq.info){
+                                font.draw(s, movedP(), Color.WHITE);
+                            }
                         }}))
                         .add(btnBounds, (()=>{
-                            const otherBtns = ["set/unset", "<<"];
+                            const otherBtns = ["装備/外す", "<<"];
                             const w = 2;
-                            const h = ((otherBtns.length + TecType.values().length + 1) / w)|0;
+                            const h = ((otherBtns.length + EqPos.values().length + 1) / w)|0;
                             const l = new FlowLayout(w,h);
                             
                             for(let pos of EqPos.values()){
@@ -85,45 +74,32 @@ export class EqScene extends Scene{
                                 }));
                             }
 
-                            // l.add(new Btn("全て", ()=>{
-                            //     this.setList( this.target, u=>{
-                            //         let res:Tec[] = [];
-                            //         for(let type of TecType.values()){
-                            //             res = res.concat( type.tecs.filter(t=> u.isMasteredTec(t)) );
-                            //         }
-                            //         return res;
-                            //     });
-                            // }));
                 
                             l.addFromLast(new Btn("<<", ()=>{
                                 Scene.load( TownScene.ins );
                             }));
                 
-                            const set = new Btn("セット",async()=>{
+                            const set = new Btn("装備",async()=>{
                                 if(!this.choosedEq){return;}
                                 
-                                this.target.equips.set(this.pos, this.choosedEq);
-                                FX_Str(Font.def, `${this.choosedEq}をセットしました`, {x:0.5, y:0.5}, Color.WHITE);
-
-                                // this.setList(this.target, this.getListTecs ,/*keepPage*/true);
-                               
+                                this.target.setEq(this.choosedEq.pos, this.choosedEq);
+                                // this.target.equips.set(this.pos, this.choosedEq);
+                                FX_Str(Font.def, `${this.choosedEq}をセットしました`, Point.CENTER, Color.WHITE);
                             });
                             const unset = new Btn("外す",async()=>{
                                 if(!this.choosedEq){return;}
 
                                 const newEq = Eq.getDef(this.pos);
-                                const oldEq = this.target.equips.get(this.pos) as Eq;
+                                const oldEq = this.target.getEq(this.pos);
+                                // const oldEq = this.target.equips.get(this.pos) as Eq;
                                 newEq.num--;
                                 oldEq.num++;
-                                this.target.equips.set(this.pos, newEq);
-                                FX_Str(Font.def, `${this.choosedEq}を外しました`, {x:0.5, y:0.5}, Color.WHITE);
-
-                                // this.list.clear(/*keepPage*/true);
-                                // this.setList(this.target, this.getListTecs, /*keepPage*/true);
+                                this.target.setEq(this.pos, newEq);
+                                FX_Str(Font.def, `${this.choosedEq}を外しました`, Point.CENTER, Color.WHITE);
                             });
                 
                             l.addFromLast(new VariableLayout(()=>{
-                                if(this.target.equips.get(this.pos) === this.choosedEq){
+                                if(this.target.getEq(this.pos) === this.choosedEq){
                                     return unset;
                                 }
                                 return set;
@@ -162,21 +138,21 @@ export class EqScene extends Scene{
         this.pos = pos;
         this.choosedEq = undefined;
 
-        // this.list.add({
-        //     center:()=>`${unit.name}`,
-        //     groundColor:()=>Color.D_GRAY,
-        // });
+        this.list.add({
+            center:()=>`${pos}`,
+            groundColor:()=>Color.D_GRAY,
+        });
 
         pos.eqs
             .forEach((eq)=>{
                 let color:()=>Color = ()=>{
                     if(eq === this.choosedEq){return Color.ORANGE;}
-                    if(unit.equips.get(pos) === eq){return Color.CYAN;}
+                    if(unit.getEq(pos) === eq){return Color.CYAN;}
                     return Color.WHITE;
                 };
 
                 this.list.add({
-                    left:()=> unit.equips.get(pos) === eq ? "=" : ``,
+                    left:()=> unit.getEq(pos) === eq ? "=" : ``,
                     leftColor:color,
                     right:()=>`${eq}`,
                     rightColor:color,

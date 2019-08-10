@@ -1,7 +1,7 @@
 
 import { TownScene } from "./scene/townscene.js";
 import { Scene, wait } from "./undym/scene.js";
-import {Util, SceneType} from "./util.js";
+import {Util, SceneType, Debug} from "./util.js";
 import { Input } from "./undym/input.js";
 import { Unit } from "./unit.js";
 import { FX, FXTest } from "./fx/fx.js";
@@ -64,10 +64,14 @@ window.onload = ()=>{
             reload.style.position = "absolute";
             reload.style.top = "0px";
             reload.style.left = "0px";
+            reload.style.width = "8vw";
+            reload.style.height = "3vh";
             return reload;
         })();
         document.body.appendChild(reload);
     }
+
+    setInput();
 
     const texture = new Texture({canvas:canvas});
     Graphics.setRenderTarget(texture);
@@ -129,3 +133,13 @@ const continueGame = ()=>{
     
     SaveData.load();
 }
+
+const setInput = ()=>{
+    document.addEventListener("keydown", ev=>{
+        if(Debug.DEBUG){
+            if(ev.key === "d"){
+                Debug.debugMode = !Debug.debugMode;
+            }
+        }
+    });
+};

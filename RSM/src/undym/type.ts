@@ -121,6 +121,7 @@ export class Color{
 export class Point{
     static readonly ZERO = new Point(0,0);
     static readonly ONE = new Point(1,1);
+    static readonly CENTER = new Point(0.5,0.5);
 
     readonly x:number;
     readonly y:number;

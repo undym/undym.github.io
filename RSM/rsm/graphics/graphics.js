@@ -37,7 +37,7 @@ export class Img {
         this.loadComplete = false;
         this.image = new Image();
         this.image.crossOrigin = 'anonymous';
-        if (src == "") {
+        if (src === "") {
             return;
         }
         this.image.onload = () => {

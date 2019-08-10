@@ -7,6 +7,7 @@ import { Btn } from "../widget/btn.js";
 import { Tec } from "../tec.js";
 import { Item } from "../item.js";
 import { Num } from "../mix.js";
+import { Eq } from "../eq.js";
 
 
 export abstract class Dungeon{
@@ -39,12 +40,18 @@ export abstract class Dungeon{
 
 
     clearNum:number = 0;
+    treasureOpenNum = 0;
 
     readonly uniqueName:string;
     readonly rank:number;
     readonly enemyLv:number;
     readonly au:number;
     readonly clearItem:()=>Num;
+    private  _treasure:()=>Num;
+    get treasure():Num{return this._treasure();}
+    private _treasureKey:()=>Num;
+    get treasureKey():Num{return this._treasureKey();}
+    readonly trendItems:()=>Item[];
     //-----------------------------------------------------------------
     //
     //
@@ -57,14 +64,20 @@ export abstract class Dungeon{
         enemyLv:number,
         au:number,
         clearItem:()=>Num,
+        treasure:()=>Num,
+        treasureKey:()=>Num;
+        trendItems:()=>Item[]
     }){
         this.uniqueName = args.uniqueName;
         this.toString = ()=>this.uniqueName;
 
-        this.rank       = args.rank;
-        this.enemyLv    = args.enemyLv;
-        this.au         = args.au;
-        this.clearItem = args.clearItem;
+        this.rank        = args.rank;
+        this.enemyLv     = args.enemyLv;
+        this.au          = args.au;
+        this.clearItem   = args.clearItem;
+        this._treasure   = args.treasure;
+        this._treasureKey= args.treasureKey;
+        this.trendItems  = args.trendItems;
 
         Dungeon._values.push(this);
     }
@@ -82,9 +95,11 @@ export abstract class Dungeon{
     //
     //-----------------------------------------------------------------
     rndEvent():DungeonEvent{
-        if(Math.random() <= 0.20){return DungeonEvent.BOX;}
-        if(Math.random() <= 0.20){return DungeonEvent.BATTLE;}
-        if(Math.random() <= 0.04){return DungeonEvent.TRAP;}
+        if(Math.random() < 0.001 ){return DungeonEvent.TREASURE;}
+        if(Math.random() < 0.001 ){return DungeonEvent.GET_TREASURE_KEY;}
+        if(Math.random() < 0.20  ){return DungeonEvent.BOX;}
+        if(Math.random() < 0.20  ){return DungeonEvent.BATTLE;}
+        if(Math.random() < 0.04  ){return DungeonEvent.TRAP;}
         return DungeonEvent.empty;
     }
 
@@ -136,7 +151,10 @@ export abstract class Dungeon{
     static readonly                      はじまりの丘:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"はじまりの丘",
                                 rank:0, enemyLv:1, au:50,
-                                clearItem:()=>Item.勾玉,
+                                clearItem:()=>Item.はじまりの丘の玉,
+                                treasure:()=>Eq.棒,
+                                treasureKey:()=>Item.はじまりの丘の鍵,
+                                trendItems:()=>[Item.石, Item.土, Item.枝,],
         });}
         isVisible = ()=>true;
         setBossInner = ()=>{
@@ -145,12 +163,19 @@ export abstract class Dungeon{
             e.name = "ボス";
             e.prm(Prm.MAX_HP).base = 30;
             e.prm(Prm.STR).base = 7;
+            //ボス以外の雑魚は0体
+            for(let i = 1; i < Unit.enemies.length; i++){
+                Unit.enemies[i].exists = false;
+            }
         };
     };
     static readonly                      丘の上:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"丘の上",
                                 rank:1, enemyLv:3, au:100,
-                                clearItem:()=>Item.石,
+                                clearItem:()=>Item.丘の上の玉,
+                                treasure:()=>Eq.安全靴,
+                                treasureKey:()=>Item.丘の上の鍵,
+                                trendItems:()=>[Item.水],
         });}
         isVisible = ()=>Dungeon.はじまりの丘.clearNum > 0;
         setBossInner = ()=>{
@@ -159,6 +184,10 @@ export abstract class Dungeon{
             e.name = "ボス";
             e.prm(Prm.MAX_HP).base = 50;
             e.prm(Prm.STR).base = 10;
+            //ボス以外の雑魚は1体
+            for(let i = 2; i < Unit.enemies.length; i++){
+                Unit.enemies[i].exists = false;
+            }
         };
     };
     

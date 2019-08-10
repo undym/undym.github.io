@@ -1,6 +1,6 @@
 import { Scene, wait, cwait } from "../undym/scene.js";
 import { Place, Util, PlayData, SceneType } from "../util.js";
-import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail } from "./sceneutil.js";
+import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
 import { VariableLayout, ILayout, Layout, YLayout, RatioLayout, FlowLayout } from "../undym/layout.js";
 import { Rect, Color, Point } from "../undym/type.js";
 import { Unit, PUnit, Prm, EUnit } from "../unit.js";
@@ -43,6 +43,8 @@ export class BattleScene extends Scene{
     init(){
 
         super.clear();
+
+        super.add(Place.TOP, DrawPlayInfo.ins);
 
         super.add(Place.DUNGEON_DATA, new VariableLayout(()=>{
             if(!this.tecInfo.tec || this.tecInfo.tec === Tec.empty){return DrawDungeonData.ins;}
@@ -328,8 +330,12 @@ const win = async()=>{
         }
     }
     {
+        let exp = 0;
+        Unit.enemies
+            .filter(e=> e.exists)
+            .forEach(e=> exp += 1);
         for(let p of Unit.players.filter(p=> p.exists)){
-            await p.addJobExp(1);
+            await p.addJobExp( exp );
         }
     }
     {

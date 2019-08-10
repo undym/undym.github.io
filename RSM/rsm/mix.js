@@ -42,7 +42,7 @@ export class Mix {
             this.countLimit = args.limit;
         }
         else {
-            this.countLimit = Mix.LIMIT_INF;
+            this.countLimit = () => Mix.LIMIT_INF;
         }
         if (args.result) {
             const re = args.result;
@@ -56,10 +56,10 @@ export class Mix {
         if (!this.materials) {
             return false;
         }
-        return this.materials[0].object.num > 0 && this.count < this.countLimit;
+        return this.materials[0].object.num > 0 && this.count < this.countLimit();
     }
     canRun() {
-        if (this.count >= this.countLimit) {
+        if (this.count >= this.countLimit()) {
             return false;
         }
         for (let m of this.materials) {

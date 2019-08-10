@@ -1,4 +1,7 @@
 import { Num } from "./mix.js";
+import { ActiveTec, TecType } from "./tec.js";
+import { Condition } from "./condition.js";
+import { PlayData } from "./util.js";
 export class EqPos {
     constructor(name) {
         this.toString = () => name;
@@ -106,6 +109,7 @@ export class Eq {
     afterBeAtk(action, attacker, target, dmg) { }
     add(v) {
         Num.add(this, v);
+        PlayData.gotAnyEq = true;
     }
 }
 Eq._values = [];
@@ -134,6 +138,18 @@ Eq.恋人 = new class extends Eq {
     constructor() {
         super({ uniqueName: "恋人", info: ["恋人info"],
             pos: EqPos.武, lv: 0 });
+    }
+};
+Eq.棒 = new class extends Eq {
+    constructor() {
+        super({ uniqueName: "棒", info: ["格闘攻撃+10x1.1"],
+            pos: EqPos.武, lv: 20 });
+    }
+    beforeDoAtk(action, attacker, target, dmg) {
+        if (action instanceof ActiveTec && action.type === TecType.格闘) {
+            dmg.pow.add += 10;
+            dmg.pow.mul *= 1.1;
+        }
     }
 };
 // static readonly                      忍者刀 = new class extends Eq{
@@ -219,5 +235,16 @@ Eq.きれいな靴 = new class extends Eq {
     constructor() {
         super({ uniqueName: "きれいな靴", info: [],
             pos: EqPos.脚, lv: 0 });
+    }
+};
+Eq.安全靴 = new class extends Eq {
+    constructor() {
+        super({ uniqueName: "安全靴", info: ["被攻撃時稀に＜盾＞化"],
+            pos: EqPos.脚, lv: 40 });
+    }
+    afterBeAtk(action, attacker, target, dmg) {
+        if (action instanceof ActiveTec && Math.random() < 0.7) {
+            target.setCondition(Condition.盾, 1);
+        }
     }
 };
