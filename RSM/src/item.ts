@@ -32,7 +32,7 @@ export class ItemType{
     static readonly HP回復 = new ItemType("HP回復");
     static readonly MP回復 = new ItemType("MP回復");
     
-    static readonly その他 = new ItemType("その他");
+    static readonly ダンジョン = new ItemType("ダンジョン");
 
     static readonly 鍵 = new ItemType("鍵");
     static readonly 玉 = new ItemType("玉");
@@ -54,9 +54,9 @@ export class ItemParentType{
         ItemParentType._values.push(this);
     }
 
-    static readonly 回復 = new ItemParentType("回復", [ItemType.HP回復, ItemType.MP回復]);
-    static readonly その他 = new ItemParentType("その他", [ItemType.その他]);
-    static readonly 素材 = new ItemParentType("素材", [ItemType.鍵, ItemType.玉, ItemType.素材]);
+    static readonly 回復      = new ItemParentType("回復", [ItemType.HP回復, ItemType.MP回復]);
+    static readonly ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン]);
+    static readonly その他    = new ItemParentType("その他", [ItemType.鍵, ItemType.玉, ItemType.素材]);
 }
 
 
@@ -66,9 +66,10 @@ export class Item implements Action, Num{
         return this._values;
     }
 
-    private static _rankValues:{[key:number]:Item[];} = {};
+    private static _rankValues = new Map<number,Item[]>();
+    // private static _rankValues:{[key:number]:Item[];} = {};
     static rankValues(rank:number):ReadonlyArray<Item>|undefined{
-        return this._rankValues[rank];
+        return this._rankValues.get(rank);
     }
 
 
@@ -96,27 +97,25 @@ export class Item implements Action, Num{
         return Item.石;
     }
 
-    static fluctuateRank(baseRank:number, passProbability = 0.3){
+    static fluctuateRank(baseRank:number, rankFluctuatePassProb = 0.3){
         let add = 0;
 
-        while(Math.random() <= passProbability){
+        while(Math.random() <= rankFluctuatePassProb){
             add++;
         }
 
         if(Math.random() <= 0.5){
-            return baseRank + add;
-        }else{
-            const res = baseRank - add;
-            return res >= 0 ? res : 0 ;
+            add *= -1;
         }
+
+        const res = baseRank + add;
+        return res > 0 ? res : 0;
     }
 
     static readonly DEF_NUM_LIMIT = 999;
 
     num:number = 0;
     totalGetNum:number = 0;
-    /**所持上限. */
-    numLimit:number;
     /**そのダンジョン内で使用した数. */
     usedNum:number = 0;
 
@@ -128,6 +127,8 @@ export class Item implements Action, Num{
     readonly box:boolean;
     readonly targetings:number;
     readonly consumable:boolean;
+    /**所持上限. */
+    readonly numLimit:number;
 
     protected useInner:(user:Unit, target:Unit)=>void;
 
@@ -168,10 +169,15 @@ export class Item implements Action, Num{
         }
 
         Item._values.push(this);
-        if(Item._rankValues[this.rank] === undefined){
-            Item._rankValues[this.rank] = [];
+        if(!Item._rankValues.has(this.rank)){
+            Item._rankValues.set(this.rank, []);
         }
-        Item._rankValues[this.rank].push(this);
+
+        (Item._rankValues.get(this.rank) as Item[]).push(this);
+        // if(Item._rankValues[this.rank] === undefined){
+        //     Item._rankValues[this.rank] = [];
+        // }
+        // Item._rankValues[this.rank].push(this);
 
     }
 
@@ -254,7 +260,7 @@ export class Item implements Action, Num{
     //-----------------------------------------------------------------
     static readonly                      脱出ポッド = new class extends Item{
         constructor(){super({uniqueName:"脱出ポッド", info:["ダンジョンから脱出する"],
-                                type:ItemType.その他, rank:0, box:false,
+                                type:ItemType.ダンジョン, rank:0, box:false,
                                 consumable:true,
                                 use:async(user,target)=>{
                                     await DungeonEvent.ESCAPE_DUNGEON.happen();
@@ -266,7 +272,7 @@ export class Item implements Action, Num{
     };
     static readonly                      記録用粘土板 = new class extends Item{
         constructor(){super({uniqueName:"記録用粘土板", info:["ダンジョン内でセーブする"],
-                                type:ItemType.その他, rank:0, box:false,
+                                type:ItemType.ダンジョン, rank:0, box:false,
                                 consumable:true,
                                 use:async(user,target)=>{
                                     SaveData.save();

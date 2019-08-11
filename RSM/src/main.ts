@@ -52,10 +52,8 @@ window.onload = ()=>{
             const reload = document.createElement("button");
             reload.onclick = ()=>{
                 if(runBtnVisible){
-                    runBtnVisible = false;
                     document.body.removeChild(run);
                 }else{
-                    runBtnVisible = true;
                     document.body.appendChild(run);
                 }
                 runBtnVisible = !runBtnVisible;

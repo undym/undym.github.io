@@ -66,9 +66,10 @@ export default abstract class DungeonEvent{
                 openNum++;
                 openBoost /= 2;
             }
-            let dungeonRank = Dungeon.now.au;
+            let dungeonRank = Dungeon.now.rank;
             for(let i = 0; i < openNum; i++){
                 const itemRank = Item.fluctuateRank( dungeonRank );
+                console.log("itemRank:", itemRank);
                 let item = Item.rndBoxRankItem( itemRank );
                 let addNum = 1;
                 item.add( addNum );

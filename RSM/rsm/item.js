@@ -73,16 +73,21 @@ export class Item {
             this.useInner = args.use;
         }
         Item._values.push(this);
-        if (Item._rankValues[this.rank] === undefined) {
-            Item._rankValues[this.rank] = [];
+        if (!Item._rankValues.has(this.rank)) {
+            Item._rankValues.set(this.rank, []);
         }
-        Item._rankValues[this.rank].push(this);
+        Item._rankValues.get(this.rank).push(this);
+        // if(Item._rankValues[this.rank] === undefined){
+        //     Item._rankValues[this.rank] = [];
+        // }
+        // Item._rankValues[this.rank].push(this);
     }
     static values() {
         return this._values;
     }
+    // private static _rankValues:{[key:number]:Item[];} = {};
     static rankValues(rank) {
-        return this._rankValues[rank];
+        return this._rankValues.get(rank);
     }
     static consumableValues() {
         return this._consumableValues;
@@ -164,7 +169,7 @@ export class Item {
     }
 }
 Item._values = [];
-Item._rankValues = {};
+Item._rankValues = new Map();
 Item._consumableValues = [];
 Item.DEF_NUM_LIMIT = 999;
 //-----------------------------------------------------------------
