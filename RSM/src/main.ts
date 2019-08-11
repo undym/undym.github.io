@@ -12,6 +12,7 @@ import { Page } from "./undym/page.js";
 import { Graphics, Texture, Font } from "./graphics/graphics.js";
 import { Item } from "./item.js";
 import { SaveData } from "./savedata.js";
+import DungeonEvent from "./dungeon/dungeonevent.js";
 
 
 window.onload = ()=>{
@@ -74,8 +75,6 @@ window.onload = ()=>{
     const texture = new Texture({canvas:canvas});
     Graphics.setRenderTarget(texture);
     Input.init(canvas, rotate);
-    Util.init();
-    Unit.init();
 
     init();
 
@@ -108,8 +107,15 @@ const draw = ()=>{
 };
 
 const init = ()=>{
+    Util.init();
+    Unit.init();
+
     SceneType.now = SceneType.TOWN;
     Dungeon.now = Dungeon.はじまりの丘;
+    //画像読み込み
+    for(const ev of DungeonEvent.values()){
+        ev.getImg();
+    }
 };
 
 const newGame = ()=>{

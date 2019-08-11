@@ -32,7 +32,7 @@ export class ItemType {
 }
 ItemType.HP回復 = new ItemType("HP回復");
 ItemType.MP回復 = new ItemType("MP回復");
-ItemType.その他 = new ItemType("その他");
+ItemType.ダンジョン = new ItemType("ダンジョン");
 ItemType.鍵 = new ItemType("鍵");
 ItemType.玉 = new ItemType("玉");
 ItemType.素材 = new ItemType("素材");
@@ -46,8 +46,8 @@ export class ItemParentType {
 }
 ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.HP回復, ItemType.MP回復]);
-ItemParentType.その他 = new ItemParentType("その他", [ItemType.その他]);
-ItemParentType.素材 = new ItemParentType("素材", [ItemType.鍵, ItemType.玉, ItemType.素材]);
+ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン]);
+ItemParentType.その他 = new ItemParentType("その他", [ItemType.鍵, ItemType.玉, ItemType.素材]);
 export class Item {
     constructor(args) {
         this.num = 0;
@@ -112,18 +112,16 @@ export class Item {
         }
         return Item.石;
     }
-    static fluctuateRank(baseRank, passProbability = 0.3) {
+    static fluctuateRank(baseRank, rankFluctuatePassProb = 0.3) {
         let add = 0;
-        while (Math.random() <= passProbability) {
+        while (Math.random() <= rankFluctuatePassProb) {
             add++;
         }
         if (Math.random() <= 0.5) {
-            return baseRank + add;
+            add *= -1;
         }
-        else {
-            const res = baseRank - add;
-            return res >= 0 ? res : 0;
-        }
+        const res = baseRank + add;
+        return res > 0 ? res : 0;
     }
     get mix() { return this._mix ? this._mix : (this._mix = this.createMix()); }
     createMix() { return undefined; }
@@ -231,7 +229,7 @@ Item.赤い水 = new class extends Item {
 Item.脱出ポッド = new class extends Item {
     constructor() {
         super({ uniqueName: "脱出ポッド", info: ["ダンジョンから脱出する"],
-            type: ItemType.その他, rank: 0, box: false,
+            type: ItemType.ダンジョン, rank: 0, box: false,
             consumable: true,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                 yield DungeonEvent.ESCAPE_DUNGEON.happen();
@@ -245,7 +243,7 @@ Item.脱出ポッド = new class extends Item {
 Item.記録用粘土板 = new class extends Item {
     constructor() {
         super({ uniqueName: "記録用粘土板", info: ["ダンジョン内でセーブする"],
-            type: ItemType.その他, rank: 0, box: false,
+            type: ItemType.ダンジョン, rank: 0, box: false,
             consumable: true,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                 SaveData.save();

@@ -18,17 +18,23 @@ import { SaveData } from "../savedata.js";
 
 
 export default abstract class DungeonEvent{
+    static _values:DungeonEvent[] = [];
+    static values():ReadonlyArray<DungeonEvent>{
+        return this._values;
+    }
+
     static now:DungeonEvent;
 
 
 
     private img:Img;
     getImg():Img{return this.img ? this.img : (this.img = this.createImg());}
-    createImg():Img{return Img.empty;}
+    protected createImg():Img{return Img.empty;}
     
     abstract createBtnLayout():ILayout;
 
     private constructor(){
+        DungeonEvent._values.push(this);
     }
 
     async happen(){

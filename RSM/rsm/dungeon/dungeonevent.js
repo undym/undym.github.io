@@ -25,6 +25,10 @@ import { Img } from "../graphics/graphics.js";
 import { SaveData } from "../savedata.js";
 export default class DungeonEvent {
     constructor() {
+        DungeonEvent._values.push(this);
+    }
+    static values() {
+        return this._values;
     }
     getImg() { return this.img ? this.img : (this.img = this.createImg()); }
     createImg() { return Img.empty; }
@@ -36,6 +40,7 @@ export default class DungeonEvent {
     }
     isZoomImg() { return true; }
 }
+DungeonEvent._values = [];
 DungeonEvent.empty = new class extends DungeonEvent {
     constructor() {
         super(...arguments);
