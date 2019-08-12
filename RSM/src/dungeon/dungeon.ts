@@ -97,7 +97,7 @@ export abstract class Dungeon{
     rndEvent():DungeonEvent{
         if(Math.random() < 0.001 ){return DungeonEvent.TREASURE;}
         if(Math.random() < 0.001 ){return DungeonEvent.GET_TREASURE_KEY;}
-        if(Math.random() < 10.20  ){return DungeonEvent.BOX;}
+        if(Math.random() < 0.20  ){return DungeonEvent.BOX;}
         if(Math.random() < 0.20  ){return DungeonEvent.BATTLE;}
         if(Math.random() < 0.04  ){return DungeonEvent.TRAP;}
         return DungeonEvent.empty;

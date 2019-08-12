@@ -63,8 +63,8 @@ window.onload = ()=>{
             reload.style.position = "absolute";
             reload.style.top = "0px";
             reload.style.left = "0px";
-            reload.style.width = "8vw";
-            reload.style.height = "3vh";
+            reload.style.width = "10vw";
+            reload.style.height = "5vh";
             return reload;
         })();
         document.body.appendChild(reload);
