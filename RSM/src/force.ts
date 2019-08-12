@@ -11,6 +11,7 @@ export class Force{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
+    equip(unit:Unit):void{};
 }
 
 
@@ -127,25 +128,26 @@ export class Targeting{
     static readonly WITH_FRIEND = 1 << 5;
     static readonly ONLY_FRIEND = 1 << 6;
 
-    static filter(targetings:number, attacker:Unit, targets:Unit[]):Unit[]{
+    static filter(targetings:number, attacker:Unit, targets:Unit[]|ReadonlyArray<Unit>):Unit[]{
         if(targetings & Targeting.SELF){return [attacker];}
 
-        targets = targets.filter(t=> t.exists);
+        let res = targets.filter(t=> t.exists);
     
              if(targetings & Targeting.WITH_DEAD){}
-        else if(targetings & Targeting.ONLY_DEAD){targets = targets.filter(t=> t.dead);}
-        else                                     {targets = targets.filter(t=> !t.dead);}
+        else if(targetings & Targeting.ONLY_DEAD){res = res.filter(t=> t.dead);}
+        else                                     {res = res.filter(t=> !t.dead);}
 
              if(targetings & Targeting.WITH_FRIEND){}
-        else if(targetings & Targeting.ONLY_FRIEND){targets = targets.filter(t=> t.isFriend(attacker));}
-        else                                       {targets = targets.filter(t=> !t.isFriend(attacker));}
+        else if(targetings & Targeting.ONLY_FRIEND){res = res.filter(t=> t.isFriend(attacker));}
+        else                                       {res = res.filter(t=> !t.isFriend(attacker));}
     
-        if((targetings & Targeting.SELECT) 
-            && targets.length > 0)
-        {
-            return [targets[0]];
+        if(
+               (targetings & Targeting.SELECT) 
+            && res.length > 0
+        ){
+            return [res[0]];
         }
     
-        return targets;
+        return res;
     }
 }

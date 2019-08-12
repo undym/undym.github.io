@@ -65,7 +65,7 @@ window.onload = () => {
             reload.style.top = "0px";
             reload.style.left = "0px";
             reload.style.width = "10vw";
-            reload.style.height = "5vh";
+            reload.style.height = "3vh";
             return reload;
         })();
         document.body.appendChild(reload);

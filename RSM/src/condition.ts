@@ -82,6 +82,7 @@ export abstract class Condition implements Force{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
+    equip(unit:Unit):void{}
     //--------------------------------------------------------------------------
     //
     //

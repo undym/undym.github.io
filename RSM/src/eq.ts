@@ -125,6 +125,7 @@ export abstract class Eq implements Force, Num{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+    equip(unit:Unit){}
 
     add(v:number){
         Num.add(this, v);

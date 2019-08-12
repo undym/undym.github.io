@@ -82,19 +82,15 @@ export class EqScene extends Scene{
                             const set = new Btn("装備",async()=>{
                                 if(!this.choosedEq){return;}
                                 
-                                this.target.setEq(this.choosedEq.pos, this.choosedEq);
-                                // this.target.equips.set(this.pos, this.choosedEq);
+                                equip( this.target, this.choosedEq );
+                                
                                 FX_Str(Font.def, `${this.choosedEq}をセットしました`, Point.CENTER, Color.WHITE);
                             });
                             const unset = new Btn("外す",async()=>{
                                 if(!this.choosedEq){return;}
 
-                                const newEq = Eq.getDef(this.pos);
-                                const oldEq = this.target.getEq(this.pos);
-                                // const oldEq = this.target.equips.get(this.pos) as Eq;
-                                newEq.num--;
-                                oldEq.num++;
-                                this.target.setEq(this.pos, newEq);
+                                equip( this.target, Eq.getDef(this.pos));
+
                                 FX_Str(Font.def, `${this.choosedEq}を外しました`, Point.CENTER, Color.WHITE);
                             });
                 
@@ -144,6 +140,7 @@ export class EqScene extends Scene{
         });
 
         pos.eqs
+            .filter(eq=> eq.num > 0 || eq === unit.getEq(pos))
             .forEach((eq)=>{
                 let color:()=>Color = ()=>{
                     if(eq === this.choosedEq){return Color.ORANGE;}
@@ -164,3 +161,14 @@ export class EqScene extends Scene{
             });
     }
 }
+
+
+const equip = (unit:Unit, newEq:Eq)=>{
+    const oldEq = unit.getEq(newEq.pos);
+
+    oldEq.num++;
+    newEq.num--;
+
+    unit.setEq(newEq.pos, newEq);
+    unit.equip();
+};

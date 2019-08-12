@@ -1,6 +1,7 @@
 import { Rect, Color, Point } from "../undym/type.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 export class FX {
+    /**countは0スタート。 */
     static set(effect) {
         let e = new Elm(effect);
         this.elms.push(e);
@@ -156,3 +157,36 @@ export const FX_RotateStr = (font, str, center, color) => {
     });
 };
 FXTest.add(FX_RotateStr.name, () => FX_RotateStr(new Font(30, Font.BOLD), "12345", FXTest.target, Color.GREEN));
+export const FX_Shake = (dstRatio, srcRatio = { x: -1, y: 0, w: 0, h: 0 }) => {
+    if (srcRatio.x === -1) {
+        srcRatio = dstRatio;
+    }
+    const over = 15;
+    const shakeRange = 0.02;
+    let tex;
+    FX.set((count) => {
+        if (count === 0) {
+            tex = Graphics.createTexture(srcRatio);
+        }
+        const shake = () => {
+            let v = shakeRange * (over - count) / over;
+            if (Math.random() < 0.5) {
+                return v;
+            }
+            else {
+                return -v;
+            }
+        };
+        let r = {
+            x: dstRatio.x,
+            y: dstRatio.y,
+            w: dstRatio.w,
+            h: dstRatio.h,
+        };
+        r.x += shake();
+        r.y += shake();
+        tex.draw(r);
+        return count < over;
+    });
+};
+FXTest.add(FX_Shake.name, () => FX_Shake({ x: 0, y: 0, w: 0.5, h: 0.5 }));

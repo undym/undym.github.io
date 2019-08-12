@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Prm } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
-import { Force, Dmg, Targeting } from "./force.js";
+import { Dmg, Targeting } from "./force.js";
 import { Condition } from "./condition.js";
 import { Color } from "./undym/type.js";
 import { FX_Str } from "./fx/fx.js";
@@ -35,7 +35,7 @@ TecType.格闘 = new class extends TecType {
     constructor() { super("格闘"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.STR).total(),
+            pow: attacker.prm(Prm.STR).total() + attacker.prm(Prm.LV).total(),
             def: target.prm(Prm.MAG).total(),
         });
         ;
@@ -46,7 +46,7 @@ TecType.魔法 = new class extends TecType {
     constructor() { super("魔法"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.MAG).total(),
+            pow: attacker.prm(Prm.MAG).total() + attacker.prm(Prm.LV).total(),
             def: target.prm(Prm.STR).total(),
         });
         ;
@@ -57,7 +57,7 @@ TecType.神格 = new class extends TecType {
     constructor() { super("神格"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.LIG).total(),
+            pow: attacker.prm(Prm.LIG).total() + attacker.prm(Prm.LV).total(),
             def: target.prm(Prm.DRK).total(),
         });
         ;
@@ -68,7 +68,7 @@ TecType.暗黒 = new class extends TecType {
     constructor() { super("暗黒"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.DRK).total(),
+            pow: attacker.prm(Prm.DRK).total() + attacker.prm(Prm.LV).total(),
             def: target.prm(Prm.LIG).total(),
         });
         ;
@@ -79,7 +79,7 @@ TecType.練術 = new class extends TecType {
     constructor() { super("練術"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.CHN).total(),
+            pow: attacker.prm(Prm.CHN).total() + attacker.prm(Prm.LV).total(),
             def: target.prm(Prm.PST).total(),
         });
         ;
@@ -90,7 +90,7 @@ TecType.過去 = new class extends TecType {
     constructor() { super("過去"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.PST).total(),
+            pow: attacker.prm(Prm.PST).total() + attacker.prm(Prm.LV).total(),
             def: target.prm(Prm.CHN).total(),
         });
         ;
@@ -101,7 +101,7 @@ TecType.銃術 = new class extends TecType {
     constructor() { super("銃術"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.GUN).total(),
+            pow: attacker.prm(Prm.GUN).total() + attacker.prm(Prm.LV).total(),
             def: target.prm(Prm.ARR).total(),
         });
         ;
@@ -112,7 +112,7 @@ TecType.弓術 = new class extends TecType {
     constructor() { super("弓術"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.ARR).total(),
+            pow: attacker.prm(Prm.ARR).total() + attacker.prm(Prm.LV).total(),
             def: target.prm(Prm.GUN).total(),
         });
         ;
@@ -126,7 +126,12 @@ TecType.強化 = new class extends TecType {
 };
 TecType.回復 = new class extends TecType {
     constructor() { super("回復"); }
-    createDmg(attacker, target) { return new Dmg(); }
+    createDmg(attacker, target) {
+        return new Dmg({
+            pow: attacker.prm(Prm.LIG).total() + attacker.prm(Prm.LV).total(),
+        });
+        ;
+    }
     ;
 };
 TecType.その他 = new class extends TecType {
@@ -134,7 +139,7 @@ TecType.その他 = new class extends TecType {
     createDmg(attacker, target) { return new Dmg(); }
     ;
 };
-export class Tec extends Force {
+export class Tec {
     static get empty() {
         return this._empty ? this._empty : (this._empty = new class extends Tec {
             constructor() {
@@ -155,6 +160,7 @@ export class Tec extends Force {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    equip(unit) { }
 }
 export class PassiveTec extends Tec {
     constructor(args) {

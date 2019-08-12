@@ -5,7 +5,7 @@ import { Color, Rect, Point } from "./undym/type.js";
 import { Tec, ActiveTec, PassiveTec, TecType } from "./tec.js";
 import { Dmg, Force, Action, Targeting } from "./force.js";
 import { Job } from "./job.js";
-import { FX_ShakeStr, FX_RotateStr } from "./fx/fx.js";
+import { FX_ShakeStr, FX_RotateStr, FX_Shake } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos } from "./eq.js";
 import { choice } from "./undym/random.js";
@@ -69,10 +69,10 @@ export abstract class Unit{
     static readonly DEF_MAX_TP = 100;
 
     private static _players:PUnit[];
-    static get players():PUnit[]{return this._players;}
+    static get players():ReadonlyArray<PUnit>{return this._players;}
 
     private static _enemies:EUnit[];
-    static get enemies():EUnit[]{return this._enemies;}
+    static get enemies():ReadonlyArray<EUnit>{return this._enemies;}
 
     private static _all:Unit[];
     static get all():Unit[]{return this._all;}
@@ -212,7 +212,8 @@ export abstract class Unit{
         if(result.isHit){
             this.hp -= result.value;
             
-            FX_RotateStr(new Font(30, Font.BOLD), `${result.value}`, p, Color.RED); 
+            FX_Shake(this.bounds);
+            FX_RotateStr(new Font(30, Font.BOLD), `${result.value}`, p, Color.RED);
             Util.msg.set(`${this.name}に${result.value}のダメージ`, Color.RED.bright); await wait();
         }else{
             FX_RotateStr(new Font(30, Font.BOLD), `MISS`, p, Color.RED); 
@@ -237,12 +238,18 @@ export abstract class Unit{
     beforeBeAtk(action:Action, attacker:Unit, dmg:Dmg){this.force(f=> f.beforeBeAtk(action, attacker, this, dmg));}
     afterDoAtk(action:Action, target:Unit, dmg:Dmg)   {this.force(f=> f.afterDoAtk(action, this, target, dmg));}
     afterBeAtk(action:Action, attacker:Unit, dmg:Dmg) {this.force(f=> f.afterBeAtk(action, this, attacker, dmg));}
+    equip()                                           {
+        for(const prm of Prm.values()){
+            this.prm(prm).eq = 0;
+        }
+        this.force(f=> f.equip(this));
+    }
 
     protected force(forceDlgt:(f:Force)=>void){
-        for(let tec of this.tecs){
+        for(const tec of this.tecs){
             forceDlgt( tec );
         }
-        for(let eq of this.equips.values()){
+        for(const eq of this.equips.values()){
             forceDlgt( eq );
         }
     }

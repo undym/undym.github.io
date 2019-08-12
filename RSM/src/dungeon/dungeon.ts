@@ -98,7 +98,7 @@ export abstract class Dungeon{
         if(Math.random() < 0.001 ){return DungeonEvent.TREASURE;}
         if(Math.random() < 0.001 ){return DungeonEvent.GET_TREASURE_KEY;}
         if(Math.random() < 0.20  ){return DungeonEvent.BOX;}
-        if(Math.random() < 0.20  ){return DungeonEvent.BATTLE;}
+        if(Math.random() < 0.25  ){return DungeonEvent.BATTLE;}
         if(Math.random() < 0.04  ){return DungeonEvent.TRAP;}
         return DungeonEvent.empty;
     }
@@ -161,8 +161,8 @@ export abstract class Dungeon{
             let e = Unit.enemies[0];
             Job.しんまい.setEnemy(e, e.prm(Prm.LV).base);
             e.name = "ボス";
-            e.prm(Prm.MAX_HP).base = 30;
-            e.prm(Prm.STR).base = 7;
+            e.prm(Prm.MAX_HP).base = 15;
+            e.prm(Prm.STR).base = 6;
             //ボス以外の雑魚は0体
             for(let i = 1; i < Unit.enemies.length; i++){
                 Unit.enemies[i].exists = false;
@@ -182,7 +182,7 @@ export abstract class Dungeon{
             let e = Unit.enemies[0];
             Job.剣士.setEnemy(e, e.prm(Prm.LV).base);
             e.name = "ボス";
-            e.prm(Prm.MAX_HP).base = 50;
+            e.prm(Prm.MAX_HP).base = 30;
             e.prm(Prm.STR).base = 10;
             //ボス以外の雑魚は1体
             for(let i = 2; i < Unit.enemies.length; i++){
@@ -192,24 +192,6 @@ export abstract class Dungeon{
     };
     
 
-    // static readonly          test:Dungeon = new class extends Dungeon{
-    //     constructor(){super("test",/*rank*/0,/*lv*/1,/*au*/50);}
-    //     getArea   = ()=>DungeonArea.黒地域;
-    //     getBounds = ()=>new Rect(0.35, 0.4, 0.3, 0.2);
-    //     isVisible = ()=>true;
-    //     setBossInner = ()=>{
-    //         let e = Unit.enemies[0];
-    //         e.name = "ボス";
-    //         e.prm(Prm.MAX_HP).base = 30;
-    //         e.prm(Prm.STR).base = 7;
-    //     };
-    // };
-    // static readonly          はじまりの丘2:Dungeon = new class extends Dungeon{
-    //     constructor(){super("はじまりの丘2",/*rank*/0,/*lv*/3,/*au*/50);}
-
-    //     getBounds = ()=>new Rect(0, 0.4, 0.3, 0.15);
-    //     isVisible = ()=>true;
-    // };
     //-----------------------------------------------------------------
     //
     //

@@ -107,6 +107,7 @@ export class Eq {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    equip(unit) { }
     add(v) {
         Num.add(this, v);
         PlayData.gotAnyEq = true;

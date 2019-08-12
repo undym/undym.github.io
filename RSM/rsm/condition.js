@@ -73,6 +73,7 @@ export class Condition {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    equip(unit) { }
 }
 Condition._values = [];
 //--------------------------------------------------------------------------

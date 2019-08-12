@@ -68,20 +68,14 @@ export class EqScene extends Scene {
                     if (!this.choosedEq) {
                         return;
                     }
-                    this.target.setEq(this.choosedEq.pos, this.choosedEq);
-                    // this.target.equips.set(this.pos, this.choosedEq);
+                    equip(this.target, this.choosedEq);
                     FX_Str(Font.def, `${this.choosedEq}をセットしました`, Point.CENTER, Color.WHITE);
                 }));
                 const unset = new Btn("外す", () => __awaiter(this, void 0, void 0, function* () {
                     if (!this.choosedEq) {
                         return;
                     }
-                    const newEq = Eq.getDef(this.pos);
-                    const oldEq = this.target.getEq(this.pos);
-                    // const oldEq = this.target.equips.get(this.pos) as Eq;
-                    newEq.num--;
-                    oldEq.num++;
-                    this.target.setEq(this.pos, newEq);
+                    equip(this.target, Eq.getDef(this.pos));
                     FX_Str(Font.def, `${this.choosedEq}を外しました`, Point.CENTER, Color.WHITE);
                 }));
                 l.addFromLast(new VariableLayout(() => {
@@ -123,6 +117,7 @@ export class EqScene extends Scene {
             groundColor: () => Color.D_GRAY,
         });
         pos.eqs
+            .filter(eq => eq.num > 0 || eq === unit.getEq(pos))
             .forEach((eq) => {
             let color = () => {
                 if (eq === this.choosedEq) {
@@ -145,3 +140,10 @@ export class EqScene extends Scene {
         });
     }
 }
+const equip = (unit, newEq) => {
+    const oldEq = unit.getEq(newEq.pos);
+    oldEq.num++;
+    newEq.num--;
+    unit.setEq(newEq.pos, newEq);
+    unit.equip();
+};

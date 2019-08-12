@@ -1,26 +1,39 @@
 export class Texture {
     static get empty() {
         if (this._empty === undefined) {
-            this._empty = new Texture({ size: { w: 1, h: 1 } });
+            this._empty = new Texture({ pixelSize: { w: 1, h: 1 } });
         }
         return this._empty;
     }
     /**
-     * canvasが設定されていればsizeを無視し、canvasが設定されていなければsizeのcanvasを生成する。
+     * 優先順位: canvas > size > imageData
      * @param values
      */
-    constructor(values) {
-        if (values.canvas !== undefined) {
-            this.canvas = values.canvas;
+    constructor(args) {
+        if (args.canvas) {
+            this.canvas = args.canvas;
             this.ctx = this.canvas.getContext("2d");
         }
-        else if (values.size !== undefined) {
+        else if (args.pixelSize) {
             this.canvas = document.createElement("canvas");
+            this.canvas.width = args.pixelSize.w;
+            this.canvas.height = args.pixelSize.h;
             this.ctx = this.canvas.getContext("2d");
-            this.canvas.width = values.size.w;
-            this.canvas.height = values.size.h;
+        }
+        else if (args.imageData) {
+            this.canvas = document.createElement("canvas");
+            this.canvas.width = args.imageData.width;
+            this.canvas.height = args.imageData.height;
+            this.ctx = this.canvas.getContext("2d");
+            this.ctx.putImageData(args.imageData, 0, 0);
         }
         this.ctx.imageSmoothingEnabled = false;
+    }
+    draw(dstRatio, srcRatio = { x: 0, y: 0, w: 1, h: 1 }) {
+        const ctx = Graphics.getRenderTarget().ctx;
+        const w = Graphics.getRenderTarget().canvas.width;
+        const h = Graphics.getRenderTarget().canvas.height;
+        ctx.drawImage(this.canvas, /*sx*/ srcRatio.x * this.canvas.width, /*sy*/ srcRatio.y * this.canvas.height, /*sw*/ srcRatio.w * this.canvas.width, /*sh*/ srcRatio.h * this.canvas.height, /*dx*/ dstRatio.x * w, /*dy*/ dstRatio.y * h, /*dw*/ dstRatio.w * w, /*dh*/ dstRatio.h * h);
     }
     /**このTextureをRenderTargetにし、runを実行したのち元のTextureをRenderTargetに戻す。*/
     setRenderTarget(run) {
@@ -54,14 +67,14 @@ export class Img {
         }
         return this._empty;
     }
-    draw(dst, src = { x: 0, y: 0, w: 1, h: 1 }) {
+    draw(dstRatio, srcRatio = { x: 0, y: 0, w: 1, h: 1 }) {
         if (!this.loadComplete) {
             return;
         }
         const ctx = Graphics.getRenderTarget().ctx;
         const w = Graphics.getRenderTarget().canvas.width;
         const h = Graphics.getRenderTarget().canvas.height;
-        ctx.drawImage(this.image, /*sx*/ src.x * this.image.width, /*sy*/ src.y * this.image.height, /*sw*/ src.w * this.image.width, /*sh*/ src.h * this.image.height, /*dx*/ dst.x * w, /*dy*/ dst.y * h, /*dw*/ dst.w * w, /*dh*/ dst.h * h);
+        ctx.drawImage(this.image, /*sx*/ srcRatio.x * this.image.width, /*sy*/ srcRatio.y * this.image.height, /*sw*/ srcRatio.w * this.image.width, /*sh*/ srcRatio.h * this.image.height, /*dx*/ dstRatio.x * w, /*dy*/ dstRatio.y * h, /*dw*/ dstRatio.w * w, /*dh*/ dstRatio.h * h);
     }
     loaded() { return this.loadComplete; }
     /**読み込みが完了するまでは0を返す。 */
@@ -170,6 +183,11 @@ export class Graphics {
         ctx.rotate(-rad);
         ctx.translate(-pw, -ph);
         ctx.closePath();
+    }
+    /**現在の画面からTextureを生成. */
+    static createTexture(ratio) {
+        const imageData = this.texture.ctx.getImageData(ratio.x * this.pixelW, ratio.y * this.pixelH, ratio.w * this.pixelW, ratio.h * this.pixelH);
+        return new Texture({ imageData: imageData });
     }
     static get pixelW() { return this.texture.pixelW; }
     static get pixelH() { return this.texture.pixelH; }

@@ -58,7 +58,7 @@ export class Dungeon {
         if (Math.random() < 0.20) {
             return DungeonEvent.BOX;
         }
-        if (Math.random() < 0.20) {
+        if (Math.random() < 0.25) {
             return DungeonEvent.BATTLE;
         }
         if (Math.random() < 0.04) {
@@ -120,8 +120,8 @@ Dungeon.はじまりの丘 = new class extends Dungeon {
             let e = Unit.enemies[0];
             Job.しんまい.setEnemy(e, e.prm(Prm.LV).base);
             e.name = "ボス";
-            e.prm(Prm.MAX_HP).base = 30;
-            e.prm(Prm.STR).base = 7;
+            e.prm(Prm.MAX_HP).base = 15;
+            e.prm(Prm.STR).base = 6;
             //ボス以外の雑魚は0体
             for (let i = 1; i < Unit.enemies.length; i++) {
                 Unit.enemies[i].exists = false;
@@ -143,7 +143,7 @@ Dungeon.丘の上 = new class extends Dungeon {
             let e = Unit.enemies[0];
             Job.剣士.setEnemy(e, e.prm(Prm.LV).base);
             e.name = "ボス";
-            e.prm(Prm.MAX_HP).base = 50;
+            e.prm(Prm.MAX_HP).base = 30;
             e.prm(Prm.STR).base = 10;
             //ボス以外の雑魚は1体
             for (let i = 2; i < Unit.enemies.length; i++) {

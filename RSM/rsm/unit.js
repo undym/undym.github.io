@@ -13,7 +13,7 @@ import { Color, Rect } from "./undym/type.js";
 import { Tec, ActiveTec, PassiveTec } from "./tec.js";
 import { Targeting } from "./force.js";
 import { Job } from "./job.js";
-import { FX_RotateStr } from "./fx/fx.js";
+import { FX_RotateStr, FX_Shake } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos } from "./eq.js";
 import { choice } from "./undym/random.js";
@@ -175,6 +175,7 @@ export class Unit {
             };
             if (result.isHit) {
                 this.hp -= result.value;
+                FX_Shake(this.bounds);
                 FX_RotateStr(new Font(30, Font.BOLD), `${result.value}`, p, Color.RED);
                 Util.msg.set(`${this.name}に${result.value}のダメージ`, Color.RED.bright);
                 yield wait();
@@ -209,11 +210,17 @@ export class Unit {
     beforeBeAtk(action, attacker, dmg) { this.force(f => f.beforeBeAtk(action, attacker, this, dmg)); }
     afterDoAtk(action, target, dmg) { this.force(f => f.afterDoAtk(action, this, target, dmg)); }
     afterBeAtk(action, attacker, dmg) { this.force(f => f.afterBeAtk(action, this, attacker, dmg)); }
+    equip() {
+        for (const prm of Prm.values()) {
+            this.prm(prm).eq = 0;
+        }
+        this.force(f => f.equip(this));
+    }
     force(forceDlgt) {
-        for (let tec of this.tecs) {
+        for (const tec of this.tecs) {
             forceDlgt(tec);
         }
-        for (let eq of this.equips.values()) {
+        for (const eq of this.equips.values()) {
             forceDlgt(eq);
         }
     }

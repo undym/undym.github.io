@@ -35,7 +35,7 @@ export abstract class TecType{
         constructor(){super("格闘");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.STR).total(),
+                pow:attacker.prm(Prm.STR).total() + attacker.prm(Prm.LV).total(),
                 def:target.prm(Prm.MAG).total(),
             });;
         };
@@ -44,7 +44,7 @@ export abstract class TecType{
         constructor(){super("魔法");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.MAG).total(),
+                pow:attacker.prm(Prm.MAG).total() + attacker.prm(Prm.LV).total(),
                 def:target.prm(Prm.STR).total(),
             });;
         };
@@ -53,7 +53,7 @@ export abstract class TecType{
         constructor(){super("神格");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.LIG).total(),
+                pow:attacker.prm(Prm.LIG).total() + attacker.prm(Prm.LV).total(),
                 def:target.prm(Prm.DRK).total(),
             });;
         };
@@ -62,7 +62,7 @@ export abstract class TecType{
         constructor(){super("暗黒");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.DRK).total(),
+                pow:attacker.prm(Prm.DRK).total() + attacker.prm(Prm.LV).total(),
                 def:target.prm(Prm.LIG).total(),
             });;
         };
@@ -71,7 +71,7 @@ export abstract class TecType{
         constructor(){super("練術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.CHN).total(),
+                pow:attacker.prm(Prm.CHN).total() + attacker.prm(Prm.LV).total(),
                 def:target.prm(Prm.PST).total(),
             });;
         };
@@ -80,7 +80,7 @@ export abstract class TecType{
         constructor(){super("過去");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.PST).total(),
+                pow:attacker.prm(Prm.PST).total() + attacker.prm(Prm.LV).total(),
                 def:target.prm(Prm.CHN).total(),
             });;
         };
@@ -89,7 +89,7 @@ export abstract class TecType{
         constructor(){super("銃術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.GUN).total(),
+                pow:attacker.prm(Prm.GUN).total() + attacker.prm(Prm.LV).total(),
                 def:target.prm(Prm.ARR).total(),
             });;
         };
@@ -98,7 +98,7 @@ export abstract class TecType{
         constructor(){super("弓術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.ARR).total(),
+                pow:attacker.prm(Prm.ARR).total() + attacker.prm(Prm.LV).total(),
                 def:target.prm(Prm.GUN).total(),
             });;
         };
@@ -109,7 +109,11 @@ export abstract class TecType{
     };
     static readonly          回復 = new class extends TecType{
         constructor(){super("回復");}
-        createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();};
+        createDmg(attacker:Unit, target:Unit):Dmg{
+            return new Dmg({
+                pow:attacker.prm(Prm.LIG).total() + attacker.prm(Prm.LV).total(),
+            });;
+        };
     };
     static readonly          その他 = new class extends TecType{
         constructor(){super("その他");}
@@ -121,7 +125,7 @@ export abstract class TecType{
 }
 
 
-export abstract class Tec extends Force{
+export abstract class Tec implements Force{
     private static _empty:Tec;
     static get empty():Tec{
         return this._empty ? this._empty : (this._empty = new class extends Tec{
@@ -147,6 +151,7 @@ export abstract class Tec extends Force{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+    equip(unit:Unit){}
 }
 
 

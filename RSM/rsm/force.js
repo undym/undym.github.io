@@ -7,6 +7,8 @@ export class Force {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    equip(unit) { }
+    ;
 }
 export class Dmg {
     constructor(args) {
@@ -99,26 +101,26 @@ export class Targeting {
         if (targetings & Targeting.SELF) {
             return [attacker];
         }
-        targets = targets.filter(t => t.exists);
+        let res = targets.filter(t => t.exists);
         if (targetings & Targeting.WITH_DEAD) { }
         else if (targetings & Targeting.ONLY_DEAD) {
-            targets = targets.filter(t => t.dead);
+            res = res.filter(t => t.dead);
         }
         else {
-            targets = targets.filter(t => !t.dead);
+            res = res.filter(t => !t.dead);
         }
         if (targetings & Targeting.WITH_FRIEND) { }
         else if (targetings & Targeting.ONLY_FRIEND) {
-            targets = targets.filter(t => t.isFriend(attacker));
+            res = res.filter(t => t.isFriend(attacker));
         }
         else {
-            targets = targets.filter(t => !t.isFriend(attacker));
+            res = res.filter(t => !t.isFriend(attacker));
         }
         if ((targetings & Targeting.SELECT)
-            && targets.length > 0) {
-            return [targets[0]];
+            && res.length > 0) {
+            return [res[0]];
         }
-        return targets;
+        return res;
     }
 }
 Targeting.SELECT = 1 << 0;
