@@ -429,7 +429,7 @@ export class FlowLayout extends ILayout {
         return __awaiter(this, void 0, void 0, function* () {
             let bounds = this.getBounds(origin);
             for (let i = 0; i < bounds.length; i++) {
-                this.layouts[i].ctrl(bounds[i]);
+                yield this.layouts[i].ctrl(bounds[i]);
             }
         });
     }

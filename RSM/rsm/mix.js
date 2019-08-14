@@ -21,7 +21,7 @@ export class Num {
             }
         }
         if (v < 0) {
-            obj.num -= v;
+            obj.num += v;
         }
     }
 }

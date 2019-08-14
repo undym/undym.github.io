@@ -162,7 +162,7 @@ export const FX_Shake = (dstRatio, srcRatio = { x: -1, y: 0, w: 0, h: 0 }) => {
         srcRatio = dstRatio;
     }
     const over = 15;
-    const shakeRange = 0.02;
+    const shakeRange = 0.015;
     let tex;
     FX.set((count) => {
         if (count === 0) {

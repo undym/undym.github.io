@@ -15,6 +15,7 @@ import { SaveData } from "./savedata.js";
 import DungeonEvent from "./dungeon/dungeonevent.js";
 
 
+
 window.onload = ()=>{
     console.log("start");
 

@@ -18,7 +18,7 @@ export abstract class Job{
         return this._valueOf.get(uniqueName);
     }
 
-    static readonly DEF_LVUP_EXP = 5;
+    static readonly DEF_LVUP_EXP = 3;
 
     static rndJob(lv:number):Job{
         for(let job of Job.values()){
@@ -75,7 +75,7 @@ export abstract class Job{
 
         for(let prm of Prm.values()){
             let set = e.prm(prm);
-            set.base = Math.floor( lv / 10 +  (lv+3) * Math.random() );
+            set.base = ( lv / 10 +  (lv+3) * Math.random() )|0;
             set.battle = 0;
             set.eq = 0;
         }
@@ -86,21 +86,21 @@ export abstract class Job{
         e.ai = EUnit.DEF_AI;
         
         e.prm(Prm.LV).base = lv;
-        e.prm(Prm.EXP).base = Math.floor(lv * (0.75 + Math.random() * 0.5)) + 1;
+        e.prm(Prm.EXP).base = (lv * (0.75 + Math.random() * 0.5) + 1)|0;
         e.yen = lv + 1;
 
-        e.prm(Prm.MAX_HP).base = 3 + Math.floor(lv * lv * 0.55 + lv * lv * 0.2);
+        e.hp = 3 + (lv * lv * 0.55)|0;
 
-        e.prm(Prm.MAX_MP).base = Unit.DEF_MAX_MP;
-        e.prm(Prm.MAX_TP).base = Unit.DEF_MAX_TP;
+        e.mp = Unit.DEF_MAX_MP;
+        e.tp = Unit.DEF_MAX_TP;
 
         e.prm(Prm.TP).base = 0;
         
         
         this.setEnemyInner(e);
 
-        e.prm(Prm.HP).base = e.prm(Prm.MAX_HP).total();
-        e.prm(Prm.MP).base = Math.floor( Math.random() * e.prm(Prm.MAX_MP).total() );
+        e.prm(Prm.HP).base = e.prm(Prm.MAX_HP).total;
+        e.prm(Prm.MP).base = Math.floor( Math.random() * e.prm(Prm.MAX_MP).total );
     }
 
     setEnemyInner(e:EUnit){}
@@ -115,7 +115,7 @@ export abstract class Job{
         constructor(){super({uniqueName:"しんまい", info:["ぺーぺー"],
                                 appearLv:0, lvupExp:Job.DEF_LVUP_EXP,
                                 grow:()=> [{prm:Prm.MAX_HP, value:2}],
-                                learn:()=> [PassiveTec.HP自動回復, ActiveTec.二回殴る, ActiveTec.大いなる動き],
+                                learn:()=> [ActiveTec.二回殴る, PassiveTec.HP自動回復, ActiveTec.大いなる動き],
                                 canJobChange:(p:PUnit)=>true,
         });}
         setEnemyInner   = (e:EUnit)=>{
@@ -125,7 +125,7 @@ export abstract class Job{
     };
     static readonly                      剣士 = new class extends Job{
         constructor(){super({uniqueName:"剣士", info:["格闘攻撃を扱う職業"],
-                                appearLv:1, lvupExp:Job.DEF_LVUP_EXP,
+                                appearLv:1, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.STR, value:1}],
                                 learn:()=> [PassiveTec.格闘攻撃UP, ActiveTec.人狼剣, ActiveTec.閻魔の笏],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
@@ -136,7 +136,7 @@ export abstract class Job{
     };
     static readonly                      魔法使い = new class extends Job{
         constructor(){super({uniqueName:"魔法使い", info:["魔法攻撃を扱う職業"],
-                                appearLv:1, lvupExp:Job.DEF_LVUP_EXP,
+                                appearLv:1, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.MAG, value:1}],
                                 learn:()=> [ActiveTec.ヴァハ, PassiveTec.MP自動回復, ActiveTec.エヴィン,],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),

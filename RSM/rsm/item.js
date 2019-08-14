@@ -48,6 +48,20 @@ ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.HP回復, ItemType.MP回復]);
 ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン]);
 ItemParentType.その他 = new ItemParentType("その他", [ItemType.鍵, ItemType.玉, ItemType.素材]);
+class ItemValues {
+    constructor(items) {
+        this.values = new Map();
+        for (const item of items) {
+            if (!this.values.has(item.rank)) {
+                this.values.set(item.rank, []);
+            }
+            this.values.get(item.rank).push(item);
+        }
+    }
+    get(rank) {
+        return this.values.get(rank);
+    }
+}
 export class Item {
     constructor(args) {
         this.num = 0;
@@ -59,7 +73,7 @@ export class Item {
         this.info = args.info;
         this.itemType = args.type;
         this.rank = args.rank;
-        this.box = args.box;
+        this.dropType = args.drop;
         this.targetings = args.targetings ? args.targetings : Targeting.SELECT;
         this.numLimit = args.numLimit ? args.numLimit : Item.DEF_NUM_LIMIT;
         if (args.consumable) {
@@ -73,41 +87,34 @@ export class Item {
             this.useInner = args.use;
         }
         Item._values.push(this);
-        if (!Item._rankValues.has(this.rank)) {
-            Item._rankValues.set(this.rank, []);
-        }
-        Item._rankValues.get(this.rank).push(this);
-        // if(Item._rankValues[this.rank] === undefined){
-        //     Item._rankValues[this.rank] = [];
-        // }
-        // Item._rankValues[this.rank].push(this);
     }
     static values() {
         return this._values;
-    }
-    // private static _rankValues:{[key:number]:Item[];} = {};
-    static rankValues(rank) {
-        return this._rankValues.get(rank);
     }
     static consumableValues() {
         return this._consumableValues;
     }
     /**
-     * 宝箱から出る指定ランクのアイテムを返す。そのランクにアイテムが存在しなければランクを一つ下げて再帰する。
+     * 指定のタイプの指定のランクのアイテムを返す。そのランクにアイテムが存在しなければランクを一つ下げて再帰する。
+     * @param dropType
      * @param rank
      */
-    static rndBoxRankItem(rank) {
-        const values = this.rankValues(rank);
-        if (!values) {
-            if (rank <= 0) {
-                return Item.石;
-            }
-            return this.rndBoxRankItem(rank - 1);
+    static rndItem(dropType, rank) {
+        if (!this._dropTypeValues.has(dropType)) {
+            const typeValues = this.values().filter(item => item.dropType & dropType);
+            this._dropTypeValues.set(dropType, new ItemValues(typeValues));
         }
-        for (let i = 0; i < 7; i++) {
-            let tmp = choice(values);
-            if (tmp.box && tmp.rank <= rank && tmp.num < tmp.numLimit) {
-                return tmp;
+        const itemValues = this._dropTypeValues.get(dropType);
+        if (itemValues) {
+            const rankValues = itemValues.get(rank);
+            if (rankValues) {
+                return choice(rankValues);
+            }
+            else {
+                if (rank <= 0) {
+                    return Item.石;
+                }
+                return this.rndItem(dropType, rank - 1);
             }
         }
         return Item.石;
@@ -167,9 +174,35 @@ export class Item {
     }
 }
 Item._values = [];
-Item._rankValues = new Map();
+// private static _rankValues = new Map<number,Item[]>();
+// // private static _rankValues:{[key:number]:Item[];} = {};
+// static rankValues(rank:number):ReadonlyArray<Item>|undefined{
+//     return this._rankValues.get(rank);
+// }
 Item._consumableValues = [];
+/**
+ * 宝箱から出る指定ランクのアイテムを返す。そのランクにアイテムが存在しなければランクを一つ下げて再帰する。
+ * @param rank
+ */
+// static rndBoxRankItem(rank:number):Item{
+//     const values = this.rankValues(rank);
+//     if(!values){
+//         if(rank <= 0){return Item.石;}
+//         return this.rndBoxRankItem(rank-1);
+//     }
+//     for(let i = 0; i < 7; i++){
+//         let tmp = choice( values );
+//         if(tmp.box && tmp.rank <= rank && tmp.num < tmp.numLimit){
+//             return tmp;
+//         }
+//     }
+//     return Item.石;
+// }
+Item._dropTypeValues = new Map();
 Item.DEF_NUM_LIMIT = 999;
+Item.DROP_NO = 0;
+Item.DROP_BOX = 1 << 0;
+Item.DROP_TREE = 1 << 1;
 //-----------------------------------------------------------------
 //
 //HP回復
@@ -178,8 +211,8 @@ Item.DEF_NUM_LIMIT = 999;
 Item.スティックパン = new class extends Item {
     constructor() {
         super({ uniqueName: "スティックパン", info: ["HP+10"],
-            type: ItemType.HP回復, rank: 0, box: false,
-            consumable: true,
+            type: ItemType.HP回復, rank: 0,
+            consumable: true, drop: Item.DROP_NO,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, 10); }),
         });
     }
@@ -187,9 +220,9 @@ Item.スティックパン = new class extends Item {
 Item.硬化スティックパン = new class extends Item {
     constructor() {
         super({ uniqueName: "硬化スティックパン", info: ["HP+10%"],
-            type: ItemType.HP回復, rank: 0, box: false,
-            consumable: true,
-            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, target.prm(Prm.MAX_HP).total() / 10); }),
+            type: ItemType.HP回復, rank: 0,
+            consumable: true, drop: Item.DROP_NO,
+            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, target.prm(Prm.MAX_HP).total / 10); }),
         });
     }
     createMix() {
@@ -208,8 +241,8 @@ Item.硬化スティックパン = new class extends Item {
 Item.赤い水 = new class extends Item {
     constructor() {
         super({ uniqueName: "赤い水", info: ["MP+10"],
-            type: ItemType.MP回復, rank: 0, box: false,
-            consumable: true,
+            type: ItemType.MP回復, rank: 0,
+            consumable: true, drop: Item.DROP_NO,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 10); }),
         });
     }
@@ -229,8 +262,8 @@ Item.赤い水 = new class extends Item {
 Item.脱出ポッド = new class extends Item {
     constructor() {
         super({ uniqueName: "脱出ポッド", info: ["ダンジョンから脱出する"],
-            type: ItemType.ダンジョン, rank: 0, box: false,
-            consumable: true,
+            type: ItemType.ダンジョン, rank: 0,
+            consumable: true, drop: Item.DROP_NO,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                 yield DungeonEvent.ESCAPE_DUNGEON.happen();
             }),
@@ -243,8 +276,8 @@ Item.脱出ポッド = new class extends Item {
 Item.記録用粘土板 = new class extends Item {
     constructor() {
         super({ uniqueName: "記録用粘土板", info: ["ダンジョン内でセーブする"],
-            type: ItemType.ダンジョン, rank: 0, box: false,
-            consumable: true,
+            type: ItemType.ダンジョン, rank: 0,
+            consumable: true, drop: Item.DROP_NO,
             use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                 SaveData.save();
             }),
@@ -269,13 +302,13 @@ Item.記録用粘土板 = new class extends Item {
 Item.はじまりの丘の鍵 = new class extends Item {
     constructor() {
         super({ uniqueName: "はじまりの丘の鍵", info: [""],
-            type: ItemType.鍵, rank: 0, box: false });
+            type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
     }
 };
 Item.丘の上の鍵 = new class extends Item {
     constructor() {
         super({ uniqueName: "丘の上の鍵", info: [""],
-            type: ItemType.鍵, rank: 0, box: false });
+            type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
     }
 };
 //-----------------------------------------------------------------
@@ -286,13 +319,13 @@ Item.丘の上の鍵 = new class extends Item {
 Item.はじまりの丘の玉 = new class extends Item {
     constructor() {
         super({ uniqueName: "はじまりの丘の玉", info: [""],
-            type: ItemType.玉, rank: 0, box: false });
+            type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
     }
 };
 Item.丘の上の玉 = new class extends Item {
     constructor() {
         super({ uniqueName: "丘の上の玉", info: [""],
-            type: ItemType.玉, rank: 0, box: false });
+            type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
     }
 };
 //-----------------------------------------------------------------
@@ -303,43 +336,55 @@ Item.丘の上の玉 = new class extends Item {
 Item.石 = new class extends Item {
     constructor() {
         super({ uniqueName: "石", info: ["いし"],
-            type: ItemType.素材, rank: 0, box: true });
+            type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
     }
 };
 Item.枝 = new class extends Item {
     constructor() {
         super({ uniqueName: "枝", info: ["えだ"],
-            type: ItemType.素材, rank: 0, box: true });
+            type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
     }
 };
 Item.土 = new class extends Item {
     constructor() {
         super({ uniqueName: "土", info: ["つち"],
-            type: ItemType.素材, rank: 0, box: true });
+            type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
     }
 };
 Item.水 = new class extends Item {
     constructor() {
         super({ uniqueName: "水", info: ["水"],
-            type: ItemType.素材, rank: 0, box: true });
+            type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
     }
 };
 Item.He = new class extends Item {
     constructor() {
         super({ uniqueName: "He", info: ["ヘェッ"],
-            type: ItemType.素材, rank: 2, box: true });
+            type: ItemType.素材, rank: 2, drop: Item.DROP_BOX });
     }
 };
 Item.少女の心を持ったおっさん = new class extends Item {
     constructor() {
         super({ uniqueName: "少女の心を持ったおっさん", info: ["いつもプリキュアの話をしている"],
-            type: ItemType.素材, rank: 5, box: true });
+            type: ItemType.素材, rank: 5, drop: Item.DROP_BOX });
     }
 };
 Item.しいたけ = new class extends Item {
     constructor() {
         super({ uniqueName: "しいたけ", info: [""],
-            type: ItemType.素材, rank: 0, box: false });
+            type: ItemType.素材, rank: 0, drop: Item.DROP_NO, });
+    }
+};
+Item.スギ = new class extends Item {
+    constructor() {
+        super({ uniqueName: "スギ", info: [""],
+            type: ItemType.素材, rank: 1, drop: Item.DROP_TREE });
+    }
+};
+Item.ヒノキ = new class extends Item {
+    constructor() {
+        super({ uniqueName: "ヒノキ", info: [""],
+            type: ItemType.素材, rank: 1, drop: Item.DROP_TREE });
     }
 };
 class ItemFont {

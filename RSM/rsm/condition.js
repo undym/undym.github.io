@@ -6,9 +6,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { Dmg } from "./force.js";
 import { TecType, ActiveTec } from "./tec.js";
+import { Prm } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
+import { Color } from "./undym/type.js";
 export class ConditionType {
     constructor(uniqueName) {
         this.uniqueName = uniqueName;
@@ -68,12 +71,14 @@ export class Condition {
     //Force
     //
     //--------------------------------------------------------------------------
+    equip(unit) { }
+    battleStart(unit) { }
     phaseStart(unit) { }
     beforeDoAtk(action, attacker, target, dmg) { }
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
-    equip(unit) { }
+    phaseEnd(unit) { }
 }
 Condition._values = [];
 //--------------------------------------------------------------------------
@@ -105,7 +110,7 @@ Condition.練 = new class extends Condition {
 };
 //--------------------------------------------------------------------------
 //
-//
+//GOOD_LV2
 //
 //--------------------------------------------------------------------------
 Condition.盾 = new class extends Condition {
@@ -118,6 +123,34 @@ Condition.盾 = new class extends Condition {
                 dmg.pow.mul *= (1 + target.getConditionValue(this) * 0.5);
                 target.addConditionValue(this, -1);
             }
+        });
+    }
+};
+//--------------------------------------------------------------------------
+//
+//GOOD_LV3
+//
+//--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
+//
+//BAD_LV1
+//
+//--------------------------------------------------------------------------
+Condition.毒 = new class extends Condition {
+    constructor() { super("毒", ConditionType.BAD_LV1); }
+    phaseEnd(unit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const value = unit.getConditionValue(this);
+            if (value < unit.prm(Prm.DRK).total + 1) {
+                unit.clearCondition(this);
+                Util.msg.set(`${unit.name}の＜毒＞が解除された`);
+                yield wait();
+                return;
+            }
+            let dmg = new Dmg({ absPow: value });
+            Util.msg.set("＞毒", Color.RED);
+            unit.doDmg(dmg);
+            unit.addConditionValue(this, value / 2);
         });
     }
 };

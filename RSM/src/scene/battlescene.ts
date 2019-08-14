@@ -100,8 +100,14 @@ export class BattleScene extends Scene{
         super.add(Rect.FULL, ILayout.create({ctrl:async(noUsed)=>{
             if(Battle.start){
                 Battle.start = false;
-                
-                SceneType.BATTLE.set();
+                //init
+                for(const u of Unit.all){
+                    u.tp = 0;
+                }
+
+                for(const u of Unit.all){
+                    u.battleStart();
+                }
 
                 await this.phaseEnd();
                 return;
@@ -132,7 +138,7 @@ export class BattleScene extends Scene{
         let attacker = Battle.getPhaseUnit();
 
         if(!attacker.exists || attacker.dead){
-            this.phaseEnd();
+            await this.phaseEnd();
             return;
         }
 
@@ -143,12 +149,12 @@ export class BattleScene extends Scene{
         attacker.phaseStart();
 
         if(attacker instanceof PUnit){
-            this.setPlayerPhase(attacker);
+            await this.setPlayerPhase(attacker);
             return;
         }else{
             let e = attacker as EUnit;
             await e.ai(e, Unit.all);
-            this.phaseEnd();
+            await this.phaseEnd();
             return;
         }
 
@@ -157,9 +163,7 @@ export class BattleScene extends Scene{
 
     
 
-    private setPlayerPhase(attacker:Unit):void{
-
-
+    private async setPlayerPhase(attacker:Unit){
         const createTecBtn = (tec:Tec)=>{
             let btn:Btn;
             if(tec instanceof ActiveTec){
@@ -170,17 +174,22 @@ export class BattleScene extends Scene{
         
                         Util.msg.set(`[${tec}]のターゲットを選択してください`);
                         
-                        this.setChooseTargetBtn(attacker, async(targets)=>{
-                            Util.msg.set(`＞${targets[0].name}を選択`);
-                            await tec.use(attacker, targets);
-                            this.phaseEnd();
+                        await this.setChooseTargetBtn(attacker, async(targets)=>{
+                            if(
+                                   !targets[0].dead 
+                                || (tec.targetings & Targeting.WITH_DEAD || tec.targetings & Targeting.ONLY_DEAD)
+                            ){
+                                Util.msg.set(`＞${targets[0].name}を選択`);
+                                await tec.use(attacker, targets);
+                                await this.phaseEnd();
+                            }
                         });
         
                         return;
                     }else{
                         let targets = Targeting.filter( tec.targetings, attacker, Unit.all );
                         await tec.use(attacker, targets);
-                        this.phaseEnd();
+                        await this.phaseEnd();
                     }
                 });
 
@@ -220,7 +229,7 @@ export class BattleScene extends Scene{
             l.add( createTecBtn(attacker.tecs[i]) );
         }
 
-        l.addFromLast(new Btn("ITEM", ()=>{
+        l.addFromLast(new Btn("ITEM", async()=>{
             Scene.load( ItemScene.ins({
                 user:attacker,
                 selectUser:false,
@@ -230,7 +239,7 @@ export class BattleScene extends Scene{
 
                         this.setChooseTargetBtn(attacker, async(targets)=>{
                             await item.use( user, targets );
-                            this.phaseEnd();
+                            await this.phaseEnd();
                         });
                     }else{
                         let targets = Targeting.filter( item.targetings, user, Unit.players );
@@ -254,16 +263,16 @@ export class BattleScene extends Scene{
         }));
 
         const tecPageLim = ((attacker.tecs.length - 1) / drawOnePage)|0;
-        const newerTecPage = new Btn(">", ()=>{
+        const newerTecPage = new Btn(">", async()=>{
             attacker.tecPage++;
-            this.setPlayerPhase( attacker );
+            await this.setPlayerPhase( attacker );
         });
         l.addFromLast(new VariableLayout(()=>{
             return attacker.tecPage < tecPageLim ? newerTecPage : ILayout.empty;
         }));
-        const olderTecPage = new Btn("<", ()=>{
+        const olderTecPage = new Btn("<", async()=>{
             attacker.tecPage--;
-            this.setPlayerPhase( attacker );
+            await this.setPlayerPhase( attacker );
         });
         l.addFromLast(new VariableLayout(()=>{
             return attacker.tecPage > 0 ? olderTecPage : ILayout.empty;
@@ -274,17 +283,17 @@ export class BattleScene extends Scene{
     }
 
 
-    private setChooseTargetBtn(attacker:Unit, chooseAction:(targets:Unit[])=>void){
+    private async setChooseTargetBtn(attacker:Unit, chooseAction:(targets:Unit[])=>void){
 
         const l = new FlowLayout(4,3);
-        const addBtn = (unit:Unit)=>{
+        const addBtn = async(unit:Unit)=>{
             if(!unit.exists){
                 l.add(ILayout.empty);
                 return;
             }
 
-            const btn = new Btn(unit.name, ()=>{
-                chooseAction([unit]);
+            const btn = new Btn(unit.name, async()=>{
+                await chooseAction([unit]);
             })
             if(unit.dead){
                 btn.groundColor = ()=>Color.D_RED;
@@ -298,9 +307,9 @@ export class BattleScene extends Scene{
             addBtn(p);
         }
         
-        l.addFromLast(new Btn("<<", ()=>{
+        l.addFromLast(new Btn("<<", async()=>{
             Util.msg.set("＞キャンセル");
-            this.setPlayerPhase(attacker);
+            await this.setPlayerPhase(attacker);
         }));
 
         
@@ -369,8 +378,14 @@ const lose = async()=>{
 
 
 const finish = async()=>{
-    for(let e of Unit.enemies){
+    for(const e of Unit.enemies){
         e.exists = false;
+    }
+
+    for(const p of Unit.players){
+        for(const prm of Prm.values()){
+            p.prm(prm).battle = 0;
+        }
     }
 
     btnSpace.clear();

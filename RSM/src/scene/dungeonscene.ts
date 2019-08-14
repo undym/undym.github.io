@@ -27,23 +27,24 @@ export default class DungeonScene extends Scene{
 
         super.add(Place.TOP, DrawPlayInfo.ins);
 
-        super.add(Place.DUNGEON_DATA, DrawDungeonData.ins);
 
         
         super.add(Place.MAIN, DrawEvent.ins);
         super.add(Place.MSG, Util.msg);
+        super.add(Place.DUNGEON_DATA, DrawDungeonData.ins);
 
-        let dungeonEventBak:DungeonEvent;
-        let btnLayout:ILayout;
-        super.add(Place.BTN,
-            new VariableLayout(()=>{
+        super.add(Place.BTN,(()=>{
+            let dungeonEventBak:DungeonEvent;
+            let btnLayout:ILayout = ILayout.empty;
+
+            return new VariableLayout(()=>{
                 if(dungeonEventBak != DungeonEvent.now){
                     dungeonEventBak = DungeonEvent.now;
                     btnLayout = dungeonEventBak.createBtnLayout();
                 }
                 return btnLayout;
             })
-        );
+        })());
         
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);

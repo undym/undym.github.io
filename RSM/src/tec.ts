@@ -2,7 +2,7 @@ import { Unit, Prm } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
 import { Force, Dmg, Targeting, Action } from "./force.js";
-import { Condition } from "./condition.js";
+import { Condition, ConditionType } from "./condition.js";
 import { Color } from "./undym/type.js";
 import { FX_Str } from "./fx/fx.js";
 import { Font } from "./graphics/graphics.js";
@@ -35,8 +35,8 @@ export abstract class TecType{
         constructor(){super("格闘");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.STR).total() + attacker.prm(Prm.LV).total(),
-                def:target.prm(Prm.MAG).total(),
+                pow:attacker.prm(Prm.STR).total + attacker.prm(Prm.LV).total,
+                def:target.prm(Prm.MAG).total,
             });;
         };
     };
@@ -44,8 +44,8 @@ export abstract class TecType{
         constructor(){super("魔法");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.MAG).total() + attacker.prm(Prm.LV).total(),
-                def:target.prm(Prm.STR).total(),
+                pow:attacker.prm(Prm.MAG).total + attacker.prm(Prm.LV).total,
+                def:target.prm(Prm.STR).total,
             });;
         };
     };
@@ -53,8 +53,8 @@ export abstract class TecType{
         constructor(){super("神格");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.LIG).total() + attacker.prm(Prm.LV).total(),
-                def:target.prm(Prm.DRK).total(),
+                pow:attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total,
+                def:target.prm(Prm.DRK).total,
             });;
         };
     };
@@ -62,8 +62,8 @@ export abstract class TecType{
         constructor(){super("暗黒");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.DRK).total() + attacker.prm(Prm.LV).total(),
-                def:target.prm(Prm.LIG).total(),
+                pow:attacker.prm(Prm.DRK).total + attacker.prm(Prm.LV).total,
+                def:target.prm(Prm.LIG).total,
             });;
         };
     };
@@ -71,8 +71,8 @@ export abstract class TecType{
         constructor(){super("練術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.CHN).total() + attacker.prm(Prm.LV).total(),
-                def:target.prm(Prm.PST).total(),
+                pow:attacker.prm(Prm.CHN).total + attacker.prm(Prm.LV).total,
+                def:target.prm(Prm.PST).total,
             });;
         };
     };
@@ -80,8 +80,8 @@ export abstract class TecType{
         constructor(){super("過去");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.PST).total() + attacker.prm(Prm.LV).total(),
-                def:target.prm(Prm.CHN).total(),
+                pow:attacker.prm(Prm.PST).total + attacker.prm(Prm.LV).total,
+                def:target.prm(Prm.CHN).total,
             });;
         };
     };
@@ -89,8 +89,8 @@ export abstract class TecType{
         constructor(){super("銃術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.GUN).total() + attacker.prm(Prm.LV).total(),
-                def:target.prm(Prm.ARR).total(),
+                pow:attacker.prm(Prm.GUN).total + attacker.prm(Prm.LV).total,
+                def:target.prm(Prm.ARR).total,
             });;
         };
     };
@@ -98,8 +98,8 @@ export abstract class TecType{
         constructor(){super("弓術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.ARR).total() + attacker.prm(Prm.LV).total(),
-                def:target.prm(Prm.GUN).total(),
+                pow:attacker.prm(Prm.ARR).total + attacker.prm(Prm.LV).total,
+                def:target.prm(Prm.GUN).total,
             });;
         };
     };
@@ -111,7 +111,7 @@ export abstract class TecType{
         constructor(){super("回復");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                pow:attacker.prm(Prm.LIG).total() + attacker.prm(Prm.LV).total(),
+                pow:attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total,
             });;
         };
     };
@@ -146,12 +146,13 @@ export abstract class Tec implements Force{
     //Force
     //
     //--------------------------------------------------------------------------
+    equip(unit:Unit){}
+    battleStart(unit:Unit){}
     phaseStart(unit:Unit){}
     beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
-    equip(unit:Unit){}
 }
 
 
@@ -192,7 +193,7 @@ export abstract class PassiveTec extends Tec{
     //格闘
     //
     //--------------------------------------------------------------------------
-    static readonly                      格闘攻撃UP = new class extends PassiveTec{
+    static readonly                      格闘攻撃UP:PassiveTec = new class extends PassiveTec{
         constructor(){super({uniqueName:"格闘攻撃UP", info:["格闘攻撃x1.2"],
                                 type:TecType.格闘,
         });}
@@ -205,19 +206,34 @@ export abstract class PassiveTec extends Tec{
     };
     //--------------------------------------------------------------------------
     //
+    //強化
+    //
+    //--------------------------------------------------------------------------
+    static readonly                      準備運動:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"準備運動", info:["戦闘開始時＜練＞化"],
+                                type:TecType.強化,
+        });}
+        battleStart(unit:Unit){
+            if(!unit.existsCondition(Condition.練.type)){
+                setCondition(unit, Condition.練, 1);
+            }
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
     //回復
     //
     //--------------------------------------------------------------------------
-    static readonly                      HP自動回復 = new class extends PassiveTec{
+    static readonly                      HP自動回復:PassiveTec = new class extends PassiveTec{
         constructor(){super({uniqueName:"HP自動回復", info:["行動開始時HP+1%"],
                                 type:TecType.回復,
         });}
         phaseStart(unit:Unit){
-            const value = (unit.prm(Prm.MAX_HP).total() * 0.01) | 0;
+            const value = (unit.prm(Prm.MAX_HP).total * 0.01) | 0;
             unit.hp += value;
         }
     };
-    static readonly                      MP自動回復 = new class extends PassiveTec{
+    static readonly                      MP自動回復:PassiveTec = new class extends PassiveTec{
         constructor(){super({uniqueName:"MP自動回復", info:["行動開始時MP+10"],
                                 type:TecType.回復,
         });}
@@ -300,16 +316,6 @@ export abstract class ActiveTec extends Tec implements Action{
     //
     //
     //--------------------------------------------------------------------------
-    //--------------------------------------------------------------------------
-    //
-    //Force
-    //
-    //--------------------------------------------------------------------------
-    phaseStart(unit:Unit){}
-    beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
-    beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
-    afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
-    afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     //--------------------------------------------------------------------------
     //
     //
@@ -404,7 +410,7 @@ export abstract class ActiveTec extends Tec implements Action{
         });}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
-                        absPow:attacker.prm(Prm.STR).total(),
+                        absPow:attacker.prm(Prm.STR).total,
                         hit:this.hit,
                     });
         }
@@ -424,7 +430,7 @@ export abstract class ActiveTec extends Tec implements Action{
         });}
         createDmg(attacker:Unit, target:Unit):Dmg{
             let dmg = super.createDmg(attacker, target);
-            dmg.pow.base = attacker.prm(Prm.MAG).total();
+            dmg.pow.base = attacker.prm(Prm.MAG).total;
             return dmg;
         }
     }

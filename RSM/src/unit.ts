@@ -20,7 +20,7 @@ class PrmSet{
 
     constructor(){}
 
-    total():number{
+    get total():number{
         let res = this.base + this.eq + this.battle;
         if(res < 0){return res;}
         return res;
@@ -193,7 +193,7 @@ export abstract class Unit{
 
     private fixPrm(checkPrm:Prm, maxPrm:Prm){
              if(this.prm(checkPrm).base < 0)                       {this.prm(checkPrm).base = 0;}
-        else if(this.prm(checkPrm).base > this.prm(maxPrm).total()){this.prm(checkPrm).base = this.prm(maxPrm).total();}
+        else if(this.prm(checkPrm).base > this.prm(maxPrm).total){this.prm(checkPrm).base = this.prm(maxPrm).total;}
     }
     //---------------------------------------------------------
     //
@@ -233,17 +233,18 @@ export abstract class Unit{
     //force
     //
     //---------------------------------------------------------
-    phaseStart()                                      {this.force(f=> f.phaseStart(this));}
-    beforeDoAtk(action:Action, target:Unit, dmg:Dmg)  {this.force(f=> f.beforeDoAtk(action, this, target, dmg));}
-    beforeBeAtk(action:Action, attacker:Unit, dmg:Dmg){this.force(f=> f.beforeBeAtk(action, attacker, this, dmg));}
-    afterDoAtk(action:Action, target:Unit, dmg:Dmg)   {this.force(f=> f.afterDoAtk(action, this, target, dmg));}
-    afterBeAtk(action:Action, attacker:Unit, dmg:Dmg) {this.force(f=> f.afterBeAtk(action, this, attacker, dmg));}
     equip()                                           {
         for(const prm of Prm.values()){
             this.prm(prm).eq = 0;
         }
         this.force(f=> f.equip(this));
     }
+    battleStart()                                     {this.force(f=> f.battleStart(this));}
+    phaseStart()                                      {this.force(f=> f.phaseStart(this));}
+    beforeDoAtk(action:Action, target:Unit, dmg:Dmg)  {this.force(f=> f.beforeDoAtk(action, this, target, dmg));}
+    beforeBeAtk(action:Action, attacker:Unit, dmg:Dmg){this.force(f=> f.beforeBeAtk(action, attacker, this, dmg));}
+    afterDoAtk(action:Action, target:Unit, dmg:Dmg)   {this.force(f=> f.afterDoAtk(action, this, target, dmg));}
+    afterBeAtk(action:Action, attacker:Unit, dmg:Dmg) {this.force(f=> f.afterBeAtk(action, this, attacker, dmg));}
 
     protected force(forceDlgt:(f:Force)=>void){
         for(const tec of this.tecs){
@@ -293,7 +294,7 @@ export abstract class Unit{
     }
 
     setCondition(condition:Condition, value:number){
-        this.conditions.set(condition.type, {condition:condition, value:value});
+        this.conditions.set(condition.type, {condition:condition, value:value|0});
     }
 
     getCondition(type:ConditionType):Condition{
@@ -327,6 +328,8 @@ export abstract class Unit{
     }
 
     addConditionValue(condition:Condition|ConditionType, value:number){
+        value = value|0;
+
         if(condition instanceof Condition){
             const set = this.conditions.get(condition.type);
             if(set && set.condition === condition){

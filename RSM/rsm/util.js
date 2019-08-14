@@ -1,4 +1,4 @@
-import { Rect, Color } from "./undym/type.js";
+import { Rect } from "./undym/type.js";
 import Msg from "./widget/msg.js";
 import { Graphics } from "./graphics/graphics.js";
 import { Scene } from "./undym/scene.js";
@@ -78,11 +78,5 @@ export class SceneType {
 }
 SceneType.TOWN = new SceneType("TOWN", () => Scene.load(TownScene.ins));
 SceneType.DUNGEON = new SceneType("DUNGEON", () => {
-    Scene.load(DungeonScene.ins);
-});
-SceneType.BATTLE = new SceneType("BATTLE", () => {
-    const lost = (PlayData.yen / 4) | 0;
-    PlayData.yen -= lost;
-    Util.msg.set(`---強制終了ペナルティ-${lost}円---`, Color.RED.bright);
     Scene.load(DungeonScene.ins);
 });

@@ -41,7 +41,7 @@ export class DrawDungeonData extends InnerLayout {
             .setOutsidePixelMargin(1, 1, 1, 1)
             .add(ILayout.empty)
             .add(new Label(Font.def, () => `[${Dungeon.now}] Rank:${Dungeon.now.rank}`))
-            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.au, () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.au}`, () => Color.D_CYAN.bright(0), Font.def)));
+            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.au, () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.au}`, () => Color.D_CYAN.bright(), Font.def)));
     }
 }
 class DrawSTBox extends InnerLayout {
@@ -57,12 +57,12 @@ class DrawSTBox extends InnerLayout {
             .setOutsidePixelMargin(1, 1, 1, 1)
             .add(new XLayout()
             .add(new Label(font, () => getUnit().name))
-            .add(new Label(font, () => `Lv${getUnit().prm(Prm.LV).total() | 0}`).setBase(Font.RIGHT)))
-            .add(new Gage(() => getUnit().hp, () => getUnit().prm(Prm.MAX_HP).total(), () => "HP", () => `${getUnit().hp | 0}`, () => Color.D_GREEN.bright(), font))
+            .add(new Label(font, () => `Lv${getUnit().prm(Prm.LV).total | 0}`).setBase(Font.RIGHT)))
+            .add(new Gage(() => getUnit().hp, () => getUnit().prm(Prm.MAX_HP).total, () => "HP", () => `${getUnit().hp | 0}`, () => Color.D_GREEN.bright(), font))
             .add(new XLayout()
             .setPixelMargin(4)
-            .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total(), () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}`, () => Color.D_RED.bright(), font))
-            .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total(), () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}`, () => Color.D_CYAN.bright(), font)))
+            .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total, () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}`, () => Color.D_RED.bright(), font))
+            .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total, () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}`, () => Color.D_CYAN.bright(), font)))
             .add(createConditionLabel(font, getUnit, ConditionType.goodConditions(), Color.CYAN))
             .add(createConditionLabel(font, getUnit, ConditionType.badConditions(), Color.RED))
             .add(ILayout.empty))
@@ -138,12 +138,12 @@ export class DrawUnitDetail extends InnerLayout {
             .add(new YLayout()
             .add(new XLayout()
             .add(new Label(font, () => getUnit().name))
-            .add(new Label(font, () => `Lv${getUnit().prm(Prm.LV).total() | 0}`).setBase(Font.RIGHT)))
-            .add(new Gage(() => getUnit().hp, () => getUnit().prm(Prm.MAX_HP).total(), () => "HP", () => `${getUnit().hp | 0}`, () => Color.D_GREEN.bright(), font))
+            .add(new Label(font, () => `Lv${getUnit().prm(Prm.LV).total | 0}`).setBase(Font.RIGHT)))
+            .add(new Gage(() => getUnit().hp, () => getUnit().prm(Prm.MAX_HP).total, () => "HP", () => `${getUnit().hp | 0}`, () => Color.D_GREEN.bright(), font))
             .add(new XLayout()
             .setPixelMargin(4)
-            .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total(), () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}`, () => Color.D_RED.bright(), font))
-            .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total(), () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}`, () => Color.D_CYAN.bright(), font)))
+            .add(new Gage(() => getUnit().prm(Prm.MP).base, () => getUnit().prm(Prm.MAX_MP).total, () => "MP", () => `${getUnit().prm(Prm.MP).base | 0}`, () => Color.D_RED.bright(), font))
+            .add(new Gage(() => getUnit().prm(Prm.TP).base, () => getUnit().prm(Prm.MAX_TP).total, () => "TP", () => `${getUnit().prm(Prm.TP).base | 0}`, () => Color.D_CYAN.bright(), font)))
             .add(createConditionLabel(font, getUnit, ConditionType.goodConditions(), Color.CYAN))
             .add(createConditionLabel(font, getUnit, ConditionType.badConditions(), Color.RED))
             .add(ILayout.empty)
@@ -170,17 +170,17 @@ export class DrawUnitDetail extends InnerLayout {
             return `${getUnit().job}`;
         }))
             .add(new XLayout()
-            .add(new Label(font, () => `力:${getUnit().prm(Prm.STR).total()}`))
-            .add(new Label(font, () => `魔:${getUnit().prm(Prm.MAG).total()}`)))
+            .add(new Label(font, () => `力:${getUnit().prm(Prm.STR).total}`))
+            .add(new Label(font, () => `魔:${getUnit().prm(Prm.MAG).total}`)))
             .add(new XLayout()
-            .add(new Label(font, () => `光:${getUnit().prm(Prm.LIG).total()}`))
-            .add(new Label(font, () => `闇:${getUnit().prm(Prm.DRK).total()}`)))
+            .add(new Label(font, () => `光:${getUnit().prm(Prm.LIG).total}`))
+            .add(new Label(font, () => `闇:${getUnit().prm(Prm.DRK).total}`)))
             .add(new XLayout()
-            .add(new Label(font, () => `鎖:${getUnit().prm(Prm.CHN).total()}`))
-            .add(new Label(font, () => `過:${getUnit().prm(Prm.PST).total()}`)))
+            .add(new Label(font, () => `鎖:${getUnit().prm(Prm.CHN).total}`))
+            .add(new Label(font, () => `過:${getUnit().prm(Prm.PST).total}`)))
             .add(new XLayout()
-            .add(new Label(font, () => `銃:${getUnit().prm(Prm.GUN).total()}`))
-            .add(new Label(font, () => `弓:${getUnit().prm(Prm.ARR).total()}`))))
+            .add(new Label(font, () => `銃:${getUnit().prm(Prm.GUN).total}`))
+            .add(new Label(font, () => `弓:${getUnit().prm(Prm.ARR).total}`))))
             .add((() => {
             let infoPos = EqPos.頭;
             let y = new YLayout();
@@ -220,6 +220,6 @@ const createConditionLabel = (font, unit, types, color) => {
     return new Label(font, () => types
         .filter(type => unit().existsCondition(type))
         .map(type => unit().getConditionSet(type))
-        .map(set => `<${set.condition}${set.value}>`)
+        .map(set => `<${set.condition}${set.value | 0}>`)
         .join(""), () => color);
 };

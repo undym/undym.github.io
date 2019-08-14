@@ -120,12 +120,13 @@ export abstract class Eq implements Force, Num{
     //
     //
     //--------------------------------------------------------------------------
+    equip(unit:Unit){}
+    battleStart(unit:Unit){}
     phaseStart(unit:Unit){}
     beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
-    equip(unit:Unit){}
 
     add(v:number){
         Num.add(this, v);

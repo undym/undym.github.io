@@ -107,10 +107,4 @@ export class SceneType{
     static DUNGEON = new SceneType("DUNGEON", ()=>{
         Scene.load( DungeonScene.ins )
     });
-    static BATTLE = new SceneType("BATTLE", ()=>{
-        const lost = (PlayData.yen / 4)|0;
-        PlayData.yen -= lost;
-        Util.msg.set(`---強制終了ペナルティ-${lost}円---`, Color.RED.bright);
-        Scene.load( DungeonScene.ins );
-    });
 }

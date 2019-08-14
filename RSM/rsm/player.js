@@ -32,7 +32,7 @@ export class Player {
         res.prm(Prm.MAX_MP).base = Unit.DEF_MAX_MP;
         res.prm(Prm.MAX_TP).base = Unit.DEF_MAX_TP;
         this.createInner(res);
-        res.prm(Prm.HP).base = res.prm(Prm.MAX_HP).total();
+        res.prm(Prm.HP).base = res.prm(Prm.MAX_HP).total;
         for (let tec of res.tecs) {
             res.setMasteredTec(tec, true);
         }

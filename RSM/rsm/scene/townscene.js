@@ -24,6 +24,7 @@ import { JobChangeScene } from "./jobchangescene.js";
 import { SetTecScene } from "./settecscene.js";
 import { MixScene } from "./mixscene.js";
 import { EqScene } from "./eqscene.js";
+import { ConditionType } from "../condition.js";
 let choosedDungeon;
 let visibleDungeonEnterBtn = false;
 export class TownScene extends Scene {
@@ -47,8 +48,12 @@ export class TownScene extends Scene {
 }
 const fullCare = () => {
     for (let u of Unit.players) {
-        u.prm(Prm.HP).base = u.prm(Prm.MAX_HP).total();
-        u.prm(Prm.MP).base = u.prm(Prm.MAX_MP).total();
+        u.dead = false;
+        u.prm(Prm.HP).base = u.prm(Prm.MAX_HP).total;
+        u.prm(Prm.MP).base = u.prm(Prm.MAX_MP).total;
+        for (const type of ConditionType.badConditions()) {
+            u.clearCondition(type);
+        }
     }
 };
 class TownBtn {

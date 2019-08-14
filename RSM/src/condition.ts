@@ -1,8 +1,9 @@
 import { Force, Dmg, Action } from "./force.js";
 import { Tec, TecType, ActiveTec } from "./tec.js";
-import { Unit } from "./unit.js";
+import { Unit, Prm } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
+import { Color } from "./undym/type.js";
 
 
 
@@ -52,6 +53,7 @@ export class ConditionType{
 export abstract class Condition implements Force{
     private static _values:Condition[] = [];
     static values():ReadonlyArray<Condition>{return this._values;}
+
     private static _valueOf:Map<string,Condition>;
     static valueOf(uniqueName:string):Condition|undefined{
         if(!this._valueOf){
@@ -77,12 +79,14 @@ export abstract class Condition implements Force{
     //Force
     //
     //--------------------------------------------------------------------------
+    equip(unit:Unit):void{}
+    battleStart(unit:Unit):void{}
     phaseStart(unit:Unit):void{}
     beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
-    equip(unit:Unit):void{}
+    phaseEnd(unit:Unit):void{}
     //--------------------------------------------------------------------------
     //
     //
@@ -111,7 +115,7 @@ export abstract class Condition implements Force{
     };
     //--------------------------------------------------------------------------
     //
-    //
+    //GOOD_LV2
     //
     //--------------------------------------------------------------------------
     static readonly          盾 = new class extends Condition{
@@ -128,7 +132,41 @@ export abstract class Condition implements Force{
     };
     //--------------------------------------------------------------------------
     //
+    //GOOD_LV3
     //
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //BAD_LV1
+    //
+    //--------------------------------------------------------------------------
+    static readonly          毒 = new class extends Condition{
+        constructor(){super("毒", ConditionType.BAD_LV1);}
+        async phaseEnd(unit:Unit){
+            const value = unit.getConditionValue(this);
+            if(value < unit.prm(Prm.DRK).total + 1){
+                unit.clearCondition(this);
+                Util.msg.set(`${unit.name}の＜毒＞が解除された`); await wait();
+                return;
+            }
+
+            let dmg = new Dmg({absPow:value});
+
+            Util.msg.set("＞毒", Color.RED);
+
+            unit.doDmg(dmg);
+
+            unit.addConditionValue(this, value / 2);
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //BAD_LV2
+    //
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //BAD_LV3
     //
     //--------------------------------------------------------------------------
 }

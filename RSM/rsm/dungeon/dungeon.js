@@ -3,6 +3,56 @@ import { Job } from "../job.js";
 import { Unit, Prm } from "../unit.js";
 import { Item } from "../item.js";
 import { Eq } from "../eq.js";
+class Event {
+    constructor(events) {
+        this.events = events;
+    }
+    static createDef() {
+        return new Event(this.BATTLE
+            | this.BOX
+            | this.TRAP
+            | this.TREASURE);
+    }
+    remove(ev) {
+        this.events = this.events & (~ev);
+        return this;
+    }
+    add(ev) {
+        this.events = this.events | ev;
+        return this;
+    }
+    // has(ev:number):boolean{
+    //     return this.events & ev ? true : false;
+    // }
+    create() {
+        if (this.events & Event.TREASURE) {
+            if (Math.random() < 0.001) {
+                return DungeonEvent.TREASURE;
+            }
+            if (Math.random() < 0.001) {
+                return DungeonEvent.GET_TREASURE_KEY;
+            }
+        }
+        if (this.events & Event.BOX && Math.random() < 0.20) {
+            return DungeonEvent.BOX;
+        }
+        if (this.events & Event.BATTLE && Math.random() < 0.25) {
+            return DungeonEvent.BATTLE;
+        }
+        if (this.events & Event.TRAP && Math.random() < 0.04) {
+            return DungeonEvent.BATTLE;
+        }
+        if (this.events & Event.TREE && Math.random() < 0.06) {
+            return DungeonEvent.TREE;
+        }
+        return DungeonEvent.empty;
+    }
+}
+Event.BATTLE = 1 << 0;
+Event.BOX = 1 << 1;
+Event.TREE = 1 << 2;
+Event.TRAP = 1 << 3;
+Event.TREASURE = 1 << 4;
 export class Dungeon {
     //-----------------------------------------------------------------
     //
@@ -27,6 +77,7 @@ export class Dungeon {
         this._treasure = args.treasure;
         this._treasureKey = args.treasureKey;
         this.trendItems = args.trendItems;
+        this.event = args.event;
         Dungeon._values.push(this);
     }
     static values() {
@@ -49,22 +100,7 @@ export class Dungeon {
     //
     //-----------------------------------------------------------------
     rndEvent() {
-        if (Math.random() < 0.001) {
-            return DungeonEvent.TREASURE;
-        }
-        if (Math.random() < 0.001) {
-            return DungeonEvent.GET_TREASURE_KEY;
-        }
-        if (Math.random() < 0.20) {
-            return DungeonEvent.BOX;
-        }
-        if (Math.random() < 0.25) {
-            return DungeonEvent.BATTLE;
-        }
-        if (Math.random() < 0.04) {
-            return DungeonEvent.TRAP;
-        }
-        return DungeonEvent.empty;
+        return this.event.create();
     }
     rndEnemyNum() {
         const prob = 1.0 - (this.rank + 4) / (this.rank * this.rank + 5);
@@ -91,11 +127,11 @@ export class Dungeon {
         for (let e of Unit.enemies) {
             this.setEnemyInner(e);
             e.prm(Prm.MAX_HP).base *= 3;
-            e.hp = e.prm(Prm.MAX_HP).total();
+            e.hp = e.prm(Prm.MAX_HP).total;
         }
         this.setBossInner();
         for (let e of Unit.enemies) {
-            e.prm(Prm.HP).base = e.prm(Prm.MAX_HP).total();
+            e.hp = e.prm(Prm.MAX_HP).total;
         }
     }
 }
@@ -114,6 +150,7 @@ Dungeon.はじまりの丘 = new class extends Dungeon {
             treasure: () => Eq.棒,
             treasureKey: () => Item.はじまりの丘の鍵,
             trendItems: () => [Item.石, Item.土, Item.枝,],
+            event: Event.createDef(),
         });
         this.isVisible = () => true;
         this.setBossInner = () => {
@@ -137,6 +174,7 @@ Dungeon.丘の上 = new class extends Dungeon {
             treasure: () => Eq.安全靴,
             treasureKey: () => Item.丘の上の鍵,
             trendItems: () => [Item.水],
+            event: Event.createDef().add(Event.TREE),
         });
         this.isVisible = () => Dungeon.はじまりの丘.clearNum > 0;
         this.setBossInner = () => {

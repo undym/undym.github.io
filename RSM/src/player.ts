@@ -47,7 +47,7 @@ export abstract class Player{
 
         this.createInner(res);
 
-        res.prm(Prm.HP).base = res.prm(Prm.MAX_HP).total();
+        res.prm(Prm.HP).base = res.prm(Prm.MAX_HP).total;
 
         for(let tec of res.tecs){
             res.setMasteredTec(tec, true);

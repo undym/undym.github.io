@@ -60,17 +60,36 @@ export class ItemParentType{
 }
 
 
+class ItemValues{
+    private values = new Map<number,Item[]>();
+
+    constructor(items:Item[]){
+        for(const item of items){
+            if(!this.values.has(item.rank)){
+                this.values.set(item.rank, []);
+            }
+
+            (this.values.get(item.rank) as Item[]).push(item);
+        }
+    }
+
+    get(rank:number):ReadonlyArray<Item>|undefined{
+        return this.values.get(rank);
+    }
+}
+
+
 export class Item implements Action, Num{
     private static _values:Item[] = [];
     static values():ReadonlyArray<Item>{
         return this._values;
     }
 
-    private static _rankValues = new Map<number,Item[]>();
-    // private static _rankValues:{[key:number]:Item[];} = {};
-    static rankValues(rank:number):ReadonlyArray<Item>|undefined{
-        return this._rankValues.get(rank);
-    }
+    // private static _rankValues = new Map<number,Item[]>();
+    // // private static _rankValues:{[key:number]:Item[];} = {};
+    // static rankValues(rank:number):ReadonlyArray<Item>|undefined{
+    //     return this._rankValues.get(rank);
+    // }
 
 
     private static _consumableValues:Item[] = [];
@@ -81,19 +100,45 @@ export class Item implements Action, Num{
      * 宝箱から出る指定ランクのアイテムを返す。そのランクにアイテムが存在しなければランクを一つ下げて再帰する。
      * @param rank 
      */
-    static rndBoxRankItem(rank:number):Item{
-        const values = this.rankValues(rank);
-        if(!values){
-            if(rank <= 0){return Item.石;}
-            return this.rndBoxRankItem(rank-1);
+    // static rndBoxRankItem(rank:number):Item{
+    //     const values = this.rankValues(rank);
+    //     if(!values){
+    //         if(rank <= 0){return Item.石;}
+    //         return this.rndBoxRankItem(rank-1);
+    //     }
+
+    //     for(let i = 0; i < 7; i++){
+    //         let tmp = choice( values );
+    //         if(tmp.box && tmp.rank <= rank && tmp.num < tmp.numLimit){
+    //             return tmp;
+    //         }
+    //     }
+    //     return Item.石;
+    // }
+
+    private static _dropTypeValues = new Map<number,ItemValues>();
+    /**
+     * 指定のタイプの指定のランクのアイテムを返す。そのランクにアイテムが存在しなければランクを一つ下げて再帰する。
+     * @param dropType 
+     * @param rank 
+     */
+    static rndItem(dropType:number, rank:number):Item{
+        if(!this._dropTypeValues.has(dropType)){
+            const typeValues = this.values().filter(item=> item.dropType & dropType);
+            this._dropTypeValues.set(dropType, new ItemValues(typeValues));
         }
 
-        for(let i = 0; i < 7; i++){
-            let tmp = choice( values );
-            if(tmp.box && tmp.rank <= rank && tmp.num < tmp.numLimit){
-                return tmp;
+        const itemValues = this._dropTypeValues.get(dropType);
+        if(itemValues){
+            const rankValues = itemValues.get(rank);
+            if(rankValues){
+                return choice(rankValues);
+            }else{
+                if(rank <= 0){return Item.石;}
+                return this.rndItem(dropType, rank-1);
             }
         }
+        
         return Item.石;
     }
 
@@ -114,6 +159,10 @@ export class Item implements Action, Num{
 
     static readonly DEF_NUM_LIMIT = 999;
 
+    static readonly DROP_NO   = 0;
+    static readonly DROP_BOX  = 1 << 0;
+    static readonly DROP_TREE = 1 << 1;
+
     num:number = 0;
     totalGetNum:number = 0;
     /**そのダンジョン内で使用した数. */
@@ -129,6 +178,7 @@ export class Item implements Action, Num{
     readonly consumable:boolean;
     /**所持上限. */
     readonly numLimit:number;
+    readonly dropType:number;
 
     protected useInner:(user:Unit, target:Unit)=>void;
 
@@ -142,7 +192,7 @@ export class Item implements Action, Num{
         info:string[],
         type:ItemType,
         rank:number,
-        box:boolean,
+        drop:number,
         targetings?:number,
         numLimit?:number,
         consumable?:boolean,
@@ -153,8 +203,8 @@ export class Item implements Action, Num{
         this.info = args.info;
         this.itemType = args.type;
         this.rank = args.rank;
-        this.box = args.box;
-
+        this.dropType = args.drop;
+        
         this.targetings = args.targetings ? args.targetings : Targeting.SELECT;
         this.numLimit = args.numLimit ? args.numLimit : Item.DEF_NUM_LIMIT;
         if(args.consumable){
@@ -169,15 +219,6 @@ export class Item implements Action, Num{
         }
 
         Item._values.push(this);
-        if(!Item._rankValues.has(this.rank)){
-            Item._rankValues.set(this.rank, []);
-        }
-
-        (Item._rankValues.get(this.rank) as Item[]).push(this);
-        // if(Item._rankValues[this.rank] === undefined){
-        //     Item._rankValues[this.rank] = [];
-        // }
-        // Item._rankValues[this.rank].push(this);
 
     }
 
@@ -219,16 +260,16 @@ export class Item implements Action, Num{
     //-----------------------------------------------------------------
     static readonly                      スティックパン = new class extends Item{
         constructor(){super({uniqueName:"スティックパン", info:["HP+10"],
-                                type:ItemType.HP回復, rank:0, box:false,
-                                consumable:true,
+                                type:ItemType.HP回復, rank:0,
+                                consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=> await healHP(target, 10),
         })}
     };
     static readonly                      硬化スティックパン = new class extends Item{
         constructor(){super({uniqueName:"硬化スティックパン", info:["HP+10%"],
-                                type:ItemType.HP回復, rank:0, box:false,
-                                consumable:true,
-                                use:async(user,target)=>await healHP(target, target.prm(Prm.MAX_HP).total() / 10),
+                                type:ItemType.HP回復, rank:0,
+                                consumable:true, drop:Item.DROP_NO,
+                                use:async(user,target)=>await healHP(target, target.prm(Prm.MAX_HP).total / 10),
         })}
         createMix(){return new Mix({
             result:[this, 1],
@@ -243,8 +284,8 @@ export class Item implements Action, Num{
     //-----------------------------------------------------------------
     static readonly                      赤い水 = new class extends Item{
         constructor(){super({uniqueName:"赤い水", info:["MP+10"],
-                                type:ItemType.MP回復, rank:0, box:false,
-                                consumable:true,
+                                type:ItemType.MP回復, rank:0,
+                                consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=> await healMP(target, 10),
         })}
         createMix(){return new Mix({
@@ -260,8 +301,8 @@ export class Item implements Action, Num{
     //-----------------------------------------------------------------
     static readonly                      脱出ポッド = new class extends Item{
         constructor(){super({uniqueName:"脱出ポッド", info:["ダンジョンから脱出する"],
-                                type:ItemType.ダンジョン, rank:0, box:false,
-                                consumable:true,
+                                type:ItemType.ダンジョン, rank:0,
+                                consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=>{
                                     await DungeonEvent.ESCAPE_DUNGEON.happen();
                                 },
@@ -272,8 +313,8 @@ export class Item implements Action, Num{
     };
     static readonly                      記録用粘土板 = new class extends Item{
         constructor(){super({uniqueName:"記録用粘土板", info:["ダンジョン内でセーブする"],
-                                type:ItemType.ダンジョン, rank:0, box:false,
-                                consumable:true,
+                                type:ItemType.ダンジョン, rank:0,
+                                consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=>{
                                     SaveData.save();
                                 },
@@ -295,11 +336,11 @@ export class Item implements Action, Num{
     //-----------------------------------------------------------------
     static readonly                      はじまりの丘の鍵 = new class extends Item{
         constructor(){super({uniqueName:"はじまりの丘の鍵", info:[""],
-                                type:ItemType.鍵, rank:0, box:false})}
+                                type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
     static readonly                      丘の上の鍵 = new class extends Item{
         constructor(){super({uniqueName:"丘の上の鍵", info:[""],
-                                type:ItemType.鍵, rank:0, box:false})}
+                                type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
     //-----------------------------------------------------------------
     //
@@ -308,11 +349,11 @@ export class Item implements Action, Num{
     //-----------------------------------------------------------------
     static readonly                      はじまりの丘の玉 = new class extends Item{
         constructor(){super({uniqueName:"はじまりの丘の玉", info:[""],
-                                type:ItemType.玉, rank:0, box:false})}
+                                type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
     static readonly                      丘の上の玉 = new class extends Item{
         constructor(){super({uniqueName:"丘の上の玉", info:[""],
-                                type:ItemType.玉, rank:0, box:false})}
+                                type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
     //-----------------------------------------------------------------
     //
@@ -321,31 +362,40 @@ export class Item implements Action, Num{
     //-----------------------------------------------------------------
     static readonly                      石 = new class extends Item{
         constructor(){super({uniqueName:"石", info:["いし"],
-                                type:ItemType.素材, rank:0, box:true})}
+                                type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
     static readonly                      枝 = new class extends Item{
         constructor(){super({uniqueName:"枝", info:["えだ"],
-                                type:ItemType.素材, rank:0, box:true})}
+                                type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
     static readonly                      土 = new class extends Item{
         constructor(){super({uniqueName:"土", info:["つち"],
-                                type:ItemType.素材, rank:0, box:true})}
+                                type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
     static readonly                      水 = new class extends Item{
         constructor(){super({uniqueName:"水", info:["水"],
-                                type:ItemType.素材, rank:0, box:true})}
+                                type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
     static readonly                      He = new class extends Item{
         constructor(){super({uniqueName:"He", info:["ヘェッ"],
-                                type:ItemType.素材, rank:2, box:true})}
+                                type:ItemType.素材, rank:2, drop:Item.DROP_BOX})}
     };
     static readonly                      少女の心を持ったおっさん = new class extends Item{
         constructor(){super({uniqueName:"少女の心を持ったおっさん", info:["いつもプリキュアの話をしている"],
-                                type:ItemType.素材, rank:5, box:true})}
+                                type:ItemType.素材, rank:5, drop:Item.DROP_BOX})}
     };
+
     static readonly                      しいたけ = new class extends Item{
         constructor(){super({uniqueName:"しいたけ", info:[""],
-                                type:ItemType.素材, rank:0, box:false})}
+                                type:ItemType.素材, rank:0, drop:Item.DROP_NO,})}
+    };
+    static readonly                      スギ = new class extends Item{
+        constructor(){super({uniqueName:"スギ", info:[""],
+                                type:ItemType.素材, rank:1, drop:Item.DROP_TREE})}
+    };
+    static readonly                      ヒノキ = new class extends Item{
+        constructor(){super({uniqueName:"ヒノキ", info:[""],
+                                type:ItemType.素材, rank:1, drop:Item.DROP_TREE})}
     };
     //-----------------------------------------------------------------
     //

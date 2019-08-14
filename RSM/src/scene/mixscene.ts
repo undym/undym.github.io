@@ -30,7 +30,7 @@ export class MixScene extends Scene{
     private choosedObj:Object|undefined;
     private choosedMix:Mix|undefined;
     /**セーブフラグ. */
-    private runAnyMix = false;
+    private doneAnyMix = false;
 
     constructor(){
         super();
@@ -99,7 +99,7 @@ export class MixScene extends Scene{
                             
                         }}))
                         .add(btnBounds, (()=>{
-                            const l = new FlowLayout(2,2);
+                            const l = new FlowLayout(2,3);
                             
                             l.add(new Btn("建築", ()=>{
                                 this.setBuildingList();
@@ -113,7 +113,9 @@ export class MixScene extends Scene{
 
                 
                             l.addFromLast(new Btn("<<", ()=>{
-                                SaveData.save();
+                                if(this.doneAnyMix){
+                                    SaveData.save();
+                                }
                                 Scene.load( TownScene.ins );
                             }));
                             
@@ -127,7 +129,7 @@ export class MixScene extends Scene{
 
                                 this.choosedMix.run();
 
-                                this.runAnyMix = true;
+                                this.doneAnyMix = true;
                             });
                             const noRun = new Btn("合成",async()=>{
                             });
@@ -168,7 +170,7 @@ export class MixScene extends Scene{
                     return Color.WHITE;
                 };
                 this.list.add({
-                    left:()=>`${mix.count}`,
+                    left:()=>`${mix.count}/${mix.countLimit}`,
                     leftColor:color,
                     right:()=>b.toString(),
                     rightColor:color,
@@ -198,7 +200,7 @@ export class MixScene extends Scene{
                     return Color.WHITE;
                 };
                 this.list.add({
-                    left:()=>`${item.num}/${item.numLimit}`,
+                    left:()=>`${item.num}`,
                     leftColor:color,
                     right:()=>item.toString(),
                     rightColor:color,

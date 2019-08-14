@@ -535,7 +535,7 @@ export class FlowLayout extends ILayout{
     async ctrlInner(origin:Rect){
         let bounds:Rect[] = this.getBounds(origin);
         for(let i = 0; i < bounds.length; i++){
-            this.layouts[i].ctrl( bounds[i] );
+            await this.layouts[i].ctrl( bounds[i] );
         }
     }
 

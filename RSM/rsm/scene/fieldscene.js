@@ -45,8 +45,8 @@ export class FieldScene extends Scene {
 }
 const fullCare = () => {
     for (let u of Unit.players) {
-        u.prm(Prm.HP).base = u.prm(Prm.MAX_HP).total();
-        u.prm(Prm.MP).base = u.prm(Prm.MAX_MP).total();
+        u.prm(Prm.HP).base = u.prm(Prm.MAX_HP).total;
+        u.prm(Prm.MP).base = u.prm(Prm.MAX_MP).total;
     }
 };
 class FieldBtn {

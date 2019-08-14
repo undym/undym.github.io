@@ -24,7 +24,7 @@ class PrmSet {
         this.eq = 0;
         this.battle = 0;
     }
-    total() {
+    get total() {
         let res = this.base + this.eq + this.battle;
         if (res < 0) {
             return res;
@@ -154,8 +154,8 @@ export class Unit {
         if (this.prm(checkPrm).base < 0) {
             this.prm(checkPrm).base = 0;
         }
-        else if (this.prm(checkPrm).base > this.prm(maxPrm).total()) {
-            this.prm(checkPrm).base = this.prm(maxPrm).total();
+        else if (this.prm(checkPrm).base > this.prm(maxPrm).total) {
+            this.prm(checkPrm).base = this.prm(maxPrm).total;
         }
     }
     //---------------------------------------------------------
@@ -205,17 +205,18 @@ export class Unit {
     //force
     //
     //---------------------------------------------------------
-    phaseStart() { this.force(f => f.phaseStart(this)); }
-    beforeDoAtk(action, target, dmg) { this.force(f => f.beforeDoAtk(action, this, target, dmg)); }
-    beforeBeAtk(action, attacker, dmg) { this.force(f => f.beforeBeAtk(action, attacker, this, dmg)); }
-    afterDoAtk(action, target, dmg) { this.force(f => f.afterDoAtk(action, this, target, dmg)); }
-    afterBeAtk(action, attacker, dmg) { this.force(f => f.afterBeAtk(action, this, attacker, dmg)); }
     equip() {
         for (const prm of Prm.values()) {
             this.prm(prm).eq = 0;
         }
         this.force(f => f.equip(this));
     }
+    battleStart() { this.force(f => f.battleStart(this)); }
+    phaseStart() { this.force(f => f.phaseStart(this)); }
+    beforeDoAtk(action, target, dmg) { this.force(f => f.beforeDoAtk(action, this, target, dmg)); }
+    beforeBeAtk(action, attacker, dmg) { this.force(f => f.beforeBeAtk(action, attacker, this, dmg)); }
+    afterDoAtk(action, target, dmg) { this.force(f => f.afterDoAtk(action, this, target, dmg)); }
+    afterBeAtk(action, attacker, dmg) { this.force(f => f.afterBeAtk(action, this, attacker, dmg)); }
     force(forceDlgt) {
         for (const tec of this.tecs) {
             forceDlgt(tec);
@@ -269,7 +270,7 @@ export class Unit {
         }
     }
     setCondition(condition, value) {
-        this.conditions.set(condition.type, { condition: condition, value: value });
+        this.conditions.set(condition.type, { condition: condition, value: value | 0 });
     }
     getCondition(type) {
         const set = this.conditions.get(type);
@@ -302,6 +303,7 @@ export class Unit {
         return { condition: Condition.empty, value: 0 };
     }
     addConditionValue(condition, value) {
+        value = value | 0;
         if (condition instanceof Condition) {
             const set = this.conditions.get(condition.type);
             if (set && set.condition === condition) {

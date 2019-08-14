@@ -35,8 +35,8 @@ TecType.格闘 = new class extends TecType {
     constructor() { super("格闘"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.STR).total() + attacker.prm(Prm.LV).total(),
-            def: target.prm(Prm.MAG).total(),
+            pow: attacker.prm(Prm.STR).total + attacker.prm(Prm.LV).total,
+            def: target.prm(Prm.MAG).total,
         });
         ;
     }
@@ -46,8 +46,8 @@ TecType.魔法 = new class extends TecType {
     constructor() { super("魔法"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.MAG).total() + attacker.prm(Prm.LV).total(),
-            def: target.prm(Prm.STR).total(),
+            pow: attacker.prm(Prm.MAG).total + attacker.prm(Prm.LV).total,
+            def: target.prm(Prm.STR).total,
         });
         ;
     }
@@ -57,8 +57,8 @@ TecType.神格 = new class extends TecType {
     constructor() { super("神格"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.LIG).total() + attacker.prm(Prm.LV).total(),
-            def: target.prm(Prm.DRK).total(),
+            pow: attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total,
+            def: target.prm(Prm.DRK).total,
         });
         ;
     }
@@ -68,8 +68,8 @@ TecType.暗黒 = new class extends TecType {
     constructor() { super("暗黒"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.DRK).total() + attacker.prm(Prm.LV).total(),
-            def: target.prm(Prm.LIG).total(),
+            pow: attacker.prm(Prm.DRK).total + attacker.prm(Prm.LV).total,
+            def: target.prm(Prm.LIG).total,
         });
         ;
     }
@@ -79,8 +79,8 @@ TecType.練術 = new class extends TecType {
     constructor() { super("練術"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.CHN).total() + attacker.prm(Prm.LV).total(),
-            def: target.prm(Prm.PST).total(),
+            pow: attacker.prm(Prm.CHN).total + attacker.prm(Prm.LV).total,
+            def: target.prm(Prm.PST).total,
         });
         ;
     }
@@ -90,8 +90,8 @@ TecType.過去 = new class extends TecType {
     constructor() { super("過去"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.PST).total() + attacker.prm(Prm.LV).total(),
-            def: target.prm(Prm.CHN).total(),
+            pow: attacker.prm(Prm.PST).total + attacker.prm(Prm.LV).total,
+            def: target.prm(Prm.CHN).total,
         });
         ;
     }
@@ -101,8 +101,8 @@ TecType.銃術 = new class extends TecType {
     constructor() { super("銃術"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.GUN).total() + attacker.prm(Prm.LV).total(),
-            def: target.prm(Prm.ARR).total(),
+            pow: attacker.prm(Prm.GUN).total + attacker.prm(Prm.LV).total,
+            def: target.prm(Prm.ARR).total,
         });
         ;
     }
@@ -112,8 +112,8 @@ TecType.弓術 = new class extends TecType {
     constructor() { super("弓術"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.ARR).total() + attacker.prm(Prm.LV).total(),
-            def: target.prm(Prm.GUN).total(),
+            pow: attacker.prm(Prm.ARR).total + attacker.prm(Prm.LV).total,
+            def: target.prm(Prm.GUN).total,
         });
         ;
     }
@@ -128,7 +128,7 @@ TecType.回復 = new class extends TecType {
     constructor() { super("回復"); }
     createDmg(attacker, target) {
         return new Dmg({
-            pow: attacker.prm(Prm.LIG).total() + attacker.prm(Prm.LV).total(),
+            pow: attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total,
         });
         ;
     }
@@ -155,12 +155,13 @@ export class Tec {
     //Force
     //
     //--------------------------------------------------------------------------
+    equip(unit) { }
+    battleStart(unit) { }
     phaseStart(unit) { }
     beforeDoAtk(action, attacker, target, dmg) { }
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
-    equip(unit) { }
 }
 export class PassiveTec extends Tec {
     constructor(args) {
@@ -203,6 +204,23 @@ PassiveTec.格闘攻撃UP = new class extends PassiveTec {
 };
 //--------------------------------------------------------------------------
 //
+//強化
+//
+//--------------------------------------------------------------------------
+PassiveTec.準備運動 = new class extends PassiveTec {
+    constructor() {
+        super({ uniqueName: "準備運動", info: ["戦闘開始時＜練＞化"],
+            type: TecType.強化,
+        });
+    }
+    battleStart(unit) {
+        if (!unit.existsCondition(Condition.練.type)) {
+            setCondition(unit, Condition.練, 1);
+        }
+    }
+};
+//--------------------------------------------------------------------------
+//
 //回復
 //
 //--------------------------------------------------------------------------
@@ -213,7 +231,7 @@ PassiveTec.HP自動回復 = new class extends PassiveTec {
         });
     }
     phaseStart(unit) {
-        const value = (unit.prm(Prm.MAX_HP).total() * 0.01) | 0;
+        const value = (unit.prm(Prm.MAX_HP).total * 0.01) | 0;
         unit.hp += value;
     }
 };
@@ -263,16 +281,6 @@ export class ActiveTec extends Tec {
     //
     //
     //--------------------------------------------------------------------------
-    //--------------------------------------------------------------------------
-    //
-    //Force
-    //
-    //--------------------------------------------------------------------------
-    phaseStart(unit) { }
-    beforeDoAtk(action, attacker, target, dmg) { }
-    beforeBeAtk(action, attacker, target, dmg) { }
-    afterDoAtk(action, attacker, target, dmg) { }
-    afterBeAtk(action, attacker, target, dmg) { }
     //--------------------------------------------------------------------------
     //
     //
@@ -372,7 +380,7 @@ ActiveTec.人狼剣 = new class extends ActiveTec {
     }
     createDmg(attacker, target) {
         return new Dmg({
-            absPow: attacker.prm(Prm.STR).total(),
+            absPow: attacker.prm(Prm.STR).total,
             hit: this.hit,
         });
     }
@@ -396,7 +404,7 @@ ActiveTec.マジカルパンチ = new class extends ActiveTec {
     }
     createDmg(attacker, target) {
         let dmg = super.createDmg(attacker, target);
-        dmg.pow.base = attacker.prm(Prm.MAG).total();
+        dmg.pow.base = attacker.prm(Prm.MAG).total;
         return dmg;
     }
 };

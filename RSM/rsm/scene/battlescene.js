@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Scene, wait } from "../undym/scene.js";
-import { Place, Util, PlayData, SceneType } from "../util.js";
+import { Place, Util, PlayData } from "../util.js";
 import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
 import { VariableLayout, ILayout, Layout, FlowLayout } from "../undym/layout.js";
 import { Rect, Color } from "../undym/type.js";
@@ -79,7 +79,13 @@ export class BattleScene extends Scene {
         super.add(Rect.FULL, ILayout.create({ ctrl: (noUsed) => __awaiter(this, void 0, void 0, function* () {
                 if (Battle.start) {
                     Battle.start = false;
-                    SceneType.BATTLE.set();
+                    //init
+                    for (const u of Unit.all) {
+                        u.tp = 0;
+                    }
+                    for (const u of Unit.all) {
+                        u.battleStart();
+                    }
                     yield this.phaseEnd();
                     return;
                 }
@@ -106,7 +112,7 @@ export class BattleScene extends Scene {
             }
             let attacker = Battle.getPhaseUnit();
             if (!attacker.exists || attacker.dead) {
-                this.phaseEnd();
+                yield this.phaseEnd();
                 return;
             }
             Util.msg.set(`${attacker.name}`, Color.ORANGE);
@@ -114,146 +120,153 @@ export class BattleScene extends Scene {
             attacker.prm(Prm.TP).base += 10;
             attacker.phaseStart();
             if (attacker instanceof PUnit) {
-                this.setPlayerPhase(attacker);
+                yield this.setPlayerPhase(attacker);
                 return;
             }
             else {
                 let e = attacker;
                 yield e.ai(e, Unit.all);
-                this.phaseEnd();
+                yield this.phaseEnd();
                 return;
             }
         });
     }
     setPlayerPhase(attacker) {
-        const createTecBtn = (tec) => {
-            let btn;
-            if (tec instanceof ActiveTec) {
-                btn = new Btn(tec.toString(), () => __awaiter(this, void 0, void 0, function* () {
-                    this.tecInfo.tec = undefined;
-                    if (tec.targetings & Targeting.SELECT) {
-                        Util.msg.set(`[${tec}]のターゲットを選択してください`);
-                        this.setChooseTargetBtn(attacker, (targets) => __awaiter(this, void 0, void 0, function* () {
-                            Util.msg.set(`＞${targets[0].name}を選択`);
+        return __awaiter(this, void 0, void 0, function* () {
+            const createTecBtn = (tec) => {
+                let btn;
+                if (tec instanceof ActiveTec) {
+                    btn = new Btn(tec.toString(), () => __awaiter(this, void 0, void 0, function* () {
+                        this.tecInfo.tec = undefined;
+                        if (tec.targetings & Targeting.SELECT) {
+                            Util.msg.set(`[${tec}]のターゲットを選択してください`);
+                            yield this.setChooseTargetBtn(attacker, (targets) => __awaiter(this, void 0, void 0, function* () {
+                                if (!targets[0].dead
+                                    || (tec.targetings & Targeting.WITH_DEAD || tec.targetings & Targeting.ONLY_DEAD)) {
+                                    Util.msg.set(`＞${targets[0].name}を選択`);
+                                    yield tec.use(attacker, targets);
+                                    yield this.phaseEnd();
+                                }
+                            }));
+                            return;
+                        }
+                        else {
+                            let targets = Targeting.filter(tec.targetings, attacker, Unit.all);
                             yield tec.use(attacker, targets);
-                            this.phaseEnd();
-                        }));
-                        return;
-                    }
-                    else {
-                        let targets = Targeting.filter(tec.targetings, attacker, Unit.all);
-                        yield tec.use(attacker, targets);
-                        this.phaseEnd();
-                    }
-                }));
-                if (!tec.checkCost(attacker)) {
-                    btn.groundColor = () => Color.GRAY;
-                    btn.stringColor = () => Color.D_RED;
-                }
-            }
-            else if (tec instanceof PassiveTec) {
-                btn = new Btn(`-${tec}-`, () => {
-                });
-                btn.groundColor = () => Color.D_GRAY;
-                btn.stringColor = () => Color.L_GRAY;
-            }
-            else {
-                return ILayout.empty;
-            }
-            return new Layout()
-                .add(btn)
-                .add(ILayout.create({ ctrl: (bounds) => {
-                    if (bounds.contains(Input.point) && Input.holding() >= 4) {
-                        this.tecInfo.tec = tec;
-                        this.tecInfo.user = attacker;
-                    }
-                } }));
-        };
-        const w = 4;
-        const h = 3;
-        const l = new FlowLayout(w, h);
-        const drawOnePage = w * (h - 1);
-        for (let i = attacker.tecPage * drawOnePage; i < (attacker.tecPage + 1) * drawOnePage; i++) {
-            if (i >= attacker.tecs.length) {
-                break;
-            }
-            l.add(createTecBtn(attacker.tecs[i]));
-        }
-        l.addFromLast(new Btn("ITEM", () => {
-            Scene.load(ItemScene.ins({
-                user: attacker,
-                selectUser: false,
-                use: (item, user) => __awaiter(this, void 0, void 0, function* () {
-                    if (item.targetings & Targeting.SELECT) {
-                        Util.msg.set(`[${item}]のターゲットを選択してください`);
-                        this.setChooseTargetBtn(attacker, (targets) => __awaiter(this, void 0, void 0, function* () {
-                            yield item.use(user, targets);
-                            this.phaseEnd();
-                        }));
-                    }
-                    else {
-                        let targets = Targeting.filter(item.targetings, user, Unit.players);
-                        if (targets.length > 0) {
-                            Scene.set(this);
-                            yield item.use(user, targets);
                             yield this.phaseEnd();
                         }
+                    }));
+                    if (!tec.checkCost(attacker)) {
+                        btn.groundColor = () => Color.GRAY;
+                        btn.stringColor = () => Color.D_RED;
                     }
-                }),
-                returnScene: () => {
-                    Scene.set(BattleScene.ins);
-                },
+                }
+                else if (tec instanceof PassiveTec) {
+                    btn = new Btn(`-${tec}-`, () => {
+                    });
+                    btn.groundColor = () => Color.D_GRAY;
+                    btn.stringColor = () => Color.L_GRAY;
+                }
+                else {
+                    return ILayout.empty;
+                }
+                return new Layout()
+                    .add(btn)
+                    .add(ILayout.create({ ctrl: (bounds) => {
+                        if (bounds.contains(Input.point) && Input.holding() >= 4) {
+                            this.tecInfo.tec = tec;
+                            this.tecInfo.user = attacker;
+                        }
+                    } }));
+            };
+            const w = 4;
+            const h = 3;
+            const l = new FlowLayout(w, h);
+            const drawOnePage = w * (h - 1);
+            for (let i = attacker.tecPage * drawOnePage; i < (attacker.tecPage + 1) * drawOnePage; i++) {
+                if (i >= attacker.tecs.length) {
+                    break;
+                }
+                l.add(createTecBtn(attacker.tecs[i]));
+            }
+            l.addFromLast(new Btn("ITEM", () => __awaiter(this, void 0, void 0, function* () {
+                Scene.load(ItemScene.ins({
+                    user: attacker,
+                    selectUser: false,
+                    use: (item, user) => __awaiter(this, void 0, void 0, function* () {
+                        if (item.targetings & Targeting.SELECT) {
+                            Util.msg.set(`[${item}]のターゲットを選択してください`);
+                            this.setChooseTargetBtn(attacker, (targets) => __awaiter(this, void 0, void 0, function* () {
+                                yield item.use(user, targets);
+                                yield this.phaseEnd();
+                            }));
+                        }
+                        else {
+                            let targets = Targeting.filter(item.targetings, user, Unit.players);
+                            if (targets.length > 0) {
+                                Scene.set(this);
+                                yield item.use(user, targets);
+                                yield this.phaseEnd();
+                            }
+                        }
+                    }),
+                    returnScene: () => {
+                        Scene.set(BattleScene.ins);
+                    },
+                }));
+            })));
+            l.addFromLast(new Btn("何もしない", () => __awaiter(this, void 0, void 0, function* () {
+                yield ActiveTec.何もしない.use(attacker, [attacker]);
+                yield this.phaseEnd();
+            })));
+            const tecPageLim = ((attacker.tecs.length - 1) / drawOnePage) | 0;
+            const newerTecPage = new Btn(">", () => __awaiter(this, void 0, void 0, function* () {
+                attacker.tecPage++;
+                yield this.setPlayerPhase(attacker);
             }));
-        }));
-        l.addFromLast(new Btn("何もしない", () => __awaiter(this, void 0, void 0, function* () {
-            yield ActiveTec.何もしない.use(attacker, [attacker]);
-            yield this.phaseEnd();
-        })));
-        const tecPageLim = ((attacker.tecs.length - 1) / drawOnePage) | 0;
-        const newerTecPage = new Btn(">", () => {
-            attacker.tecPage++;
-            this.setPlayerPhase(attacker);
+            l.addFromLast(new VariableLayout(() => {
+                return attacker.tecPage < tecPageLim ? newerTecPage : ILayout.empty;
+            }));
+            const olderTecPage = new Btn("<", () => __awaiter(this, void 0, void 0, function* () {
+                attacker.tecPage--;
+                yield this.setPlayerPhase(attacker);
+            }));
+            l.addFromLast(new VariableLayout(() => {
+                return attacker.tecPage > 0 ? olderTecPage : ILayout.empty;
+            }));
+            btnSpace.clear();
+            btnSpace.add(l);
         });
-        l.addFromLast(new VariableLayout(() => {
-            return attacker.tecPage < tecPageLim ? newerTecPage : ILayout.empty;
-        }));
-        const olderTecPage = new Btn("<", () => {
-            attacker.tecPage--;
-            this.setPlayerPhase(attacker);
-        });
-        l.addFromLast(new VariableLayout(() => {
-            return attacker.tecPage > 0 ? olderTecPage : ILayout.empty;
-        }));
-        btnSpace.clear();
-        btnSpace.add(l);
     }
     setChooseTargetBtn(attacker, chooseAction) {
-        const l = new FlowLayout(4, 3);
-        const addBtn = (unit) => {
-            if (!unit.exists) {
-                l.add(ILayout.empty);
-                return;
-            }
-            const btn = new Btn(unit.name, () => {
-                chooseAction([unit]);
+        return __awaiter(this, void 0, void 0, function* () {
+            const l = new FlowLayout(4, 3);
+            const addBtn = (unit) => __awaiter(this, void 0, void 0, function* () {
+                if (!unit.exists) {
+                    l.add(ILayout.empty);
+                    return;
+                }
+                const btn = new Btn(unit.name, () => __awaiter(this, void 0, void 0, function* () {
+                    yield chooseAction([unit]);
+                }));
+                if (unit.dead) {
+                    btn.groundColor = () => Color.D_RED;
+                }
+                l.add(btn);
             });
-            if (unit.dead) {
-                btn.groundColor = () => Color.D_RED;
+            for (let e of Unit.enemies) {
+                addBtn(e);
             }
-            l.add(btn);
-        };
-        for (let e of Unit.enemies) {
-            addBtn(e);
-        }
-        for (let p of Unit.players) {
-            addBtn(p);
-        }
-        l.addFromLast(new Btn("<<", () => {
-            Util.msg.set("＞キャンセル");
-            this.setPlayerPhase(attacker);
-        }));
-        btnSpace.clear();
-        btnSpace.add(l);
+            for (let p of Unit.players) {
+                addBtn(p);
+            }
+            l.addFromLast(new Btn("<<", () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set("＞キャンセル");
+                yield this.setPlayerPhase(attacker);
+            })));
+            btnSpace.clear();
+            btnSpace.add(l);
+        });
     }
 }
 const win = () => __awaiter(this, void 0, void 0, function* () {
@@ -308,8 +321,13 @@ const lose = () => __awaiter(this, void 0, void 0, function* () {
     yield Battle.battleEndAction(BattleResult.LOSE);
 });
 const finish = () => __awaiter(this, void 0, void 0, function* () {
-    for (let e of Unit.enemies) {
+    for (const e of Unit.enemies) {
         e.exists = false;
+    }
+    for (const p of Unit.players) {
+        for (const prm of Prm.values()) {
+            p.prm(prm).battle = 0;
+        }
     }
     btnSpace.clear();
 });

@@ -102,12 +102,13 @@ export class Eq {
     //
     //
     //--------------------------------------------------------------------------
+    equip(unit) { }
+    battleStart(unit) { }
     phaseStart(unit) { }
     beforeDoAtk(action, attacker, target, dmg) { }
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
-    equip(unit) { }
     add(v) {
         Num.add(this, v);
         PlayData.gotAnyEq = true;

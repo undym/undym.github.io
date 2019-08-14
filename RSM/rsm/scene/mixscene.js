@@ -24,7 +24,7 @@ export class MixScene extends Scene {
     constructor() {
         super();
         /**セーブフラグ. */
-        this.runAnyMix = false;
+        this.doneAnyMix = false;
         this.list = new List();
     }
     init() {
@@ -86,7 +86,7 @@ export class MixScene extends Scene {
                     }
                 } }))
                 .add(btnBounds, (() => {
-                const l = new FlowLayout(2, 2);
+                const l = new FlowLayout(2, 3);
                 l.add(new Btn("建築", () => {
                     this.setBuildingList();
                 }));
@@ -97,7 +97,9 @@ export class MixScene extends Scene {
                     this.setEqList();
                 }));
                 l.addFromLast(new Btn("<<", () => {
-                    SaveData.save();
+                    if (this.doneAnyMix) {
+                        SaveData.save();
+                    }
                     Scene.load(TownScene.ins);
                 }));
                 const canMix = () => {
@@ -111,7 +113,7 @@ export class MixScene extends Scene {
                         return;
                     }
                     this.choosedMix.run();
-                    this.runAnyMix = true;
+                    this.doneAnyMix = true;
                 }));
                 const noRun = new Btn("合成", () => __awaiter(this, void 0, void 0, function* () {
                 }));
@@ -149,7 +151,7 @@ export class MixScene extends Scene {
                 return Color.WHITE;
             };
             this.list.add({
-                left: () => `${mix.count}`,
+                left: () => `${mix.count}/${mix.countLimit}`,
                 leftColor: color,
                 right: () => b.toString(),
                 rightColor: color,
@@ -182,7 +184,7 @@ export class MixScene extends Scene {
                 return Color.WHITE;
             };
             this.list.add({
-                left: () => `${item.num}/${item.numLimit}`,
+                left: () => `${item.num}`,
                 leftColor: color,
                 right: () => item.toString(),
                 rightColor: color,

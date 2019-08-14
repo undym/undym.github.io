@@ -59,9 +59,6 @@ const setSaveDataDeleteBtn = (l:FlowLayout)=>{
         Util.msg.set("＞いいえ");
         setOptionBtn(l);
     }));
-    l.add(new Btn("どちらともいえない", ()=>{
-        Util.msg.set("＞はっきりしなさい");
-    }));
     l.addFromLast(new Btn("<<", ()=>{
         Util.msg.set("やめた");
         setOptionBtn(l);

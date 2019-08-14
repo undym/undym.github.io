@@ -1,14 +1,14 @@
 export class Force {
     // private static _empty:Force;
     // static get empty():Force{return this._empty ? this._empty : (this._empty = new Force());}
-    // equip(unit:Unit):void{}
+    equip(unit) { }
+    ;
+    battleStart(unit) { }
     phaseStart(unit) { }
     beforeDoAtk(action, attacker, target, dmg) { }
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
-    equip(unit) { }
-    ;
 }
 export class Dmg {
     constructor(args) {

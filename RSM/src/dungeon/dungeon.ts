@@ -10,6 +10,60 @@ import { Num } from "../mix.js";
 import { Eq } from "../eq.js";
 
 
+
+class Event{
+    static createDef(){
+        return  new Event(
+                      this.BATTLE
+                    | this.BOX
+                    | this.TRAP
+                    | this.TREASURE
+                );
+    }
+    static readonly BATTLE  = 1 << 0;
+    static readonly BOX     = 1 << 1;
+    static readonly TREE    = 1 << 2;
+    static readonly TRAP    = 1 << 3;
+    static readonly TREASURE= 1 << 4;
+
+    private events:number;
+    
+    constructor(events:number){
+        this.events = events;
+    }
+
+    remove(ev:number):this{
+        this.events = this.events & (~ev);
+        return this;
+    }
+
+    add(ev:number):this{
+        this.events = this.events | ev;
+        return this;
+    }
+
+    // has(ev:number):boolean{
+    //     return this.events & ev ? true : false;
+    // }
+
+    create():DungeonEvent{
+        if(this.events & Event.TREASURE){
+            if(Math.random() < 0.001){return DungeonEvent.TREASURE;}
+            if(Math.random() < 0.001){return DungeonEvent.GET_TREASURE_KEY;}
+        }
+
+        if(this.events & Event.BOX      && Math.random() < 0.20){return DungeonEvent.BOX;}
+        
+        if(this.events & Event.BATTLE   && Math.random() < 0.25){return DungeonEvent.BATTLE;}
+        if(this.events & Event.TRAP     && Math.random() < 0.04){return DungeonEvent.BATTLE;}
+        
+        if(this.events & Event.TREE     && Math.random() < 0.06){return DungeonEvent.TREE;}
+
+        return DungeonEvent.empty;
+    }
+}
+
+
 export abstract class Dungeon{
     private static _values:Dungeon[] = [];
     static values():ReadonlyArray<Dungeon>{
@@ -52,6 +106,8 @@ export abstract class Dungeon{
     private _treasureKey:()=>Num;
     get treasureKey():Num{return this._treasureKey();}
     readonly trendItems:()=>Item[];
+
+    private readonly event:Event;
     //-----------------------------------------------------------------
     //
     //
@@ -65,8 +121,9 @@ export abstract class Dungeon{
         au:number,
         clearItem:()=>Num,
         treasure:()=>Num,
-        treasureKey:()=>Num;
-        trendItems:()=>Item[]
+        treasureKey:()=>Num,
+        trendItems:()=>Item[],
+        event:Event,
     }){
         this.uniqueName = args.uniqueName;
         this.toString = ()=>this.uniqueName;
@@ -78,6 +135,7 @@ export abstract class Dungeon{
         this._treasure   = args.treasure;
         this._treasureKey= args.treasureKey;
         this.trendItems  = args.trendItems;
+        this.event       = args.event;
 
         Dungeon._values.push(this);
     }
@@ -95,12 +153,7 @@ export abstract class Dungeon{
     //
     //-----------------------------------------------------------------
     rndEvent():DungeonEvent{
-        if(Math.random() < 0.001 ){return DungeonEvent.TREASURE;}
-        if(Math.random() < 0.001 ){return DungeonEvent.GET_TREASURE_KEY;}
-        if(Math.random() < 0.20  ){return DungeonEvent.BOX;}
-        if(Math.random() < 0.25  ){return DungeonEvent.BATTLE;}
-        if(Math.random() < 0.04  ){return DungeonEvent.TRAP;}
-        return DungeonEvent.empty;
+        return this.event.create();
     }
 
     rndEnemyNum():number{
@@ -132,13 +185,13 @@ export abstract class Dungeon{
             this.setEnemyInner(e);
 
             e.prm(Prm.MAX_HP).base *= 3;
-            e.hp = e.prm(Prm.MAX_HP).total();
+            e.hp = e.prm(Prm.MAX_HP).total;
         }
 
         this.setBossInner();
 
         for(let e of Unit.enemies){
-            e.prm(Prm.HP).base = e.prm(Prm.MAX_HP).total();
+            e.hp = e.prm(Prm.MAX_HP).total;
         }
     }
     
@@ -155,12 +208,13 @@ export abstract class Dungeon{
                                 treasure:()=>Eq.棒,
                                 treasureKey:()=>Item.はじまりの丘の鍵,
                                 trendItems:()=>[Item.石, Item.土, Item.枝,],
+                                event:Event.createDef(),
         });}
         isVisible = ()=>true;
         setBossInner = ()=>{
             let e = Unit.enemies[0];
             Job.しんまい.setEnemy(e, e.prm(Prm.LV).base);
-            e.name = "ボス";
+            e.name = "聖戦士";
             e.prm(Prm.MAX_HP).base = 15;
             e.prm(Prm.STR).base = 6;
             //ボス以外の雑魚は0体
@@ -171,17 +225,18 @@ export abstract class Dungeon{
     };
     static readonly                      丘の上:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"丘の上",
-                                rank:1, enemyLv:3, au:100,
+                                rank:1, enemyLv:3, au:70,
                                 clearItem:()=>Item.丘の上の玉,
                                 treasure:()=>Eq.安全靴,
                                 treasureKey:()=>Item.丘の上の鍵,
                                 trendItems:()=>[Item.水],
+                                event:Event.createDef().add(Event.TREE),
         });}
         isVisible = ()=>Dungeon.はじまりの丘.clearNum > 0;
         setBossInner = ()=>{
             let e = Unit.enemies[0];
             Job.剣士.setEnemy(e, e.prm(Prm.LV).base);
-            e.name = "ボス";
+            e.name = "丘太郎";
             e.prm(Prm.MAX_HP).base = 30;
             e.prm(Prm.STR).base = 10;
             //ボス以外の雑魚は1体

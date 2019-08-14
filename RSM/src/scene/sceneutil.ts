@@ -54,7 +54,7 @@ export class DrawDungeonData extends InnerLayout{
                 ,()=> Dungeon.now.au
                 ,()=> "AU"
                 ,()=> `${Dungeon.auNow}/${Dungeon.now.au}`
-                ,()=> Color.D_CYAN.bright(0)
+                ,()=> Color.D_CYAN.bright()
                 ,Font.def
             ))
         );
@@ -78,11 +78,11 @@ class DrawSTBox extends InnerLayout{
                 .setOutsidePixelMargin(1,1,1,1)
                 .add(new XLayout()
                     .add(new Label(font, ()=>getUnit().name))
-                    .add(new Label(font, ()=>`Lv${ getUnit().prm(Prm.LV).total()|0 }`).setBase(Font.RIGHT))
+                    .add(new Label(font, ()=>`Lv${ getUnit().prm(Prm.LV).total|0 }`).setBase(Font.RIGHT))
                 )
                 .add(new Gage(
                      ()=> getUnit().hp
-                    ,()=> getUnit().prm(Prm.MAX_HP).total()
+                    ,()=> getUnit().prm(Prm.MAX_HP).total
                     ,()=> "HP"
                     ,()=> `${ getUnit().hp|0 }`
                     ,()=> Color.D_GREEN.bright()
@@ -92,7 +92,7 @@ class DrawSTBox extends InnerLayout{
                     .setPixelMargin(4)
                     .add(new Gage(
                         ()=> getUnit().prm(Prm.MP).base
-                       ,()=> getUnit().prm(Prm.MAX_MP).total()
+                       ,()=> getUnit().prm(Prm.MAX_MP).total
                        ,()=> "MP"
                        ,()=> `${ getUnit().prm(Prm.MP).base|0 }`
                        ,()=> Color.D_RED.bright()
@@ -100,7 +100,7 @@ class DrawSTBox extends InnerLayout{
                     ))
                     .add(new Gage(
                         ()=> getUnit().prm(Prm.TP).base
-                       ,()=> getUnit().prm(Prm.MAX_TP).total()
+                       ,()=> getUnit().prm(Prm.MAX_TP).total
                        ,()=> "TP"
                        ,()=> `${ getUnit().prm(Prm.TP).base|0 }`
                        ,()=> Color.D_CYAN.bright()
@@ -192,11 +192,11 @@ export class DrawUnitDetail extends InnerLayout{
                         .add(new YLayout()
                             .add(new XLayout()
                                 .add(new Label(font, ()=>getUnit().name))
-                                .add(new Label(font, ()=>`Lv${ getUnit().prm(Prm.LV).total()|0 }`).setBase(Font.RIGHT))
+                                .add(new Label(font, ()=>`Lv${ getUnit().prm(Prm.LV).total|0 }`).setBase(Font.RIGHT))
                             )
                             .add(new Gage(
                                 ()=> getUnit().hp
-                                ,()=> getUnit().prm(Prm.MAX_HP).total()
+                                ,()=> getUnit().prm(Prm.MAX_HP).total
                                 ,()=> "HP"
                                 ,()=> `${ getUnit().hp|0 }`
                                 ,()=> Color.D_GREEN.bright()
@@ -206,7 +206,7 @@ export class DrawUnitDetail extends InnerLayout{
                                 .setPixelMargin(4)
                                 .add(new Gage(
                                     ()=> getUnit().prm(Prm.MP).base
-                                ,()=> getUnit().prm(Prm.MAX_MP).total()
+                                ,()=> getUnit().prm(Prm.MAX_MP).total
                                 ,()=> "MP"
                                 ,()=> `${ getUnit().prm(Prm.MP).base|0 }`
                                 ,()=> Color.D_RED.bright()
@@ -214,7 +214,7 @@ export class DrawUnitDetail extends InnerLayout{
                                 ))
                                 .add(new Gage(
                                     ()=> getUnit().prm(Prm.TP).base
-                                ,()=> getUnit().prm(Prm.MAX_TP).total()
+                                ,()=> getUnit().prm(Prm.MAX_TP).total
                                 ,()=> "TP"
                                 ,()=> `${ getUnit().prm(Prm.TP).base|0 }`
                                 ,()=> Color.D_CYAN.bright()
@@ -251,20 +251,20 @@ export class DrawUnitDetail extends InnerLayout{
                                 return `${getUnit().job}`;
                             }))
                             .add(new XLayout()
-                                .add(new Label(font, ()=>`力:${getUnit().prm(Prm.STR).total()}`))
-                                .add(new Label(font, ()=>`魔:${getUnit().prm(Prm.MAG).total()}`))
+                                .add(new Label(font, ()=>`力:${getUnit().prm(Prm.STR).total}`))
+                                .add(new Label(font, ()=>`魔:${getUnit().prm(Prm.MAG).total}`))
                             )
                             .add(new XLayout()
-                                .add(new Label(font, ()=>`光:${getUnit().prm(Prm.LIG).total()}`))
-                                .add(new Label(font, ()=>`闇:${getUnit().prm(Prm.DRK).total()}`))
+                                .add(new Label(font, ()=>`光:${getUnit().prm(Prm.LIG).total}`))
+                                .add(new Label(font, ()=>`闇:${getUnit().prm(Prm.DRK).total}`))
                             )
                             .add(new XLayout()
-                                .add(new Label(font, ()=>`鎖:${getUnit().prm(Prm.CHN).total()}`))
-                                .add(new Label(font, ()=>`過:${getUnit().prm(Prm.PST).total()}`))
+                                .add(new Label(font, ()=>`鎖:${getUnit().prm(Prm.CHN).total}`))
+                                .add(new Label(font, ()=>`過:${getUnit().prm(Prm.PST).total}`))
                             )
                             .add(new XLayout()
-                                .add(new Label(font, ()=>`銃:${getUnit().prm(Prm.GUN).total()}`))
-                                .add(new Label(font, ()=>`弓:${getUnit().prm(Prm.ARR).total()}`))
+                                .add(new Label(font, ()=>`銃:${getUnit().prm(Prm.GUN).total}`))
+                                .add(new Label(font, ()=>`弓:${getUnit().prm(Prm.ARR).total}`))
                             )
                         )
                         .add((()=>{
@@ -310,7 +310,7 @@ const createConditionLabel = (font:Font, unit:()=>Unit, types:ReadonlyArray<Cond
         ,()=>types
                 .filter(type=> unit().existsCondition(type))
                 .map(type=> unit().getConditionSet(type))
-                .map(set=> `<${set.condition}${set.value}>`)
+                .map(set=> `<${set.condition}${set.value|0}>`)
                 .join("")
         ,()=>color
     );
