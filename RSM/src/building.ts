@@ -15,7 +15,7 @@ export class Building{
     private _mix:Mix|undefined;
     protected createMix():Mix|undefined{return undefined;}
 
-    private constructor(args:{
+    protected constructor(args:{
         uniqueName:string,
         info:string[],
     }){
@@ -27,7 +27,11 @@ export class Building{
         Building._values.push(this);
     }
 
-    static readonly                      よしこ = new class extends Building{
+}
+
+
+export namespace Building{
+    export const                         よしこ = new class extends Building{
         constructor(){super({uniqueName:"よしこ", info:["よしこが仲間になる"]});}
         createMix(){return new Mix({
             materials:[[Item.はじまりの丘の玉, 1]],

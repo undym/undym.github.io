@@ -13,7 +13,7 @@ import { Btn } from "../widget/btn.js";
 import { Dungeon } from "../dungeon/dungeon.js";
 import { Color } from "../undym/type.js";
 import DungeonScene from "./dungeonscene.js";
-import DungeonEvent from "../dungeon/dungeonevent.js";
+import { DungeonEvent } from "../dungeon/dungeonevent.js";
 import { DrawUnitDetail, DrawSTBoxes, DrawPlayInfo } from "./sceneutil.js";
 import { Unit, Prm } from "../unit.js";
 import { createOptionBtn } from "./optionscene.js";

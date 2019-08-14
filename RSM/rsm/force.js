@@ -1,3 +1,4 @@
+import { choice } from "./undym/random.js";
 export class Force {
     // private static _empty:Force;
     // static get empty():Force{return this._empty ? this._empty : (this._empty = new Force());}
@@ -14,6 +15,8 @@ export class Dmg {
     constructor(args) {
         /**calc()で出された結果のbak. */
         this.result = { value: 0, isHit: false };
+        /** */
+        this.counter = false;
         this.clear();
         if (args) {
             if (args.pow) {
@@ -33,6 +36,9 @@ export class Dmg {
             }
             if (args.absMul) {
                 this.abs.mul = args.absMul;
+            }
+            if (args.counter) {
+                this.counter = args.counter;
             }
         }
     }
@@ -71,6 +77,7 @@ export class Dmg {
         };
         this.result.value = 0;
         this.result.isHit = false;
+        this.counter = false;
     }
     calc() {
         const _pow = Dmg.calcDmgElm(this.pow);
@@ -116,6 +123,12 @@ export class Targeting {
         else {
             res = res.filter(t => !t.isFriend(attacker));
         }
+        if (targetings & Targeting.RANDOM) {
+            if (res.length <= 0) {
+                return [];
+            }
+            return [choice(res)];
+        }
         if ((targetings & Targeting.SELECT)
             && res.length > 0) {
             return [res[0]];
@@ -130,3 +143,4 @@ Targeting.WITH_DEAD = 1 << 3;
 Targeting.ONLY_DEAD = 1 << 4;
 Targeting.WITH_FRIEND = 1 << 5;
 Targeting.ONLY_FRIEND = 1 << 6;
+Targeting.RANDOM = 1 << 7;

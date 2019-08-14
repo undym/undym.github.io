@@ -1,4 +1,5 @@
 import { Unit, Prm } from "./unit.js";
+import { choice } from "./undym/random.js";
 
 
 export class Force{
@@ -38,6 +39,8 @@ export class Dmg{
     abs:{base:number, add:number, mul:number};
     /**calc()で出された結果のbak. */
     result = {value:0, isHit:false};
+    /** */
+    counter = false;
 
     constructor(args?:{
         pow?:number,
@@ -46,16 +49,18 @@ export class Dmg{
         def?:number,
         absPow?:number,
         absMul?:number,
+        counter?:boolean,
     }){
         this.clear();
 
         if(args){
             if(args.pow)    {this.pow.base = args.pow;}
-            if(args.mul)    {this.pow.mul   = args.mul;}
+            if(args.mul)    {this.pow.mul  = args.mul;}
             if(args.hit)    {this.hit.base = args.hit;}
             if(args.def)    {this.def.base = args.def;}
             if(args.absPow) {this.abs.base = args.absPow;}
-            if(args.absMul) {this.abs.mul   = args.absMul;}
+            if(args.absMul) {this.abs.mul  = args.absMul;}
+            if(args.counter){this.counter  = args.counter;}
         }
     }
 
@@ -83,6 +88,8 @@ export class Dmg{
 
         this.result.value = 0;
         this.result.isHit = false;
+
+        this.counter = false;
     }
 
     calc():{value:number, isHit:boolean}{
@@ -127,6 +134,7 @@ export class Targeting{
     static readonly ONLY_DEAD   = 1 << 4;
     static readonly WITH_FRIEND = 1 << 5;
     static readonly ONLY_FRIEND = 1 << 6;
+    static readonly RANDOM      = 1 << 7;
 
     static filter(targetings:number, attacker:Unit, targets:Unit[]|ReadonlyArray<Unit>):Unit[]{
         if(targetings & Targeting.SELF){return [attacker];}
@@ -140,6 +148,11 @@ export class Targeting{
              if(targetings & Targeting.WITH_FRIEND){}
         else if(targetings & Targeting.ONLY_FRIEND){res = res.filter(t=> t.isFriend(attacker));}
         else                                       {res = res.filter(t=> !t.isFriend(attacker));}
+
+        if(targetings & Targeting.RANDOM){
+            if(res.length <= 0){return [];}
+            return [choice( res )];
+        }
     
         if(
                (targetings & Targeting.SELECT) 

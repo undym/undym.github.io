@@ -23,7 +23,7 @@ import { ItemScene } from "../scene/itemscene.js";
 import { Targeting, Dmg } from "../force.js";
 import { Img } from "../graphics/graphics.js";
 import { SaveData } from "../savedata.js";
-export default class DungeonEvent {
+export class DungeonEvent {
     constructor() {
         DungeonEvent._values.push(this);
     }
@@ -41,266 +41,268 @@ export default class DungeonEvent {
     isZoomImg() { return true; }
 }
 DungeonEvent._values = [];
-DungeonEvent.empty = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.happenInner = () => { Util.msg.set(""); };
-        this.createBtnLayout = () => createDefLayout();
-    }
-};
-DungeonEvent.BOX = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.createImg = () => new Img("img/box.png");
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () { Util.msg.set("宝箱だ"); });
-        this.createBtnLayout = () => createDefLayout()
-            .set(ReturnBtn.index, new Btn("開ける", () => __awaiter(this, void 0, void 0, function* () {
-            yield DungeonEvent.OPEN_BOX.happen();
-        })));
-    }
-};
-DungeonEvent.OPEN_BOX = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.createImg = () => new Img("img/box_open.png");
-        this.isZoomImg = () => false;
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            let openNum = 1;
-            let openBoost = 0.3;
-            while (Math.random() <= openBoost) {
-                openNum++;
-                openBoost /= 2;
-            }
-            let dungeonRank = Dungeon.now.rank;
-            for (let i = 0; i < openNum; i++) {
-                const itemRank = Item.fluctuateRank(dungeonRank);
-                let item = Item.rndItem(Item.DROP_BOX, itemRank);
-                let addNum = 1;
-                item.add(addNum);
-                if (i < openNum - 1) {
-                    yield wait();
+(function (DungeonEvent) {
+    DungeonEvent.empty = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.happenInner = () => { Util.msg.set(""); };
+            this.createBtnLayout = () => createDefLayout();
+        }
+    };
+    DungeonEvent.BOX = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.createImg = () => new Img("img/box.png");
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () { Util.msg.set("宝箱だ"); });
+            this.createBtnLayout = () => createDefLayout()
+                .set(ReturnBtn.index, new Btn("開ける", () => __awaiter(this, void 0, void 0, function* () {
+                yield DungeonEvent.OPEN_BOX.happen();
+            })));
+        }
+    };
+    DungeonEvent.OPEN_BOX = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.createImg = () => new Img("img/box_open.png");
+            this.isZoomImg = () => false;
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                let openNum = 1;
+                let openBoost = 0.3;
+                while (Math.random() <= openBoost) {
+                    openNum++;
+                    openBoost /= 2;
                 }
-            }
-            if (Math.random() < 0.15) {
-                const trends = Dungeon.now.trendItems();
-                if (trends.length > 0) {
-                    const item = trends[(Math.random() * trends.length) | 0];
-                    yield wait();
-                    item.add(1);
+                let dungeonRank = Dungeon.now.rank;
+                for (let i = 0; i < openNum; i++) {
+                    const itemRank = Item.fluctuateRank(dungeonRank);
+                    let item = Item.rndItem(Item.DROP_BOX, itemRank);
+                    let addNum = 1;
+                    item.add(addNum);
+                    if (i < openNum - 1) {
+                        yield wait();
+                    }
                 }
-            }
-        });
-        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
-    }
-};
-DungeonEvent.TREASURE = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.createImg = () => new Img("img/treasure.png");
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            Util.msg.set("財宝の箱だ！");
-            Util.msg.set(`要:${Dungeon.now.treasureKey}(所持:${Dungeon.now.treasureKey.num}個)`);
-        });
-        this.createBtnLayout = () => createDefLayout()
-            .set(ReturnBtn.index, new Btn("開ける", () => __awaiter(this, void 0, void 0, function* () {
-            if (Dungeon.now.treasureKey.num > 0) {
-                Dungeon.now.treasureKey.num--;
-                Dungeon.now.treasureOpenNum++;
-                yield DungeonEvent.OPEN_TREASURE.happen();
-            }
-            else {
-                Util.msg.set("鍵を持っていない");
-            }
-        })));
-    }
-};
-DungeonEvent.OPEN_TREASURE = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.createImg = () => new Img("img/treasure_open.png");
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            yield Dungeon.now.treasure.add(1);
-        });
-        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
-    }
-};
-DungeonEvent.GET_TREASURE_KEY = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            yield Dungeon.now.treasureKey.add(1);
-        });
-        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
-    }
-};
-DungeonEvent.TRAP = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.createImg = () => new Img("img/trap.png");
-        this.happenInner = () => {
-            Util.msg.set("罠だ");
-        };
-        this.createBtnLayout = () => createDefLayout()
-            .set(ReturnBtn.index, new Btn("解除", () => __awaiter(this, void 0, void 0, function* () {
-            yield DungeonEvent.TRAP_BROKEN.happen();
-        })))
-            .set(AdvanceBtn.index, new Btn("進む", () => __awaiter(this, void 0, void 0, function* () {
-            Util.msg.set("引っかかった！", Color.RED);
-            yield wait();
-            for (let p of Unit.players) {
-                if (!p.exists || p.dead) {
-                    continue;
-                }
-                const dmg = new Dmg({ absPow: p.prm(Prm.MAX_HP).total / 5 });
-                yield p.doDmg(dmg);
-                yield p.judgeDead();
-            }
-            DungeonEvent.empty.happen();
-        })).setNoMove());
-    }
-};
-DungeonEvent.TRAP_BROKEN = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.createImg = () => new Img("img/trap_broken.png");
-        this.isZoomImg = () => false;
-        this.happenInner = () => {
-            Util.msg.set("解除した");
-        };
-        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
-    }
-};
-DungeonEvent.TREE = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.createImg = () => new Img("img/tree.png");
-        this.happenInner = () => {
-            Util.msg.set("木だ");
-        };
-        this.createBtnLayout = () => createDefLayout()
-            .set(ReturnBtn.index, new Btn("切る", () => __awaiter(this, void 0, void 0, function* () {
-            yield DungeonEvent.TREE_BROKEN.happen();
-        })))
-            .set(AdvanceBtn.index, new Btn("進む", () => __awaiter(this, void 0, void 0, function* () {
-            Util.msg.set("いてっ！", Color.RED);
-            yield wait();
-            for (let p of Unit.players) {
-                if (!p.exists || p.dead) {
-                    continue;
-                }
-                const dmg = new Dmg({ absPow: p.prm(Prm.MAX_HP).total / 10 });
-                yield p.doDmg(dmg);
-                yield p.judgeDead();
-            }
-        })).setNoMove());
-    }
-};
-DungeonEvent.TREE_BROKEN = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.createImg = () => new Img("img/tree_broken.png");
-        this.isZoomImg = () => false;
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            let openNum = 1;
-            let openBoost = 0.3;
-            while (Math.random() <= openBoost) {
-                openNum++;
-                openBoost /= 2;
-            }
-            let dungeonRank = Dungeon.now.rank;
-            for (let i = 0; i < openNum; i++) {
-                const itemRank = Item.fluctuateRank(dungeonRank);
-                let item = Item.rndItem(Item.DROP_TREE, itemRank);
-                let addNum = 1;
-                item.add(addNum);
-                if (i < openNum - 1) {
-                    yield wait();
-                }
-            }
-        });
-        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
-    }
-};
-DungeonEvent.BATTLE = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            Util.msg.set("敵が現れた！");
-            Dungeon.now.setEnemy();
-            Battle.setup(BattleType.NORMAL, (result) => {
-                switch (result) {
-                    case BattleResult.WIN:
-                        SaveData.save();
-                        Scene.load(DungeonScene.ins);
-                        break;
-                    case BattleResult.LOSE:
-                        DungeonEvent.ESCAPE_DUNGEON.happen();
-                        break;
-                    case BattleResult.ESCAPE:
-                        Scene.load(DungeonScene.ins);
-                        break;
+                if (Math.random() < 0.15) {
+                    const trends = Dungeon.now.trendItems();
+                    if (trends.length > 0) {
+                        const item = trends[(Math.random() * trends.length) | 0];
+                        yield wait();
+                        item.add(1);
+                    }
                 }
             });
-            Scene.load(BattleScene.ins);
-        });
-        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
-    }
-};
-DungeonEvent.BOSS_BATTLE = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            Util.msg.set(`[${Dungeon.now}]のボスが現れた！`, Color.WHITE.bright);
-            Dungeon.now.setBoss();
-            Battle.setup(BattleType.BOSS, (result) => __awaiter(this, void 0, void 0, function* () {
-                switch (result) {
-                    case BattleResult.WIN:
-                        yield DungeonEvent.CLEAR_DUNGEON.happen();
-                        break;
-                    case BattleResult.LOSE:
-                        yield DungeonEvent.ESCAPE_DUNGEON.happen();
-                        break;
-                    case BattleResult.ESCAPE:
-                        yield DungeonEvent.ESCAPE_DUNGEON.happen();
-                        break;
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.TREASURE = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.createImg = () => new Img("img/treasure.png");
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set("財宝の箱だ！");
+                Util.msg.set(`要:${Dungeon.now.treasureKey}(所持:${Dungeon.now.treasureKey.num}個)`);
+            });
+            this.createBtnLayout = () => createDefLayout()
+                .set(ReturnBtn.index, new Btn("開ける", () => __awaiter(this, void 0, void 0, function* () {
+                if (Dungeon.now.treasureKey.num > 0) {
+                    Dungeon.now.treasureKey.num--;
+                    Dungeon.now.treasureOpenNum++;
+                    yield DungeonEvent.OPEN_TREASURE.happen();
                 }
-            }));
-            Scene.load(BattleScene.ins);
-        });
-        this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
-    }
-};
-DungeonEvent.ESCAPE_DUNGEON = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            Util.msg.set(`${Dungeon.now.toString()}を脱出します...`);
-            yield cwait();
-            SaveData.save();
-            yield cwait();
-            Scene.load(TownScene.ins);
-        });
-        this.createBtnLayout = () => ILayout.empty;
-    }
-};
-DungeonEvent.CLEAR_DUNGEON = new class extends DungeonEvent {
-    constructor() {
-        super(...arguments);
-        this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-            let yen = (Dungeon.now.au + 1) * Dungeon.now.au / 10 * (1 + Dungeon.now.clearNum * 0.02);
-            Dungeon.now.clearNum++;
-            Util.msg.set(`[${Dungeon.now}]を踏破した！`, Color.WHITE.bright);
-            yield cwait();
-            PlayData.yen += yen | 0;
-            Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright);
-            yield cwait();
-            Dungeon.now.clearItem().add(1);
-            yield cwait();
-            DungeonEvent.ESCAPE_DUNGEON.happen();
-        });
-        this.createBtnLayout = () => ILayout.empty;
-    }
-};
+                else {
+                    Util.msg.set("鍵を持っていない");
+                }
+            })));
+        }
+    };
+    DungeonEvent.OPEN_TREASURE = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.createImg = () => new Img("img/treasure_open.png");
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                yield Dungeon.now.treasure.add(1);
+            });
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.GET_TREASURE_KEY = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                yield Dungeon.now.treasureKey.add(1);
+            });
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.TRAP = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.createImg = () => new Img("img/trap.png");
+            this.happenInner = () => {
+                Util.msg.set("罠だ");
+            };
+            this.createBtnLayout = () => createDefLayout()
+                .set(ReturnBtn.index, new Btn("解除", () => __awaiter(this, void 0, void 0, function* () {
+                yield DungeonEvent.TRAP_BROKEN.happen();
+            })))
+                .set(AdvanceBtn.index, new Btn("進む", () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set("引っかかった！", Color.RED);
+                yield wait();
+                for (let p of Unit.players) {
+                    if (!p.exists || p.dead) {
+                        continue;
+                    }
+                    const dmg = new Dmg({ absPow: p.prm(Prm.MAX_HP).total / 5 });
+                    yield p.doDmg(dmg);
+                    yield p.judgeDead();
+                }
+                DungeonEvent.empty.happen();
+            })).setNoMove());
+        }
+    };
+    DungeonEvent.TRAP_BROKEN = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.createImg = () => new Img("img/trap_broken.png");
+            this.isZoomImg = () => false;
+            this.happenInner = () => {
+                Util.msg.set("解除した");
+            };
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.TREE = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.createImg = () => new Img("img/tree.png");
+            this.happenInner = () => {
+                Util.msg.set("木だ");
+            };
+            this.createBtnLayout = () => createDefLayout()
+                .set(ReturnBtn.index, new Btn("切る", () => __awaiter(this, void 0, void 0, function* () {
+                yield DungeonEvent.TREE_BROKEN.happen();
+            })))
+                .set(AdvanceBtn.index, new Btn("進む", () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set("いてっ！", Color.RED);
+                yield wait();
+                for (let p of Unit.players) {
+                    if (!p.exists || p.dead) {
+                        continue;
+                    }
+                    const dmg = new Dmg({ absPow: p.prm(Prm.MAX_HP).total / 10 });
+                    yield p.doDmg(dmg);
+                    yield p.judgeDead();
+                }
+            })).setNoMove());
+        }
+    };
+    DungeonEvent.TREE_BROKEN = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.createImg = () => new Img("img/tree_broken.png");
+            this.isZoomImg = () => false;
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                let openNum = 1;
+                let openBoost = 0.3;
+                while (Math.random() <= openBoost) {
+                    openNum++;
+                    openBoost /= 2;
+                }
+                let dungeonRank = Dungeon.now.rank;
+                for (let i = 0; i < openNum; i++) {
+                    const itemRank = Item.fluctuateRank(dungeonRank);
+                    let item = Item.rndItem(Item.DROP_TREE, itemRank);
+                    let addNum = 1;
+                    item.add(addNum);
+                    if (i < openNum - 1) {
+                        yield wait();
+                    }
+                }
+            });
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.BATTLE = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set("敵が現れた！");
+                Dungeon.now.setEnemy();
+                Battle.setup(BattleType.NORMAL, (result) => {
+                    switch (result) {
+                        case BattleResult.WIN:
+                            SaveData.save();
+                            Scene.load(DungeonScene.ins);
+                            break;
+                        case BattleResult.LOSE:
+                            DungeonEvent.ESCAPE_DUNGEON.happen();
+                            break;
+                        case BattleResult.ESCAPE:
+                            Scene.load(DungeonScene.ins);
+                            break;
+                    }
+                });
+                Scene.load(BattleScene.ins);
+            });
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.BOSS_BATTLE = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set(`[${Dungeon.now}]のボスが現れた！`, Color.WHITE.bright);
+                Dungeon.now.setBoss();
+                Battle.setup(BattleType.BOSS, (result) => __awaiter(this, void 0, void 0, function* () {
+                    switch (result) {
+                        case BattleResult.WIN:
+                            yield DungeonEvent.CLEAR_DUNGEON.happen();
+                            break;
+                        case BattleResult.LOSE:
+                            yield DungeonEvent.ESCAPE_DUNGEON.happen();
+                            break;
+                        case BattleResult.ESCAPE:
+                            yield DungeonEvent.ESCAPE_DUNGEON.happen();
+                            break;
+                    }
+                }));
+                Scene.load(BattleScene.ins);
+            });
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.ESCAPE_DUNGEON = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set(`${Dungeon.now.toString()}を脱出します...`);
+                yield cwait();
+                SaveData.save();
+                yield cwait();
+                Scene.load(TownScene.ins);
+            });
+            this.createBtnLayout = () => ILayout.empty;
+        }
+    };
+    DungeonEvent.CLEAR_DUNGEON = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                let yen = (Dungeon.now.au + 1) * Dungeon.now.au / 10 * (1 + Dungeon.now.clearNum * 0.02);
+                Dungeon.now.clearNum++;
+                Util.msg.set(`[${Dungeon.now}]を踏破した！`, Color.WHITE.bright);
+                yield cwait();
+                PlayData.yen += yen | 0;
+                Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright);
+                yield cwait();
+                Dungeon.now.clearItem().add(1);
+                yield cwait();
+                DungeonEvent.ESCAPE_DUNGEON.happen();
+            });
+            this.createBtnLayout = () => ILayout.empty;
+        }
+    };
+})(DungeonEvent || (DungeonEvent = {}));
 const createDefLayout = () => {
     //0,1,2,
     //3,4,5,

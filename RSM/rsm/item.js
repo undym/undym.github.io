@@ -15,8 +15,7 @@ import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
 import { Num, Mix } from "./mix.js";
-import DungeonEvent from "./dungeon/dungeonevent.js";
-import { SaveData } from "./savedata.js";
+import { DungeonEvent } from "./dungeon/dungeonevent.js";
 export class ItemType {
     constructor(name) {
         this.toString = () => name;
@@ -203,190 +202,193 @@ Item.DEF_NUM_LIMIT = 999;
 Item.DROP_NO = 0;
 Item.DROP_BOX = 1 << 0;
 Item.DROP_TREE = 1 << 1;
-//-----------------------------------------------------------------
-//
-//HP回復
-//
-//-----------------------------------------------------------------
-Item.スティックパン = new class extends Item {
-    constructor() {
-        super({ uniqueName: "スティックパン", info: ["HP+10"],
-            type: ItemType.HP回復, rank: 0,
-            consumable: true, drop: Item.DROP_NO,
-            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, 10); }),
-        });
-    }
-};
-Item.硬化スティックパン = new class extends Item {
-    constructor() {
-        super({ uniqueName: "硬化スティックパン", info: ["HP+10%"],
-            type: ItemType.HP回復, rank: 0,
-            consumable: true, drop: Item.DROP_NO,
-            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, target.prm(Prm.MAX_HP).total / 10); }),
-        });
-    }
-    createMix() {
-        return new Mix({
-            result: [this, 1],
-            limit: () => 5,
-            materials: [[Item.石, 5], [Item.土, 5]],
-        });
-    }
-};
-//-----------------------------------------------------------------
-//
-//MP回復
-//
-//-----------------------------------------------------------------
-Item.赤い水 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "赤い水", info: ["MP+10"],
-            type: ItemType.MP回復, rank: 0,
-            consumable: true, drop: Item.DROP_NO,
-            use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 10); }),
-        });
-    }
-    createMix() {
-        return new Mix({
-            result: [this, 1],
-            limit: () => 5,
-            materials: [[Item.水, 5], [Item.土, 1]],
-        });
-    }
-};
-//-----------------------------------------------------------------
-//
-//その他
-//
-//-----------------------------------------------------------------
-Item.脱出ポッド = new class extends Item {
-    constructor() {
-        super({ uniqueName: "脱出ポッド", info: ["ダンジョンから脱出する"],
-            type: ItemType.ダンジョン, rank: 0,
-            consumable: true, drop: Item.DROP_NO,
-            use: (user, target) => __awaiter(this, void 0, void 0, function* () {
-                yield DungeonEvent.ESCAPE_DUNGEON.happen();
-            }),
-        });
-    }
-    canUse() {
-        return super.canUse() && SceneType.now === SceneType.DUNGEON;
-    }
-};
-Item.記録用粘土板 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "記録用粘土板", info: ["ダンジョン内でセーブする"],
-            type: ItemType.ダンジョン, rank: 0,
-            consumable: true, drop: Item.DROP_NO,
-            use: (user, target) => __awaiter(this, void 0, void 0, function* () {
-                SaveData.save();
-            }),
-        });
-    }
-    createMix() {
-        return new Mix({
-            result: [this, 1],
-            limit: () => 1,
-            materials: [[Item.石, 3], [Item.土, 3], [Item.枝, 3]],
-        });
-    }
-    canUse() {
-        return super.canUse() && SceneType.now === SceneType.DUNGEON;
-    }
-};
-//-----------------------------------------------------------------
-//
-//鍵
-//
-//-----------------------------------------------------------------
-Item.はじまりの丘の鍵 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "はじまりの丘の鍵", info: [""],
-            type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
-    }
-};
-Item.丘の上の鍵 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "丘の上の鍵", info: [""],
-            type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
-    }
-};
-//-----------------------------------------------------------------
-//
-//玉
-//
-//-----------------------------------------------------------------
-Item.はじまりの丘の玉 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "はじまりの丘の玉", info: [""],
-            type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
-    }
-};
-Item.丘の上の玉 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "丘の上の玉", info: [""],
-            type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
-    }
-};
-//-----------------------------------------------------------------
-//
-//素材
-//
-//-----------------------------------------------------------------
-Item.石 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "石", info: ["いし"],
-            type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
-    }
-};
-Item.枝 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "枝", info: ["えだ"],
-            type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
-    }
-};
-Item.土 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "土", info: ["つち"],
-            type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
-    }
-};
-Item.水 = new class extends Item {
-    constructor() {
-        super({ uniqueName: "水", info: ["水"],
-            type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
-    }
-};
-Item.He = new class extends Item {
-    constructor() {
-        super({ uniqueName: "He", info: ["ヘェッ"],
-            type: ItemType.素材, rank: 2, drop: Item.DROP_BOX });
-    }
-};
-Item.少女の心を持ったおっさん = new class extends Item {
-    constructor() {
-        super({ uniqueName: "少女の心を持ったおっさん", info: ["いつもプリキュアの話をしている"],
-            type: ItemType.素材, rank: 5, drop: Item.DROP_BOX });
-    }
-};
-Item.しいたけ = new class extends Item {
-    constructor() {
-        super({ uniqueName: "しいたけ", info: [""],
-            type: ItemType.素材, rank: 0, drop: Item.DROP_NO, });
-    }
-};
-Item.スギ = new class extends Item {
-    constructor() {
-        super({ uniqueName: "スギ", info: [""],
-            type: ItemType.素材, rank: 1, drop: Item.DROP_TREE });
-    }
-};
-Item.ヒノキ = new class extends Item {
-    constructor() {
-        super({ uniqueName: "ヒノキ", info: [""],
-            type: ItemType.素材, rank: 1, drop: Item.DROP_TREE });
-    }
-};
+(function (Item) {
+    //-----------------------------------------------------------------
+    //
+    //HP回復
+    //
+    //-----------------------------------------------------------------
+    Item.スティックパン = new class extends Item {
+        constructor() {
+            super({ uniqueName: "スティックパン", info: ["HP+10"],
+                type: ItemType.HP回復, rank: 0,
+                consumable: true, drop: Item.DROP_NO,
+                use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, 10); }),
+            });
+        }
+    };
+    Item.硬化スティックパン = new class extends Item {
+        constructor() {
+            super({ uniqueName: "硬化スティックパン", info: ["HP+10%"],
+                type: ItemType.HP回復, rank: 0,
+                consumable: true, drop: Item.DROP_NO,
+                use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, target.prm(Prm.MAX_HP).total / 10); }),
+            });
+        }
+        createMix() {
+            return new Mix({
+                result: [this, 1],
+                limit: () => 5,
+                materials: [[Item.石, 5], [Item.土, 5]],
+            });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
+    //MP回復
+    //
+    //-----------------------------------------------------------------
+    Item.赤い水 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "赤い水", info: ["MP+10"],
+                type: ItemType.MP回復, rank: 0,
+                consumable: true, drop: Item.DROP_NO,
+                use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 10); }),
+            });
+        }
+        createMix() {
+            return new Mix({
+                result: [this, 1],
+                limit: () => 5,
+                materials: [[Item.水, 5], [Item.土, 1]],
+            });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
+    //その他
+    //
+    //-----------------------------------------------------------------
+    Item.脱出ポッド = new class extends Item {
+        constructor() {
+            super({ uniqueName: "脱出ポッド", info: ["ダンジョンから脱出する"],
+                type: ItemType.ダンジョン, rank: 0,
+                consumable: true, drop: Item.DROP_NO,
+                use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                    yield DungeonEvent.ESCAPE_DUNGEON.happen();
+                }),
+            });
+        }
+        canUse() {
+            return super.canUse() && SceneType.now === SceneType.DUNGEON;
+        }
+    };
+    // export const                         記録用粘土板 = new class extends Item{
+    //     constructor(){super({uniqueName:"記録用粘土板", info:["ダンジョン内でセーブする"],
+    //                             type:ItemType.ダンジョン, rank:0,
+    //                             consumable:true, drop:Item.DROP_NO,
+    //                             use:async(user,target)=>{
+    //                                 SaveData.save();
+    //                             },
+    //     })}
+    //     createMix(){return new Mix({
+    //         result:[this, 1],
+    //         limit:()=>1,
+    //         materials:[[Item.石, 3], [Item.土, 3], [Item.枝, 3]],
+    //     });}
+    //     canUse(){
+    //         return super.canUse() && SceneType.now === SceneType.DUNGEON;
+    //     }
+    // };
+    //-----------------------------------------------------------------
+    //
+    //鍵
+    //
+    //-----------------------------------------------------------------
+    Item.はじまりの丘の鍵 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "はじまりの丘の鍵", info: [""],
+                type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
+        }
+    };
+    Item.丘の上の鍵 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "丘の上の鍵", info: [""],
+                type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
+    //玉
+    //
+    //-----------------------------------------------------------------
+    Item.はじまりの丘の玉 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "はじまりの丘の玉", info: [""],
+                type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
+        }
+    };
+    Item.丘の上の玉 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "丘の上の玉", info: [""],
+                type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
+    //素材
+    //
+    //-----------------------------------------------------------------
+    Item.石 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "石", info: ["いし"],
+                type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
+        }
+    };
+    Item.枝 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "枝", info: ["えだ"],
+                type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
+        }
+    };
+    Item.土 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "土", info: ["つち"],
+                type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
+        }
+    };
+    Item.水 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "水", info: ["水"],
+                type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
+        }
+    };
+    Item.He = new class extends Item {
+        constructor() {
+            super({ uniqueName: "He", info: ["ヘェッ"],
+                type: ItemType.素材, rank: 2, drop: Item.DROP_BOX });
+        }
+    };
+    Item.少女の心を持ったおっさん = new class extends Item {
+        constructor() {
+            super({ uniqueName: "少女の心を持ったおっさん", info: ["いつもプリキュアの話をしている"],
+                type: ItemType.素材, rank: 5, drop: Item.DROP_BOX });
+        }
+    };
+    Item.しいたけ = new class extends Item {
+        constructor() {
+            super({ uniqueName: "しいたけ", info: [""],
+                type: ItemType.素材, rank: 0, drop: Item.DROP_NO, });
+        }
+    };
+    Item.スギ = new class extends Item {
+        constructor() {
+            super({ uniqueName: "スギ", info: [""],
+                type: ItemType.素材, rank: 1, drop: Item.DROP_TREE });
+        }
+    };
+    Item.ヒノキ = new class extends Item {
+        constructor() {
+            super({ uniqueName: "ヒノキ", info: [""],
+                type: ItemType.素材, rank: 1, drop: Item.DROP_TREE });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
+    //
+    //
+    //-----------------------------------------------------------------
+})(Item || (Item = {}));
 class ItemFont {
     static get font() {
         if (!this._font) {

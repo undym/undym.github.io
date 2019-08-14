@@ -8,7 +8,7 @@ import { Targeting, Action } from "./force.js";
 import { randomInt, choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
 import { Num, Mix } from "./mix.js";
-import DungeonEvent from "./dungeon/dungeonevent.js";
+import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import { SaveData } from "./savedata.js";
 
 
@@ -187,7 +187,7 @@ export class Item implements Action, Num{
     private _mix:Mix|undefined;
     protected createMix():Mix|undefined{return undefined;}
     
-    constructor(args:{
+    protected constructor(args:{
         uniqueName:string,
         info:string[],
         type:ItemType,
@@ -253,19 +253,24 @@ export class Item implements Action, Num{
         if(this.num - this.usedNum <= 0){return false;}
         return true;
     }
+}
+
+
+
+export namespace Item{
     //-----------------------------------------------------------------
     //
     //HP回復
     //
     //-----------------------------------------------------------------
-    static readonly                      スティックパン = new class extends Item{
+    export const                         スティックパン = new class extends Item{
         constructor(){super({uniqueName:"スティックパン", info:["HP+10"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=> await healHP(target, 10),
         })}
     };
-    static readonly                      硬化スティックパン = new class extends Item{
+    export const                         硬化スティックパン = new class extends Item{
         constructor(){super({uniqueName:"硬化スティックパン", info:["HP+10%"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
@@ -282,7 +287,7 @@ export class Item implements Action, Num{
     //MP回復
     //
     //-----------------------------------------------------------------
-    static readonly                      赤い水 = new class extends Item{
+    export const                         赤い水 = new class extends Item{
         constructor(){super({uniqueName:"赤い水", info:["MP+10"],
                                 type:ItemType.MP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
@@ -299,7 +304,7 @@ export class Item implements Action, Num{
     //その他
     //
     //-----------------------------------------------------------------
-    static readonly                      脱出ポッド = new class extends Item{
+    export const                         脱出ポッド = new class extends Item{
         constructor(){super({uniqueName:"脱出ポッド", info:["ダンジョンから脱出する"],
                                 type:ItemType.ダンジョン, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
@@ -311,34 +316,34 @@ export class Item implements Action, Num{
             return super.canUse() && SceneType.now === SceneType.DUNGEON;
         }
     };
-    static readonly                      記録用粘土板 = new class extends Item{
-        constructor(){super({uniqueName:"記録用粘土板", info:["ダンジョン内でセーブする"],
-                                type:ItemType.ダンジョン, rank:0,
-                                consumable:true, drop:Item.DROP_NO,
-                                use:async(user,target)=>{
-                                    SaveData.save();
-                                },
-        })}
-        createMix(){return new Mix({
-            result:[this, 1],
-            limit:()=>1,
-            materials:[[Item.石, 3], [Item.土, 3], [Item.枝, 3]],
+    // export const                         記録用粘土板 = new class extends Item{
+    //     constructor(){super({uniqueName:"記録用粘土板", info:["ダンジョン内でセーブする"],
+    //                             type:ItemType.ダンジョン, rank:0,
+    //                             consumable:true, drop:Item.DROP_NO,
+    //                             use:async(user,target)=>{
+    //                                 SaveData.save();
+    //                             },
+    //     })}
+    //     createMix(){return new Mix({
+    //         result:[this, 1],
+    //         limit:()=>1,
+    //         materials:[[Item.石, 3], [Item.土, 3], [Item.枝, 3]],
 
-        });}
-        canUse(){
-            return super.canUse() && SceneType.now === SceneType.DUNGEON;
-        }
-    };
+    //     });}
+    //     canUse(){
+    //         return super.canUse() && SceneType.now === SceneType.DUNGEON;
+    //     }
+    // };
     //-----------------------------------------------------------------
     //
     //鍵
     //
     //-----------------------------------------------------------------
-    static readonly                      はじまりの丘の鍵 = new class extends Item{
+    export const                         はじまりの丘の鍵 = new class extends Item{
         constructor(){super({uniqueName:"はじまりの丘の鍵", info:[""],
                                 type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
-    static readonly                      丘の上の鍵 = new class extends Item{
+    export const                         丘の上の鍵 = new class extends Item{
         constructor(){super({uniqueName:"丘の上の鍵", info:[""],
                                 type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
@@ -347,11 +352,11 @@ export class Item implements Action, Num{
     //玉
     //
     //-----------------------------------------------------------------
-    static readonly                      はじまりの丘の玉 = new class extends Item{
+    export const                         はじまりの丘の玉 = new class extends Item{
         constructor(){super({uniqueName:"はじまりの丘の玉", info:[""],
                                 type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
-    static readonly                      丘の上の玉 = new class extends Item{
+    export const                         丘の上の玉 = new class extends Item{
         constructor(){super({uniqueName:"丘の上の玉", info:[""],
                                 type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
@@ -360,40 +365,40 @@ export class Item implements Action, Num{
     //素材
     //
     //-----------------------------------------------------------------
-    static readonly                      石 = new class extends Item{
+    export const                         石 = new class extends Item{
         constructor(){super({uniqueName:"石", info:["いし"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    static readonly                      枝 = new class extends Item{
+    export const                         枝 = new class extends Item{
         constructor(){super({uniqueName:"枝", info:["えだ"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    static readonly                      土 = new class extends Item{
+    export const                         土 = new class extends Item{
         constructor(){super({uniqueName:"土", info:["つち"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    static readonly                      水 = new class extends Item{
+    export const                         水 = new class extends Item{
         constructor(){super({uniqueName:"水", info:["水"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    static readonly                      He = new class extends Item{
+    export const                         He = new class extends Item{
         constructor(){super({uniqueName:"He", info:["ヘェッ"],
                                 type:ItemType.素材, rank:2, drop:Item.DROP_BOX})}
     };
-    static readonly                      少女の心を持ったおっさん = new class extends Item{
+    export const                         少女の心を持ったおっさん = new class extends Item{
         constructor(){super({uniqueName:"少女の心を持ったおっさん", info:["いつもプリキュアの話をしている"],
                                 type:ItemType.素材, rank:5, drop:Item.DROP_BOX})}
     };
 
-    static readonly                      しいたけ = new class extends Item{
+    export const                         しいたけ = new class extends Item{
         constructor(){super({uniqueName:"しいたけ", info:[""],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_NO,})}
     };
-    static readonly                      スギ = new class extends Item{
+    export const                         スギ = new class extends Item{
         constructor(){super({uniqueName:"スギ", info:[""],
                                 type:ItemType.素材, rank:1, drop:Item.DROP_TREE})}
     };
-    static readonly                      ヒノキ = new class extends Item{
+    export const                         ヒノキ = new class extends Item{
         constructor(){super({uniqueName:"ヒノキ", info:[""],
                                 type:ItemType.素材, rank:1, drop:Item.DROP_TREE})}
     };

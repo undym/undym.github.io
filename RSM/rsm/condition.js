@@ -81,76 +81,88 @@ export class Condition {
     phaseEnd(unit) { }
 }
 Condition._values = [];
-//--------------------------------------------------------------------------
-//
-//
-//
-//--------------------------------------------------------------------------
-Condition.empty = new class extends Condition {
-    constructor() { super("empty", ConditionType.GOOD_LV1); }
-    toString() { return ""; }
-};
-//--------------------------------------------------------------------------
-//
-//GOOD_LV1
-//
-//--------------------------------------------------------------------------
-Condition.練 = new class extends Condition {
-    constructor() { super("練", ConditionType.GOOD_LV1); }
-    beforeDoAtk(action, attacker, target, dmg) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (action instanceof ActiveTec && action.type === TecType.格闘) {
-                Util.msg.set("＞練");
-                yield wait();
-                dmg.pow.mul *= (1 + attacker.getConditionValue(this) * 0.5);
-                attacker.addConditionValue(this, -1);
-            }
-        });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//GOOD_LV2
-//
-//--------------------------------------------------------------------------
-Condition.盾 = new class extends Condition {
-    constructor() { super("盾", ConditionType.GOOD_LV2); }
-    beforeBeAtk(action, attacker, target, dmg) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (action instanceof ActiveTec && action.type === TecType.格闘) {
-                Util.msg.set("＞盾");
-                yield wait();
-                dmg.pow.mul *= (1 + target.getConditionValue(this) * 0.5);
-                target.addConditionValue(this, -1);
-            }
-        });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//GOOD_LV3
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-//
-//BAD_LV1
-//
-//--------------------------------------------------------------------------
-Condition.毒 = new class extends Condition {
-    constructor() { super("毒", ConditionType.BAD_LV1); }
-    phaseEnd(unit) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const value = unit.getConditionValue(this);
-            if (value < unit.prm(Prm.DRK).total + 1) {
-                unit.clearCondition(this);
-                Util.msg.set(`${unit.name}の＜毒＞が解除された`);
-                yield wait();
-                return;
-            }
-            let dmg = new Dmg({ absPow: value });
-            Util.msg.set("＞毒", Color.RED);
-            unit.doDmg(dmg);
-            unit.addConditionValue(this, value / 2);
-        });
-    }
-};
+(function (Condition) {
+    //--------------------------------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------------------------------
+    Condition.empty = new class extends Condition {
+        constructor() { super("empty", ConditionType.GOOD_LV1); }
+        toString() { return ""; }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //GOOD_LV1
+    //
+    //--------------------------------------------------------------------------
+    Condition.練 = new class extends Condition {
+        constructor() { super("練", ConditionType.GOOD_LV1); }
+        beforeDoAtk(action, attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof ActiveTec && action.type === TecType.格闘) {
+                    Util.msg.set("＞練");
+                    yield wait();
+                    dmg.pow.mul *= (1 + attacker.getConditionValue(this) * 0.5);
+                    attacker.addConditionValue(this, -1);
+                }
+            });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //GOOD_LV2
+    //
+    //--------------------------------------------------------------------------
+    Condition.盾 = new class extends Condition {
+        constructor() { super("盾", ConditionType.GOOD_LV2); }
+        beforeBeAtk(action, attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof ActiveTec && action.type === TecType.格闘) {
+                    Util.msg.set("＞盾");
+                    yield wait();
+                    dmg.pow.mul *= (1 + target.getConditionValue(this) * 0.5);
+                    target.addConditionValue(this, -1);
+                }
+            });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //GOOD_LV3
+    //
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //BAD_LV1
+    //
+    //--------------------------------------------------------------------------
+    Condition.毒 = new class extends Condition {
+        constructor() { super("毒", ConditionType.BAD_LV1); }
+        phaseEnd(unit) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const value = unit.getConditionValue(this);
+                if (value < unit.prm(Prm.DRK).total + 1) {
+                    unit.clearCondition(this);
+                    Util.msg.set(`${unit.name}の＜毒＞が解除された`);
+                    yield wait();
+                    return;
+                }
+                let dmg = new Dmg({ absPow: value });
+                Util.msg.set("＞毒", Color.RED);
+                unit.doDmg(dmg);
+                unit.addConditionValue(this, value * 0.666);
+            });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //BAD_LV2
+    //
+    //--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //BAD_LV3
+    //
+    //--------------------------------------------------------------------------
+})(Condition || (Condition = {}));

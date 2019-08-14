@@ -1,5 +1,5 @@
 
-import DungeonEvent from "./dungeonevent.js";
+import { DungeonEvent } from "./dungeonevent.js";
 import { Rect } from "../undym/type.js";
 import { Job } from "../job.js";
 import { Unit, EUnit, Prm } from "../unit.js";
@@ -114,7 +114,7 @@ export abstract class Dungeon{
     //
     //-----------------------------------------------------------------
     // private constructor(name:string, protected rank:number, protected enemyLv:number, protected au:number){
-    private constructor(args:{
+    protected constructor(args:{
         uniqueName:string,
         rank:number,
         enemyLv:number,
@@ -196,12 +196,22 @@ export abstract class Dungeon{
     }
     
 
+    
+
     //-----------------------------------------------------------------
     //
     //
     //
     //-----------------------------------------------------------------
-    static readonly                      はじまりの丘:Dungeon = new class extends Dungeon{
+}
+
+export namespace Dungeon{
+    //-----------------------------------------------------------------
+    //
+    //
+    //
+    //-----------------------------------------------------------------
+    export const                         はじまりの丘:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"はじまりの丘",
                                 rank:0, enemyLv:1, au:50,
                                 clearItem:()=>Item.はじまりの丘の玉,
@@ -223,7 +233,7 @@ export abstract class Dungeon{
             }
         };
     };
-    static readonly                      丘の上:Dungeon = new class extends Dungeon{
+    export const                         丘の上:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"丘の上",
                                 rank:1, enemyLv:3, au:70,
                                 clearItem:()=>Item.丘の上の玉,
@@ -235,7 +245,7 @@ export abstract class Dungeon{
         isVisible = ()=>Dungeon.はじまりの丘.clearNum > 0;
         setBossInner = ()=>{
             let e = Unit.enemies[0];
-            Job.剣士.setEnemy(e, e.prm(Prm.LV).base);
+            Job.格闘家.setEnemy(e, e.prm(Prm.LV).base);
             e.name = "丘太郎";
             e.prm(Prm.MAX_HP).base = 30;
             e.prm(Prm.STR).base = 10;
@@ -245,12 +255,4 @@ export abstract class Dungeon{
             }
         };
     };
-    
-
-    //-----------------------------------------------------------------
-    //
-    //
-    //
-    //-----------------------------------------------------------------
 }
-

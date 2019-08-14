@@ -105,6 +105,27 @@ export abstract class Unit{
         }
         return this._players[0];
     }
+    // /**そのユニットのパーティーメンバーを返す。withHimSelfで本人を含めるかどうか。!existsは含めない。*/
+    // static getParty(unit:Unit, withHimSelf = true):ReadonlyArray<Unit>{
+    //     const searchMember = (units:ReadonlyArray<PUnit>|ReadonlyArray<EUnit>):Unit[]=>{
+    //         let res:Unit[] = [];
+    //         for(const u of units){
+    //             if(!u.exists){continue;}
+    //             if(withHimSelf && u === unit){continue;}
+
+    //             res.push(u);
+    //         }
+    //         return res;
+    //     };
+
+    //     if(unit instanceof PUnit){
+    //         return searchMember( Unit.players );
+    //     }
+    //     if(unit instanceof EUnit){
+    //         return searchMember( Unit.enemies );
+    //     }
+    //     return [];
+    // }
 
     private static resetAll(){
         this._all = [];
@@ -175,24 +196,24 @@ export abstract class Unit{
 
     get hp():number      {return this.prm(Prm.HP).base;}
     set hp(value:number) {
-        this.prm(Prm.HP).base = value;
+        this.prm(Prm.HP).base = value|0;
         this.fixPrm(Prm.HP, Prm.MAX_HP);
     }
     get mp():number      {return this.prm(Prm.MP).base;}
     set mp(value:number) {
-        this.prm(Prm.MP).base = value;
+        this.prm(Prm.MP).base = value|0;
         this.fixPrm(Prm.MP, Prm.MAX_MP);
     }
     get tp():number      {return this.prm(Prm.TP).base;}
     set tp(value:number) {
-        this.prm(Prm.TP).base = value;
+        this.prm(Prm.TP).base = value|0;
         this.fixPrm(Prm.TP, Prm.MAX_TP);
     }
     get exp():number     {return this.prm(Prm.EXP).base;}
     set exp(value:number){this.prm(Prm.EXP).base = value;}
 
     private fixPrm(checkPrm:Prm, maxPrm:Prm){
-             if(this.prm(checkPrm).base < 0)                       {this.prm(checkPrm).base = 0;}
+             if(this.prm(checkPrm).base < 0)                     {this.prm(checkPrm).base = 0;}
         else if(this.prm(checkPrm).base > this.prm(maxPrm).total){this.prm(checkPrm).base = this.prm(maxPrm).total;}
     }
     //---------------------------------------------------------
@@ -494,7 +515,7 @@ export class EUnit extends Unit{
     static readonly DEF_AI = async(attacker:Unit, targetCandidates:Unit[])=>{
         let activeTecs:ActiveTec[] = attacker.tecs.filter(tec=> tec instanceof ActiveTec) as ActiveTec[];
         if(activeTecs.length === 0){
-            ActiveTec.何もしない.use( attacker, [attacker] );
+            Tec.何もしない.use( attacker, [attacker] );
             return;
         }
 
@@ -508,7 +529,7 @@ export class EUnit extends Unit{
             }
         }
 
-        ActiveTec.何もしない.use( attacker, [attacker] );
+        Tec.何もしない.use( attacker, [attacker] );
     };
 
     yen:number = 0;

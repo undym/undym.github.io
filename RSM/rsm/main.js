@@ -19,7 +19,7 @@ import { Page } from "./undym/page.js";
 import { Graphics, Texture } from "./graphics/graphics.js";
 import { Item } from "./item.js";
 import { SaveData } from "./savedata.js";
-import DungeonEvent from "./dungeon/dungeonevent.js";
+import { DungeonEvent } from "./dungeon/dungeonevent.js";
 window.onload = () => {
     console.log("start");
     Page.init();

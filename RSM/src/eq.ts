@@ -100,7 +100,7 @@ export abstract class Eq implements Force, Num{
     //
     //
     //--------------------------------------------------------------------------
-    private constructor(args:{
+    protected constructor(args:{
         uniqueName:string,
         info:string[],
         pos:EqPos,
@@ -140,10 +140,19 @@ export abstract class Eq implements Force, Num{
     //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
     //
+    //
+    //
+    //--------------------------------------------------------------------------
+}
+
+
+export namespace Eq{
+    //--------------------------------------------------------------------------
+    //
     //頭
     //
     //--------------------------------------------------------------------------
-    static readonly                      髪 = new class extends Eq{
+    export const                         髪 = new class extends Eq{
         constructor(){super({uniqueName:"髪", info:["髪a","髪b"], 
                                 pos:EqPos.頭, lv:0});}
     }
@@ -152,11 +161,11 @@ export abstract class Eq implements Force, Num{
     //武
     //
     //--------------------------------------------------------------------------
-    static readonly                      恋人 = new class extends Eq{
+    export const                         恋人 = new class extends Eq{
         constructor(){super({uniqueName:"恋人", info:["恋人info"],
                                 pos:EqPos.武, lv:0});}
     }
-    static readonly                      棒 = new class extends Eq{
+    export const                         棒 = new class extends Eq{
         constructor(){super({uniqueName:"棒", info:["格闘攻撃+10x1.1"],
                                 pos:EqPos.武, lv:20});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -166,7 +175,7 @@ export abstract class Eq implements Force, Num{
             }
         }
     }
-    // static readonly                      忍者刀 = new class extends Eq{
+    // export const                         忍者刀 = new class extends Eq{
     //     constructor(){super({uniqueName:"忍者刀", info:["格闘攻撃時稀に追加攻撃"],
     //                             pos:EqPos.武, lv:99});}
     //     createMix(){return new Mix({
@@ -179,7 +188,7 @@ export abstract class Eq implements Force, Num{
     //盾
     //
     //--------------------------------------------------------------------------
-    static readonly                      板 = new class extends Eq{
+    export const                         板 = new class extends Eq{
         constructor(){super({uniqueName:"板", info:[],
                                 pos:EqPos.盾, lv:0});}
     }
@@ -188,7 +197,7 @@ export abstract class Eq implements Force, Num{
     //体
     //
     //--------------------------------------------------------------------------
-    static readonly                      襤褸切れ = new class extends Eq{
+    export const                         襤褸切れ = new class extends Eq{
         constructor(){super({uniqueName:"襤褸切れ", info:[],
                                 pos:EqPos.体, lv:0});}
     }
@@ -197,7 +206,7 @@ export abstract class Eq implements Force, Num{
     //腰
     //
     //--------------------------------------------------------------------------
-    static readonly                      ひも = new class extends Eq{
+    export const                         ひも = new class extends Eq{
         constructor(){super({uniqueName:"ひも", info:[],
                                 pos:EqPos.腰, lv:0});}
     }
@@ -206,7 +215,7 @@ export abstract class Eq implements Force, Num{
     //腕
     //
     //--------------------------------------------------------------------------
-    static readonly                      腕 = new class extends Eq{
+    export const                         腕 = new class extends Eq{
         constructor(){super({uniqueName:"腕", info:[],
                                 pos:EqPos.腕, lv:0});}
     }
@@ -215,7 +224,7 @@ export abstract class Eq implements Force, Num{
     //手
     //
     //--------------------------------------------------------------------------
-    static readonly                          手 = new class extends Eq{
+    export const                             手 = new class extends Eq{
             constructor(){super({uniqueName:"手", info:[],
                                     pos:EqPos.手, lv:0});}
     }
@@ -224,7 +233,7 @@ export abstract class Eq implements Force, Num{
     //指
     //
     //--------------------------------------------------------------------------
-    static readonly                      肩身の指輪 = new class extends Eq{
+    export const                         肩身の指輪 = new class extends Eq{
         constructor(){super({uniqueName:"肩身の指輪", info:[],
                                 pos:EqPos.指, lv:0});}
     }
@@ -233,11 +242,11 @@ export abstract class Eq implements Force, Num{
     //脚
     //
     //--------------------------------------------------------------------------
-    static readonly                      きれいな靴 = new class extends Eq{
+    export const                         きれいな靴 = new class extends Eq{
         constructor(){super({uniqueName:"きれいな靴", info:[],
                                 pos:EqPos.脚, lv:0});}
     }
-    static readonly                      安全靴 = new class extends Eq{
+    export const                         安全靴 = new class extends Eq{
         constructor(){super({uniqueName:"安全靴", info:["被攻撃時稀に＜盾＞化"],
                                 pos:EqPos.脚, lv:40});}
         afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -246,9 +255,4 @@ export abstract class Eq implements Force, Num{
             }
         }
     }
-    //--------------------------------------------------------------------------
-    //
-    //
-    //
-    //--------------------------------------------------------------------------
 }

@@ -1,5 +1,5 @@
 import { PUnit, Prm, Unit } from "./unit.js";
-import { Tec, ActiveTec, PassiveTec } from "./tec.js";
+import { Tec } from "./tec.js";
 import { Job } from "./job.js";
 export class Player {
     constructor(uniqueName) {
@@ -51,64 +51,66 @@ export class Player {
     }
 }
 Player._values = [];
-Player.empty = new class extends Player {
-    constructor() { super("empty"); }
-    createInner(p) {
-        p.exists = false;
-    }
-};
-Player.スメラギ = new class extends Player {
-    constructor() { super("スメラギ"); }
-    createInner(p) {
-        p.job = Job.しんまい;
-        p.prm(Prm.MAX_HP).base = 30;
-        p.prm(Prm.STR).base = 3;
-        p.tecs = [
-            ActiveTec.殴る,
-            PassiveTec.HP自動回復,
-            Tec.empty,
-            Tec.empty,
-        ];
-    }
-};
-Player.よしこ = new class extends Player {
-    constructor() { super("よしこ"); }
-    createInner(p) {
-        p.job = Job.魔法使い;
-        p.prm(Prm.MAX_HP).base = 20;
-        p.prm(Prm.STR).base = 2;
-        p.prm(Prm.MAG).base = 6;
-        p.tecs = [
-            ActiveTec.殴る,
-            ActiveTec.マジカルパンチ,
-            Tec.empty,
-            Tec.empty,
-        ];
-    }
-};
-Player.test1 = new class extends Player {
-    constructor() { super("test1"); }
-    createInner(p) {
-        p.prm(Prm.MAX_HP).base = 20;
-        p.prm(Prm.STR).base = 2;
-        p.prm(Prm.MAG).base = 4;
-        p.tecs = [
-            ActiveTec.グレートウォール,
-            ActiveTec.ヴァハ,
-            ActiveTec.殴る,
-        ];
-    }
-};
-Player.test2 = new class extends Player {
-    constructor() { super("test2"); }
-    createInner(p) {
-        p.prm(Prm.MAX_HP).base = 20;
-        p.prm(Prm.STR).base = 2;
-        p.prm(Prm.MAG).base = 4;
-        p.tecs = [
-            ActiveTec.グレートウォール,
-            ActiveTec.ヴァハ,
-            ActiveTec.殴る,
-        ];
-    }
-};
+(function (Player) {
+    Player.empty = new class extends Player {
+        constructor() { super("empty"); }
+        createInner(p) {
+            p.exists = false;
+        }
+    };
+    Player.スメラギ = new class extends Player {
+        constructor() { super("スメラギ"); }
+        createInner(p) {
+            p.job = Job.しんまい;
+            p.prm(Prm.MAX_HP).base = 30;
+            p.prm(Prm.STR).base = 3;
+            p.tecs = [
+                Tec.殴る,
+                Tec.HP自動回復,
+                Tec.empty,
+                Tec.empty,
+            ];
+        }
+    };
+    Player.よしこ = new class extends Player {
+        constructor() { super("よしこ"); }
+        createInner(p) {
+            p.job = Job.魔法使い;
+            p.prm(Prm.MAX_HP).base = 20;
+            p.prm(Prm.STR).base = 2;
+            p.prm(Prm.MAG).base = 6;
+            p.tecs = [
+                Tec.殴る,
+                Tec.マジカルパンチ,
+                Tec.empty,
+                Tec.empty,
+            ];
+        }
+    };
+    Player.test1 = new class extends Player {
+        constructor() { super("test1"); }
+        createInner(p) {
+            p.prm(Prm.MAX_HP).base = 20;
+            p.prm(Prm.STR).base = 2;
+            p.prm(Prm.MAG).base = 4;
+            p.tecs = [
+                Tec.グレートウォール,
+                Tec.ヴァハ,
+                Tec.殴る,
+            ];
+        }
+    };
+    Player.test2 = new class extends Player {
+        constructor() { super("test2"); }
+        createInner(p) {
+            p.prm(Prm.MAX_HP).base = 20;
+            p.prm(Prm.STR).base = 2;
+            p.prm(Prm.MAG).base = 4;
+            p.tecs = [
+                Tec.グレートウォール,
+                Tec.ヴァハ,
+                Tec.殴る,
+            ];
+        }
+    };
+})(Player || (Player = {}));

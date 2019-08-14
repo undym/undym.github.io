@@ -17,7 +17,7 @@ import { Img } from "../graphics/graphics.js";
 import { SaveData } from "../savedata.js";
 
 
-export default abstract class DungeonEvent{
+export abstract class DungeonEvent{
     static _values:DungeonEvent[] = [];
     static values():ReadonlyArray<DungeonEvent>{
         return this._values;
@@ -33,7 +33,7 @@ export default abstract class DungeonEvent{
     
     abstract createBtnLayout():ILayout;
 
-    private constructor(){
+    protected constructor(){
         DungeonEvent._values.push(this);
     }
 
@@ -47,11 +47,18 @@ export default abstract class DungeonEvent{
 
 
 
-    static readonly empty:DungeonEvent = new class extends DungeonEvent{
+}
+
+
+
+export namespace DungeonEvent{
+    export const empty:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         happenInner = ()=>{Util.msg.set("");};
         createBtnLayout = ()=> createDefLayout();
     };
-    static readonly BOX:DungeonEvent = new class extends DungeonEvent{
+    export const BOX:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         createImg = ()=> new Img("img/box.png");
         happenInner = async()=>{Util.msg.set("宝箱だ")};
         createBtnLayout = ()=> createDefLayout()
@@ -60,7 +67,8 @@ export default abstract class DungeonEvent{
                                 }))
                                 ;
     };
-    static readonly OPEN_BOX:DungeonEvent = new class extends DungeonEvent{
+    export const OPEN_BOX:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         createImg = ()=> new Img("img/box_open.png");
         isZoomImg = ()=> false;
         happenInner = async()=>{
@@ -93,7 +101,8 @@ export default abstract class DungeonEvent{
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
-    static readonly TREASURE:DungeonEvent = new class extends DungeonEvent{
+    export const TREASURE:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         createImg = ()=> new Img("img/treasure.png");
         happenInner = async()=>{
             Util.msg.set("財宝の箱だ！")
@@ -111,20 +120,23 @@ export default abstract class DungeonEvent{
                                 }))
                                 ;
     };
-    static readonly OPEN_TREASURE:DungeonEvent = new class extends DungeonEvent{
+    export const OPEN_TREASURE:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         createImg = ()=> new Img("img/treasure_open.png");
         happenInner = async()=>{
             await Dungeon.now.treasure.add(1);
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
-    static readonly GET_TREASURE_KEY:DungeonEvent = new class extends DungeonEvent{
+    export const GET_TREASURE_KEY:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         happenInner = async()=>{
             await Dungeon.now.treasureKey.add(1);
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
-    static readonly TRAP:DungeonEvent = new class extends DungeonEvent{
+    export const TRAP:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         createImg = ()=> new Img("img/trap.png");
         happenInner = ()=>{
             Util.msg.set("罠だ");
@@ -148,7 +160,8 @@ export default abstract class DungeonEvent{
                                 }).setNoMove())
                                 ;
     };
-    static readonly TRAP_BROKEN:DungeonEvent = new class extends DungeonEvent{
+    export const TRAP_BROKEN:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         createImg = ()=> new Img("img/trap_broken.png");
         isZoomImg = ()=> false;
         happenInner = ()=>{
@@ -156,7 +169,8 @@ export default abstract class DungeonEvent{
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
-    static readonly TREE:DungeonEvent = new class extends DungeonEvent{
+    export const TREE:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         createImg = ()=> new Img("img/tree.png");
         happenInner = ()=>{
             Util.msg.set("木だ");
@@ -178,7 +192,8 @@ export default abstract class DungeonEvent{
                                 }).setNoMove())
                                 ;
     };
-    static readonly TREE_BROKEN:DungeonEvent = new class extends DungeonEvent{
+    export const TREE_BROKEN:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         createImg = ()=> new Img("img/tree_broken.png");
         isZoomImg = ()=> false;
         happenInner = async()=>{
@@ -202,7 +217,8 @@ export default abstract class DungeonEvent{
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
-    static readonly BATTLE:DungeonEvent = new class extends DungeonEvent{
+    export const BATTLE:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         happenInner = async()=>{
             Util.msg.set("敵が現れた！");
             Dungeon.now.setEnemy();
@@ -224,7 +240,8 @@ export default abstract class DungeonEvent{
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
-    static readonly BOSS_BATTLE:DungeonEvent = new class extends DungeonEvent{
+    export const BOSS_BATTLE:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         happenInner = async()=>{
             Util.msg.set(`[${Dungeon.now}]のボスが現れた！`, Color.WHITE.bright);
             Dungeon.now.setBoss();
@@ -245,7 +262,8 @@ export default abstract class DungeonEvent{
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
-    static readonly ESCAPE_DUNGEON:DungeonEvent = new class extends DungeonEvent{
+    export const ESCAPE_DUNGEON:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         happenInner = async()=>{
 
             Util.msg.set(`${Dungeon.now.toString()}を脱出します...`); await cwait();
@@ -256,7 +274,8 @@ export default abstract class DungeonEvent{
         };
         createBtnLayout = ()=> ILayout.empty;
     };
-    static readonly CLEAR_DUNGEON:DungeonEvent = new class extends DungeonEvent{
+    export const CLEAR_DUNGEON:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
         happenInner = async()=>{
             let yen = (Dungeon.now.au + 1) * Dungeon.now.au / 10 * (1 + Dungeon.now.clearNum * 0.02);
     
@@ -273,6 +292,8 @@ export default abstract class DungeonEvent{
         createBtnLayout = ()=> ILayout.empty;
     };
 }
+
+
 
 
 const createDefLayout = ()=>{

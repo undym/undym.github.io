@@ -151,7 +151,12 @@ export class BattleScene extends Scene {
                             return;
                         }
                         else {
-                            let targets = Targeting.filter(tec.targetings, attacker, Unit.all);
+                            let targets = [];
+                            const attackNum = tec.rndAttackNum();
+                            for (let i = 0; i < attackNum; i++) { //攻撃回数分ターゲットを追加
+                                targets = targets.concat(Targeting.filter(tec.targetings, attacker, Unit.all));
+                            }
+                            // let targets = Targeting.filter( tec.targetings, attacker, Unit.all, tec.rndAttackNum() );
                             yield tec.use(attacker, targets);
                             yield this.phaseEnd();
                         }
@@ -216,7 +221,7 @@ export class BattleScene extends Scene {
                 }));
             })));
             l.addFromLast(new Btn("何もしない", () => __awaiter(this, void 0, void 0, function* () {
-                yield ActiveTec.何もしない.use(attacker, [attacker]);
+                yield Tec.何もしない.use(attacker, [attacker]);
                 yield this.phaseEnd();
             })));
             const tecPageLim = ((attacker.tecs.length - 1) / drawOnePage) | 0;

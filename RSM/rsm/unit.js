@@ -113,6 +113,25 @@ export class Unit {
         }
         return this._players[0];
     }
+    // /**そのユニットのパーティーメンバーを返す。withHimSelfで本人を含めるかどうか。!existsは含めない。*/
+    // static getParty(unit:Unit, withHimSelf = true):ReadonlyArray<Unit>{
+    //     const searchMember = (units:ReadonlyArray<PUnit>|ReadonlyArray<EUnit>):Unit[]=>{
+    //         let res:Unit[] = [];
+    //         for(const u of units){
+    //             if(!u.exists){continue;}
+    //             if(withHimSelf && u === unit){continue;}
+    //             res.push(u);
+    //         }
+    //         return res;
+    //     };
+    //     if(unit instanceof PUnit){
+    //         return searchMember( Unit.players );
+    //     }
+    //     if(unit instanceof EUnit){
+    //         return searchMember( Unit.enemies );
+    //     }
+    //     return [];
+    // }
     static resetAll() {
         this._all = [];
         for (let p of this._players) {
@@ -135,17 +154,17 @@ export class Unit {
     prm(p) { return this.prmSets.get(p); }
     get hp() { return this.prm(Prm.HP).base; }
     set hp(value) {
-        this.prm(Prm.HP).base = value;
+        this.prm(Prm.HP).base = value | 0;
         this.fixPrm(Prm.HP, Prm.MAX_HP);
     }
     get mp() { return this.prm(Prm.MP).base; }
     set mp(value) {
-        this.prm(Prm.MP).base = value;
+        this.prm(Prm.MP).base = value | 0;
         this.fixPrm(Prm.MP, Prm.MAX_MP);
     }
     get tp() { return this.prm(Prm.TP).base; }
     set tp(value) {
-        this.prm(Prm.TP).base = value;
+        this.prm(Prm.TP).base = value | 0;
         this.fixPrm(Prm.TP, Prm.MAX_TP);
     }
     get exp() { return this.prm(Prm.EXP).base; }
@@ -461,7 +480,7 @@ export class EUnit extends Unit {
 EUnit.DEF_AI = (attacker, targetCandidates) => __awaiter(this, void 0, void 0, function* () {
     let activeTecs = attacker.tecs.filter(tec => tec instanceof ActiveTec);
     if (activeTecs.length === 0) {
-        ActiveTec.何もしない.use(attacker, [attacker]);
+        Tec.何もしない.use(attacker, [attacker]);
         return;
     }
     for (let i = 0; i < 7; i++) {
@@ -475,5 +494,5 @@ EUnit.DEF_AI = (attacker, targetCandidates) => __awaiter(this, void 0, void 0, f
             return;
         }
     }
-    ActiveTec.何もしない.use(attacker, [attacker]);
+    Tec.何もしない.use(attacker, [attacker]);
 });

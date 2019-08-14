@@ -115,138 +115,135 @@ export class Eq {
     }
 }
 Eq._values = [];
-//--------------------------------------------------------------------------
-//
-//
-//
-//--------------------------------------------------------------------------
-//--------------------------------------------------------------------------
-//
-//頭
-//
-//--------------------------------------------------------------------------
-Eq.髪 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "髪", info: ["髪a", "髪b"],
-            pos: EqPos.頭, lv: 0 });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//武
-//
-//--------------------------------------------------------------------------
-Eq.恋人 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "恋人", info: ["恋人info"],
-            pos: EqPos.武, lv: 0 });
-    }
-};
-Eq.棒 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "棒", info: ["格闘攻撃+10x1.1"],
-            pos: EqPos.武, lv: 20 });
-    }
-    beforeDoAtk(action, attacker, target, dmg) {
-        if (action instanceof ActiveTec && action.type === TecType.格闘) {
-            dmg.pow.add += 10;
-            dmg.pow.mul *= 1.1;
+(function (Eq) {
+    //--------------------------------------------------------------------------
+    //
+    //頭
+    //
+    //--------------------------------------------------------------------------
+    Eq.髪 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "髪", info: ["髪a", "髪b"],
+                pos: EqPos.頭, lv: 0 });
         }
-    }
-};
-// static readonly                      忍者刀 = new class extends Eq{
-//     constructor(){super({uniqueName:"忍者刀", info:["格闘攻撃時稀に追加攻撃"],
-//                             pos:EqPos.武, lv:99});}
-//     createMix(){return new Mix({
-//         result:[this,1],
-//         materials:[[Item.石, 1]],
-//     });}
-// }
-//--------------------------------------------------------------------------
-//
-//盾
-//
-//--------------------------------------------------------------------------
-Eq.板 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "板", info: [],
-            pos: EqPos.盾, lv: 0 });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//体
-//
-//--------------------------------------------------------------------------
-Eq.襤褸切れ = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "襤褸切れ", info: [],
-            pos: EqPos.体, lv: 0 });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//腰
-//
-//--------------------------------------------------------------------------
-Eq.ひも = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "ひも", info: [],
-            pos: EqPos.腰, lv: 0 });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//腕
-//
-//--------------------------------------------------------------------------
-Eq.腕 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "腕", info: [],
-            pos: EqPos.腕, lv: 0 });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//手
-//
-//--------------------------------------------------------------------------
-Eq.手 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "手", info: [],
-            pos: EqPos.手, lv: 0 });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//指
-//
-//--------------------------------------------------------------------------
-Eq.肩身の指輪 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "肩身の指輪", info: [],
-            pos: EqPos.指, lv: 0 });
-    }
-};
-//--------------------------------------------------------------------------
-//
-//脚
-//
-//--------------------------------------------------------------------------
-Eq.きれいな靴 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "きれいな靴", info: [],
-            pos: EqPos.脚, lv: 0 });
-    }
-};
-Eq.安全靴 = new class extends Eq {
-    constructor() {
-        super({ uniqueName: "安全靴", info: ["被攻撃時稀に＜盾＞化"],
-            pos: EqPos.脚, lv: 40 });
-    }
-    afterBeAtk(action, attacker, target, dmg) {
-        if (action instanceof ActiveTec && Math.random() < 0.7) {
-            target.setCondition(Condition.盾, 1);
+    };
+    //--------------------------------------------------------------------------
+    //
+    //武
+    //
+    //--------------------------------------------------------------------------
+    Eq.恋人 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "恋人", info: ["恋人info"],
+                pos: EqPos.武, lv: 0 });
         }
-    }
-};
+    };
+    Eq.棒 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "棒", info: ["格闘攻撃+10x1.1"],
+                pos: EqPos.武, lv: 20 });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type === TecType.格闘) {
+                dmg.pow.add += 10;
+                dmg.pow.mul *= 1.1;
+            }
+        }
+    };
+    // export const                         忍者刀 = new class extends Eq{
+    //     constructor(){super({uniqueName:"忍者刀", info:["格闘攻撃時稀に追加攻撃"],
+    //                             pos:EqPos.武, lv:99});}
+    //     createMix(){return new Mix({
+    //         result:[this,1],
+    //         materials:[[Item.石, 1]],
+    //     });}
+    // }
+    //--------------------------------------------------------------------------
+    //
+    //盾
+    //
+    //--------------------------------------------------------------------------
+    Eq.板 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "板", info: [],
+                pos: EqPos.盾, lv: 0 });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //体
+    //
+    //--------------------------------------------------------------------------
+    Eq.襤褸切れ = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "襤褸切れ", info: [],
+                pos: EqPos.体, lv: 0 });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //腰
+    //
+    //--------------------------------------------------------------------------
+    Eq.ひも = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "ひも", info: [],
+                pos: EqPos.腰, lv: 0 });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //腕
+    //
+    //--------------------------------------------------------------------------
+    Eq.腕 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "腕", info: [],
+                pos: EqPos.腕, lv: 0 });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //手
+    //
+    //--------------------------------------------------------------------------
+    Eq.手 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "手", info: [],
+                pos: EqPos.手, lv: 0 });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //指
+    //
+    //--------------------------------------------------------------------------
+    Eq.肩身の指輪 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "肩身の指輪", info: [],
+                pos: EqPos.指, lv: 0 });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //脚
+    //
+    //--------------------------------------------------------------------------
+    Eq.きれいな靴 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "きれいな靴", info: [],
+                pos: EqPos.脚, lv: 0 });
+        }
+    };
+    Eq.安全靴 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "安全靴", info: ["被攻撃時稀に＜盾＞化"],
+                pos: EqPos.脚, lv: 40 });
+        }
+        afterBeAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && Math.random() < 0.7) {
+                target.setCondition(Condition.盾, 1);
+            }
+        }
+    };
+})(Eq || (Eq = {}));

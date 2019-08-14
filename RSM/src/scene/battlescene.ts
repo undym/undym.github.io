@@ -10,8 +10,6 @@ import { Input } from "../undym/input.js";
 import { Btn } from "../widget/btn.js";
 import { Targeting, Action } from "../force.js";
 import { Player } from "../player.js";
-import DungeonScene from "./dungeonscene.js";
-import DungeonEvent from "../dungeon/dungeonevent.js";
 import { FX } from "../fx/fx.js";
 import { Dungeon } from "../dungeon/dungeon.js";
 import { TownScene } from "./townscene.js";
@@ -187,7 +185,12 @@ export class BattleScene extends Scene{
         
                         return;
                     }else{
-                        let targets = Targeting.filter( tec.targetings, attacker, Unit.all );
+                        let targets:Unit[] = [];
+                        const attackNum = tec.rndAttackNum();
+                        for(let i = 0; i < attackNum; i++){//攻撃回数分ターゲットを追加
+                            targets = targets.concat( Targeting.filter( tec.targetings, attacker, Unit.all ) );
+                        }
+                        // let targets = Targeting.filter( tec.targetings, attacker, Unit.all, tec.rndAttackNum() );
                         await tec.use(attacker, targets);
                         await this.phaseEnd();
                     }
@@ -258,7 +261,7 @@ export class BattleScene extends Scene{
         }));
 
         l.addFromLast(new Btn("何もしない", async()=>{
-            await ActiveTec.何もしない.use( attacker, [attacker] );
+            await Tec.何もしない.use( attacker, [attacker] );
             await this.phaseEnd();
         }));
 

@@ -15,7 +15,7 @@ export class Num{
 
             obj.num += v;
             obj.totalGetNum += v;
-            Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, Color.D_GREEN.bright);
+            Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, Color.GREEN.wave(Color.YELLOW));
 
             if(newItem){
                 for(let str of obj.info){

@@ -12,7 +12,7 @@ import { Page } from "./undym/page.js";
 import { Graphics, Texture, Font } from "./graphics/graphics.js";
 import { Item } from "./item.js";
 import { SaveData } from "./savedata.js";
-import DungeonEvent from "./dungeon/dungeonevent.js";
+import { DungeonEvent } from "./dungeon/dungeonevent.js";
 
 
 

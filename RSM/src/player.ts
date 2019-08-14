@@ -1,5 +1,5 @@
 import { PUnit, Prm, Unit } from "./unit.js";
-import { Tec, ActiveTec, PassiveTec } from "./tec.js";
+import { Tec, PassiveTec } from "./tec.js";
 import { Job } from "./job.js";
 
 
@@ -69,13 +69,17 @@ export abstract class Player{
     }
 
 
-    static readonly empty = new class extends Player{
+}
+
+
+export namespace Player{
+    export const             empty = new class extends Player{
         constructor(){super("empty");}
         createInner(p:PUnit){
             p.exists = false;
         }
     };
-    static readonly          スメラギ = new class extends Player{
+    export const             スメラギ = new class extends Player{
         constructor(){super("スメラギ");}
         createInner(p:PUnit){
             p.job = Job.しんまい;
@@ -83,14 +87,14 @@ export abstract class Player{
             p.prm(Prm.STR).base = 3;
 
             p.tecs = [
-                ActiveTec.殴る,
-                PassiveTec.HP自動回復,
+                Tec.殴る,
+                Tec.HP自動回復,
                 Tec.empty,
                 Tec.empty,
             ];
         }
     };
-    static readonly          よしこ = new class extends Player{
+    export const             よしこ = new class extends Player{
         constructor(){super("よしこ");}
         createInner(p:PUnit){
             p.job = Job.魔法使い;
@@ -99,14 +103,14 @@ export abstract class Player{
             p.prm(Prm.MAG).base = 6;
             
             p.tecs = [
-                ActiveTec.殴る,
-                ActiveTec.マジカルパンチ,
+                Tec.殴る,
+                Tec.マジカルパンチ,
                 Tec.empty,
                 Tec.empty,
             ];
         }
     };
-    static readonly          test1 = new class extends Player{
+    export const             test1 = new class extends Player{
         constructor(){super("test1");}
         createInner(p:PUnit){
             p.prm(Prm.MAX_HP).base = 20;
@@ -114,13 +118,13 @@ export abstract class Player{
             p.prm(Prm.MAG).base = 4;
             
             p.tecs = [
-                ActiveTec.グレートウォール,
-                ActiveTec.ヴァハ,
-                ActiveTec.殴る,
+                Tec.グレートウォール,
+                Tec.ヴァハ,
+                Tec.殴る,
             ];
         }
     };
-    static readonly          test2 = new class extends Player{
+    export const             test2 = new class extends Player{
         constructor(){super("test2");}
         createInner(p:PUnit){
             p.prm(Prm.MAX_HP).base = 20;
@@ -128,9 +132,9 @@ export abstract class Player{
             p.prm(Prm.MAG).base = 4;
             
             p.tecs = [
-                ActiveTec.グレートウォール,
-                ActiveTec.ヴァハ,
-                ActiveTec.殴る,
+                Tec.グレートウォール,
+                Tec.ヴァハ,
+                Tec.殴る,
             ];
         }
     };

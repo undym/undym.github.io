@@ -21,6 +21,21 @@ export class Color {
             let sin = Math.sin(Math.PI * 2 * count * spd) * range;
             return new Color(round(this.r + sin), round(this.g + sin), round(this.b + sin), this.a);
         };
+        this.wave = (color, args) => {
+            let count = Date.now() / 30;
+            let spd = 0.02;
+            if (args) {
+                if (args.count) {
+                    count = args.count;
+                }
+                if (args.spd) {
+                    spd = args.spd;
+                }
+            }
+            let ratio1 = (1 + Math.sin(Math.PI * 2 * count * spd)) / 2;
+            let ratio2 = 1 - ratio1;
+            return new Color(this.r * ratio1 + color.r * ratio2, this.g * ratio1 + color.g * ratio2, this.b * ratio1 + color.b * ratio2, this.a * ratio1 + color.a * ratio2);
+        };
         this.r = r;
         this.g = g;
         this.b = b;
@@ -28,19 +43,19 @@ export class Color {
     }
     brighter() {
         let mul = 1.3;
-        let nr = this.r * mul;
-        if (nr > 1) {
-            nr = 1;
+        let _r = this.r * mul;
+        if (_r > 1) {
+            _r = 1;
         }
-        let ng = this.g * mul;
-        if (ng > 1) {
-            ng = 1;
+        let _g = this.g * mul;
+        if (_g > 1) {
+            _g = 1;
         }
-        let nb = this.b * mul;
-        if (nb > 1) {
-            nb = 1;
+        let _b = this.b * mul;
+        if (_b > 1) {
+            _b = 1;
         }
-        return new Color(nr, ng, nb, this.a);
+        return new Color(_r, _g, _b, this.a);
     }
     darker() {
         let mul = 0.7;

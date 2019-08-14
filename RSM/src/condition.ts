@@ -87,12 +87,16 @@ export abstract class Condition implements Force{
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     phaseEnd(unit:Unit):void{}
+}
+
+
+export namespace Condition{
     //--------------------------------------------------------------------------
     //
     //
     //
     //--------------------------------------------------------------------------
-    static readonly empty = new class extends Condition{
+    export const             empty = new class extends Condition{
         constructor(){super("empty", ConditionType.GOOD_LV1);}
         toString():string{return "";}
     };
@@ -101,7 +105,7 @@ export abstract class Condition implements Force{
     //GOOD_LV1
     //
     //--------------------------------------------------------------------------
-    static readonly          練 = new class extends Condition{
+    export const             練 = new class extends Condition{
         constructor(){super("練", ConditionType.GOOD_LV1);}
         async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type === TecType.格闘){
@@ -118,7 +122,7 @@ export abstract class Condition implements Force{
     //GOOD_LV2
     //
     //--------------------------------------------------------------------------
-    static readonly          盾 = new class extends Condition{
+    export const             盾 = new class extends Condition{
         constructor(){super("盾", ConditionType.GOOD_LV2);}
         async beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type === TecType.格闘){
@@ -140,7 +144,7 @@ export abstract class Condition implements Force{
     //BAD_LV1
     //
     //--------------------------------------------------------------------------
-    static readonly          毒 = new class extends Condition{
+    export const             毒 = new class extends Condition{
         constructor(){super("毒", ConditionType.BAD_LV1);}
         async phaseEnd(unit:Unit){
             const value = unit.getConditionValue(this);
@@ -156,7 +160,7 @@ export abstract class Condition implements Force{
 
             unit.doDmg(dmg);
 
-            unit.addConditionValue(this, value / 2);
+            unit.addConditionValue(this, value * 0.666);
         }
     };
     //--------------------------------------------------------------------------

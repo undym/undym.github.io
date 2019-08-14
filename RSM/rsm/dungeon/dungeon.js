@@ -1,4 +1,4 @@
-import DungeonEvent from "./dungeonevent.js";
+import { DungeonEvent } from "./dungeonevent.js";
 import { Job } from "../job.js";
 import { Unit, Prm } from "../unit.js";
 import { Item } from "../item.js";
@@ -137,56 +137,58 @@ export class Dungeon {
 }
 Dungeon._values = [];
 Dungeon.auNow = 0;
-//-----------------------------------------------------------------
-//
-//
-//
-//-----------------------------------------------------------------
-Dungeon.はじまりの丘 = new class extends Dungeon {
-    constructor() {
-        super({ uniqueName: "はじまりの丘",
-            rank: 0, enemyLv: 1, au: 50,
-            clearItem: () => Item.はじまりの丘の玉,
-            treasure: () => Eq.棒,
-            treasureKey: () => Item.はじまりの丘の鍵,
-            trendItems: () => [Item.石, Item.土, Item.枝,],
-            event: Event.createDef(),
-        });
-        this.isVisible = () => true;
-        this.setBossInner = () => {
-            let e = Unit.enemies[0];
-            Job.しんまい.setEnemy(e, e.prm(Prm.LV).base);
-            e.name = "ボス";
-            e.prm(Prm.MAX_HP).base = 15;
-            e.prm(Prm.STR).base = 6;
-            //ボス以外の雑魚は0体
-            for (let i = 1; i < Unit.enemies.length; i++) {
-                Unit.enemies[i].exists = false;
-            }
-        };
-    }
-};
-Dungeon.丘の上 = new class extends Dungeon {
-    constructor() {
-        super({ uniqueName: "丘の上",
-            rank: 1, enemyLv: 3, au: 100,
-            clearItem: () => Item.丘の上の玉,
-            treasure: () => Eq.安全靴,
-            treasureKey: () => Item.丘の上の鍵,
-            trendItems: () => [Item.水],
-            event: Event.createDef().add(Event.TREE),
-        });
-        this.isVisible = () => Dungeon.はじまりの丘.clearNum > 0;
-        this.setBossInner = () => {
-            let e = Unit.enemies[0];
-            Job.剣士.setEnemy(e, e.prm(Prm.LV).base);
-            e.name = "ボス";
-            e.prm(Prm.MAX_HP).base = 30;
-            e.prm(Prm.STR).base = 10;
-            //ボス以外の雑魚は1体
-            for (let i = 2; i < Unit.enemies.length; i++) {
-                Unit.enemies[i].exists = false;
-            }
-        };
-    }
-};
+(function (Dungeon) {
+    //-----------------------------------------------------------------
+    //
+    //
+    //
+    //-----------------------------------------------------------------
+    Dungeon.はじまりの丘 = new class extends Dungeon {
+        constructor() {
+            super({ uniqueName: "はじまりの丘",
+                rank: 0, enemyLv: 1, au: 50,
+                clearItem: () => Item.はじまりの丘の玉,
+                treasure: () => Eq.棒,
+                treasureKey: () => Item.はじまりの丘の鍵,
+                trendItems: () => [Item.石, Item.土, Item.枝,],
+                event: Event.createDef(),
+            });
+            this.isVisible = () => true;
+            this.setBossInner = () => {
+                let e = Unit.enemies[0];
+                Job.しんまい.setEnemy(e, e.prm(Prm.LV).base);
+                e.name = "聖戦士";
+                e.prm(Prm.MAX_HP).base = 15;
+                e.prm(Prm.STR).base = 6;
+                //ボス以外の雑魚は0体
+                for (let i = 1; i < Unit.enemies.length; i++) {
+                    Unit.enemies[i].exists = false;
+                }
+            };
+        }
+    };
+    Dungeon.丘の上 = new class extends Dungeon {
+        constructor() {
+            super({ uniqueName: "丘の上",
+                rank: 1, enemyLv: 3, au: 70,
+                clearItem: () => Item.丘の上の玉,
+                treasure: () => Eq.安全靴,
+                treasureKey: () => Item.丘の上の鍵,
+                trendItems: () => [Item.水],
+                event: Event.createDef().add(Event.TREE),
+            });
+            this.isVisible = () => Dungeon.はじまりの丘.clearNum > 0;
+            this.setBossInner = () => {
+                let e = Unit.enemies[0];
+                Job.格闘家.setEnemy(e, e.prm(Prm.LV).base);
+                e.name = "丘太郎";
+                e.prm(Prm.MAX_HP).base = 30;
+                e.prm(Prm.STR).base = 10;
+                //ボス以外の雑魚は1体
+                for (let i = 2; i < Unit.enemies.length; i++) {
+                    Unit.enemies[i].exists = false;
+                }
+            };
+        }
+    };
+})(Dungeon || (Dungeon = {}));

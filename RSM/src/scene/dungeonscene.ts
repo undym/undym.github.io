@@ -1,7 +1,7 @@
 import { Scene, cwait } from "../undym/scene.js";
 import { RatioLayout, YLayout, ILayout, XLayout, VariableLayout, InnerLayout } from "../undym/layout.js";
 import { Rect, Color } from "../undym/type.js";
-import DungeonEvent from "../dungeon/dungeonevent.js";
+import { DungeonEvent } from "../dungeon/dungeonevent.js";
 import { Place, Util, SceneType } from "../util.js";
 import { DrawSTBoxes, DrawUnitDetail, DrawDungeonData, DrawPlayInfo } from "./sceneutil.js";
 import { Unit } from "../unit.js";

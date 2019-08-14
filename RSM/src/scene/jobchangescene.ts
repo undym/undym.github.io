@@ -5,7 +5,7 @@ import { Unit, PUnit } from "../unit.js";
 import { Input } from "../undym/input.js";
 import { Rect, Color } from "../undym/type.js";
 import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
-import { Place } from "../util.js";
+import { Place, Debug } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 import { List } from "../widget/list.js";
 import { TownScene } from "./townscene.js";
@@ -132,7 +132,7 @@ export class JobChangeScene extends Scene{
         });
 
         Job.values()
-            .filter(job=> job.canJobChange(unit) || unit.getJobLv(job) > 0)
+            .filter(job=> job.canJobChange(unit) || unit.getJobLv(job) > 0 || Debug.debugMode)
             .forEach((job)=>{
                 let color:()=>Color = ()=>{
                     if(job === this.choosedJob){return Color.CYAN;}
