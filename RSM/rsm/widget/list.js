@@ -27,7 +27,7 @@ export class List extends ILayout {
         this.elms = [];
         this.page = 0;
         this.update = true;
-        this.aPageElmNum = aPageElmNum;
+        this.aPageElmNum = aPageElmNum | 0;
         this.elmPanel = new YLayout();
         this.panel = new RatioLayout()
             .add(new Rect(0, 0, 1, 0.85 - 2 / Graphics.pixelH), this.elmPanel)
@@ -41,7 +41,7 @@ export class List extends ILayout {
         }))
             .add(new Btn(() => "＞", () => {
             this.page++;
-            let lim = this.elms.length / this.aPageElmNum - 1;
+            let lim = ((this.elms.length - 1) / this.aPageElmNum) | 0;
             if (lim < 0) {
                 lim = 0;
             }
@@ -64,8 +64,11 @@ export class List extends ILayout {
     //     this.elms.push(e);
     //     this.update = true;
     // }
-    add(values) {
-        const e = new Elm(values);
+    add(args) {
+        const e = new Elm(args);
+        if (e.right) {
+            console.log(e.right());
+        }
         this.elms.push(e);
         this.update = true;
         return e;
@@ -92,23 +95,26 @@ export class List extends ILayout {
         });
     }
     drawInner(bounds) {
+        if (!this.elmPanel) {
+            console.log(this.elmPanel);
+        }
         this.panel.draw(bounds);
     }
 }
 class Elm extends ILayout {
-    constructor(values) {
+    constructor(args) {
         super();
-        this.push = values.push ? values.push : (elm) => { };
-        this.hold = values.hold ? values.hold : (elm) => { };
-        this.left = values.left;
-        this.leftColor = values.leftColor ? values.leftColor : () => Color.WHITE;
-        this.center = values.center;
-        this.centerColor = values.centerColor ? values.centerColor : () => Color.WHITE;
-        this.right = values.right;
-        this.rightColor = values.rightColor ? values.rightColor : () => Color.WHITE;
-        this.groundColor = values.groundColor ? values.groundColor : () => Color.BLACK;
-        this.frameColor = values.frameColor ? values.frameColor : () => Color.L_GRAY;
-        this.stringColor = values.stringColor ? values.stringColor : () => Color.WHITE;
+        this.push = args.push ? args.push : (elm) => { };
+        this.hold = args.hold ? args.hold : (elm) => { };
+        this.left = args.left;
+        this.leftColor = args.leftColor ? args.leftColor : () => Color.WHITE;
+        this.center = args.center;
+        this.centerColor = args.centerColor ? args.centerColor : () => Color.WHITE;
+        this.right = args.right;
+        this.rightColor = args.rightColor ? args.rightColor : () => Color.WHITE;
+        this.groundColor = args.groundColor ? args.groundColor : () => Color.BLACK;
+        this.frameColor = args.frameColor ? args.frameColor : () => Color.L_GRAY;
+        this.stringColor = args.stringColor ? args.stringColor : () => Color.WHITE;
         this.font = Font.def;
     }
     ctrlInner(bounds) {

@@ -34,7 +34,7 @@ export namespace Building{
     export const                         よしこ = new class extends Building{
         constructor(){super({uniqueName:"よしこ", info:["よしこが仲間になる"]});}
         createMix(){return new Mix({
-            materials:[[Item.はじまりの丘の玉, 1]],
+            materials:[[Item.再構成トンネルの玉, 1]],
             limit:()=>1,
             action:()=>{
                 Player.よしこ.join();

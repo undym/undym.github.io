@@ -56,6 +56,8 @@ Prm.GUN = new Prm("銃");
 Prm.ARR = new Prm("弓");
 Prm.LV = new Prm("Lv");
 Prm.EXP = new Prm("Exp");
+Prm.EP = new Prm("EP");
+Prm.MAX_EP = new Prm("最大EP");
 export class Unit {
     //---------------------------------------------------------
     //
@@ -76,6 +78,7 @@ export class Unit {
         for (let prm of Prm.values()) {
             this.prmSets.set(prm, new PrmSet());
         }
+        this.prm(Prm.MAX_EP).base = Unit.DEF_MAX_EP;
         this.job = Job.しんまい;
         for (let type of ConditionType.values()) {
             this.conditions.set(type, { condition: Condition.empty, value: 0 });
@@ -169,6 +172,11 @@ export class Unit {
     }
     get exp() { return this.prm(Prm.EXP).base; }
     set exp(value) { this.prm(Prm.EXP).base = value; }
+    get ep() { return this.prm(Prm.EP).base; }
+    set ep(value) {
+        this.prm(Prm.EP).base = value;
+        this.fixPrm(Prm.EP, Prm.MAX_EP);
+    }
     fixPrm(checkPrm, maxPrm) {
         if (this.prm(checkPrm).base < 0) {
             this.prm(checkPrm).base = 0;
@@ -352,6 +360,7 @@ export class Unit {
 }
 Unit.DEF_MAX_MP = 100;
 Unit.DEF_MAX_TP = 100;
+Unit.DEF_MAX_EP = 1;
 export class PUnit extends Unit {
     // private jobExps = new Map<Job,number>();
     constructor(player) {

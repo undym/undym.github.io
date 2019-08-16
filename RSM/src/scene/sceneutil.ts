@@ -266,6 +266,7 @@ export class DrawUnitDetail extends InnerLayout{
                                 .add(new Label(font, ()=>`銃:${getUnit().prm(Prm.GUN).total}`))
                                 .add(new Label(font, ()=>`弓:${getUnit().prm(Prm.ARR).total}`))
                             )
+                            .add(new Label(font, ()=>`EP:${getUnit().ep}`))
                         )
                         .add((()=>{
                             let infoPos:EqPos = EqPos.頭;

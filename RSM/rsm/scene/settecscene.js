@@ -51,7 +51,10 @@ export class SetTecScene extends Scene {
                             font.draw(`MP:${tec.mpCost}`, _p, Color.WHITE);
                         }
                         if (tec.tpCost > 0) {
-                            font.draw(`TP:${tec.tpCost}`, _p.move(bounds.w / 2, 0), Color.WHITE);
+                            font.draw(`TP:${tec.tpCost}`, _p.move(bounds.w * 1 / 4, 0), Color.WHITE);
+                        }
+                        if (tec.epCost > 0) {
+                            font.draw(`EP:${tec.epCost}`, _p.move(bounds.w * 2 / 4, 0), Color.WHITE);
                         }
                     }
                     else {

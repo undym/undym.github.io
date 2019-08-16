@@ -6,6 +6,7 @@ import { Condition, ConditionType } from "./condition.js";
 import { Color } from "./undym/type.js";
 import { FX_Str } from "./fx/fx.js";
 import { Font } from "./graphics/graphics.js";
+import { randomInt } from "./undym/random.js";
 
 
 
@@ -24,14 +25,19 @@ export abstract class TecType{
         return this._tecs;
     }
 
-    private constructor(name:string){
+    protected constructor(name:string){
         this.toString = ()=>name;
         TecType._values.push(this);
     }
 
 
+    abstract createDmg(attacker:Unit, target:Unit):Dmg;
+}
 
-    static readonly          格闘 = new class extends TecType{
+
+
+export namespace TecType{
+    export const             格闘 = new class extends TecType{
         constructor(){super("格闘");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -40,7 +46,7 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          魔法 = new class extends TecType{
+    export const             魔法 = new class extends TecType{
         constructor(){super("魔法");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -49,7 +55,7 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          神格 = new class extends TecType{
+    export const             神格 = new class extends TecType{
         constructor(){super("神格");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -58,7 +64,7 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          暗黒 = new class extends TecType{
+    export const             暗黒 = new class extends TecType{
         constructor(){super("暗黒");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -67,7 +73,7 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          練術 = new class extends TecType{
+    export const             練術 = new class extends TecType{
         constructor(){super("練術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -76,7 +82,7 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          過去 = new class extends TecType{
+    export const             過去 = new class extends TecType{
         constructor(){super("過去");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -85,7 +91,7 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          銃術 = new class extends TecType{
+    export const             銃術 = new class extends TecType{
         constructor(){super("銃術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -94,7 +100,7 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          弓術 = new class extends TecType{
+    export const             弓術 = new class extends TecType{
         constructor(){super("弓術");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -103,11 +109,11 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          状態 = new class extends TecType{
+    export const             状態 = new class extends TecType{
         constructor(){super("状態");}
         createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();};
     };
-    static readonly          回復 = new class extends TecType{
+    export const             回復 = new class extends TecType{
         constructor(){super("回復");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
@@ -115,14 +121,13 @@ export abstract class TecType{
             });;
         };
     };
-    static readonly          その他 = new class extends TecType{
+    export const             その他 = new class extends TecType{
         constructor(){super("その他");}
         createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();};
     };
-
-
-    abstract createDmg(attacker:Unit, target:Unit):Dmg;
 }
+
+
 
 
 export abstract class Tec implements Force{
@@ -182,7 +187,7 @@ export abstract class PassiveTec extends Tec{
     }){
         super();
         this.uniqueName = args.uniqueName;
-        this.toString = ()=>this.uniqueName;
+        this.toString = ()=>`-${this.uniqueName}-`;
         this.info = args.info;
         this.type = args.type;
 
@@ -218,6 +223,7 @@ export abstract class ActiveTec extends Tec implements Action{
 
     readonly mpCost:number;
     readonly tpCost:number;
+    readonly epCost:number;
     
     /**攻撃倍率 */
     readonly mul:number;
@@ -240,6 +246,7 @@ export abstract class ActiveTec extends Tec implements Action{
         hit:number,
         mp?:number,
         tp?:number,
+        ep?:number,
     }){
         super();
         this.uniqueName = args.uniqueName;
@@ -253,6 +260,7 @@ export abstract class ActiveTec extends Tec implements Action{
 
         this.mpCost = args.mp ? args.mp : 0;
         this.tpCost = args.tp ? args.tp : 0;
+        this.epCost = args.ep ? args.ep : 0;
 
         ActiveTec._values.push(this);
     }
@@ -264,14 +272,16 @@ export abstract class ActiveTec extends Tec implements Action{
     //--------------------------------------------------------------------------
     checkCost(u:Unit):boolean{
         return (
-                       u.prm(Prm.MP).base >= this.mpCost
-                    && u.prm(Prm.TP).base >= this.tpCost
+                       u.mp >= this.mpCost
+                    && u.tp >= this.tpCost
+                    && u.ep >= this.epCost
                );
     }
 
     payCost(u:Unit):void{
-        u.prm(Prm.MP).base -= this.mpCost;
-        u.prm(Prm.TP).base -= this.tpCost;
+        u.mp -= this.mpCost;
+        u.tp -= this.tpCost;
+        u.ep -= this.epCost;
     }
 
     async use(attacker:Unit, targets:Unit[]){
@@ -317,17 +327,6 @@ export abstract class ActiveTec extends Tec implements Action{
     toString(){return this.uniqueName;}
     //--------------------------------------------------------------------------
     //
-    //格闘Active
-    //
-    //--------------------------------------------------------------------------
-    // static readonly          タックル = new class extends Tec{
-    //     constructor(){super("タックル", ["一体に格闘攻撃x1.5"]
-    //                     ,TecType.格闘,/*mul*/1.5,/*num*/()=>1,/*hit*/1);}
-    //     get targetings(){return Targeting.SELECT;}
-    //     get tpCost()    {return 20;}
-    // }
-    //--------------------------------------------------------------------------
-    //
     //
     //
     //--------------------------------------------------------------------------
@@ -355,7 +354,7 @@ export namespace Tec{
     export const                          大いなる動き:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"大いなる動き", info:["敵全体に格闘攻撃"],
                               type:TecType.格闘, targetings:Targeting.ALL,
-                              mul:1, num:1, hit:1, tp:60,
+                              mul:1, num:1, hit:1, ep:1,
         });}
     }
     export const                          人狼剣:ActiveTec = new class extends ActiveTec{
@@ -371,9 +370,9 @@ export namespace Tec{
         }
     }
     export const                          閻魔の笏:ActiveTec = new class extends ActiveTec{
-        constructor(){super({ uniqueName:"閻魔の笏", info:["一体に5回格闘攻撃"],
+        constructor(){super({ uniqueName:"閻魔の笏", info:["一体に4回格闘攻撃"],
                               type:TecType.格闘, targetings:Targeting.SELECT,
-                              mul:1, num:5, hit:1, tp:100,
+                              mul:1, num:4, hit:1, ep:1,
         });}
     }
     export const                          マジカルパンチ:ActiveTec = new class extends ActiveTec{
@@ -435,15 +434,36 @@ export namespace Tec{
     export const                          ヴァハ:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"ヴァハ", info:["一体に魔法攻撃"],
                               type:TecType.魔法, targetings:Targeting.SELECT,
-                              mul:1, num:1, hit:1.5, mp:10,
+                              mul:1, num:1, hit:1.2, mp:10,
         });}
     }
     export const                          エヴィン:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"エヴィン", info:["一体に魔法攻撃x2"],
                               type:TecType.魔法, targetings:Targeting.SELECT,
-                              mul:2, num:1, hit:1.5, mp:25,
+                              mul:2, num:1, hit:1.2, mp:25,
         });}
     }
+    export const                          ルー:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"ルー", info:["一体に魔法攻撃x3"],
+                              type:TecType.魔法, targetings:Targeting.SELECT,
+                              mul:3, num:1, hit:1.2, mp:40,
+        });}
+    }
+    //--------------------------------------------------------------------------
+    //
+    //魔法Passive
+    //
+    //--------------------------------------------------------------------------
+    export const                         魔法攻撃UP:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"魔法攻撃UP", info:["魔法攻撃x1.2"],
+                                type:TecType.魔法,
+        });}
+        beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type === TecType.魔法){
+                dmg.pow.mul *= 1.2;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //神格Active
@@ -452,7 +472,7 @@ export namespace Tec{
     export const                          天籟:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"天籟", info:["一体に神格攻撃"],
                               type:TecType.神格, targetings:Targeting.SELECT,
-                              mul:1, num:1, hit:1.5,
+                              mul:1, num:1.5, hit:1.5,
         });}
     }
     //--------------------------------------------------------------------------
@@ -496,16 +516,21 @@ export namespace Tec{
     export const                          念力:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"念力", info:["全体に過去攻撃"],
                               type:TecType.過去, targetings:Targeting.ALL,
-                              mul:1, num:1, hit:1.2,
-                              mp:40,
+                              mul:1, num:1, hit:1.2, mp:40,
         });}
     }
     export const                          念:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"念", info:["ランダムな一体に過去攻撃"],
                               type:TecType.過去, targetings:Targeting.RANDOM,
-                              mul:1, num:1, hit:1.2,
-                              mp:10,
+                              mul:1, num:1, hit:1.2, mp:10,
         });}
+    }
+    export const                          メテオ:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"メテオ", info:["ランダムに4～6回過去攻撃"],
+                              type:TecType.過去, targetings:Targeting.RANDOM,
+                              mul:1, num:4, hit:1.2, ep:1,
+        });}
+        rndAttackNum = ()=> randomInt(4,6);
     }
     //--------------------------------------------------------------------------
     //
@@ -522,6 +547,12 @@ export namespace Tec{
         constructor(){super({ uniqueName:"二丁拳銃", info:["一体に銃術攻撃2回"],
                               type:TecType.銃術, targetings:Targeting.RANDOM,
                               mul:1, num:2, hit:0.8, tp:10,
+        });}
+    }
+    export const                          あがらない雨:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"あがらない雨", info:["全体に銃術攻撃2回"],
+                              type:TecType.銃術, targetings:Targeting.ALL,
+                              mul:1, num:2, hit:0.7, ep:1,
         });}
     }
     //--------------------------------------------------------------------------
@@ -541,6 +572,12 @@ export namespace Tec{
                               mul:3, num:1, hit:0.9, tp:30,
         });}
     }
+    export const                          キャンドラ:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"キャンドラ", info:["一体に弓術攻撃x6"],
+                              type:TecType.弓術, targetings:Targeting.SELECT,
+                              mul:6, num:1, hit:0.9, ep:1,
+        });}
+    }
     //--------------------------------------------------------------------------
     //
     //状態Active
@@ -551,7 +588,7 @@ export namespace Tec{
                               type:TecType.状態, targetings:Targeting.SELF,
                               mul:1, num:1, hit:1,
         });}
-        async runInner(attacker:Unit, target:Unit, dmg:Dmg){
+        async run(attacker:Unit, target:Unit){
             const condition = Condition.練;
             const value = target.getConditionValue(Condition.練) + 1;
 
@@ -559,7 +596,7 @@ export namespace Tec{
 
             target.setCondition(condition, value);
             FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-            Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.RED.wave(Color.GREEN));
+            Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
         }
     }
     export const                          グレートウォール:ActiveTec = new class extends ActiveTec{
@@ -567,7 +604,7 @@ export namespace Tec{
                               type:TecType.状態, targetings:Targeting.ALL | Targeting.ONLY_FRIEND,
                               mul:1, num:1, hit:1,
         });}
-        async runInner(attacker:Unit, target:Unit, dmg:Dmg){
+        async run(attacker:Unit, target:Unit){
             const condition = Condition.盾;
             const value = target.getConditionValue(Condition.盾) + 1;
 
@@ -575,7 +612,7 @@ export namespace Tec{
 
             target.setCondition(condition, value);
             FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-            Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.RED.wave(Color.GREEN));
+            Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
         }
     }
     export const                          ポイズンバタフライ:ActiveTec = new class extends ActiveTec{
@@ -583,13 +620,39 @@ export namespace Tec{
                               type:TecType.状態, targetings:Targeting.SELECT,
                               mul:1, num:1, hit:1,
         });}
-        async runInner(attacker:Unit, target:Unit, dmg:Dmg){
+        async run(attacker:Unit, target:Unit){
             const condition = Condition.毒;
             const value = attacker.prm(Prm.DRK).total;
 
             target.setCondition(condition, value);
             FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-            Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.RED.wave(Color.GREEN));
+            Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, cnt=>Color.RED.wave(Color.GREEN, cnt));
+        }
+    }
+    export const                          凍てつく波動:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"凍てつく波動", info:["敵味方全体の状態を解除"],
+                              type:TecType.状態, targetings:Targeting.ALL | Targeting.WITH_FRIEND,
+                              mul:1, num:1, hit:10, ep:1,
+        });}
+        async run(attacker:Unit, target:Unit){
+            target.clearAllCondition();
+            Util.msg.set(`${target.name}の状態が解除された！`, Color.WHITE.bright);
+        }
+    }
+    export const                          癒しの風:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"癒しの風", info:["一体を＜癒5＞状態にする"],
+                              type:TecType.状態, targetings:Targeting.SELECT | Targeting.ONLY_FRIEND,
+                              mul:1, num:1, hit:10, mp:20,
+        });}
+        async run(attacker:Unit, target:Unit){
+            const condition = Condition.癒;
+            const value = 5;
+
+            if(value > 4){return;}
+
+            target.setCondition(condition, value);
+            FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+            Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
         }
     }
     //--------------------------------------------------------------------------
@@ -615,11 +678,35 @@ export namespace Tec{
     export const                          ばんそうこう:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"ばんそうこう", info:["一体を光依存で回復"],
                               type:TecType.回復, targetings:Targeting.SELECT,
-                              mul:2, num:1, hit:2,
-                              mp:20,
+                              mul:2, num:1, hit:10, mp:20,
         });}
-        async runInner(attacker:Unit, target:Unit, dmg:Dmg){
-            healHP(target, dmg.calc().value);
+        async run(attacker:Unit, target:Unit){
+            const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
+            healHP(target, value);
+        }
+    }
+    export const                          ジョンD:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"ジョンD", info:["自分の最大MPを倍加","MP回復"],
+                              type:TecType.回復, targetings:Targeting.SELF,
+                              mul:1, num:1, hit:10, ep:1,
+        });}
+        async run(attacker:Unit, target:Unit){
+            target.prm(Prm.MAX_MP).battle *= 2;
+            target.mp = target.prm(Prm.MAX_MP).total;
+
+            Util.msg.set(`${target.name}に魔力が満ちた！`); await wait();
+        }
+    }
+    export const                          ユグドラシル:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"ユグドラシル", info:["味方全員を蘇生・回復"],
+                              type:TecType.回復, targetings:Targeting.ALL | Targeting.ONLY_FRIEND | Targeting.WITH_DEAD,
+                              mul:1, num:1, hit:10, ep:1,
+        });}
+        async run(attacker:Unit, target:Unit){
+            target.dead = false;
+            target.hp = target.prm(Prm.MAX_HP).total;
+
+            Util.msg.set(`${target.name}は回復した`); await wait();
         }
     }
     //--------------------------------------------------------------------------
@@ -665,6 +752,46 @@ export namespace Tec{
             Util.msg.set(`${attacker.name}は空を眺めている...`); await wait();
         }
     }
+    export const                          自爆:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"自爆", info:["敵全体に自分のHP分のダメージを与える","HP=0"],
+                              type:TecType.その他, targetings:Targeting.ALL,
+                              mul:1, num:1, hit:1, ep:1,
+        });}
+        async use(attacker:Unit, targets:Unit[]){
+            const canUse = this.checkCost(attacker);
+
+            Util.msg.set(`${attacker.name}の体から光が溢れる...`); await wait();
+            super.use(attacker, targets);
+            
+            if(canUse){
+                attacker.hp = 0;
+            }else{
+                Util.msg.set(`光に吸い寄せられた虫が体にいっぱいくっついた...`); await wait();
+            }
+        }
+        async run(attacker:Unit, target:Unit){
+            const dmg = new Dmg({absPow:attacker.hp});
+            target.doDmg(dmg);
+        }
+    }
+    //--------------------------------------------------------------------------
+    //
+    //その他Passive
+    //
+    //--------------------------------------------------------------------------
+    export const                         我慢:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"我慢", info:["防御値+99"],
+                                type:TecType.その他,
+        });}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.def.add += 99;
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------------------------------
 }
 
 const setCondition = (target:Unit, condition:Condition, value:number):void=>{

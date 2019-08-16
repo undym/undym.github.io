@@ -51,6 +51,8 @@ export class Prm{
     static readonly LV      = new Prm("Lv");
     static readonly EXP     = new Prm("Exp");
 
+    static readonly EP      = new Prm("EP");
+    static readonly MAX_EP  = new Prm("最大EP");
 
 
     private constructor(_toString:string){
@@ -67,6 +69,7 @@ export class Prm{
 export abstract class Unit{
     static readonly DEF_MAX_MP = 100;
     static readonly DEF_MAX_TP = 100;
+    static readonly DEF_MAX_EP = 1;
 
     private static _players:PUnit[];
     static get players():ReadonlyArray<PUnit>{return this._players;}
@@ -162,6 +165,8 @@ export abstract class Unit{
             this.prmSets.set(prm, new PrmSet());
         }
 
+        this.prm(Prm.MAX_EP).base = Unit.DEF_MAX_EP;
+
         this.job = Job.しんまい;
         
         for(let type of ConditionType.values()){
@@ -211,6 +216,12 @@ export abstract class Unit{
     }
     get exp():number     {return this.prm(Prm.EXP).base;}
     set exp(value:number){this.prm(Prm.EXP).base = value;}
+
+    get ep():number      {return this.prm(Prm.EP).base;}
+    set ep(value:number) {
+        this.prm(Prm.EP).base = value;
+        this.fixPrm(Prm.EP, Prm.MAX_EP);
+    }
 
     private fixPrm(checkPrm:Prm, maxPrm:Prm){
              if(this.prm(checkPrm).base < 0)                     {this.prm(checkPrm).base = 0;}

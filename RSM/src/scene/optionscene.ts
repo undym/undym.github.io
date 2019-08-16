@@ -1,5 +1,5 @@
 import { Scene } from "../undym/scene.js";
-import { Place, Util, Debug } from "../util.js";
+import { Place, Util, Debug, PlayData } from "../util.js";
 import { Rect, Color, Size } from "../undym/type.js";
 import { YLayout, ILayout, Layout, Label, FlowLayout } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
@@ -92,7 +92,7 @@ const setDebugBtn = (l:FlowLayout)=>{
         }
         Util.msg.set("GetMaterials");
     }));
-    l.add(new Btn("TecMaster", ()=>{
+    l.add(new Btn("技習得", ()=>{
         for(let p of Player.values()){
             for(let tec of ActiveTec.values()){
                 p.ins.setMasteredTec(tec, true);
@@ -102,7 +102,13 @@ const setDebugBtn = (l:FlowLayout)=>{
             }   
         }
         
-        Util.msg.set("TecMaster");
+        Util.msg.set("技習得");
+    }));
+    l.add(new Btn("金", ()=>{
+        const value = 99999;
+        PlayData.yen += value;
+
+        Util.msg.set(`yen+${value}`);
     }));
     l.add(new Btn("EffectTest", ()=>{
         Scene.load(new EffectTest());

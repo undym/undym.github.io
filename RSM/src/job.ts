@@ -95,6 +95,7 @@ export abstract class Job{
         e.prm(Prm.MAX_TP).base = Unit.DEF_MAX_TP;
 
         e.tp = 0;
+        e.ep = 0;
         
         
         this.setEnemyInner(e);
@@ -105,12 +106,6 @@ export abstract class Job{
 
     setEnemyInner(e:EUnit){}
 
-
-    //------------------------------------------------------------------
-    //
-    //
-    //
-    //------------------------------------------------------------------
     //------------------------------------------------------------------
     //
     //
@@ -129,6 +124,18 @@ export namespace Job{
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.殴る, Tec.殴る, Tec.殴る, Tec.殴る, Tec.練気];
+
+        }
+    };
+    export const                         先輩 = new class extends Job{
+        constructor(){super({uniqueName:"先輩", info:["進化したしんまい"],
+                                appearLv:40, lvupExp:Job.DEF_LVUP_EXP * 3,
+                                grow:()=> [{prm:Prm.MAX_HP, value:2}],
+                                learn:()=> [Tec.癒しの風, Tec.我慢],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.殴る, Tec.殴る, Tec.殴る, Tec.HP自動回復, Tec.練気];
 
         }
     };
@@ -158,18 +165,29 @@ export namespace Job{
         constructor(){super({uniqueName:"魔法使い", info:["魔法攻撃を扱う職業"],
                                 appearLv:1, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.MAG, value:1}],
-                                learn:()=> [Tec.ヴァハ, Tec.MP自動回復, Tec.エヴィン,],
+                                learn:()=> [Tec.ヴァハ, Tec.MP自動回復, Tec.ジョンD],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.ヴァハ, Tec.ヴァハ, Tec.殴る, Tec.殴る, Tec.殴る];
         }
     };
+    export const                         ウィザード = new class extends Job{
+        constructor(){super({uniqueName:"ウィザード", info:["魔法攻撃を扱う職業"],
+                                appearLv:50, lvupExp:Job.DEF_LVUP_EXP * 2,
+                                grow:()=> [{prm:Prm.MAG, value:1}],
+                                learn:()=> [Tec.魔法攻撃UP, Tec.エヴィン, Tec.ルー],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.魔法使い),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.ヴァハ, Tec.ヴァハ,Tec.ヴァハ,Tec.ヴァハ, Tec.エヴィン, Tec.エヴィン, Tec.殴る];
+        }
+    };
     export const                         天使 = new class extends Job{
         constructor(){super({uniqueName:"天使", info:["回復に優れる"],
                                 appearLv:8, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.LIG, value:1}],
-                                learn:()=> [Tec.天籟, Tec.ばんそうこう],
+                                learn:()=> [Tec.天籟, Tec.ばんそうこう, Tec.ユグドラシル],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{
@@ -180,7 +198,7 @@ export namespace Job{
         constructor(){super({uniqueName:"暗黒戦士", info:["自分の身を削り強力な攻撃を放つ"],
                                 appearLv:8, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.DRK, value:1}],
-                                learn:()=> [Tec.暗黒剣, Tec.ポイズンバタフライ],
+                                learn:()=> [Tec.暗黒剣, Tec.ポイズンバタフライ, Tec.自爆],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{
@@ -191,7 +209,7 @@ export namespace Job{
         constructor(){super({uniqueName:"スネイカー", info:["全体攻撃に長ける"],
                                 appearLv:20, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.CHN, value:1}],
-                                learn:()=> [Tec.スネイク, Tec.TP自動回復],
+                                learn:()=> [Tec.スネイク, Tec.TP自動回復, Tec.凍てつく波動],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{
@@ -202,7 +220,7 @@ export namespace Job{
         constructor(){super({uniqueName:"ダウザー", info:["全体攻撃に長ける"],
                                 appearLv:30, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.PST, value:1}],
-                                learn:()=> [Tec.念力, Tec.念],
+                                learn:()=> [Tec.念力, Tec.念, Tec.メテオ],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{
@@ -213,7 +231,7 @@ export namespace Job{
         constructor(){super({uniqueName:"ガンマン", info:["銃攻撃は命中率が低いものの","それを補う手数の多さを持つ"],
                                 appearLv:30, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.GUN, value:1}],
-                                learn:()=> [Tec.撃つ, Tec.二丁拳銃],
+                                learn:()=> [Tec.撃つ, Tec.二丁拳銃, Tec.あがらない雨],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{
@@ -224,7 +242,7 @@ export namespace Job{
         constructor(){super({uniqueName:"アーチャー", info:["致命の一撃を放つ"],
                                 appearLv:30, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.ARR, value:1}],
-                                learn:()=> [Tec.射る, Tec.インドラ],
+                                learn:()=> [Tec.射る, Tec.インドラ, Tec.キャンドラ],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{

@@ -113,7 +113,6 @@ const strageEq = (save:boolean, eq:Eq)=>{
 const strageDungeon = (save:boolean, d:Dungeon)=>{
     const name = `${strageDungeon.name}_${d.uniqueName}`;
     ioInt(save, `${name}_clearNum`,         d.clearNum,         load=> d.clearNum = load);
-    ioInt(save, `${name}_treasureOpenNum`,  d.treasureOpenNum,  load=> d.treasureOpenNum = load);
 };
 
 

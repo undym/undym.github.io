@@ -45,7 +45,7 @@ export class Place {
     }
     static get DUNGEON_DATA() {
         return this.dungeon_data ? this.dungeon_data :
-            (this.dungeon_data = new Rect(this.MAIN.x + this.MAIN.w * 0.05, this.MSG.yh, this.MAIN.w * 0.9, this.MAIN.h - this.MSG.h - this.dotH));
+            (this.dungeon_data = new Rect(this.MAIN.x + this.MAIN.w * 0.05, this.MSG.yh, this.MAIN.w * 0.9, this.MAIN.h - this.MSG.h - this.dotH * 2));
     }
 }
 Place.ST_H = 0.125;

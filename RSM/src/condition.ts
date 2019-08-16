@@ -139,6 +139,20 @@ export namespace Condition{
     //GOOD_LV3
     //
     //--------------------------------------------------------------------------
+    export const             癒 = new class extends Condition{
+        constructor(){super("癒", ConditionType.GOOD_LV3);}
+        
+        async phaseStart(unit:Unit){
+            let value = unit.prm(Prm.MAX_HP).total * 0.2;
+            const lim = (unit.prm(Prm.LIG).total + unit.prm(Prm.LV).total) * 10;
+            if(value > lim){value = lim;}
+
+            Util.msg.set("＞癒", Color.CYAN.bright);
+            unit.hp += value;
+            
+            unit.addConditionValue(this, -1);
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //BAD_LV1
@@ -160,7 +174,7 @@ export namespace Condition{
 
             unit.doDmg(dmg);
 
-            unit.addConditionValue(this, value * 0.666);
+            unit.setCondition(this, value * 0.666);
         }
     };
     //--------------------------------------------------------------------------

@@ -105,7 +105,6 @@ const strageEq = (save, eq) => {
 const strageDungeon = (save, d) => {
     const name = `${strageDungeon.name}_${d.uniqueName}`;
     ioInt(save, `${name}_clearNum`, d.clearNum, load => d.clearNum = load);
-    ioInt(save, `${name}_treasureOpenNum`, d.treasureOpenNum, load => d.treasureOpenNum = load);
 };
 const stragePlayer = (save, p) => {
     const name = `${stragePlayer.name}_${p.uniqueName}`;

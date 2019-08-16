@@ -21,16 +21,9 @@ export class Color {
             let sin = Math.sin(Math.PI * 2 * count * spd) * range;
             return new Color(round(this.r + sin), round(this.g + sin), round(this.b + sin), this.a);
         };
-        this.wave = (color, args) => {
-            let count = Date.now() / 30;
-            let spd = 0.02;
-            if (args) {
-                if (args.count) {
-                    count = args.count;
-                }
-                if (args.spd) {
-                    spd = args.spd;
-                }
+        this.wave = (color, count, spd = 0.02) => {
+            if (!count) {
+                count = Date.now() / 30;
             }
             let ratio1 = (1 + Math.sin(Math.PI * 2 * count * spd)) / 2;
             let ratio2 = 1 - ratio1;

@@ -70,13 +70,8 @@ export class Color{
                 );
     };
 
-    readonly wave = (color:Color, args?:{count?:number, spd?:number}):Color=>{
-        let count:number = Date.now() / 30;
-        let spd:number = 0.02;
-        if(args){
-            if(args.count)  {count = args.count;}
-            if(args.spd)    {spd = args.spd;}
-        }
+    readonly wave = (color:Color, count?:number, spd:number = 0.02):Color=>{
+        if(!count)  {count = Date.now() / 30;}
 
         let ratio1 = (1 + Math.sin( Math.PI * 2 * count * spd )) / 2;
         let ratio2 = 1 - ratio1;

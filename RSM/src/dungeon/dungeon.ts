@@ -94,7 +94,6 @@ export abstract class Dungeon{
 
 
     clearNum:number = 0;
-    treasureOpenNum = 0;
 
     readonly uniqueName:string;
     readonly rank:number;
@@ -233,12 +232,12 @@ export namespace Dungeon{
             }
         };
     };
-    export const                         丘の上:Dungeon = new class extends Dungeon{
-        constructor(){super({uniqueName:"丘の上",
+    export const                         再構成トンネル:Dungeon = new class extends Dungeon{
+        constructor(){super({uniqueName:"再構成トンネル",
                                 rank:1, enemyLv:3, au:70,
-                                clearItem:()=>Item.丘の上の玉,
+                                clearItem:()=>Item.再構成トンネルの玉,
                                 treasure:()=>Eq.安全靴,
-                                treasureKey:()=>Item.丘の上の鍵,
+                                treasureKey:()=>Item.再構成トンネルの鍵,
                                 trendItems:()=>[Item.水],
                                 event:Event.createDef().add(Event.TREE),
         });}
@@ -246,11 +245,34 @@ export namespace Dungeon{
         setBossInner = ()=>{
             let e = Unit.enemies[0];
             Job.格闘家.setEnemy(e, e.prm(Prm.LV).base);
-            e.name = "丘太郎";
-            e.prm(Prm.MAX_HP).base = 30;
+            e.name = "幻影";
+            e.prm(Prm.MAX_HP).base = 23;
             e.prm(Prm.STR).base = 10;
             //ボス以外の雑魚は1体
             for(let i = 2; i < Unit.enemies.length; i++){
+                Unit.enemies[i].exists = false;
+            }
+        };
+    };
+    export const                         リテの門:Dungeon = new class extends Dungeon{
+        constructor(){super({uniqueName:"リ・テの門",
+                                rank:1, enemyLv:5, au:70,
+                                clearItem:()=>Item.リテの門の玉,
+                                treasure:()=>Eq.魔法の杖,
+                                treasureKey:()=>Item.リテの門の鍵,
+                                trendItems:()=>[],
+                                event:Event.createDef().add(Event.TREE),
+        });}
+        isVisible = ()=>Dungeon.再構成トンネル.clearNum > 0;
+        setBossInner = ()=>{
+            let e = Unit.enemies[0];
+            Job.魔法使い.setEnemy(e, e.prm(Prm.LV).base);
+            e.name = "門番";
+            e.prm(Prm.MAX_HP).base = 50;
+            e.prm(Prm.STR).base = 7;
+            e.prm(Prm.MAG).base = 10;
+            //ボス以外の雑魚は2体
+            for(let i = 3; i < Unit.enemies.length; i++){
                 Unit.enemies[i].exists = false;
             }
         };

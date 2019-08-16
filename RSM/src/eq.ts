@@ -1,5 +1,5 @@
 import { Force, Dmg, Action } from "./force.js";
-import { Unit } from "./unit.js";
+import { Unit, Prm } from "./unit.js";
 import { Num, Mix } from "./mix.js";
 import { Item } from "./item.js";
 import { ActiveTec, TecType } from "./tec.js";
@@ -106,7 +106,6 @@ export abstract class Eq implements Force, Num{
         pos:EqPos,
         lv:number,
     }){
-    // private constructor(name:string, info:string[], pos:EqPos, appearLv:number){
         this.uniqueName = args.uniqueName;
         this.toString = ()=>this.uniqueName;
         this.info = args.info;
@@ -138,11 +137,6 @@ export abstract class Eq implements Force, Num{
     //
     //
     //--------------------------------------------------------------------------
-    //--------------------------------------------------------------------------
-    //
-    //
-    //
-    //--------------------------------------------------------------------------
 }
 
 
@@ -166,13 +160,21 @@ export namespace Eq{
                                 pos:EqPos.武, lv:0});}
     }
     export const                         棒 = new class extends Eq{
-        constructor(){super({uniqueName:"棒", info:["格闘攻撃+10x1.1"],
+        constructor(){super({uniqueName:"棒", info:["格闘攻撃x1.3"],
                                 pos:EqPos.武, lv:20});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type === TecType.格闘){
-                dmg.pow.add += 10;
-                dmg.pow.mul *= 1.1;
+                dmg.pow.add += 2;
+                dmg.pow.mul *= 1.3;
             }
+        }
+    }
+    //再構成トンネル・財宝
+    export const                         魔法の杖 = new class extends Eq{
+        constructor(){super({uniqueName:"魔法の杖", info:["魔法+15"],
+                                pos:EqPos.武, lv:40});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAG).eq += 15;
         }
     }
     // export const                         忍者刀 = new class extends Eq{
@@ -191,6 +193,38 @@ export namespace Eq{
     export const                         板 = new class extends Eq{
         constructor(){super({uniqueName:"板", info:[],
                                 pos:EqPos.盾, lv:0});}
+    }
+    //shop
+    export const                         銅板 = new class extends Eq{
+        constructor(){super({uniqueName:"銅板", info:["防御値+50"],
+                                pos:EqPos.盾, lv:12});}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.def.add += 50;
+        }
+    }
+    //shop
+    export const                         鉄板 = new class extends Eq{
+        constructor(){super({uniqueName:"鉄板", info:["防御値+100"],
+                                pos:EqPos.盾, lv:22});}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.def.add += 100;
+        }
+    }
+    //shop
+    export const                         鋼鉄板 = new class extends Eq{
+        constructor(){super({uniqueName:"鋼鉄板", info:["防御値+200"],
+                                pos:EqPos.盾, lv:32});}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.def.add += 200;
+        }
+    }
+    //shop
+    export const                         チタン板 = new class extends Eq{
+        constructor(){super({uniqueName:"チタン板", info:["防御値+300"],
+                                pos:EqPos.盾, lv:42});}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.def.add += 300;
+        }
     }
     //--------------------------------------------------------------------------
     //
@@ -250,7 +284,7 @@ export namespace Eq{
         constructor(){super({uniqueName:"安全靴", info:["被攻撃時稀に＜盾＞化"],
                                 pos:EqPos.脚, lv:40});}
         afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-            if(action instanceof ActiveTec && Math.random() < 0.7){
+            if(action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.7){
                 target.setCondition(Condition.盾, 1);
             }
         }

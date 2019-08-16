@@ -13,7 +13,7 @@ export class Num {
             }
             obj.num += v;
             obj.totalGetNum += v;
-            Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, Color.GREEN.wave(Color.YELLOW));
+            Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, cnt => Color.GREEN.wave(Color.YELLOW, cnt));
             if (newItem) {
                 for (let str of obj.info) {
                     Util.msg.set(`"${str}"`, Color.GREEN);

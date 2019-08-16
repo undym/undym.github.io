@@ -112,7 +112,6 @@ export namespace DungeonEvent{
                                 .set(ReturnBtn.index, new Btn("開ける", async()=>{
                                     if(Dungeon.now.treasureKey.num > 0){
                                         Dungeon.now.treasureKey.num--;
-                                        Dungeon.now.treasureOpenNum++;
                                         await DungeonEvent.OPEN_TREASURE.happen();
                                     }else{
                                         Util.msg.set("鍵を持っていない");

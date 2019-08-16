@@ -96,25 +96,6 @@ export class Item implements Action, Num{
     static consumableValues():ReadonlyArray<Item>{
         return this._consumableValues;
     }
-    /**
-     * 宝箱から出る指定ランクのアイテムを返す。そのランクにアイテムが存在しなければランクを一つ下げて再帰する。
-     * @param rank 
-     */
-    // static rndBoxRankItem(rank:number):Item{
-    //     const values = this.rankValues(rank);
-    //     if(!values){
-    //         if(rank <= 0){return Item.石;}
-    //         return this.rndBoxRankItem(rank-1);
-    //     }
-
-    //     for(let i = 0; i < 7; i++){
-    //         let tmp = choice( values );
-    //         if(tmp.box && tmp.rank <= rank && tmp.num < tmp.numLimit){
-    //             return tmp;
-    //         }
-    //     }
-    //     return Item.石;
-    // }
 
     private static _dropTypeValues = new Map<number,ItemValues>();
     /**
@@ -343,8 +324,12 @@ export namespace Item{
         constructor(){super({uniqueName:"はじまりの丘の鍵", info:[""],
                                 type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
-    export const                         丘の上の鍵 = new class extends Item{
-        constructor(){super({uniqueName:"丘の上の鍵", info:[""],
+    export const                         再構成トンネルの鍵 = new class extends Item{
+        constructor(){super({uniqueName:"再構成トンネルの鍵", info:[""],
+                                type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
+    };
+    export const                         リテの門の鍵 = new class extends Item{
+        constructor(){super({uniqueName:"リ・テの門の鍵", info:[""],
                                 type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
     //-----------------------------------------------------------------
@@ -356,8 +341,12 @@ export namespace Item{
         constructor(){super({uniqueName:"はじまりの丘の玉", info:[""],
                                 type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
-    export const                         丘の上の玉 = new class extends Item{
-        constructor(){super({uniqueName:"丘の上の玉", info:[""],
+    export const                         再構成トンネルの玉 = new class extends Item{
+        constructor(){super({uniqueName:"再構成トンネルの玉", info:[""],
+                                type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
+    };
+    export const                         リテの門の玉 = new class extends Item{
+        constructor(){super({uniqueName:"リ・テの門の玉", info:[""],
                                 type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
     //-----------------------------------------------------------------

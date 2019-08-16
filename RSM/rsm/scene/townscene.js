@@ -25,6 +25,7 @@ import { SetTecScene } from "./settecscene.js";
 import { MixScene } from "./mixscene.js";
 import { EqScene } from "./eqscene.js";
 import { ConditionType } from "../condition.js";
+import { ShopScene } from "./shopscene.js";
 let choosedDungeon;
 let visibleDungeonEnterBtn = false;
 export class TownScene extends Scene {
@@ -49,8 +50,9 @@ export class TownScene extends Scene {
 const fullCare = () => {
     for (let u of Unit.players) {
         u.dead = false;
-        u.prm(Prm.HP).base = u.prm(Prm.MAX_HP).total;
-        u.prm(Prm.MP).base = u.prm(Prm.MAX_MP).total;
+        u.hp = u.prm(Prm.MAX_HP).total;
+        u.mp = u.prm(Prm.MAX_MP).total;
+        u.ep = u.prm(Prm.MAX_EP).total;
         for (const type of ConditionType.badConditions()) {
             u.clearCondition(type);
         }
@@ -77,6 +79,11 @@ class TownBtn {
             }));
         }
         if (Dungeon.はじまりの丘.clearNum > 0 || Debug.debugMode) {
+            l.add(new Btn("お店", () => {
+                Scene.load(new ShopScene());
+            }));
+        }
+        if (Dungeon.再構成トンネル.clearNum > 0 || Debug.debugMode) {
             l.add(new Btn("合成", () => {
                 Scene.load(new MixScene());
             }));
@@ -122,9 +129,16 @@ class TownBtn {
             l.add(new Btn(() => `${d}`, () => {
                 choosedDungeon = d;
                 visibleDungeonEnterBtn = true;
+                Util.msg.set("");
                 Util.msg.set(`[${d}]`);
                 Util.msg.set(`Rank:${d.rank}`);
-                Util.msg.set(`攻略回数:${d.clearNum}`, d.clearNum === 0 ? Color.GRAY : Color.WHITE);
+                Util.msg.set(`攻略回数:${d.clearNum}`, d.clearNum > 0 ? Color.WHITE : Color.GRAY);
+                if (d.treasure.totalGetNum > 0) {
+                    Util.msg.set(`財宝:${d.treasure}(${d.treasure.num}個)`);
+                }
+                else {
+                    Util.msg.set(`財宝:${"？".repeat(d.treasure.toString().length)}`, Color.GRAY);
+                }
             }));
             if (++num >= onePageDrawDungeonNum) {
                 break;

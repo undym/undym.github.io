@@ -132,6 +132,21 @@ Condition._values = [];
     //GOOD_LV3
     //
     //--------------------------------------------------------------------------
+    Condition.癒 = new class extends Condition {
+        constructor() { super("癒", ConditionType.GOOD_LV3); }
+        phaseStart(unit) {
+            return __awaiter(this, void 0, void 0, function* () {
+                let value = unit.prm(Prm.MAX_HP).total * 0.2;
+                const lim = (unit.prm(Prm.LIG).total + unit.prm(Prm.LV).total) * 10;
+                if (value > lim) {
+                    value = lim;
+                }
+                Util.msg.set("＞癒", Color.CYAN.bright);
+                unit.hp += value;
+                unit.addConditionValue(this, -1);
+            });
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //BAD_LV1
@@ -151,7 +166,7 @@ Condition._values = [];
                 let dmg = new Dmg({ absPow: value });
                 Util.msg.set("＞毒", Color.RED);
                 unit.doDmg(dmg);
-                unit.addConditionValue(this, value * 0.666);
+                unit.setCondition(this, value * 0.666);
             });
         }
     };

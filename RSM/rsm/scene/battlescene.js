@@ -47,16 +47,23 @@ export class BattleScene extends Scene {
                 p = p.move(0, f.ratioH);
                 if (tec instanceof ActiveTec) {
                     let mpW = 0;
+                    let tpW = 0;
                     const user = this.tecInfo.user;
                     if (tec.mpCost > 0) {
-                        let col = tec.mpCost <= user.prm(Prm.MP).base ? Color.WHITE : Color.GRAY;
+                        let col = tec.mpCost <= user.mp ? Color.WHITE : Color.GRAY;
                         const s = `MP:${tec.mpCost} `;
-                        mpW = f.measureRatioW(s);
                         f.draw(s, p, col);
+                        mpW = f.measureRatioW(s);
                     }
                     if (tec.tpCost > 0) {
-                        let col = tec.tpCost <= user.prm(Prm.TP).base ? Color.WHITE : Color.GRAY;
-                        f.draw(`TP:${tec.tpCost}`, p.move(mpW, 0), col);
+                        let col = tec.tpCost <= user.tp ? Color.WHITE : Color.GRAY;
+                        const s = `TP:${tec.tpCost} `;
+                        f.draw(s, p.move(mpW, 0), col);
+                        tpW = f.measureRatioW(s);
+                    }
+                    if (tec.epCost > 0) {
+                        let col = tec.epCost <= user.ep ? Color.WHITE : Color.GRAY;
+                        f.draw(`EP:${tec.epCost}`, p.move(tpW, 0), col);
                     }
                 }
                 else {

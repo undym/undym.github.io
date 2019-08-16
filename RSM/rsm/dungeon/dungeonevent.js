@@ -106,7 +106,6 @@ DungeonEvent._values = [];
                 .set(ReturnBtn.index, new Btn("開ける", () => __awaiter(this, void 0, void 0, function* () {
                 if (Dungeon.now.treasureKey.num > 0) {
                     Dungeon.now.treasureKey.num--;
-                    Dungeon.now.treasureOpenNum++;
                     yield DungeonEvent.OPEN_TREASURE.happen();
                 }
                 else {

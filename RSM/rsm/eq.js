@@ -1,3 +1,4 @@
+import { Prm } from "./unit.js";
 import { Num } from "./mix.js";
 import { ActiveTec, TecType } from "./tec.js";
 import { Condition } from "./condition.js";
@@ -34,7 +35,6 @@ export class Eq {
     constructor(args) {
         this.num = 0;
         this.totalGetNum = 0;
-        // private constructor(name:string, info:string[], pos:EqPos, appearLv:number){
         this.uniqueName = args.uniqueName;
         this.toString = () => this.uniqueName;
         this.info = args.info;
@@ -140,14 +140,24 @@ Eq._values = [];
     };
     Eq.棒 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "棒", info: ["格闘攻撃+10x1.1"],
+            super({ uniqueName: "棒", info: ["格闘攻撃x1.3"],
                 pos: EqPos.武, lv: 20 });
         }
         beforeDoAtk(action, attacker, target, dmg) {
             if (action instanceof ActiveTec && action.type === TecType.格闘) {
-                dmg.pow.add += 10;
-                dmg.pow.mul *= 1.1;
+                dmg.pow.add += 2;
+                dmg.pow.mul *= 1.3;
             }
+        }
+    };
+    //再構成トンネル・財宝
+    Eq.魔法の杖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "魔法の杖", info: ["魔法+15"],
+                pos: EqPos.武, lv: 40 });
+        }
+        equip(unit) {
+            unit.prm(Prm.MAG).eq += 15;
         }
     };
     // export const                         忍者刀 = new class extends Eq{
@@ -167,6 +177,46 @@ Eq._values = [];
         constructor() {
             super({ uniqueName: "板", info: [],
                 pos: EqPos.盾, lv: 0 });
+        }
+    };
+    //shop
+    Eq.銅板 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "銅板", info: ["防御値+50"],
+                pos: EqPos.盾, lv: 12 });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            dmg.def.add += 50;
+        }
+    };
+    //shop
+    Eq.鉄板 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "鉄板", info: ["防御値+100"],
+                pos: EqPos.盾, lv: 22 });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            dmg.def.add += 100;
+        }
+    };
+    //shop
+    Eq.鋼鉄板 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "鋼鉄板", info: ["防御値+200"],
+                pos: EqPos.盾, lv: 32 });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            dmg.def.add += 200;
+        }
+    };
+    //shop
+    Eq.チタン板 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "チタン板", info: ["防御値+300"],
+                pos: EqPos.盾, lv: 42 });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            dmg.def.add += 300;
         }
     };
     //--------------------------------------------------------------------------
@@ -241,7 +291,7 @@ Eq._values = [];
                 pos: EqPos.脚, lv: 40 });
         }
         afterBeAtk(action, attacker, target, dmg) {
-            if (action instanceof ActiveTec && Math.random() < 0.7) {
+            if (action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.7) {
                 target.setCondition(Condition.盾, 1);
             }
         }
