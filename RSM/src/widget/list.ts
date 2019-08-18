@@ -90,10 +90,6 @@ export class List extends ILayout{
     }):Elm{
         const e = new Elm(args);
         
-        if(e.right){
-            console.log(e.right());
-        }
-
         this.elms.push(e);
 
         this.update = true;
@@ -126,9 +122,6 @@ export class List extends ILayout{
     }
 
     drawInner(bounds:Rect){
-        if(!this.elmPanel){
-            console.log(this.elmPanel);
-        }
         this.panel.draw(bounds);
     }
 

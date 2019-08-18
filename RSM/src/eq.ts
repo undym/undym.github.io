@@ -88,10 +88,6 @@ export abstract class Eq implements Force, Num{
     readonly pos:EqPos;
     /**敵が装備し始めるレベル. */
     readonly appearLv:number;
-    
-    get mix():Mix|undefined{return this._mix ? this._mix : (this._mix = this.createMix());}
-    private _mix:Mix|undefined;
-    protected createMix():Mix|undefined{return undefined;}
 
     num = 0;
     totalGetNum = 0;

@@ -19,7 +19,6 @@ import { Item } from "../item.js";
 import { Mix } from "../mix.js";
 import { Eq } from "../eq.js";
 import { SaveData } from "../savedata.js";
-import { Building } from "../building.js";
 export class MixScene extends Scene {
     constructor() {
         super();
@@ -38,63 +37,101 @@ export class MixScene extends Scene {
             return new RatioLayout()
                 .add(infoBounds, ILayout.create({ draw: (bounds) => {
                     Graphics.fillRect(bounds, Color.D_GRAY);
-                    if (!this.choosedMix) {
+                    const mix = this.choosedMix;
+                    if (!mix) {
                         return;
                     }
-                    const mix = this.choosedMix;
                     const font = Font.def;
                     let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
                     const movedP = () => p = p.move(0, font.ratioH);
-                    if (mix.countLimit() === Mix.LIMIT_INF) {
+                    if (mix.countLimit === Mix.LIMIT_INF) {
                         font.draw(`合成回数(${mix.count}/-)`, p, Color.WHITE);
                     }
                     else {
-                        font.draw(`合成回数(${mix.count}/${mix.countLimit()})`, p, Color.WHITE);
+                        font.draw(`合成回数(${mix.count}/${mix.countLimit})`, p, Color.WHITE);
                     }
                     for (let m of mix.materials) {
                         const color = m.num >= m.object.num ? Color.WHITE : Color.GRAY;
                         font.draw(`[${m.object}] ${m.num}/${m.object.num}`, movedP(), color);
                     }
-                    if (this.choosedObj instanceof Item) {
-                        const result = this.choosedMix.result;
-                        if (!result) {
-                            return;
+                    const result = mix.result;
+                    if (result) {
+                        movedP();
+                        if (result.object instanceof Eq) {
+                            const eq = result.object;
+                            font.draw(`<${eq.pos}>`, movedP(), Color.WHITE);
+                            if (!mix.info) {
+                                for (const info of eq.info) {
+                                    font.draw(info, movedP(), Color.WHITE);
+                                }
+                            }
                         }
-                        const item = result.object;
-                        if (!(item instanceof Item)) {
-                            return;
+                        if (result.object instanceof Item) {
+                            const item = result.object;
+                            font.draw(`<${item.itemType}>`, movedP(), Color.WHITE);
+                            if (!mix.info) {
+                                for (const info of item.info) {
+                                    font.draw(info, movedP(), Color.WHITE);
+                                }
+                            }
                         }
-                        const limit = item.num >= item.numLimit ? "（所持上限）" : "";
-                        font.draw(`[${item}]x${result.num} <${item.itemType}> ${limit}`, movedP(), Color.WHITE);
-                        for (let info of item.info) {
+                    }
+                    if (mix.info) {
+                        movedP();
+                        for (const info of mix.info) {
                             font.draw(info, movedP(), Color.WHITE);
                         }
                     }
-                    if (this.choosedObj instanceof Eq) {
-                        const result = this.choosedMix.result;
-                        if (!result) {
-                            return;
-                        }
-                        const eq = result.object;
-                        if (!(eq instanceof Eq)) {
-                            return;
-                        }
-                        font.draw(`[${eq}]x${eq.num} <${eq.pos}>`, movedP(), Color.WHITE);
-                        for (let info of eq.info) {
-                            font.draw(info, movedP(), Color.WHITE);
-                        }
-                    }
+                    // if(this.choosedObj instanceof Item){
+                    //     const result = this.choosedMix.result;
+                    //     if(!result){return;}
+                    //     const item = result.object;
+                    //     if(!(item instanceof Item)){return;}
+                    //     const limit = item.num >= item.numLimit ? "（所持上限）" : "";
+                    //     font.draw(`[${item}]x${result.num} <${item.itemType}> ${limit}`, movedP(), Color.WHITE);
+                    //     for(let info of item.info){
+                    //         font.draw(info, movedP(), Color.WHITE);
+                    //     }
+                    // }
+                    // if(this.choosedObj instanceof Eq){
+                    //     const result = this.choosedMix.result;
+                    //     if(!result){return;}
+                    //     const eq = result.object;
+                    //     if(!(eq instanceof Eq)){return;}
+                    //     font.draw(`[${eq}]x${eq.num} <${eq.pos}>`, movedP(), Color.WHITE);
+                    //     for(let info of eq.info){
+                    //         font.draw(info, movedP(), Color.WHITE);
+                    //     }
+                    // }
                 } }))
                 .add(btnBounds, (() => {
                 const l = new FlowLayout(2, 3);
                 l.add(new Btn("建築", () => {
-                    this.setBuildingList();
-                }));
-                l.add(new Btn("アイテム", () => {
-                    this.setItemList();
+                    const values = Mix.values()
+                        .filter(m => !m.result && m.isVisible());
+                    this.setList("建築", values);
                 }));
                 l.add(new Btn("装備", () => {
-                    this.setEqList();
+                    const values = Mix.values()
+                        .filter(m => {
+                        const result = m.result;
+                        if (result && result.object instanceof Eq && m.isVisible()) {
+                            return true;
+                        }
+                        return false;
+                    });
+                    this.setList("装備", values);
+                }));
+                l.add(new Btn("アイテム", () => {
+                    const values = Mix.values()
+                        .filter(m => {
+                        const result = m.result;
+                        if (result && result.object instanceof Item && m.isVisible()) {
+                            return true;
+                        }
+                        return false;
+                    });
+                    this.setList("アイテム", values);
                 }));
                 l.addFromLast(new Btn("<<", () => {
                     if (this.doneAnyMix) {
@@ -115,10 +152,8 @@ export class MixScene extends Scene {
                     this.choosedMix.run();
                     this.doneAnyMix = true;
                 }));
-                const noRun = new Btn("合成", () => __awaiter(this, void 0, void 0, function* () {
+                const noRun = new Btn("-", () => __awaiter(this, void 0, void 0, function* () {
                 }));
-                noRun.stringColor = () => Color.GRAY;
-                noRun.groundColor = () => Color.D_GRAY;
                 l.addFromLast(new VariableLayout(() => {
                     return canMix() ? run : noRun;
                 }));
@@ -129,20 +164,15 @@ export class MixScene extends Scene {
         super.add(pboxBounds, DrawSTBoxes.players);
         super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
     }
-    setBuildingList() {
+    setList(name, values) {
         this.list.clear();
         this.list.add({
-            center: () => "建築",
-            groundColor: () => Color.D_GRAY,
+            center: () => name,
         });
-        Building.values()
-            .forEach(b => {
-            if (!b.mix || !b.mix.isVisible()) {
-                return;
-            }
-            const mix = b.mix;
+        values
+            .forEach(mix => {
             const color = () => {
-                if (b === this.choosedObj) {
+                if (mix === this.choosedMix) {
                     return Color.CYAN;
                 }
                 if (!mix.canRun()) {
@@ -151,79 +181,17 @@ export class MixScene extends Scene {
                 return Color.WHITE;
             };
             this.list.add({
-                left: () => `${mix.count}/${mix.countLimit}`,
-                leftColor: color,
-                right: () => b.toString(),
-                rightColor: color,
-                push: (elm) => {
-                    this.choosedObj = b;
-                    this.choosedMix = b.mix;
+                left: () => {
+                    if (mix.countLimit === Mix.LIMIT_INF) {
+                        return `${mix.count}`;
+                    }
+                    return `${mix.count}/${mix.countLimit}`;
                 },
-            });
-        });
-    }
-    setItemList() {
-        this.list.clear();
-        this.list.add({
-            center: () => "アイテム",
-            groundColor: () => Color.D_GRAY,
-        });
-        Item.values()
-            .forEach(item => {
-            if (!item.mix || !item.mix.isVisible()) {
-                return;
-            }
-            const mix = item.mix;
-            const color = () => {
-                if (item === this.choosedObj) {
-                    return Color.CYAN;
-                }
-                if (!mix.canRun()) {
-                    return Color.GRAY;
-                }
-                return Color.WHITE;
-            };
-            this.list.add({
-                left: () => `${item.num}`,
                 leftColor: color,
-                right: () => item.toString(),
+                right: () => mix.toString(),
                 rightColor: color,
                 push: (elm) => {
-                    this.choosedObj = item;
-                    this.choosedMix = item.mix;
-                },
-            });
-        });
-    }
-    setEqList() {
-        this.list.clear();
-        this.list.add({
-            center: () => "装備",
-            groundColor: () => Color.D_GRAY,
-        });
-        Eq.values()
-            .forEach(eq => {
-            if (!eq.mix || !eq.mix.isVisible()) {
-                return;
-            }
-            const mix = eq.mix;
-            const color = () => {
-                if (eq === this.choosedObj) {
-                    return Color.CYAN;
-                }
-                if (!mix.canRun()) {
-                    return Color.GRAY;
-                }
-                return Color.WHITE;
-            };
-            this.list.add({
-                left: () => `${eq.num}`,
-                leftColor: color,
-                right: () => eq.toString(),
-                rightColor: color,
-                push: (elm) => {
-                    this.choosedObj = eq;
-                    this.choosedMix = eq.mix;
+                    this.choosedMix = mix;
                 },
             });
         });

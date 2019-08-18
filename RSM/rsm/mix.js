@@ -1,5 +1,7 @@
 import { Util } from "./util.js";
 import { Color } from "./undym/type.js";
+import { Item } from "./item.js";
+import { Player } from "./player.js";
 export class Num {
     static add(obj, v) {
         v = v | 0;
@@ -32,34 +34,50 @@ export class Mix {
      * action:合成時に発生する効果。
      */
     constructor(args) {
-        this.materials = [];
+        this.args = args;
         /**合成回数. */
         this.count = 0;
-        for (let m of args.materials) {
-            this.materials.push({ object: m[0], num: m[1] });
-        }
-        if (args.limit) {
-            this.countLimit = args.limit;
+        this.toString = () => this.uniqueName;
+        Mix._values.push(this);
+        if (Mix._valueOf.has(args.uniqueName)) {
+            console.log("Mix._valueOf.has:", `"${args.uniqueName}"`);
         }
         else {
-            this.countLimit = () => Mix.LIMIT_INF;
-        }
-        if (args.result) {
-            const re = args.result;
-            this.result = { object: re[0], num: re[1] };
-        }
-        if (args.action) {
-            this.action = args.action;
+            Mix._valueOf.set(args.uniqueName, this);
         }
     }
+    static values() { return this._values; }
+    static valueOf(uniqueName) {
+        return this._valueOf.get(uniqueName);
+    }
+    // readonly materials:{object:Num, num:number}[] = [];
+    // readonly result:{object:Num, num:number}|undefined;
+    get materials() {
+        let res = [];
+        for (const m of this.args.materials()) {
+            res.push({ object: m[0], num: m[1] });
+        }
+        return res;
+    }
+    get result() {
+        const res = this.args.result;
+        if (res) {
+            const r = res();
+            return { object: r[0], num: r[1] };
+        }
+        return undefined;
+    }
+    get countLimit() { return this.args.limit ? this.args.limit : Mix.LIMIT_INF; }
+    get uniqueName() { return this.args.uniqueName; }
+    get info() { return this.args.info; }
     isVisible() {
         if (!this.materials) {
             return false;
         }
-        return this.materials[0].object.num > 0 && this.count < this.countLimit();
+        return this.materials[0].object.num > 0 && this.count < this.countLimit;
     }
     canRun() {
-        if (this.count >= this.countLimit()) {
+        if (this.count >= this.countLimit) {
             return false;
         }
         for (let m of this.materials) {
@@ -80,9 +98,46 @@ export class Mix {
         if (this.result) {
             this.result.object.add(this.result.num);
         }
-        if (this.action) {
-            this.action();
+        if (this.args.action) {
+            this.args.action();
         }
     }
 }
+Mix._values = [];
+Mix._valueOf = new Map();
 Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
+(function (Mix) {
+    //--------------------------------------------------------
+    //
+    //建築
+    //
+    //--------------------------------------------------------
+    const よしこ = new Mix({
+        uniqueName: "よしこ", info: ["よしこが仲間になる"],
+        limit: 1,
+        materials: () => [[Item.再構成トンネルの玉, 1]],
+        action: () => {
+            Player.よしこ.join();
+        }
+    });
+    //--------------------------------------------------------
+    //
+    //装備
+    //
+    //--------------------------------------------------------
+    //--------------------------------------------------------
+    //
+    //アイテム
+    //
+    //--------------------------------------------------------
+    const サンタクララ薬 = new Mix({
+        uniqueName: "サンタクララ薬", limit: 5,
+        result: () => [Item.サンタクララ薬, 1],
+        materials: () => [[Item.ヒノキ, 5], [Item.しいたけ, 5], [Item.水, 5]],
+    });
+    const 硬化スティックパン = new Mix({
+        uniqueName: "硬化スティックパン", limit: 5,
+        result: () => [Item.硬化スティックパン, 1],
+        materials: () => [[Item.石, 5], [Item.土, 5]],
+    });
+})(Mix || (Mix = {}));

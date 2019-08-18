@@ -83,12 +83,12 @@ export namespace Player{
         constructor(){super("スメラギ");}
         createInner(p:PUnit){
             p.job = Job.しんまい;
-            p.prm(Prm.MAX_HP).base = 30;
-            p.prm(Prm.STR).base = 3;
+            p.prm(Prm.MAX_HP).base = 20;
+            p.prm(Prm.STR).base = 2;
 
             p.tecs = [
                 Tec.殴る,
-                Tec.HP自動回復,
+                Tec.empty,
                 Tec.empty,
                 Tec.empty,
             ];
@@ -98,9 +98,9 @@ export namespace Player{
         constructor(){super("よしこ");}
         createInner(p:PUnit){
             p.job = Job.魔法使い;
-            p.prm(Prm.MAX_HP).base = 20;
+            p.prm(Prm.MAX_HP).base = 16;
             p.prm(Prm.STR).base = 2;
-            p.prm(Prm.MAG).base = 6;
+            p.prm(Prm.MAG).base = 4;
             
             p.tecs = [
                 Tec.殴る,

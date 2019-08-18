@@ -29,6 +29,7 @@ export class ItemType{
         return this._values;
     };
 
+    static readonly 蘇生 = new ItemType("蘇生");
     static readonly HP回復 = new ItemType("HP回復");
     static readonly MP回復 = new ItemType("MP回復");
     
@@ -54,7 +55,7 @@ export class ItemParentType{
         ItemParentType._values.push(this);
     }
 
-    static readonly 回復      = new ItemParentType("回復", [ItemType.HP回復, ItemType.MP回復]);
+    static readonly 回復      = new ItemParentType("回復", [ItemType.蘇生, ItemType.HP回復, ItemType.MP回復]);
     static readonly ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン]);
     static readonly その他    = new ItemParentType("その他", [ItemType.鍵, ItemType.玉, ItemType.素材]);
 }
@@ -164,9 +165,9 @@ export class Item implements Action, Num{
     protected useInner:(user:Unit, target:Unit)=>void;
 
     
-    get mix():Mix|undefined{return this._mix ? this._mix : (this._mix = this.createMix());}
-    private _mix:Mix|undefined;
-    protected createMix():Mix|undefined{return undefined;}
+    // get mix():Mix|undefined{return this._mix ? this._mix : (this._mix = this.createMix());}
+    // private _mix:Mix|undefined;
+    // protected createMix():Mix|undefined{return undefined;}
     
     protected constructor(args:{
         uniqueName:string,
@@ -241,6 +242,24 @@ export class Item implements Action, Num{
 export namespace Item{
     //-----------------------------------------------------------------
     //
+    //蘇生
+    //
+    //-----------------------------------------------------------------
+    export const                         サンタクララ薬 = new class extends Item{
+        constructor(){super({uniqueName:"サンタクララ薬", info:["一体をHP1で蘇生"],
+                                type:ItemType.HP回復, rank:0,
+                                consumable:true, drop:Item.DROP_NO,
+                                use:async(user,target)=>{
+                                    if(target.dead){
+                                        target.dead = false;
+                                        target.hp = 1;
+                                        Util.msg.set(`${target.name}は生き返った`);
+                                    }
+                                }
+        })}
+    };
+    //-----------------------------------------------------------------
+    //
     //HP回復
     //
     //-----------------------------------------------------------------
@@ -252,16 +271,11 @@ export namespace Item{
         })}
     };
     export const                         硬化スティックパン = new class extends Item{
-        constructor(){super({uniqueName:"硬化スティックパン", info:["HP+10%"],
+        constructor(){super({uniqueName:"硬化スティックパン", info:["HP+30"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
-                                use:async(user,target)=>await healHP(target, target.prm(Prm.MAX_HP).total / 10),
+                                use:async(user,target)=>await healHP(target, 30),
         })}
-        createMix(){return new Mix({
-            result:[this, 1],
-            limit:()=>5,
-            materials:[[Item.石, 5], [Item.土, 5]],
-        });}
     };
     //-----------------------------------------------------------------
     //
@@ -274,11 +288,6 @@ export namespace Item{
                                 consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=> await healMP(target, 10),
         })}
-        createMix(){return new Mix({
-            result:[this, 1],
-            limit:()=>5,
-            materials:[[Item.水, 5], [Item.土, 1]],
-        });}
     };
     //-----------------------------------------------------------------
     //
@@ -297,24 +306,6 @@ export namespace Item{
             return super.canUse() && SceneType.now === SceneType.DUNGEON;
         }
     };
-    // export const                         記録用粘土板 = new class extends Item{
-    //     constructor(){super({uniqueName:"記録用粘土板", info:["ダンジョン内でセーブする"],
-    //                             type:ItemType.ダンジョン, rank:0,
-    //                             consumable:true, drop:Item.DROP_NO,
-    //                             use:async(user,target)=>{
-    //                                 SaveData.save();
-    //                             },
-    //     })}
-    //     createMix(){return new Mix({
-    //         result:[this, 1],
-    //         limit:()=>1,
-    //         materials:[[Item.石, 3], [Item.土, 3], [Item.枝, 3]],
-
-    //     });}
-    //     canUse(){
-    //         return super.canUse() && SceneType.now === SceneType.DUNGEON;
-    //     }
-    // };
     //-----------------------------------------------------------------
     //
     //鍵
@@ -370,6 +361,10 @@ export namespace Item{
         constructor(){super({uniqueName:"水", info:["水"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
+    export const                         しいたけ = new class extends Item{
+        constructor(){super({uniqueName:"しいたけ", info:[""],
+                                type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
+    };
     export const                         He = new class extends Item{
         constructor(){super({uniqueName:"He", info:["ヘェッ"],
                                 type:ItemType.素材, rank:2, drop:Item.DROP_BOX})}
@@ -377,11 +372,6 @@ export namespace Item{
     export const                         少女の心を持ったおっさん = new class extends Item{
         constructor(){super({uniqueName:"少女の心を持ったおっさん", info:["いつもプリキュアの話をしている"],
                                 type:ItemType.素材, rank:5, drop:Item.DROP_BOX})}
-    };
-
-    export const                         しいたけ = new class extends Item{
-        constructor(){super({uniqueName:"しいたけ", info:[""],
-                                type:ItemType.素材, rank:0, drop:Item.DROP_NO,})}
     };
     export const                         スギ = new class extends Item{
         constructor(){super({uniqueName:"スギ", info:[""],

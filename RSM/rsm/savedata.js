@@ -8,7 +8,7 @@ import { Job } from "./job.js";
 import { ConditionType, Condition } from "./condition.js";
 import { PlayData, SceneType, Util } from "./util.js";
 import { Color } from "./undym/type.js";
-import { Building } from "./building.js";
+import { Mix } from "./mix.js";
 export class SaveData {
     static exists() {
         return window.localStorage.getItem(this.existsSaveData) !== null;
@@ -33,7 +33,7 @@ export class SaveData {
         Eq.values().forEach(eq => strageEq(save, eq));
         Dungeon.values().forEach(d => strageDungeon(save, d));
         Player.values().forEach(p => stragePlayer(save, p));
-        Building.values().forEach(b => strageBuilding(save, b));
+        Mix.values().forEach(m => strageMix(save, m));
         stragePlayData(save);
     }
 }
@@ -88,19 +88,19 @@ const strageItem = (save, item) => {
     ioInt(save, `${name}_num`, item.num, load => item.num = load);
     ioInt(save, `${name}_totalGetNum`, item.totalGetNum, load => item.totalGetNum = load);
     ioInt(save, `${name}_usedNum`, item.usedNum, load => item.usedNum = load);
-    const mix = item.mix;
-    if (mix) {
-        ioInt(save, `${name}_mixCount`, mix.count, load => mix.count = load);
-    }
+    // const mix = item.mix;
+    // if(mix){
+    //     ioInt(save, `${name}_mixCount`, mix.count, load=> mix.count = load);
+    // }
 };
 const strageEq = (save, eq) => {
     const name = `${strageEq.name}_${eq.uniqueName}`;
     ioInt(save, `${name}_num`, eq.num, load => eq.num = load);
     ioInt(save, `${name}_totalGetNum`, eq.totalGetNum, load => eq.totalGetNum = load);
-    const mix = eq.mix;
-    if (mix) {
-        ioInt(save, `${name}_mixCount`, mix.count, load => mix.count = load);
-    }
+    // const mix = eq.mix;
+    // if(mix){
+    //     ioInt(save, `${name}_mixCount`, mix.count, load=> mix.count = load);
+    // }
 };
 const strageDungeon = (save, d) => {
     const name = `${strageDungeon.name}_${d.uniqueName}`;
@@ -201,15 +201,9 @@ const stragePlayer = (save, p) => {
         }
     }
 };
-const strageBuilding = (save, b) => {
-    if (!b.mix) {
-        return;
-    }
-    const mix = b.mix;
-    const name = `${strageBuilding.name}_${b.uniqueName}`;
-    ioInt(save, `${name}_mixCount`, mix.count, load => {
-        mix.count = load;
-    });
+const strageMix = (save, mix) => {
+    const name = `${strageMix.name}_${mix.uniqueName}`;
+    ioInt(save, `${name}_count`, mix.count, load => mix.count = load);
 };
 const stragePlayData = (save) => {
     const name = `${stragePlayData.name}`;

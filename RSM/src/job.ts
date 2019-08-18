@@ -151,7 +151,7 @@ export namespace Job{
         }
     };
     export const                         剣士 = new class extends Job{
-        constructor(){super({uniqueName:"剣士", info:["格闘攻撃を扱う職業"],
+        constructor(){super({uniqueName:"剣士", info:[""],
                                 appearLv:5, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.STR, value:1}],
                                 learn:()=> [Tec.人狼剣, Tec.急所],

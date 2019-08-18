@@ -84,9 +84,7 @@ export class JobChangeScene extends Scene{
             
                             this.target.job = this.choosedJob;
                         });
-                        const cantChange = new Btn(()=>"転職",()=>{});
-                        cantChange.stringColor = ()=>Color.GRAY;
-                        cantChange.groundColor = ()=>Color.D_GRAY;
+                        const cantChange = new Btn(()=>"-",()=>{});
             
                         l.addFromLast(new VariableLayout(()=>{
                             if(!checkCanChange()){

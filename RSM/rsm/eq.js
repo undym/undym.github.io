@@ -95,8 +95,6 @@ export class Eq {
         }
         return this.髪;
     }
-    get mix() { return this._mix ? this._mix : (this._mix = this.createMix()); }
-    createMix() { return undefined; }
     //--------------------------------------------------------------------------
     //
     //
