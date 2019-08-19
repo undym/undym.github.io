@@ -62,11 +62,11 @@ Player._values = [];
         constructor() { super("スメラギ"); }
         createInner(p) {
             p.job = Job.しんまい;
-            p.prm(Prm.MAX_HP).base = 30;
-            p.prm(Prm.STR).base = 3;
+            p.prm(Prm.MAX_HP).base = 20;
+            p.prm(Prm.STR).base = 2;
             p.tecs = [
                 Tec.殴る,
-                Tec.HP自動回復,
+                Tec.empty,
                 Tec.empty,
                 Tec.empty,
             ];
@@ -76,40 +76,14 @@ Player._values = [];
         constructor() { super("よしこ"); }
         createInner(p) {
             p.job = Job.魔法使い;
-            p.prm(Prm.MAX_HP).base = 20;
+            p.prm(Prm.MAX_HP).base = 16;
             p.prm(Prm.STR).base = 2;
-            p.prm(Prm.MAG).base = 6;
+            p.prm(Prm.MAG).base = 4;
             p.tecs = [
                 Tec.殴る,
                 Tec.マジカルパンチ,
                 Tec.empty,
                 Tec.empty,
-            ];
-        }
-    };
-    Player.test1 = new class extends Player {
-        constructor() { super("test1"); }
-        createInner(p) {
-            p.prm(Prm.MAX_HP).base = 20;
-            p.prm(Prm.STR).base = 2;
-            p.prm(Prm.MAG).base = 4;
-            p.tecs = [
-                Tec.グレートウォール,
-                Tec.ヴァハ,
-                Tec.殴る,
-            ];
-        }
-    };
-    Player.test2 = new class extends Player {
-        constructor() { super("test2"); }
-        createInner(p) {
-            p.prm(Prm.MAX_HP).base = 20;
-            p.prm(Prm.STR).base = 2;
-            p.prm(Prm.MAG).base = 4;
-            p.tecs = [
-                Tec.グレートウォール,
-                Tec.ヴァハ,
-                Tec.殴る,
             ];
         }
     };

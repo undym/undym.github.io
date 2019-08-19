@@ -110,32 +110,4 @@ export namespace Player{
             ];
         }
     };
-    export const             test1 = new class extends Player{
-        constructor(){super("test1");}
-        createInner(p:PUnit){
-            p.prm(Prm.MAX_HP).base = 20;
-            p.prm(Prm.STR).base = 2;
-            p.prm(Prm.MAG).base = 4;
-            
-            p.tecs = [
-                Tec.グレートウォール,
-                Tec.ヴァハ,
-                Tec.殴る,
-            ];
-        }
-    };
-    export const             test2 = new class extends Player{
-        constructor(){super("test2");}
-        createInner(p:PUnit){
-            p.prm(Prm.MAX_HP).base = 20;
-            p.prm(Prm.STR).base = 2;
-            p.prm(Prm.MAG).base = 4;
-            
-            p.tecs = [
-                Tec.グレートウォール,
-                Tec.ヴァハ,
-                Tec.殴る,
-            ];
-        }
-    };
 }

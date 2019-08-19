@@ -158,8 +158,24 @@ export namespace Condition{
     //BAD_LV1
     //
     //--------------------------------------------------------------------------
+    export const             攻撃低下 = new class extends Condition{
+        constructor(){super("攻↓", ConditionType.BAD_LV1);}
+        async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec){
+                Util.msg.set("＞攻↓"); await wait();
+                dmg.pow.mul *= 0.5;
+
+                attacker.addConditionValue(this, -1);
+            }
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //BAD_LV2
+    //
+    //--------------------------------------------------------------------------
     export const             毒 = new class extends Condition{
-        constructor(){super("毒", ConditionType.BAD_LV1);}
+        constructor(){super("毒", ConditionType.BAD_LV2);}
         async phaseEnd(unit:Unit){
             const value = unit.getConditionValue(this);
             if(value < unit.prm(Prm.DRK).total + 1){
@@ -177,11 +193,6 @@ export namespace Condition{
             unit.setCondition(this, value * 0.666);
         }
     };
-    //--------------------------------------------------------------------------
-    //
-    //BAD_LV2
-    //
-    //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
     //
     //BAD_LV3

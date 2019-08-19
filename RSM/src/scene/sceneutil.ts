@@ -39,8 +39,7 @@ export class DrawPlayInfo extends InnerLayout{
 
 export class DrawDungeonData extends InnerLayout{
     private static _ins:DrawDungeonData;
-    static get ins(){return this._ins ? this._ins
-        : (this._ins = new DrawDungeonData());}
+    static get ins(){return this._ins ? this._ins : (this._ins = new DrawDungeonData());}
 
     private constructor(){
         super();
@@ -57,6 +56,7 @@ export class DrawDungeonData extends InnerLayout{
                 ,()=> Color.D_CYAN.bright()
                 ,Font.def
             ))
+            .add(ILayout.empty)
         );
     }
 }
@@ -267,6 +267,7 @@ export class DrawUnitDetail extends InnerLayout{
                                 .add(new Label(font, ()=>`弓:${getUnit().prm(Prm.ARR).total}`))
                             )
                             .add(new Label(font, ()=>`EP:${getUnit().ep}`))
+                            .add(ILayout.empty)
                         )
                         .add((()=>{
                             let infoPos:EqPos = EqPos.頭;

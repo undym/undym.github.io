@@ -252,7 +252,8 @@ export namespace Item{
                                 use:async(user,target)=>{
                                     if(target.dead){
                                         target.dead = false;
-                                        target.hp = 1;
+                                        target.hp = 0;
+                                        target.healHP(1);
                                         Util.msg.set(`${target.name}は生き返った`);
                                     }
                                 }
@@ -267,14 +268,22 @@ export namespace Item{
         constructor(){super({uniqueName:"スティックパン", info:["HP+10"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
-                                use:async(user,target)=> await healHP(target, 10),
+                                use:async(user,target)=>{
+                                    const value = 10;
+                                    await target.healHP(value);
+                                    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
+                                },
         })}
     };
     export const                         硬化スティックパン = new class extends Item{
         constructor(){super({uniqueName:"硬化スティックパン", info:["HP+30"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
-                                use:async(user,target)=>await healHP(target, 30),
+                                use:async(user,target)=>{
+                                    const value = 30;
+                                    await target.healHP(value);
+                                    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
+                                },
         })}
     };
     //-----------------------------------------------------------------
@@ -398,14 +407,6 @@ class ItemFont{
     }
 }
 
-
-const healHP = async(target:Unit, value:number)=>{
-    value = value|0;
-    target.hp += value;
-
-    FX_RotateStr(ItemFont.font, `${value}`, target.bounds.center, Color.GREEN);
-    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
-};
 
 
 const healMP = async(target:Unit, value:number)=>{

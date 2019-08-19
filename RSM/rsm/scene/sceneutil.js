@@ -31,17 +31,15 @@ export class DrawPlayInfo extends InnerLayout {
     }
 }
 export class DrawDungeonData extends InnerLayout {
-    static get ins() {
-        return this._ins ? this._ins
-            : (this._ins = new DrawDungeonData());
-    }
+    static get ins() { return this._ins ? this._ins : (this._ins = new DrawDungeonData()); }
     constructor() {
         super();
         super.add(new YLayout()
             .setOutsidePixelMargin(1, 1, 1, 1)
             .add(ILayout.empty)
             .add(new Label(Font.def, () => `[${Dungeon.now}] Rank:${Dungeon.now.rank}`))
-            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.au, () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.au}`, () => Color.D_CYAN.bright(), Font.def)));
+            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.au, () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.au}`, () => Color.D_CYAN.bright(), Font.def))
+            .add(ILayout.empty));
     }
 }
 class DrawSTBox extends InnerLayout {

@@ -106,8 +106,7 @@ export class ItemScene extends Scene{
                 await this.use( this.selectedItem as Item, this.user );
             });
             const cantUse = new Btn(()=>"-",()=>{});
-            cantUse.stringColor = ()=>Color.GRAY;
-
+            
             l.addFromLast(new VariableLayout(()=>{
                 if(this.selectedItem === undefined || !this.selectedItem.canUse()){
                     return cantUse;

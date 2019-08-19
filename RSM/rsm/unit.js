@@ -13,7 +13,7 @@ import { Color, Rect } from "./undym/type.js";
 import { Tec, ActiveTec, PassiveTec } from "./tec.js";
 import { Targeting } from "./force.js";
 import { Job } from "./job.js";
-import { FX_RotateStr, FX_Shake } from "./fx/fx.js";
+import { FX_RotateStr, FX_Shake, FX_Str } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos } from "./eq.js";
 import { choice } from "./undym/random.js";
@@ -35,11 +35,13 @@ class PrmSet {
 export class Prm {
     constructor(_toString) {
         this.toString = () => _toString;
+        this.ordinal = Prm.ordinalNow++;
         Prm._values.push(this);
     }
     static values() { return this._values; }
 }
 Prm._values = [];
+Prm.ordinalNow = 0;
 Prm.HP = new Prm("HP");
 Prm.MAX_HP = new Prm("最大HP");
 Prm.MP = new Prm("MP");
@@ -71,20 +73,21 @@ export class Unit {
         this.tecs = [];
         /**戦闘時の技ページ。 */
         this.tecPage = 0;
-        this.prmSets = new Map();
-        this.equips = new Map();
+        // protected prmSets = new Map<Prm,PrmSet>();
+        this.prmSets = [];
+        this.equips = [];
         this.conditions = new Map();
         this.bounds = Rect.ZERO;
-        for (let prm of Prm.values()) {
-            this.prmSets.set(prm, new PrmSet());
+        for (const prm of Prm.values()) {
+            this.prmSets.push(new PrmSet());
         }
         this.prm(Prm.MAX_EP).base = Unit.DEF_MAX_EP;
         this.job = Job.しんまい;
         for (let type of ConditionType.values()) {
             this.conditions.set(type, { condition: Condition.empty, value: 0 });
         }
-        for (let pos of EqPos.values()) {
-            this.equips.set(pos, Eq.getDef(pos));
+        for (const pos of EqPos.values()) {
+            this.equips.push(Eq.getDef(pos));
         }
     }
     static get players() { return this._players; }
@@ -116,25 +119,6 @@ export class Unit {
         }
         return this._players[0];
     }
-    // /**そのユニットのパーティーメンバーを返す。withHimSelfで本人を含めるかどうか。!existsは含めない。*/
-    // static getParty(unit:Unit, withHimSelf = true):ReadonlyArray<Unit>{
-    //     const searchMember = (units:ReadonlyArray<PUnit>|ReadonlyArray<EUnit>):Unit[]=>{
-    //         let res:Unit[] = [];
-    //         for(const u of units){
-    //             if(!u.exists){continue;}
-    //             if(withHimSelf && u === unit){continue;}
-    //             res.push(u);
-    //         }
-    //         return res;
-    //     };
-    //     if(unit instanceof PUnit){
-    //         return searchMember( Unit.players );
-    //     }
-    //     if(unit instanceof EUnit){
-    //         return searchMember( Unit.enemies );
-    //     }
-    //     return [];
-    // }
     static resetAll() {
         this._all = [];
         for (let p of this._players) {
@@ -154,7 +138,7 @@ export class Unit {
     //
     //
     //---------------------------------------------------------
-    prm(p) { return this.prmSets.get(p); }
+    prm(p) { return this.prmSets[p.ordinal]; }
     get hp() { return this.prm(Prm.HP).base; }
     set hp(value) {
         this.prm(Prm.HP).base = value | 0;
@@ -213,6 +197,15 @@ export class Unit {
                 yield wait();
             }
         });
+    }
+    /**回復するときは数値のエフェクトを出すためこの関数を経由して回復する。 */
+    healHP(value) {
+        value = value | 0;
+        if (this.dead) {
+            return;
+        }
+        FX_Str(Font.def, `${value}`, this.bounds.center, Color.GREEN);
+        this.hp += value;
     }
     judgeDead() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -355,8 +348,36 @@ export class Unit {
     //Eq
     //
     //---------------------------------------------------------
-    getEq(pos) { return this.equips.get(pos); }
-    setEq(pos, eq) { this.equips.set(pos, eq); }
+    getEq(pos) { return this.equips[pos.ordinal]; }
+    setEq(pos, eq) { this.equips[pos.ordinal] = eq; }
+    //---------------------------------------------------------
+    //
+    //
+    //
+    //---------------------------------------------------------
+    /**そのユニットのパーティーメンバーを返す。withHimSelfで本人を含めるかどうか。!existsは含めない。deadは含める.*/
+    getParty(withHimSelf = true) {
+        const searchMember = (units) => {
+            let res = [];
+            for (const u of units) {
+                if (!u.exists) {
+                    continue;
+                }
+                if (withHimSelf && u === this) {
+                    continue;
+                }
+                res.push(u);
+            }
+            return res;
+        };
+        if (this instanceof PUnit) {
+            return searchMember(Unit.players);
+        }
+        if (this instanceof EUnit) {
+            return searchMember(Unit.enemies);
+        }
+        return [];
+    }
 }
 Unit.DEF_MAX_MP = 100;
 Unit.DEF_MAX_TP = 100;
@@ -400,7 +421,8 @@ export class PUnit extends Unit {
             }
         });
     }
-    getNextLvExp() { return Math.pow(this.prm(Prm.LV).base, 2) * 3; }
+    // getNextLvExp():number{return Math.pow(this.prm(Prm.LV).base, 2) * 3;}
+    getNextLvExp() { return this.prm(Prm.LV).base * 5; }
     //---------------------------------------------------------
     //
     //

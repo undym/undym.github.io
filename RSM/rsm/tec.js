@@ -366,7 +366,7 @@ ActiveTec._values = [];
         }
         afterBeAtk(action, attacker, target, dmg) {
             if (action instanceof Tec && action.type === TecType.格闘 && !dmg.counter) {
-                Util.msg.set("＞カウンター");
+                Util.msg.set(">カウンター");
                 let cdmg = TecType.格闘.createDmg(target, attacker);
                 cdmg.counter = true;
                 attacker.doDmg(cdmg);
@@ -381,7 +381,7 @@ ActiveTec._values = [];
         }
         beforeDoAtk(action, attacker, target, dmg) {
             if (action instanceof ActiveTec && action.type === TecType.格闘 && Math.random() < 0.3) {
-                Util.msg.set("＞急所");
+                Util.msg.set(">急所");
                 dmg.pow.mul *= 1.5;
             }
         }
@@ -463,12 +463,44 @@ ActiveTec._values = [];
             });
             return __awaiter(this, void 0, void 0, function* () {
                 _super.run.call(this, attacker, target);
-                Util.msg.set("＞反動");
+                Util.msg.set(">反動");
                 const cdmg = new Dmg({
                     pow: target.prm(Prm.LIG).total,
                     counter: true,
                 });
                 attacker.doDmg(cdmg);
+            });
+        }
+    };
+    Tec.吸血 = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "吸血", info: ["相手からHPを吸収", "暗黒依存"],
+                type: TecType.暗黒, targetings: Targeting.SELECT,
+                mul: 0.5, num: 1, hit: 2, mp: 20, tp: 10,
+            });
+        }
+        runInner(attacker, target, dmg) {
+            const _super = Object.create(null, {
+                runInner: { get: () => super.runInner }
+            });
+            return __awaiter(this, void 0, void 0, function* () {
+                _super.runInner.call(this, attacker, target, dmg);
+                if (dmg.result.isHit) {
+                    attacker.hp += dmg.result.value;
+                }
+            });
+        }
+    };
+    Tec.VBS = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "VBS", info: ["敵全体に吸血"],
+                type: TecType.暗黒, targetings: Targeting.SELECT,
+                mul: 1, num: 1, hit: 2, ep: 1,
+            });
+        }
+        runInner(attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                Tec.吸血.runInner(attacker, target, dmg);
             });
         }
     };
@@ -481,8 +513,38 @@ ActiveTec._values = [];
         constructor() {
             super({ uniqueName: "スネイク", info: ["全体に練術攻撃"],
                 type: TecType.練術, targetings: Targeting.ALL,
-                mul: 1, num: 1, hit: 0.85,
-                tp: 20,
+                mul: 1, num: 1, hit: 0.85, tp: 20,
+            });
+        }
+    };
+    Tec.コブラ = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "コブラ", info: ["一体に練術攻撃2回"],
+                type: TecType.練術, targetings: Targeting.SELECT,
+                mul: 1, num: 2, hit: 0.85, tp: 30,
+            });
+        }
+    };
+    Tec.ハブ = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "ハブ", info: ["全体に練術攻撃", "稀に対象を<毒>化"],
+                type: TecType.練術, targetings: Targeting.ALL,
+                mul: 1, num: 1, hit: 0.85, tp: 40,
+            });
+        }
+        runInner(attacker, target, dmg) {
+            const _super = Object.create(null, {
+                runInner: { get: () => super.runInner }
+            });
+            return __awaiter(this, void 0, void 0, function* () {
+                _super.runInner.call(this, attacker, target, dmg);
+                if (dmg.result.isHit && Math.random() < 0.3) {
+                    const condition = Condition.毒;
+                    const value = (attacker.prm(Prm.DRK).total + attacker.prm(Prm.CHN).total / 10 + 1) | 0;
+                    target.setCondition(condition, value);
+                    FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+                    Util.msg.set(`${target.name}は<${condition}${value}>になった`, cnt => Color.RED.wave(Color.GREEN, cnt));
+                }
             });
         }
     };
@@ -581,7 +643,7 @@ ActiveTec._values = [];
     //--------------------------------------------------------------------------
     Tec.練気 = new class extends ActiveTec {
         constructor() {
-            super({ uniqueName: "練気", info: ["自分を＜練＞化"],
+            super({ uniqueName: "練気", info: ["自分を<練>化"],
                 type: TecType.状態, targetings: Targeting.SELF,
                 mul: 1, num: 1, hit: 1,
             });
@@ -595,13 +657,13 @@ ActiveTec._values = [];
                 }
                 target.setCondition(condition, value);
                 FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
+                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
             });
         }
     };
     Tec.グレートウォール = new class extends ActiveTec {
         constructor() {
-            super({ uniqueName: "グレートウォール", info: ["味方全体を＜盾＞化"],
+            super({ uniqueName: "グレートウォール", info: ["味方全体を<盾>化"],
                 type: TecType.状態, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
                 mul: 1, num: 1, hit: 1,
             });
@@ -615,13 +677,13 @@ ActiveTec._values = [];
                 }
                 target.setCondition(condition, value);
                 FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
+                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
             });
         }
     };
     Tec.ポイズンバタフライ = new class extends ActiveTec {
         constructor() {
-            super({ uniqueName: "ポイズンバタフライ", info: ["一体を＜毒＞化"],
+            super({ uniqueName: "ポイズンバタフライ", info: ["一体を<毒>化"],
                 type: TecType.状態, targetings: Targeting.SELECT,
                 mul: 1, num: 1, hit: 1,
             });
@@ -632,7 +694,7 @@ ActiveTec._values = [];
                 const value = attacker.prm(Prm.DRK).total;
                 target.setCondition(condition, value);
                 FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, cnt => Color.RED.wave(Color.GREEN, cnt));
+                Util.msg.set(`${target.name}は<${condition}${value}>になった`, cnt => Color.RED.wave(Color.GREEN, cnt));
             });
         }
     };
@@ -652,7 +714,7 @@ ActiveTec._values = [];
     };
     Tec.癒しの風 = new class extends ActiveTec {
         constructor() {
-            super({ uniqueName: "癒しの風", info: ["一体を＜癒5＞状態にする"],
+            super({ uniqueName: "癒しの風", info: ["一体を<癒5>状態にする"],
                 type: TecType.状態, targetings: Targeting.SELECT | Targeting.ONLY_FRIEND,
                 mul: 1, num: 1, hit: 10, mp: 20,
             });
@@ -661,12 +723,26 @@ ActiveTec._values = [];
             return __awaiter(this, void 0, void 0, function* () {
                 const condition = Condition.癒;
                 const value = 5;
-                if (value > 4) {
-                    return;
-                }
                 target.setCondition(condition, value);
                 FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.CYAN.bright);
+                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+            });
+        }
+    };
+    Tec.やる気ゼロ = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "やる気0", info: ["一体を<攻↓>状態にする"],
+                type: TecType.状態, targetings: Targeting.SELECT,
+                mul: 1, num: 1, hit: 10, mp: 10,
+            });
+        }
+        run(attacker, target) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const condition = Condition.攻撃低下;
+                const value = 3;
+                target.setCondition(condition, value);
+                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
             });
         }
     };
@@ -677,7 +753,7 @@ ActiveTec._values = [];
     //--------------------------------------------------------------------------
     Tec.準備運動 = new class extends PassiveTec {
         constructor() {
-            super({ uniqueName: "準備運動", info: ["戦闘開始時＜練＞化"],
+            super({ uniqueName: "準備運動", info: ["戦闘開始時<練>化"],
                 type: TecType.状態,
             });
         }
@@ -694,7 +770,7 @@ ActiveTec._values = [];
     //--------------------------------------------------------------------------
     Tec.ばんそうこう = new class extends ActiveTec {
         constructor() {
-            super({ uniqueName: "ばんそうこう", info: ["一体を光依存で回復"],
+            super({ uniqueName: "ばんそうこう", info: ["一体を回復(光依存)"],
                 type: TecType.回復, targetings: Targeting.SELECT,
                 mul: 2, num: 1, hit: 10, mp: 20,
             });
@@ -702,7 +778,23 @@ ActiveTec._values = [];
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
                 const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-                healHP(target, value);
+                target.healHP(value);
+                Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
+            });
+        }
+    };
+    Tec.ひんやりゼリー = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "ひんやりゼリー", info: ["味方全体を回復"],
+                type: TecType.回復, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
+                mul: 2, num: 1, hit: 10, mp: 20,
+            });
+        }
+        run(attacker, target) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
+                target.healHP(value);
+                Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
             });
         }
     };
@@ -738,6 +830,23 @@ ActiveTec._values = [];
             });
         }
     };
+    Tec.吸心 = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "吸心", info: ["一体をからTPを20吸収"],
+                type: TecType.回復, targetings: Targeting.SELECT,
+                mul: 1, num: 1, hit: 10, tp: 10,
+            });
+        }
+        run(attacker, target) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const value = 20;
+                target.tp -= value;
+                attacker.tp += value;
+                Util.msg.set(`${target.name}からTPを${value}吸収した`);
+                yield wait();
+            });
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //回復Passive
@@ -750,7 +859,23 @@ ActiveTec._values = [];
             });
         }
         phaseStart(unit) {
-            unit.hp += 1 + unit.prm(Prm.MAX_HP).total * 0.01;
+            unit.healHP(1 + unit.prm(Prm.MAX_HP).total * 0.01);
+        }
+    };
+    Tec.衛生 = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "衛生", info: ["行動開始時味方のHP+5%"],
+                type: TecType.回復,
+            });
+        }
+        phaseStart(unit) {
+            const members = unit.getParty(/*withHimSelf*/ true);
+            const lim = unit.prm(Prm.LIG).total * 10;
+            for (const u of members) {
+                const value = u.prm(Prm.MAX_HP).total * 0.05 + 1;
+                const v = value < lim ? value : lim;
+                u.healHP(1 + unit.prm(Prm.MAX_HP).total * 0.01);
+            }
         }
     };
     Tec.MP自動回復 = new class extends PassiveTec {
@@ -761,6 +886,18 @@ ActiveTec._values = [];
         }
         phaseStart(unit) {
             unit.mp += 10;
+        }
+    };
+    Tec.a = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "a", info: ["行動開始時MP+10%", "回復MP分のダメージを受ける"],
+                type: TecType.回復,
+            });
+        }
+        phaseStart(unit) {
+            const value = unit.prm(Prm.MAX_MP).total * 0.1;
+            unit.mp += value;
+            unit.doDmg(new Dmg({ absPow: value }));
         }
     };
     Tec.TP自動回復 = new class extends PassiveTec {
@@ -848,14 +985,5 @@ ActiveTec._values = [];
 const setCondition = (target, condition, value) => {
     target.setCondition(condition, value);
     FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-    Util.msg.set(`${target.name}は＜${condition}${value}＞になった`, Color.WHITE.bright);
-};
-const healHP = (target, value) => {
-    if (target.dead) {
-        return;
-    }
-    value = value | 0;
-    FX_Str(Font.def, `${value}`, target.bounds.center, Color.GREEN);
-    target.hp += value;
-    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
+    Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.WHITE.bright);
 };

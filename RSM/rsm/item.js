@@ -199,7 +199,8 @@ Item.DROP_TREE = 1 << 1;
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                     if (target.dead) {
                         target.dead = false;
-                        target.hp = 1;
+                        target.hp = 0;
+                        target.healHP(1);
                         Util.msg.set(`${target.name}は生き返った`);
                     }
                 })
@@ -216,7 +217,12 @@ Item.DROP_TREE = 1 << 1;
             super({ uniqueName: "スティックパン", info: ["HP+10"],
                 type: ItemType.HP回復, rank: 0,
                 consumable: true, drop: Item.DROP_NO,
-                use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, 10); }),
+                use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                    const value = 10;
+                    yield target.healHP(value);
+                    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
+                    yield wait();
+                }),
             });
         }
     };
@@ -225,7 +231,12 @@ Item.DROP_TREE = 1 << 1;
             super({ uniqueName: "硬化スティックパン", info: ["HP+30"],
                 type: ItemType.HP回復, rank: 0,
                 consumable: true, drop: Item.DROP_NO,
-                use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healHP(target, 30); }),
+                use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                    const value = 30;
+                    yield target.healHP(value);
+                    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
+                    yield wait();
+                }),
             });
         }
     };
@@ -381,13 +392,6 @@ class ItemFont {
         return this._font;
     }
 }
-const healHP = (target, value) => __awaiter(this, void 0, void 0, function* () {
-    value = value | 0;
-    target.hp += value;
-    FX_RotateStr(ItemFont.font, `${value}`, target.bounds.center, Color.GREEN);
-    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
-    yield wait();
-});
 const healMP = (target, value) => __awaiter(this, void 0, void 0, function* () {
     value = value | 0;
     target.mp += value;

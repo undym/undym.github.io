@@ -153,6 +153,7 @@ class TownBtn {
                 return;
             }
             Dungeon.now = choosedDungeon;
+            Dungeon.auNow = 0;
             DungeonEvent.now = DungeonEvent.empty;
             for (let item of Item.consumableValues()) {
                 item.usedNum = 0;

@@ -138,6 +138,14 @@ const initGoods = () => {
     //     ()=>!Player.よしこ.member,
     //     ()=>Player.よしこ.join(),
     // );
+    createEqGoods(Eq.魔女のとんがり帽, 100, () => true);
+    createEqGoods(Eq.魔女の高級とんがり帽, 1000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 30);
+    createEqGoods(Eq.魔女の最高級とんがり帽, 10000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 60);
+    createEqGoods(Eq.魔女の超最高級とんがり帽, 100000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 90);
+    createEqGoods(Eq.山男のとんかつ帽, 100, () => true);
+    createEqGoods(Eq.山男の高級とんかつ帽, 1000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 30);
+    createEqGoods(Eq.山男の最高級とんかつ帽, 10000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 60);
+    createEqGoods(Eq.山男の超最高級とんかつ帽, 100000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 90);
     createEqGoods(Eq.銅板, 100, () => true);
     createEqGoods(Eq.鉄板, 300, () => Unit.getFirstPlayer().prm(Prm.LV).base > 10);
     createEqGoods(Eq.鋼鉄板, 1000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 20);

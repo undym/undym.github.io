@@ -5,7 +5,7 @@ import { Color, Rect, Point } from "./undym/type.js";
 import { Tec, ActiveTec, PassiveTec, TecType } from "./tec.js";
 import { Dmg, Force, Action, Targeting } from "./force.js";
 import { Job } from "./job.js";
-import { FX_ShakeStr, FX_RotateStr, FX_Shake } from "./fx/fx.js";
+import { FX_ShakeStr, FX_RotateStr, FX_Shake, FX_Str } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos } from "./eq.js";
 import { choice } from "./undym/random.js";
@@ -32,6 +32,8 @@ export class Prm{
     private static _values:Prm[] = [];
     static values():ReadonlyArray<Prm>{return this._values;}
 
+    private static ordinalNow:number = 0;
+
     static readonly HP      = new Prm("HP");
     static readonly MAX_HP  = new Prm("最大HP");
     static readonly MP      = new Prm("MP");
@@ -55,8 +57,12 @@ export class Prm{
     static readonly MAX_EP  = new Prm("最大EP");
 
 
+    readonly ordinal:number;
+
     private constructor(_toString:string){
         this.toString = ()=>_toString;
+
+        this.ordinal = Prm.ordinalNow++;
 
         Prm._values.push(this);
     }
@@ -108,27 +114,6 @@ export abstract class Unit{
         }
         return this._players[0];
     }
-    // /**そのユニットのパーティーメンバーを返す。withHimSelfで本人を含めるかどうか。!existsは含めない。*/
-    // static getParty(unit:Unit, withHimSelf = true):ReadonlyArray<Unit>{
-    //     const searchMember = (units:ReadonlyArray<PUnit>|ReadonlyArray<EUnit>):Unit[]=>{
-    //         let res:Unit[] = [];
-    //         for(const u of units){
-    //             if(!u.exists){continue;}
-    //             if(withHimSelf && u === unit){continue;}
-
-    //             res.push(u);
-    //         }
-    //         return res;
-    //     };
-
-    //     if(unit instanceof PUnit){
-    //         return searchMember( Unit.players );
-    //     }
-    //     if(unit instanceof EUnit){
-    //         return searchMember( Unit.enemies );
-    //     }
-    //     return [];
-    // }
 
     private static resetAll(){
         this._all = [];
@@ -147,8 +132,9 @@ export abstract class Unit{
     tecs:Tec[] = [];
     /**戦闘時の技ページ。 */
     tecPage = 0;
-    protected prmSets = new Map<Prm,PrmSet>();
-    protected equips = new Map<EqPos,Eq>();
+    // protected prmSets = new Map<Prm,PrmSet>();
+    protected prmSets:PrmSet[] = [];
+    protected equips:Eq[] = [];
 
     job:Job;
 
@@ -161,8 +147,8 @@ export abstract class Unit{
     constructor(){
         this.bounds = Rect.ZERO;
 
-        for(let prm of Prm.values()){
-            this.prmSets.set(prm, new PrmSet());
+        for(const prm of Prm.values()){
+            this.prmSets.push(new PrmSet());
         }
 
         this.prm(Prm.MAX_EP).base = Unit.DEF_MAX_EP;
@@ -173,8 +159,8 @@ export abstract class Unit{
             this.conditions.set(type, {condition:Condition.empty, value:0});
         }
 
-        for(let pos of EqPos.values()){
-            this.equips.set(pos, Eq.getDef(pos));
+        for(const pos of EqPos.values()){
+            this.equips.push( Eq.getDef(pos) );
         }
     }
 
@@ -197,7 +183,7 @@ export abstract class Unit{
     //
     //
     //---------------------------------------------------------
-    prm(p:Prm){return this.prmSets.get(p) as PrmSet;}
+    prm(p:Prm){return this.prmSets[p.ordinal] as PrmSet;}
 
     get hp():number      {return this.prm(Prm.HP).base;}
     set hp(value:number) {
@@ -252,6 +238,14 @@ export abstract class Unit{
             Util.msg.set("MISS"); await wait();
         }
     }
+    /**回復するときは数値のエフェクトを出すためこの関数を経由して回復する。 */
+    healHP(value:number){
+        value = value|0;
+        if(this.dead){return;}
+    
+        FX_Str(Font.def, `${value}`, this.bounds.center, Color.GREEN);
+        this.hp += value;
+    }
 
     async judgeDead(){
         if(!this.exists || this.dead){return;}
@@ -265,7 +259,7 @@ export abstract class Unit{
     //force
     //
     //---------------------------------------------------------
-    equip()                                           {
+    equip(){
         for(const prm of Prm.values()){
             this.prm(prm).eq = 0;
         }
@@ -386,13 +380,33 @@ export abstract class Unit{
     //Eq
     //
     //---------------------------------------------------------
-    getEq(pos:EqPos):Eq            {return this.equips.get(pos) as Eq;}
-    setEq(pos:EqPos, eq:Eq):void   {this.equips.set(pos, eq);}
+    getEq(pos:EqPos):Eq            {return this.equips[pos.ordinal];}
+    setEq(pos:EqPos, eq:Eq):void   {this.equips[pos.ordinal] = eq;}
     //---------------------------------------------------------
     //
     //
     //
     //---------------------------------------------------------
+    /**そのユニットのパーティーメンバーを返す。withHimSelfで本人を含めるかどうか。!existsは含めない。deadは含める.*/
+    getParty(withHimSelf = true):ReadonlyArray<Unit>{
+        const searchMember = (units:ReadonlyArray<PUnit>|ReadonlyArray<EUnit>|ReadonlyArray<Unit>):Unit[]=>{
+            let res:Unit[] = [];
+            for(const u of units){
+                if(!u.exists){continue;}
+                if(withHimSelf && u === this){continue;}
+                res.push(u);
+            }
+            return res;
+        };
+
+        if(this instanceof PUnit){
+            return searchMember( Unit.players );
+        }
+        if(this instanceof EUnit){
+            return searchMember( Unit.enemies );
+        }
+        return [];
+    }
 }
 
 
@@ -441,7 +455,8 @@ export class PUnit extends Unit{
         }
     }
 
-    getNextLvExp():number{return Math.pow(this.prm(Prm.LV).base, 2) * 3;}
+    // getNextLvExp():number{return Math.pow(this.prm(Prm.LV).base, 2) * 3;}
+    getNextLvExp():number{return this.prm(Prm.LV).base * 5;}
     //---------------------------------------------------------
     //
     //

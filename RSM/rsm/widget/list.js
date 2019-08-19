@@ -66,9 +66,6 @@ export class List extends ILayout {
     // }
     add(args) {
         const e = new Elm(args);
-        if (e.right) {
-            console.log(e.right());
-        }
         this.elms.push(e);
         this.update = true;
         return e;
@@ -95,9 +92,6 @@ export class List extends ILayout {
         });
     }
     drawInner(bounds) {
-        if (!this.elmPanel) {
-            console.log(this.elmPanel);
-        }
         this.panel.draw(bounds);
     }
 }

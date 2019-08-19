@@ -11,6 +11,8 @@ export class EqPos{
     private static _values:EqPos[] = [];
     static values(){return this._values;}
 
+    private static ordinalNow = 0;
+
     private _eqs:Eq[];
     get eqs():ReadonlyArray<Eq>{
         if(!this._eqs){
@@ -19,8 +21,13 @@ export class EqPos{
         return this._eqs;
     }
 
+    readonly ordinal:number;
+
     private constructor(name:string){
         this.toString = ()=>name;
+
+        this.ordinal = EqPos.ordinalNow++;
+
         EqPos._values.push(this);
     }
 
@@ -145,6 +152,62 @@ export namespace Eq{
     export const                         髪 = new class extends Eq{
         constructor(){super({uniqueName:"髪", info:["髪a","髪b"], 
                                 pos:EqPos.頭, lv:0});}
+    }
+    export const                         魔女のとんがり帽 = new class extends Eq{
+        constructor(){super({uniqueName:"魔女のとんがり帽", info:["最大MP+50"], 
+                                pos:EqPos.頭, lv:3});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_MP).eq += 50;
+        }
+    }
+    export const                         魔女の高級とんがり帽 = new class extends Eq{
+        constructor(){super({uniqueName:"魔女の高級とんがり帽", info:["最大MP+100"], 
+                                pos:EqPos.頭, lv:30});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_MP).eq += 100;
+        }
+    }
+    export const                         魔女の最高級とんがり帽 = new class extends Eq{
+        constructor(){super({uniqueName:"魔女の最高級とんがり帽", info:["最大MP+150"], 
+                                pos:EqPos.頭, lv:60});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_MP).eq += 150;
+        }
+    }
+    export const                         魔女の超最高級とんがり帽 = new class extends Eq{
+        constructor(){super({uniqueName:"魔女の超最高級とんがり帽", info:["最大MP+200"], 
+                                pos:EqPos.頭, lv:90});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_MP).eq += 200;
+        }
+    }
+    export const                         山男のとんかつ帽 = new class extends Eq{
+        constructor(){super({uniqueName:"山男のとんかつ帽", info:["最大TP+50"], 
+                                pos:EqPos.頭, lv:3});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_TP).eq += 50;
+        }
+    }
+    export const                         山男の高級とんかつ帽 = new class extends Eq{
+        constructor(){super({uniqueName:"山男の高級とんかつ帽", info:["最大TP+100"], 
+                                pos:EqPos.頭, lv:30});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_TP).eq += 100;
+        }
+    }
+    export const                         山男の最高級とんかつ帽 = new class extends Eq{
+        constructor(){super({uniqueName:"山男の最高級とんかつ帽", info:["最大TP+150"], 
+                                pos:EqPos.頭, lv:60});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_TP).eq += 150;
+        }
+    }
+    export const                         山男の超最高級とんかつ帽 = new class extends Eq{
+        constructor(){super({uniqueName:"山男の超最高級とんかつ帽", info:["最大TP+200"], 
+                                pos:EqPos.頭, lv:90});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_TP).eq += 200;
+        }
     }
     //--------------------------------------------------------------------------
     //

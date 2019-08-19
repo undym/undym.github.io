@@ -152,8 +152,26 @@ Condition._values = [];
     //BAD_LV1
     //
     //--------------------------------------------------------------------------
+    Condition.攻撃低下 = new class extends Condition {
+        constructor() { super("攻↓", ConditionType.BAD_LV1); }
+        beforeDoAtk(action, attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof ActiveTec) {
+                    Util.msg.set("＞攻↓");
+                    yield wait();
+                    dmg.pow.mul *= 0.5;
+                    attacker.addConditionValue(this, -1);
+                }
+            });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //BAD_LV2
+    //
+    //--------------------------------------------------------------------------
     Condition.毒 = new class extends Condition {
-        constructor() { super("毒", ConditionType.BAD_LV1); }
+        constructor() { super("毒", ConditionType.BAD_LV2); }
         phaseEnd(unit) {
             return __awaiter(this, void 0, void 0, function* () {
                 const value = unit.getConditionValue(this);
@@ -170,11 +188,6 @@ Condition._values = [];
             });
         }
     };
-    //--------------------------------------------------------------------------
-    //
-    //BAD_LV2
-    //
-    //--------------------------------------------------------------------------
     //--------------------------------------------------------------------------
     //
     //BAD_LV3

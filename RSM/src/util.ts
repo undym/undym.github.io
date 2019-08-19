@@ -61,7 +61,7 @@ export class Place{
         
     private static dungeon_data:Rect;
     static get DUNGEON_DATA(){return this.dungeon_data ? this.dungeon_data : 
-        (this.dungeon_data = new Rect(this.MAIN.x + this.MAIN.w * 0.05, this.MSG.yh, this.MAIN.w * 0.9, this.MAIN.h - this.MSG.h - this.dotH * 2));}
+        (this.dungeon_data = new Rect(this.MAIN.x + this.MAIN.w * 0.05, this.MSG.yh, this.MAIN.w * 0.9, this.MAIN.h - this.MSG.h - this.dotH));}
     
 }
 

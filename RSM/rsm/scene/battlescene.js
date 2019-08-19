@@ -126,6 +126,13 @@ export class BattleScene extends Scene {
             Util.msg.add(`の行動`);
             attacker.prm(Prm.TP).base += 10;
             attacker.phaseStart();
+            for (const u of Unit.all) {
+                u.judgeDead();
+            }
+            if (attacker.dead) {
+                yield this.phaseEnd();
+                return;
+            }
             if (attacker instanceof PUnit) {
                 yield this.setPlayerPhase(attacker);
                 return;
