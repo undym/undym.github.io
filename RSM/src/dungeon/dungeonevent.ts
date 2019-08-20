@@ -276,12 +276,13 @@ export namespace DungeonEvent{
     export const CLEAR_DUNGEON:DungeonEvent = new class extends DungeonEvent{
         constructor(){super();}
         happenInner = async()=>{
-            let yen = (Dungeon.now.au + 1) * Dungeon.now.au / 10 * (1 + Dungeon.now.clearNum * 0.02);
+            let yen = Dungeon.now.au * (Dungeon.now.enemyLv / 10 + 1) * (1 + Dungeon.now.clearNum * 0.02);
+            yen = yen|0;
     
             Dungeon.now.clearNum++;
             Util.msg.set(`[${Dungeon.now}]を踏破した！`, Color.WHITE.bright); await cwait();
     
-            PlayData.yen += yen|0;
+            PlayData.yen += yen;
             Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright); await cwait();
 
             Dungeon.now.clearItem().add(1); await cwait();

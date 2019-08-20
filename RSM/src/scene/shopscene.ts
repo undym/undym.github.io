@@ -13,6 +13,8 @@ import { TecType, Tec, ActiveTec } from "../tec.js";
 import { FX_Str } from "../fx/fx.js";
 import { Player } from "../player.js";
 import { Eq } from "../eq.js";
+import { Item } from "../item.js";
+import { Dungeon } from "../dungeon/dungeon.js";
 
 
 
@@ -87,6 +89,7 @@ export class ShopScene extends Scene{
                                 
                                 const goods = this.choosedGoods;
                                 
+                                if(!goods.isVisible()){return;}
                                 if(PlayData.yen >= goods.price){
                                     PlayData.yen -= goods.price;
 
@@ -163,6 +166,16 @@ class Goods{
 
 
 const initGoods = ()=>{
+    const createItemGoods = (item:Item, price:number, isVisible:()=>boolean)=>{
+        new Goods(
+            item.toString(),
+            item.info,
+            price,
+            isVisible,
+            ()=> item.add(1),
+            ()=> item.num,
+        );
+    };
     const createEqGoods = (eq:Eq, price:number, isVisible:()=>boolean)=>{
         let info:string[] = [`＜${eq.pos}＞`];
         new Goods(
@@ -182,30 +195,32 @@ const initGoods = ()=>{
     //     ()=>!Player.よしこ.member,
     //     ()=>Player.よしこ.join(),
     // );
-    createEqGoods(Eq.う棒,      　100,    ()=>true);
-    createEqGoods(Eq.銅剣,      　300,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
-    createEqGoods(Eq.鉄拳,     　1000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
-    createEqGoods(Eq.はがねの剣,10000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 55);
+    createItemGoods(Item.スティックパン, 100, ()=> Item.スティックパン.num < 5);
+    createItemGoods(Item.脱出ポッド, 10, ()=> Item.脱出ポッド.num < 1);
+    createEqGoods(Eq.う棒,      　500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
+    createEqGoods(Eq.銅剣,       3000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
+    createEqGoods(Eq.鉄拳,     　9000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 40);
+    createEqGoods(Eq.はがねの剣,27000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 60);
 
-    createEqGoods(Eq.杖,         100,    ()=>true);
-    createEqGoods(Eq.スギの杖,    300,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
-    createEqGoods(Eq.ヒノキの杖, 1000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
-    createEqGoods(Eq.漆の杖,   10000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 55);
+    createEqGoods(Eq.杖,         500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
+    createEqGoods(Eq.スギの杖,   3000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
+    createEqGoods(Eq.ヒノキの杖, 9000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 40);
+    createEqGoods(Eq.漆の杖,   27000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 60);
     
-    createEqGoods(Eq.木の鎖,     100,    ()=>true);
-    createEqGoods(Eq.銅の鎖,     300,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
-    createEqGoods(Eq.鉄の鎖,    1000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
-    createEqGoods(Eq.銀の鎖,   10000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 55);
+    createEqGoods(Eq.木の鎖,     500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
+    createEqGoods(Eq.銅の鎖,    3000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
+    createEqGoods(Eq.鉄の鎖,    9000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 40);
+    createEqGoods(Eq.銀の鎖,   27000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 60);
     
-    createEqGoods(Eq.パチンコ,   100,    ()=>true);
-    createEqGoods(Eq.ボウガン,   300,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
-    createEqGoods(Eq.投石器,    1000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
-    createEqGoods(Eq.大砲,     10000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 55);
+    createEqGoods(Eq.パチンコ,   500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
+    createEqGoods(Eq.ボウガン,  3000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
+    createEqGoods(Eq.投石器,    9000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 40);
+    createEqGoods(Eq.大砲,     27000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 60);
 
-    createEqGoods(Eq.銅板,      100,    ()=>true);
-    createEqGoods(Eq.鉄板,      300,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
-    createEqGoods(Eq.鋼鉄板,    1000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
-    createEqGoods(Eq.チタン板,  3000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 30);
+    createEqGoods(Eq.銅板,      500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 3);
+    createEqGoods(Eq.鉄板,     3000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);
+    createEqGoods(Eq.鋼鉄板,   9000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
+    createEqGoods(Eq.チタン板,27000,   ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 30);
 
     createEqGoods(Eq.魔女のとんがり帽,            500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
     createEqGoods(Eq.魔女の高級とんがり帽,       3000,  ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 40);

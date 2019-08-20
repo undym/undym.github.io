@@ -78,16 +78,14 @@ class TownBtn {
                 Scene.load(new EqScene());
             }));
         }
-        if (Dungeon.はじまりの丘.clearNum > 0 || Debug.debugMode) {
-            l.add(new Btn("お店", () => {
-                Scene.load(new ShopScene());
-            }));
-        }
         if (Dungeon.再構成トンネル.clearNum > 0 || Debug.debugMode) {
             l.add(new Btn("合成", () => {
                 Scene.load(new MixScene());
             }));
         }
+        l.add(new Btn("お店", () => {
+            Scene.load(new ShopScene());
+        }));
         l.add(new Btn("アイテム", () => {
             Scene.load(ItemScene.ins({
                 selectUser: true,

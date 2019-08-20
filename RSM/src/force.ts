@@ -26,7 +26,8 @@ export class Dmg{
         return (3000.0 + def * 1) / (3000.0 + def * 10);
     }
     private static calcDmgElm(elm:{base:number, add:number, mul:number}){
-        const res = (elm.base + elm.add) * elm.mul;
+        let res = (elm.base + elm.add) * elm.mul;
+        res = res|0;
         return res > 0 ? res : 0;
     }
     /**攻撃力。*/

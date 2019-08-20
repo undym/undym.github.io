@@ -141,13 +141,13 @@ const newGame = ()=>{
 
     Player.スメラギ.join();
 
-    const setItemNum = (item:Item, num:number)=>{
-        item.num = num;
-        item.totalGetNum = num;
-    }
+    // const setItemNum = (item:Item, num:number)=>{
+    //     item.num = num;
+    //     item.totalGetNum = num;
+    // }
     
-    setItemNum(Item.スティックパン, 5);
-    setItemNum(Item.脱出ポッド, 1);
+    // setItemNum(Item.スティックパン, 5);
+    // setItemNum(Item.脱出ポッド, 1);
 };
 
 const continueGame = ()=>{

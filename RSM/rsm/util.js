@@ -8,13 +8,22 @@ export class Debug {
 }
 Debug.DEBUG = true;
 Debug.debugMode = false;
+// export class Version{
+//     static readonly NOW:Version;
+//     readonly major:number;
+//     readonly minior:number;
+//     readonly mentener:number;
+//     constructor(ver:string){
+//         let s = ver.split(".");
+//     }
+// }
 export class Util {
     constructor() { }
     static init() {
         this.msg = new Msg();
     }
 }
-Util.VERSION = "0.1.0";
+Util.VERSION = "0.2.0";
 export class Place {
     constructor() { }
     static get dotW() { return 1 / Graphics.pixelW; }

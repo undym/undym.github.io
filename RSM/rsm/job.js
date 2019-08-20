@@ -44,7 +44,7 @@ export class Job {
     setEnemy(e, lv) {
         for (const prm of Prm.values()) {
             const set = e.prm(prm);
-            set.base = (lv / 10 + (lv + 3) * Math.random()) | 0;
+            set.base = lv / 10 + (lv + 3) * Math.random();
             set.battle = 0;
             set.eq = 0;
         }
@@ -53,7 +53,7 @@ export class Job {
         e.dead = false;
         e.ai = EUnit.DEF_AI;
         e.prm(Prm.LV).base = lv;
-        e.prm(Prm.EXP).base = (lv * (0.75 + Math.random() * 0.5) + 1) | 0;
+        e.prm(Prm.EXP).base = lv + 1;
         e.yen = lv + 1;
         e.prm(Prm.MAX_HP).base = 3 + (lv * lv * 0.55);
         e.prm(Prm.MAX_MP).base = Unit.DEF_MAX_MP;

@@ -14,9 +14,17 @@ import { Graphics, Font } from "./graphics/graphics.js";
 
 
 class PrmSet{
-    base:number = 0;
-    eq:number = 0;
-    battle:number = 0;
+    private _base:number = 0;
+    get base()            {return this._base;}
+    set base(value:number){this._base = value|0;}
+
+    private _eq:number = 0;
+    get eq()              {return this._eq;}
+    set eq(value:number)  {this._eq = value|0;}
+
+    private _battle:number = 0;
+    get battle()            {return this._battle;}
+    set battle(value:number){this._battle = value|0;}
 
     constructor(){}
 
@@ -135,10 +143,10 @@ export abstract class Unit{
     // protected prmSets = new Map<Prm,PrmSet>();
     protected prmSets:PrmSet[] = [];
     protected equips:Eq[] = [];
+    protected conditions:{condition:Condition, value:number}[] = [];
 
     job:Job;
 
-    protected conditions = new Map<ConditionType,{condition:Condition, value:number}>();
     //---------------------------------------------------------
     //
     //
@@ -156,7 +164,7 @@ export abstract class Unit{
         this.job = Job.しんまい;
         
         for(let type of ConditionType.values()){
-            this.conditions.set(type, {condition:Condition.empty, value:0});
+            this.conditions.push( {condition:Condition.empty, value:0} );
         }
 
         for(const pos of EqPos.values()){
@@ -279,6 +287,9 @@ export abstract class Unit{
         for(const eq of this.equips.values()){
             forceDlgt( eq );
         }
+        for(const cond of this.conditions.values()){
+            forceDlgt( cond.condition );
+        }
     }
     //---------------------------------------------------------
     //
@@ -287,92 +298,81 @@ export abstract class Unit{
     //---------------------------------------------------------
     existsCondition(condition:Condition|ConditionType){
         if(condition instanceof Condition){
-            const set= this.conditions.get(condition.type);
-            if(set){return set.condition === condition;}
+            return this.conditions[condition.type.ordinal].condition === condition;
         }
         if(condition instanceof ConditionType){
-            const set= this.conditions.get(condition);
-            if(set){return set.condition !== Condition.empty;}
+            return this.conditions[condition.ordinal].condition !== Condition.empty;
         }
         return false;
     }
     clearCondition(condition:Condition|ConditionType){
         if(condition instanceof Condition){
-            const set = this.conditions.get(condition.type);
-            if(set && set.condition === condition){
+            const set = this.conditions[condition.type.ordinal];
+            if(set.condition === condition){
                 set.condition = Condition.empty;
             }
             return;
         }
         if(condition instanceof ConditionType){
-            const set = this.conditions.get(condition);
-            if(set){set.condition = Condition.empty;}
+            this.conditions[condition.ordinal].condition = Condition.empty;
             return;
         }
     }
     clearAllCondition(){
-        for(const type of ConditionType.values()){
-            const set = this.conditions.get(type);
-            if(set){
-                set.condition = Condition.empty;
-            }
+        for(const set of this.conditions){
+            set.condition = Condition.empty;
+            set.value = 0;
         }
     }
 
     setCondition(condition:Condition, value:number){
-        this.conditions.set(condition.type, {condition:condition, value:value|0});
+        const set = this.conditions[condition.type.ordinal];
+        set.condition = condition;
+        set.value = value|0;
     }
 
     getCondition(type:ConditionType):Condition{
-        const set = this.conditions.get(type);
-        if(set){return set.condition;}
-        return Condition.empty;
+        return this.conditions[type.ordinal].condition;
     }
     
     getConditionValue(condition:Condition|ConditionType):number{
         if(condition instanceof Condition){
-            const set = this.conditions.get(condition.type);
-            if(set && set.condition === condition){
+            const set = this.conditions[condition.type.ordinal];
+            if(set.condition === condition){
                 return set.value;
             }
         }
         if(condition instanceof ConditionType){
-            const set = this.conditions.get(condition);
-            if(set){
-                return set.value;
-            }
+            return this.conditions[condition.ordinal].value;
         }
         return 0;
     }
     /**返り値は変更しても影響なし。 */
     getConditionSet(type:ConditionType):{condition:Condition, value:number}{
-        const set = this.conditions.get(type);
-        if(set){
-            return {condition:set.condition, value:set.value};
-        }
-        return {condition:Condition.empty, value:0};
+        const set = this.conditions[type.ordinal];
+        return {condition:set.condition, value:set.value};
     }
 
     addConditionValue(condition:Condition|ConditionType, value:number){
         value = value|0;
 
         if(condition instanceof Condition){
-            const set = this.conditions.get(condition.type);
-            if(set && set.condition === condition){
+            const set = this.conditions[condition.type.ordinal];
+            if(set.condition === condition){
                 set.value += value;
                 if(set.value <= 0){
                     set.condition = Condition.empty;
                 }
             }
+            return;
         }
         if(condition instanceof ConditionType){
-            const set = this.conditions.get(condition);
-            if(set){
-                set.value += value;
-                if(set.value <= 0){
-                    set.condition = Condition.empty;
-                }
+            const set = this.conditions[condition.ordinal];
+            set.value += value;
+            if(set.value <= 0){
+                set.condition = Condition.empty;
             }
+            return;
         }
     }
     //---------------------------------------------------------
@@ -456,7 +456,11 @@ export class PUnit extends Unit{
     }
 
     // getNextLvExp():number{return Math.pow(this.prm(Prm.LV).base, 2) * 3;}
-    getNextLvExp():number{return this.prm(Prm.LV).base * 5;}
+    getNextLvExp():number{
+        const lv = this.prm(Prm.LV).base;
+        const res = lv * (lv/20+1) * 5;
+        return res|0;
+    }
     //---------------------------------------------------------
     //
     //

@@ -287,11 +287,12 @@ DungeonEvent._values = [];
         constructor() {
             super();
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                let yen = (Dungeon.now.au + 1) * Dungeon.now.au / 10 * (1 + Dungeon.now.clearNum * 0.02);
+                let yen = Dungeon.now.au * (Dungeon.now.enemyLv / 10 + 1) * (1 + Dungeon.now.clearNum * 0.02);
+                yen = yen | 0;
                 Dungeon.now.clearNum++;
                 Util.msg.set(`[${Dungeon.now}]を踏破した！`, Color.WHITE.bright);
                 yield cwait();
-                PlayData.yen += yen | 0;
+                PlayData.yen += yen;
                 Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright);
                 yield cwait();
                 Dungeon.now.clearItem().add(1);

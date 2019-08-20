@@ -16,10 +16,24 @@ export class Debug{
 }
 
 
+// export class Version{
+//     static readonly NOW:Version;
+
+//     readonly major:number;
+//     readonly minior:number;
+//     readonly mentener:number;
+
+//     constructor(ver:string){
+//         let s = ver.split(".");
+        
+//     }
+// }
+
+
 export class Util{
     private constructor(){}
 
-    static readonly VERSION = "0.1.0";
+    static readonly VERSION = "0.2.0";
 
     static msg:Msg;
 

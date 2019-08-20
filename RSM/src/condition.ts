@@ -36,7 +36,12 @@ export class ConditionType{
         return this._badConditions;
     }
 
+    private static ordinalNow = 0;
+
+    readonly ordinal:number;
+
     private constructor(public readonly uniqueName:string){
+        this.ordinal = ConditionType.ordinalNow++;
         ConditionType._values.push(this);
     }
 

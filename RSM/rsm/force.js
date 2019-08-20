@@ -51,7 +51,8 @@ export class Dmg {
         return (3000.0 + def * 1) / (3000.0 + def * 10);
     }
     static calcDmgElm(elm) {
-        const res = (elm.base + elm.add) * elm.mul;
+        let res = (elm.base + elm.add) * elm.mul;
+        res = res | 0;
         return res > 0 ? res : 0;
     }
     clear() {

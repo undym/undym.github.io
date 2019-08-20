@@ -15,6 +15,7 @@ import { Color } from "./undym/type.js";
 export class ConditionType {
     constructor(uniqueName) {
         this.uniqueName = uniqueName;
+        this.ordinal = ConditionType.ordinalNow++;
         ConditionType._values.push(this);
     }
     static values() {
@@ -42,6 +43,7 @@ export class ConditionType {
     }
 }
 ConditionType._values = [];
+ConditionType.ordinalNow = 0;
 ConditionType.GOOD_LV1 = new ConditionType("GOOD_LV1");
 ConditionType.GOOD_LV2 = new ConditionType("GOOD_LV2");
 ConditionType.GOOD_LV3 = new ConditionType("GOOD_LV3");

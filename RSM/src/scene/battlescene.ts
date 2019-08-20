@@ -253,6 +253,8 @@ export class BattleScene extends Scene{
                 user:attacker,
                 selectUser:false,
                 use:async(item, user)=>{
+                    Scene.set(this);
+
                     if(item.targetings & Targeting.SELECT){
                         Util.msg.set(`[${item}]のターゲットを選択してください`);
 
@@ -263,11 +265,8 @@ export class BattleScene extends Scene{
                     }else{
                         let targets = Targeting.filter( item.targetings, user, Unit.players );
                         
-                        if(targets.length > 0){
-                            Scene.set(this);
-                            await item.use( user, targets );
-                            await this.phaseEnd();
-                        }
+                        await item.use( user, targets );
+                        await this.phaseEnd();
                     }
                 },
                 returnScene:()=>{
@@ -315,7 +314,7 @@ export class BattleScene extends Scene{
                 await chooseAction([unit]);
             })
             if(unit.dead){
-                btn.groundColor = ()=>Color.D_RED;
+                btn.groundColor = ()=>new Color(1,0.3,0.3);
             }
             l.add(btn);
         }
