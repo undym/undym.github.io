@@ -33,7 +33,7 @@ export class Dmg{
     pow:{base:number, add:number, mul:number};
     /**防御力。 */
     def:{base:number, add:number, mul:number};
-    /**命中率.1が最大. */
+    /**命中率.1で必中. */
     hit:{base:number, add:number, mul:number};
     /**絶対攻撃値。*/
     abs:{base:number, add:number, mul:number};

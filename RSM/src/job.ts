@@ -18,7 +18,7 @@ export abstract class Job{
         return this._valueOf.get(uniqueName);
     }
 
-    static readonly DEF_LVUP_EXP = 3;
+    static readonly DEF_LVUP_EXP = 5;
 
     static rndJob(lv:number):Job{
         for(let job of Job.values()){
@@ -129,14 +129,25 @@ export namespace Job{
     };
     export const                         先輩 = new class extends Job{
         constructor(){super({uniqueName:"先輩", info:["進化したしんまい"],
-                                appearLv:40, lvupExp:Job.DEF_LVUP_EXP * 3,
+                                appearLv:15, lvupExp:Job.DEF_LVUP_EXP * 3,
                                 grow:()=> [{prm:Prm.MAX_HP, value:2}],
                                 learn:()=> [Tec.癒しの風, Tec.我慢],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.殴る, Tec.殴る, Tec.殴る, Tec.HP自動回復, Tec.練気];
-
+        }
+    };
+    export const                         常務 = new class extends Job{
+        constructor(){super({uniqueName:"常務", info:[""],
+                                appearLv:40, lvupExp:Job.DEF_LVUP_EXP * 4,
+                                grow:()=> [{prm:Prm.MAX_HP, value:2}],
+                                learn:()=> [Tec.いやらしの風, Tec.風],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.先輩),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.殴る, Tec.殴る, Tec.癒しの風, Tec.HP自動回復, Tec.練気];
+            e.prm(Prm.MAX_HP).base *= 1.5;
         }
     };
     export const                         格闘家 = new class extends Job{
@@ -266,7 +277,7 @@ export namespace Job{
         constructor(){super({uniqueName:"エスパー", info:[""],
                                 appearLv:50, lvupExp:Job.DEF_LVUP_EXP * 3,
                                 grow:()=> [{prm:Prm.PST, value:1}],
-                                learn:()=> [Tec.やる気ゼロ],
+                                learn:()=> [Tec.頭痛, Tec.やる気ゼロ, Tec.弱体液],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.ダウザー),
         });}
         setEnemyInner   = (e:EUnit)=>{

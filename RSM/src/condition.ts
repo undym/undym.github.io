@@ -134,6 +134,16 @@ export namespace Condition{
             }
         }
     };
+    export const             風 = new class extends Condition{
+        constructor(){super("風", ConditionType.GOOD_LV2);}
+        async beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec){
+                dmg.hit.mul *= 0.5;
+
+                target.addConditionValue(this, -1);
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //GOOD_LV3
@@ -166,6 +176,17 @@ export namespace Condition{
                 dmg.pow.mul *= 0.5;
 
                 attacker.addConditionValue(this, -1);
+            }
+        }
+    };
+    export const             防御低下 = new class extends Condition{
+        constructor(){super("防↓", ConditionType.BAD_LV1);}
+        async beforeBeoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec){
+                Util.msg.set("＞防↓"); await wait();
+                dmg.def.mul *= 0.5;
+
+                target.addConditionValue(this, -1);
             }
         }
     };

@@ -123,7 +123,7 @@ class TownBtn {
         // 0, 1, 2, 3,
         // 4, 5, 6, 7,
         // 8, 9,10,11,
-        const visibleDungeons = Dungeon.values().filter(d => d.isVisible());
+        const visibleDungeons = Dungeon.values().filter(d => d.isVisible() || Debug.debugMode);
         for (let i = this.dungeonPage * onePageDrawDungeonNum; i < visibleDungeons.length; i++) {
             const d = visibleDungeons[i];
             l.add(new Btn(() => `${d}`, () => {
@@ -144,7 +144,7 @@ class TownBtn {
                 break;
             }
         }
-        const pageLim = (visibleDungeons.length - 1) / onePageDrawDungeonNum;
+        const pageLim = ((visibleDungeons.length - 1) / onePageDrawDungeonNum) | 0;
         l.addFromLast(new Btn(() => "<<", () => {
             this.reset();
         }));

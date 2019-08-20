@@ -684,7 +684,7 @@ export namespace Tec{
         }
     }
     export const                          癒しの風:ActiveTec = new class extends ActiveTec{
-        constructor(){super({ uniqueName:"癒しの風", info:["一体を<癒5>状態にする"],
+        constructor(){super({ uniqueName:"癒しの風", info:["一体を<癒5>(毎ターン回復)状態にする"],
                               type:TecType.状態, targetings:Targeting.SELECT | Targeting.ONLY_FRIEND,
                               mul:1, num:1, hit:10, mp:20,
         });}
@@ -697,14 +697,51 @@ export namespace Tec{
             Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
         }
     }
+    export const                          いやらしの風:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"いやらしの風", info:["味方全体を<癒5>状態にする"],
+                              type:TecType.状態, targetings:Targeting.ALL | Targeting.ONLY_FRIEND,
+                              mul:1, num:1, hit:10, mp:60,
+        });}
+        async run(attacker:Unit, target:Unit){
+            Tec.癒しの風.run(attacker, target);
+        }
+    }
+    export const                          風:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"風", info:["自分を<風3>(回避UP)状態にする"],
+                              type:TecType.状態, targetings:Targeting.ALL | Targeting.ONLY_FRIEND,
+                              mul:1, num:1, hit:10, tp:10,
+        });}
+        async run(attacker:Unit, target:Unit){
+            const condition = Condition.風;
+            const value = 5;
+
+            target.setCondition(condition, value);
+            FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+            Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+        }
+    }
     export const                          やる気ゼロ:ActiveTec = new class extends ActiveTec{
-        constructor(){super({ uniqueName:"やる気0", info:["一体を<攻↓>状態にする"],
+        constructor(){super({ uniqueName:"やる気0", info:["一体を<攻↓5>状態にする"],
                               type:TecType.状態, targetings:Targeting.SELECT,
                               mul:1, num:1, hit:10, mp:10,
         });}
         async run(attacker:Unit, target:Unit){
             const condition = Condition.攻撃低下;
-            const value = 3;
+            const value = 5;
+
+            target.setCondition(condition, value);
+            FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+            Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+        }
+    }
+    export const                          弱体液:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"弱体液", info:["一体を<防↓5>状態にする"],
+                              type:TecType.状態, targetings:Targeting.SELECT,
+                              mul:1, num:1, hit:10, mp:10,
+        });}
+        async run(attacker:Unit, target:Unit){
+            const condition = Condition.防御低下;
+            const value = 5;
 
             target.setCondition(condition, value);
             FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
@@ -816,6 +853,16 @@ export namespace Tec{
             }
         }
     };
+    export const                         体力機関:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"体力機関", info:["戦闘開始時最大HP･HP+10%"],
+                                type:TecType.回復,
+        });}
+        battleStart(unit:Unit){
+            const value = unit.prm(Prm.MAX_HP).total * 0.1;
+            unit.prm(Prm.MAX_HP).battle += value;
+            unit.hp += value;
+        }
+    };
     export const                         MP自動回復:PassiveTec = new class extends PassiveTec{
         constructor(){super({uniqueName:"MP自動回復", info:["行動開始時MP+10"],
                                 type:TecType.回復,
@@ -824,8 +871,8 @@ export namespace Tec{
             unit.mp += 10;
         }
     };
-    export const                         a:PassiveTec = new class extends PassiveTec{
-        constructor(){super({uniqueName:"a", info:["行動開始時MP+10%","回復MP分のダメージを受ける"],
+    export const                         頭痛:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"頭痛", info:["行動開始時MP+10%","回復MP分のダメージを受ける"],
                                 type:TecType.回復,
         });}
         phaseStart(unit:Unit){

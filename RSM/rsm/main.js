@@ -15,14 +15,29 @@ import { FX } from "./fx/fx.js";
 import { Dungeon } from "./dungeon/dungeon.js";
 import { Player } from "./player.js";
 import { Rect, Color } from "./undym/type.js";
-import { Page } from "./undym/page.js";
 import { Graphics, Texture } from "./graphics/graphics.js";
 import { Item } from "./item.js";
 import { SaveData } from "./savedata.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 window.onload = () => {
+    {
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        ctx.font = "50px monospace";
+        ctx.fillStyle = "rgb(0,0,0)";
+        const s = "読み込み中";
+        const sw = ctx.measureText(s).width;
+        ctx.fillText(s, canvas.width / 2 - sw, canvas.height - 2);
+    }
+    // {
+    //     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    //     ctx.font = "normal 50px monospace";
+    //     ctx.fillStyle = "rgba(255,255,255,1)";
+    //     const s = "読み込み中";
+    //     const sw = ctx.measureText(s).width;
+    //     ctx.fillText(s, canvas.width / 2 - sw, canvas.height - 2);
+    // }
     console.log("start");
-    Page.init();
     const canvas = document.getElementById("canvas");
     const rotate = false;
     // const rotate:boolean = window.navigator.userAgent.indexOf("Mobile") !== -1;

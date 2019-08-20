@@ -446,22 +446,22 @@ export class PUnit extends Unit {
                 for (let grow of this.job.getGrowthPrms()) {
                     this.growPrm(grow.prm, grow.value);
                 }
-                const tecs = this.job.getLearningTecs();
+                const learnings = this.job.getLearningTecs();
                 const ratio = set.lv / this.job.getMaxLv();
-                for (let i = 0; i < tecs.length; i++) {
-                    if (i + 1 > tecs.length * ratio) {
+                for (let i = 0; i < learnings.length; i++) {
+                    if (i + 1 > ((learnings.length * ratio) | 0)) {
                         break;
                     }
-                    if (this.isMasteredTec(tecs[i])) {
+                    if (this.isMasteredTec(learnings[i])) {
                         continue;
                     }
-                    this.setMasteredTec(tecs[i], true);
-                    Util.msg.set(`[${tecs[i]}]を習得した！`, Color.GREEN.bright);
+                    this.setMasteredTec(learnings[i], true);
+                    Util.msg.set(`[${learnings[i]}]を習得した！`, Color.GREEN.bright);
                     yield wait();
                     //技スロットに空きがあれば覚えた技をセット
                     for (let ei = 0; ei < this.tecs.length; ei++) {
                         if (this.tecs[ei] === Tec.empty) {
-                            this.tecs[ei] = tecs[i];
+                            this.tecs[ei] = learnings[i];
                             break;
                         }
                     }

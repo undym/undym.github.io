@@ -714,7 +714,7 @@ ActiveTec._values = [];
     };
     Tec.癒しの風 = new class extends ActiveTec {
         constructor() {
-            super({ uniqueName: "癒しの風", info: ["一体を<癒5>状態にする"],
+            super({ uniqueName: "癒しの風", info: ["一体を<癒5>(毎ターン回復)状態にする"],
                 type: TecType.状態, targetings: Targeting.SELECT | Targeting.ONLY_FRIEND,
                 mul: 1, num: 1, hit: 10, mp: 20,
             });
@@ -729,9 +729,39 @@ ActiveTec._values = [];
             });
         }
     };
+    Tec.いやらしの風 = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "いやらしの風", info: ["味方全体を<癒5>状態にする"],
+                type: TecType.状態, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
+                mul: 1, num: 1, hit: 10, mp: 60,
+            });
+        }
+        run(attacker, target) {
+            return __awaiter(this, void 0, void 0, function* () {
+                Tec.癒しの風.run(attacker, target);
+            });
+        }
+    };
+    Tec.風 = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "風", info: ["自分を<風3>(回避UP)状態にする"],
+                type: TecType.状態, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
+                mul: 1, num: 1, hit: 10, tp: 10,
+            });
+        }
+        run(attacker, target) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const condition = Condition.風;
+                const value = 5;
+                target.setCondition(condition, value);
+                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+            });
+        }
+    };
     Tec.やる気ゼロ = new class extends ActiveTec {
         constructor() {
-            super({ uniqueName: "やる気0", info: ["一体を<攻↓>状態にする"],
+            super({ uniqueName: "やる気0", info: ["一体を<攻↓5>状態にする"],
                 type: TecType.状態, targetings: Targeting.SELECT,
                 mul: 1, num: 1, hit: 10, mp: 10,
             });
@@ -739,7 +769,24 @@ ActiveTec._values = [];
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
                 const condition = Condition.攻撃低下;
-                const value = 3;
+                const value = 5;
+                target.setCondition(condition, value);
+                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+            });
+        }
+    };
+    Tec.弱体液 = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "弱体液", info: ["一体を<防↓5>状態にする"],
+                type: TecType.状態, targetings: Targeting.SELECT,
+                mul: 1, num: 1, hit: 10, mp: 10,
+            });
+        }
+        run(attacker, target) {
+            return __awaiter(this, void 0, void 0, function* () {
+                const condition = Condition.防御低下;
+                const value = 5;
                 target.setCondition(condition, value);
                 FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
                 Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
@@ -878,6 +925,18 @@ ActiveTec._values = [];
             }
         }
     };
+    Tec.体力機関 = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "体力機関", info: ["戦闘開始時最大HP･HP+10%"],
+                type: TecType.回復,
+            });
+        }
+        battleStart(unit) {
+            const value = unit.prm(Prm.MAX_HP).total * 0.1;
+            unit.prm(Prm.MAX_HP).battle += value;
+            unit.hp += value;
+        }
+    };
     Tec.MP自動回復 = new class extends PassiveTec {
         constructor() {
             super({ uniqueName: "MP自動回復", info: ["行動開始時MP+10"],
@@ -888,9 +947,9 @@ ActiveTec._values = [];
             unit.mp += 10;
         }
     };
-    Tec.a = new class extends PassiveTec {
+    Tec.頭痛 = new class extends PassiveTec {
         constructor() {
-            super({ uniqueName: "a", info: ["行動開始時MP+10%", "回復MP分のダメージを受ける"],
+            super({ uniqueName: "頭痛", info: ["行動開始時MP+10%", "回復MP分のダメージを受ける"],
                 type: TecType.回復,
             });
         }

@@ -3,7 +3,6 @@
 import {ILayout,Label, RatioLayout} from "./layout.js";
 import { Rect } from "./type.js";
 import { Input } from "./input.js";
-import { Page } from "./page.js";
 import { Graphics } from "../graphics/graphics.js";
 
 

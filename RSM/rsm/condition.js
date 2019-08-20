@@ -127,6 +127,17 @@ Condition._values = [];
             });
         }
     };
+    Condition.風 = new class extends Condition {
+        constructor() { super("風", ConditionType.GOOD_LV2); }
+        beforeBeAtk(action, attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof ActiveTec) {
+                    dmg.hit.mul *= 0.5;
+                    target.addConditionValue(this, -1);
+                }
+            });
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //GOOD_LV3
@@ -161,6 +172,19 @@ Condition._values = [];
                     yield wait();
                     dmg.pow.mul *= 0.5;
                     attacker.addConditionValue(this, -1);
+                }
+            });
+        }
+    };
+    Condition.防御低下 = new class extends Condition {
+        constructor() { super("防↓", ConditionType.BAD_LV1); }
+        beforeBeoAtk(action, attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof ActiveTec) {
+                    Util.msg.set("＞防↓");
+                    yield wait();
+                    dmg.def.mul *= 0.5;
+                    target.addConditionValue(this, -1);
                 }
             });
         }

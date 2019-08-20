@@ -67,7 +67,7 @@ export class Job {
     setEnemyInner(e) { }
 }
 Job._values = [];
-Job.DEF_LVUP_EXP = 3;
+Job.DEF_LVUP_EXP = 5;
 (function (Job) {
     Job.しんまい = new class extends Job {
         constructor() {
@@ -85,13 +85,27 @@ Job.DEF_LVUP_EXP = 3;
     Job.先輩 = new class extends Job {
         constructor() {
             super({ uniqueName: "先輩", info: ["進化したしんまい"],
-                appearLv: 40, lvupExp: Job.DEF_LVUP_EXP * 3,
+                appearLv: 15, lvupExp: Job.DEF_LVUP_EXP * 3,
                 grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
                 learn: () => [Tec.癒しの風, Tec.我慢],
                 canJobChange: (p) => p.isMasteredJob(Job.しんまい),
             });
             this.setEnemyInner = (e) => {
                 e.tecs = [Tec.殴る, Tec.殴る, Tec.殴る, Tec.HP自動回復, Tec.練気];
+            };
+        }
+    };
+    Job.常務 = new class extends Job {
+        constructor() {
+            super({ uniqueName: "常務", info: [""],
+                appearLv: 40, lvupExp: Job.DEF_LVUP_EXP * 4,
+                grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
+                learn: () => [Tec.いやらしの風, Tec.風],
+                canJobChange: (p) => p.isMasteredJob(Job.先輩),
+            });
+            this.setEnemyInner = (e) => {
+                e.tecs = [Tec.殴る, Tec.殴る, Tec.癒しの風, Tec.HP自動回復, Tec.練気];
+                e.prm(Prm.MAX_HP).base *= 1.5;
             };
         }
     };
@@ -245,7 +259,7 @@ Job.DEF_LVUP_EXP = 3;
             super({ uniqueName: "エスパー", info: [""],
                 appearLv: 50, lvupExp: Job.DEF_LVUP_EXP * 3,
                 grow: () => [{ prm: Prm.PST, value: 1 }],
-                learn: () => [Tec.やる気ゼロ],
+                learn: () => [Tec.頭痛, Tec.やる気ゼロ, Tec.弱体液],
                 canJobChange: (p) => p.isMasteredJob(Job.ダウザー),
             });
             this.setEnemyInner = (e) => {
