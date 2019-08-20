@@ -14,7 +14,7 @@ export class Util {
         this.msg = new Msg();
     }
 }
-Util.VERSION = "0.0.13";
+Util.VERSION = "0.1.0";
 export class Place {
     constructor() { }
     static get dotW() { return 1 / Graphics.pixelW; }

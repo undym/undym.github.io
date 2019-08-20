@@ -232,6 +232,182 @@ Eq._values = [];
             unit.prm(Prm.MAG).eq += 15;
         }
     };
+    //shop
+    Eq.う棒 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "う棒", info: ["力+3光+3"],
+                pos: EqPos.武, lv: 7 });
+        }
+        equip(unit) {
+            unit.prm(Prm.STR).eq += 3;
+            unit.prm(Prm.LIG).eq += 3;
+        }
+    };
+    //shop
+    Eq.銅剣 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "銅剣", info: ["力+10光+10"],
+                pos: EqPos.武, lv: 15 });
+        }
+        equip(unit) {
+            unit.prm(Prm.STR).eq += 10;
+            unit.prm(Prm.LIG).eq += 10;
+        }
+    };
+    //shop
+    Eq.鉄拳 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "鉄拳", info: ["力+30光+30"],
+                pos: EqPos.武, lv: 35 });
+        }
+        equip(unit) {
+            unit.prm(Prm.STR).eq += 30;
+            unit.prm(Prm.LIG).eq += 30;
+        }
+    };
+    //shop
+    Eq.はがねの剣 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "はがねの剣", info: ["力+100光+100"],
+                pos: EqPos.武, lv: 75 });
+        }
+        equip(unit) {
+            unit.prm(Prm.STR).eq += 100;
+            unit.prm(Prm.LIG).eq += 100;
+        }
+    };
+    //shop
+    Eq.杖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "杖", info: ["魔+3闇+3"],
+                pos: EqPos.武, lv: 7 });
+        }
+        equip(unit) {
+            unit.prm(Prm.MAG).eq += 3;
+            unit.prm(Prm.DRK).eq += 3;
+        }
+    };
+    //shop
+    Eq.スギの杖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "スギの杖", info: ["魔+10闇+10"],
+                pos: EqPos.武, lv: 15 });
+        }
+        equip(unit) {
+            unit.prm(Prm.MAG).eq += 10;
+            unit.prm(Prm.DRK).eq += 10;
+        }
+    };
+    //shop
+    Eq.ヒノキの杖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "ヒノキの杖", info: ["魔+30闇+30"],
+                pos: EqPos.武, lv: 35 });
+        }
+        equip(unit) {
+            unit.prm(Prm.MAG).eq += 30;
+            unit.prm(Prm.DRK).eq += 30;
+        }
+    };
+    //shop
+    Eq.漆の杖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "漆の杖", info: ["魔+100闇+100"],
+                pos: EqPos.武, lv: 75 });
+        }
+        equip(unit) {
+            unit.prm(Prm.MAG).eq += 100;
+            unit.prm(Prm.DRK).eq += 100;
+        }
+    };
+    //shop
+    Eq.木の鎖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "木の鎖", info: ["鎖+3過+3"],
+                pos: EqPos.武, lv: 7 });
+        }
+        equip(unit) {
+            unit.prm(Prm.CHN).eq += 3;
+            unit.prm(Prm.PST).eq += 3;
+        }
+    };
+    //shop
+    Eq.銅の鎖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "銅の鎖", info: ["鎖+10過+10"],
+                pos: EqPos.武, lv: 15 });
+        }
+        equip(unit) {
+            unit.prm(Prm.CHN).eq += 10;
+            unit.prm(Prm.PST).eq += 10;
+        }
+    };
+    //shop
+    Eq.鉄の鎖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "鉄の鎖", info: ["鎖+30過+30"],
+                pos: EqPos.武, lv: 35 });
+        }
+        equip(unit) {
+            unit.prm(Prm.CHN).eq += 30;
+            unit.prm(Prm.PST).eq += 30;
+        }
+    };
+    //shop
+    Eq.銀の鎖 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "銀の鎖", info: ["鎖+100過+100"],
+                pos: EqPos.武, lv: 75 });
+        }
+        equip(unit) {
+            unit.prm(Prm.CHN).eq += 100;
+            unit.prm(Prm.PST).eq += 100;
+        }
+    };
+    //shop
+    Eq.パチンコ = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "パチンコ", info: ["銃+3弓+3"],
+                pos: EqPos.武, lv: 7 });
+        }
+        equip(unit) {
+            unit.prm(Prm.GUN).eq += 3;
+            unit.prm(Prm.ARR).eq += 3;
+        }
+    };
+    //shop
+    Eq.ボウガン = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "ボウガン", info: ["銃+10弓+10"],
+                pos: EqPos.武, lv: 15 });
+        }
+        equip(unit) {
+            unit.prm(Prm.GUN).eq += 10;
+            unit.prm(Prm.ARR).eq += 10;
+        }
+    };
+    //shop
+    Eq.投石器 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "投石器", info: ["銃+30弓+30"],
+                pos: EqPos.武, lv: 35 });
+        }
+        equip(unit) {
+            unit.prm(Prm.GUN).eq += 30;
+            unit.prm(Prm.ARR).eq += 30;
+        }
+    };
+    //shop
+    Eq.大砲 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "大砲", info: ["銃+100弓+100"],
+                pos: EqPos.武, lv: 75 });
+        }
+        equip(unit) {
+            unit.prm(Prm.GUN).eq += 100;
+            unit.prm(Prm.ARR).eq += 100;
+        }
+    };
     // export const                         忍者刀 = new class extends Eq{
     //     constructor(){super({uniqueName:"忍者刀", info:["格闘攻撃時稀に追加攻撃"],
     //                             pos:EqPos.武, lv:99});}
