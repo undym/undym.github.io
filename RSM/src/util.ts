@@ -19,7 +19,7 @@ export class Debug{
 export class Util{
     private constructor(){}
 
-    static readonly VERSION = "0.0.13";
+    static readonly VERSION = "0.1.0";
 
     static msg:Msg;
 
