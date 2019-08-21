@@ -2,6 +2,11 @@ import { Unit } from "./unit.js";
 import { Item } from "./item.js";
 import { randomInt } from "./undym/random.js";
 import { Scene } from "./undym/scene.js";
+import { Condition } from "./condition.js";
+import { FX_Str } from "./fx/fx.js";
+import { Color } from "./undym/type.js";
+import { Util } from "./util.js";
+import { Font } from "./graphics/graphics.js";
 
 
 
@@ -53,4 +58,23 @@ export enum BattleResult{
     WIN,
     LOSE,
     ESCAPE,
+}
+
+
+
+export namespace Battle{
+    class ConditionFont{
+        private static font:Font;
+        static get def(){return this.font ? this.font : (this.font = new Font(60));}
+    }
+    
+    export const setCondition = (target:Unit, condition:Condition, value:number)=>{
+        value = value|0;
+        if(value <= 0){return;}
+        if(condition === Condition.empty){return;}
+
+        target.setCondition(condition, value);
+        FX_Str(ConditionFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+        Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+    };
 }

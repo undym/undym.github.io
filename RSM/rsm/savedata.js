@@ -10,15 +10,19 @@ import { PlayData, SceneType, Util } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Mix } from "./mix.js";
 export class Version {
+    /**整数。 */
     constructor(major, minior, mentener) {
-        this.values = [major, minior, mentener];
+        this.values = [major | 0, minior | 0, mentener | 0];
     }
     get major() { return this.values[0]; }
     get minior() { return this.values[1]; }
     get mentener() { return this.values[2]; }
     isNewerThan(version) {
         for (let i = 0; i < this.values.length; i++) {
-            if (version.values[i] < this.values[i]) {
+            if (this.values[i] < version.values[i]) {
+                return false;
+            }
+            if (this.values[i] > version.values[i]) {
                 return true;
             }
         }
@@ -34,7 +38,7 @@ export class Version {
     }
     toString() { return `${this.major}.${this.minior}.${this.mentener}`; }
 }
-Version.NOW = new Version(0, 3, 0);
+Version.NOW = new Version(0, 3, 2);
 let saveDataVersion;
 export class SaveData {
     static exists() {

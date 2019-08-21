@@ -12,9 +12,8 @@ import { wait } from "./undym/scene.js";
 import { Dmg, Targeting } from "./force.js";
 import { Condition } from "./condition.js";
 import { Color } from "./undym/type.js";
-import { FX_Str } from "./fx/fx.js";
-import { Font } from "./graphics/graphics.js";
 import { randomInt } from "./undym/random.js";
+import { Battle } from "./battle.js";
 export class TecType {
     constructor(name) {
         this.toString = () => name;
@@ -336,7 +335,7 @@ ActiveTec._values = [];
         }
         createDmg(attacker, target) {
             let dmg = super.createDmg(attacker, target);
-            dmg.pow.base = attacker.prm(Prm.MAG).total;
+            dmg.pow.base = attacker.prm(Prm.MAG).total + attacker.prm(Prm.LV).total;
             return dmg;
         }
     };
@@ -539,11 +538,8 @@ ActiveTec._values = [];
             return __awaiter(this, void 0, void 0, function* () {
                 _super.runInner.call(this, attacker, target, dmg);
                 if (dmg.result.isHit && Math.random() < 0.3) {
-                    const condition = Condition.毒;
-                    const value = (attacker.prm(Prm.DRK).total + attacker.prm(Prm.CHN).total / 10 + 1) | 0;
-                    target.setCondition(condition, value);
-                    FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                    Util.msg.set(`${target.name}は<${condition}${value}>になった`, cnt => Color.RED.wave(Color.GREEN, cnt));
+                    const value = attacker.prm(Prm.DRK).total / 2 + attacker.prm(Prm.CHN).total / 2 + 1;
+                    Battle.setCondition(target, Condition.毒, value);
                 }
             });
         }
@@ -650,14 +646,11 @@ ActiveTec._values = [];
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                const condition = Condition.練;
                 const value = target.getConditionValue(Condition.練) + 1;
                 if (value > 4) {
                     return;
                 }
-                target.setCondition(condition, value);
-                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+                Battle.setCondition(target, Condition.練, value);
             });
         }
     };
@@ -670,14 +663,11 @@ ActiveTec._values = [];
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                const condition = Condition.盾;
                 const value = target.getConditionValue(Condition.盾) + 1;
                 if (value > 4) {
                     return;
                 }
-                target.setCondition(condition, value);
-                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+                Battle.setCondition(target, Condition.盾, value);
             });
         }
     };
@@ -690,11 +680,8 @@ ActiveTec._values = [];
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                const condition = Condition.毒;
                 const value = attacker.prm(Prm.DRK).total;
-                target.setCondition(condition, value);
-                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は<${condition}${value}>になった`, cnt => Color.RED.wave(Color.GREEN, cnt));
+                Battle.setCondition(target, Condition.毒, value);
             });
         }
     };
@@ -721,11 +708,7 @@ ActiveTec._values = [];
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                const condition = Condition.癒;
-                const value = 5;
-                target.setCondition(condition, value);
-                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+                Battle.setCondition(target, Condition.癒, 5);
             });
         }
     };
@@ -751,11 +734,7 @@ ActiveTec._values = [];
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                const condition = Condition.風;
-                const value = 5;
-                target.setCondition(condition, value);
-                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+                Battle.setCondition(target, Condition.風, 5);
             });
         }
     };
@@ -768,11 +747,7 @@ ActiveTec._values = [];
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                const condition = Condition.攻撃低下;
-                const value = 5;
-                target.setCondition(condition, value);
-                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+                Battle.setCondition(target, Condition.攻撃低下, 5);
             });
         }
     };
@@ -785,11 +760,11 @@ ActiveTec._values = [];
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                const condition = Condition.防御低下;
-                const value = 5;
-                target.setCondition(condition, value);
-                FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+                // const condition = Condition.防御低下;
+                // const value = 5;
+                // target.setCondition(condition, value);
+                // FX_Str(ConditionFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+                // Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
             });
         }
     };
@@ -806,7 +781,7 @@ ActiveTec._values = [];
         }
         battleStart(unit) {
             if (!unit.existsCondition(Condition.練.type)) {
-                setCondition(unit, Condition.練, 1);
+                Battle.setCondition(unit, Condition.練, 1);
             }
         }
     };
@@ -1041,8 +1016,8 @@ ActiveTec._values = [];
     //
     //--------------------------------------------------------------------------
 })(Tec || (Tec = {}));
-const setCondition = (target, condition, value) => {
-    target.setCondition(condition, value);
-    FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-    Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.WHITE.bright);
-};
+// const setCondition = (target:Unit, condition:Condition, value:number):void=>{
+//     target.setCondition(condition, value);
+//     FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+//     Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.WHITE.bright);
+// };

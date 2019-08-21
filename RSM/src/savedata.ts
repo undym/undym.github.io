@@ -13,7 +13,7 @@ import { Mix } from "./mix.js";
 
 
 export class Version{
-    static readonly NOW = new Version(0,3,0);
+    static readonly NOW = new Version(0,3,2);
 
     private values:number[];
 
@@ -21,16 +21,21 @@ export class Version{
     get minior()    {return this.values[1];}
     get mentener()  {return this.values[2];}
 
+    /**整数。 */
     constructor(major:number, minior:number, mentener:number){
-        this.values = [major, minior, mentener];
+        this.values = [major|0, minior|0, mentener|0];
     }
 
     isNewerThan(version:Version):boolean{
         for(let i = 0; i < this.values.length; i++){
-            if(version.values[i] < this.values[i]){
+            if(this.values[i] < version.values[i]){
+                return false;
+            }
+            if(this.values[i] > version.values[i]){
                 return true;
             }
         }
+
         return false;
     }
 

@@ -10,7 +10,7 @@ import { Player } from "./player.js";
 import { Rect, Color, Point } from "./undym/type.js";
 import { Graphics, Texture, Font } from "./graphics/graphics.js";
 import { Item } from "./item.js";
-import { SaveData } from "./savedata.js";
+import { SaveData, Version } from "./savedata.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 
 
@@ -107,6 +107,7 @@ window.onload = ()=>{
     }
 
     setInterval( draw, 1000 / 30 );
+
 
 };
 

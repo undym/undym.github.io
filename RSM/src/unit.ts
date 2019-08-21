@@ -239,10 +239,10 @@ export abstract class Unit{
             this.hp -= result.value;
             
             FX_Shake(this.bounds);
-            FX_RotateStr(new Font(30, Font.BOLD), `${result.value}`, p, Color.RED);
+            FX_RotateStr(new Font(60, Font.BOLD), `${result.value}`, p, Color.RED);
             Util.msg.set(`${this.name}に${result.value}のダメージ`, Color.RED.bright); await wait();
         }else{
-            FX_RotateStr(new Font(30, Font.BOLD), `MISS`, p, Color.RED); 
+            FX_RotateStr(new Font(60, Font.BOLD), `MISS`, p, Color.RED); 
             Util.msg.set("MISS"); await wait();
         }
     }
