@@ -86,7 +86,7 @@ export class BattleScene extends Scene {
         super.add(Rect.FULL, ILayout.create({ ctrl: (noUsed) => __awaiter(this, void 0, void 0, function* () {
                 if (Battle.start) {
                     Battle.start = false;
-                    SceneType.now = SceneType.BATTLE;
+                    SceneType.BATTLE.set();
                     //init
                     for (const u of Unit.all) {
                         u.tp = 0;

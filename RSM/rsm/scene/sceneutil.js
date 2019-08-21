@@ -3,12 +3,13 @@ import { YLayout } from "../undym/layout.js";
 import Gage from "../widget/gage.js";
 import { Dungeon } from "../dungeon/dungeon.js";
 import { Color } from "../undym/type.js";
-import { PlayData, Util, Debug } from "../util.js";
+import { PlayData, Debug } from "../util.js";
 import { Unit, Prm, PUnit } from "../unit.js";
 import { Input } from "../undym/input.js";
 import { ConditionType } from "../condition.js";
 import { EqPos } from "../eq.js";
 import { Font, Graphics } from "../graphics/graphics.js";
+import { Version } from "../savedata.js";
 export class DrawPlayInfo extends InnerLayout {
     static get ins() {
         return this._ins ? this._ins
@@ -20,10 +21,10 @@ export class DrawPlayInfo extends InnerLayout {
             .add(ILayout.empty)
             .add(new Label(Font.def, () => {
             if (Debug.debugMode) {
-                return `Debug{${Util.VERSION}}`;
+                return `Debug{${Version.NOW}}`;
             }
             else {
-                return `Version{${Util.VERSION}}`;
+                return `Version{${Version.NOW}}`;
             }
         }, () => Debug.DEBUG ? Color.RED : Color.WHITE)
             .setBase(Font.LEFT))

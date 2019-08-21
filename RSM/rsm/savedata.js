@@ -9,6 +9,33 @@ import { ConditionType, Condition } from "./condition.js";
 import { PlayData, SceneType, Util } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Mix } from "./mix.js";
+export class Version {
+    constructor(major, minior, mentener) {
+        this.values = [major, minior, mentener];
+    }
+    get major() { return this.values[0]; }
+    get minior() { return this.values[1]; }
+    get mentener() { return this.values[2]; }
+    isNewerThan(version) {
+        for (let i = 0; i < this.values.length; i++) {
+            if (version.values[i] < this.values[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    equals(version) {
+        for (let i = 0; i < this.values.length; i++) {
+            if (this.values[i] !== version.values[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    toString() { return `${this.major}.${this.minior}.${this.mentener}`; }
+}
+Version.NOW = new Version(0, 3, 0);
+let saveDataVersion;
 export class SaveData {
     static exists() {
         return window.localStorage.getItem(this.existsSaveData) !== null;
@@ -29,6 +56,7 @@ export class SaveData {
         this.io(/*save*/ false);
     }
     static io(save) {
+        strageSaveData(save);
         Item.values().forEach(item => strageItem(save, item));
         Eq.values().forEach(eq => strageEq(save, eq));
         Dungeon.values().forEach(d => strageDungeon(save, d));
@@ -82,6 +110,16 @@ const ioStr = (save, key, value, loadAction) => {
             loadAction(strage);
         }
     }
+};
+const strageSaveData = (save) => {
+    const name = `${strageSaveData.name}`;
+    let major = Version.NOW.major;
+    let minior = Version.NOW.minior;
+    let mentener = Version.NOW.mentener;
+    ioInt(save, `${name}_version_major`, Version.NOW.major, load => major = load);
+    ioInt(save, `${name}_version_minior`, Version.NOW.minior, load => minior = load);
+    ioInt(save, `${name}_version_mentener`, Version.NOW.mentener, load => mentener = load);
+    saveDataVersion = new Version(major, minior, mentener);
 };
 const strageItem = (save, item) => {
     const name = `${strageItem.name}_${item.uniqueName}`;

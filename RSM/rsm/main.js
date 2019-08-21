@@ -114,7 +114,7 @@ const draw = () => {
 const init = () => {
     Util.init();
     Unit.init();
-    SceneType.now = SceneType.TOWN;
+    SceneType.TOWN.set();
     Dungeon.now = Dungeon.はじまりの丘;
     //画像読み込み
     for (const ev of DungeonEvent.values()) {

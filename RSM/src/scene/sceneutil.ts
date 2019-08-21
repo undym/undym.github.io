@@ -13,6 +13,7 @@ import { Action } from "../force.js";
 import { ConditionType } from "../condition.js";
 import { EqPos, Eq } from "../eq.js";
 import { Font, Graphics } from "../graphics/graphics.js";
+import { Version } from "../savedata.js";
 
 
 
@@ -27,8 +28,8 @@ export class DrawPlayInfo extends InnerLayout{
         super.add(new XLayout()
             .add(ILayout.empty)
             .add(new Label(Font.def, ()=>{
-                if(Debug.debugMode) {return `Debug{${Util.VERSION}}`;}
-                else                {return `Version{${Util.VERSION}}`;}
+                if(Debug.debugMode) {return `Debug{${Version.NOW}}`;}
+                else                {return `Version{${Version.NOW}}`;}
             }, ()=>Debug.DEBUG ? Color.RED : Color.WHITE)
                 .setBase(Font.LEFT))
             .add(new Label(Font.def, ()=>`${PlayData.yen|0}円`, ()=>Color.YELLOW).setBase(Font.RIGHT))

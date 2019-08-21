@@ -15,7 +15,6 @@ export class Battle {
         this.phase = (Battle.firstPhase + Unit.all.length - 1) % Unit.all.length;
         // this.attacker = Unit.all[0];
         // this.target = Unit.all[0];
-        // this.item.use = false;
     }
 }
 Battle.start = false;

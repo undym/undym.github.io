@@ -41,7 +41,7 @@ export class Version{
         return true;
     }
 
-    toString(){return `${this.major},${this.minior},${this.mentener}`;}
+    toString(){return `${this.major}.${this.minior}.${this.mentener}`;}
 }
 
 
