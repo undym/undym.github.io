@@ -1,4 +1,4 @@
-import { Util, Place, PlayData } from "../util.js";
+import { Util, Place, PlayData, SceneType } from "../util.js";
 import { Btn } from "../widget/btn.js";
 import { Dungeon } from "./dungeon.js";
 import { Scene, cwait, wait } from "../undym/scene.js";
@@ -234,7 +234,7 @@ export namespace DungeonEvent{
                         Scene.load( DungeonScene.ins );
                         break;
                 }
-            } );
+            });
             Scene.load( BattleScene.ins );
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;

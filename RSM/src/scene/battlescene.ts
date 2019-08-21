@@ -106,6 +106,7 @@ export class BattleScene extends Scene{
         super.add(Rect.FULL, ILayout.create({ctrl:async(noUsed)=>{
             if(Battle.start){
                 Battle.start = false;
+                SceneType.BATTLE.set();
                 //init
                 for(const u of Unit.all){
                     u.tp = 0;

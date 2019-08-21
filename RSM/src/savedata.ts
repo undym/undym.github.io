@@ -12,6 +12,44 @@ import { Mix } from "./mix.js";
 
 
 
+export class Version{
+    static readonly NOW = new Version(0,3,0);
+
+    private values:number[];
+
+    get major()     {return this.values[0];}
+    get minior()    {return this.values[1];}
+    get mentener()  {return this.values[2];}
+
+    constructor(major:number, minior:number, mentener:number){
+        this.values = [major, minior, mentener];
+    }
+
+    isNewerThan(version:Version):boolean{
+        for(let i = 0; i < this.values.length; i++){
+            if(version.values[i] < this.values[i]){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    equals(version:Version):boolean{
+        for(let i = 0; i < this.values.length; i++){
+            if(this.values[i] !== version.values[i]){return false;}
+        }
+        return true;
+    }
+
+    toString(){return `${this.major},${this.minior},${this.mentener}`;}
+}
+
+
+
+let saveDataVersion:Version;
+
+
+
 export class SaveData{
     private static readonly existsSaveData = "existsSaveData";
 
@@ -37,6 +75,7 @@ export class SaveData{
     }
 
     private static io(save:boolean){
+        strageSaveData(save);
         Item.values().forEach(item=> strageItem(save, item));
         Eq.values().forEach(eq=> strageEq(save, eq));
         Dungeon.values().forEach(d=> strageDungeon(save, d));
@@ -82,6 +121,19 @@ const ioStr = (save:boolean, key:string, value:string, loadAction:(load:string)=
             loadAction(strage);
         }
     }
+};
+
+
+const strageSaveData = (save:boolean)=>{
+    const name = `${strageSaveData.name}`;
+    let major = Version.NOW.major;
+    let minior = Version.NOW.minior;
+    let mentener = Version.NOW.mentener;
+    ioInt(save, `${name}_version_major`,    Version.NOW.major,    load=>major = load);
+    ioInt(save, `${name}_version_minior`,   Version.NOW.minior,   load=>minior = load);
+    ioInt(save, `${name}_version_mentener`, Version.NOW.mentener, load=>mentener = load);
+
+    saveDataVersion = new Version(major, minior, mentener);
 };
 
 

@@ -14,8 +14,8 @@ export class Battle{
     static phase = 0;
     static firstPhase = 0;
     static turn = 0;
-    static attacker:Unit;
-    static target:Unit;
+    // static attacker:Unit;
+    // static target:Unit;
     static battleEndAction:(result:BattleResult)=>void;
     
 
@@ -34,10 +34,8 @@ export class Battle{
         this.firstPhase = randomInt(0, Unit.all.length);
         this.phase = (Battle.firstPhase + Unit.all.length - 1) % Unit.all.length;
         
-        this.attacker = Unit.all[0];
-        this.target = Unit.all[0];
-
-        // this.item.use = false;
+        // this.attacker = Unit.all[0];
+        // this.target = Unit.all[0];
     }
 }
 

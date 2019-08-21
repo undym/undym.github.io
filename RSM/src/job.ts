@@ -172,6 +172,7 @@ export namespace Job{
             e.tecs = [Tec.殴る, Tec.殴る, Tec.殴る, Tec.二回殴る, Tec.人狼剣, Tec.急所];
         }
     };
+
     export const                         魔法使い = new class extends Job{
         constructor(){super({uniqueName:"魔法使い", info:["魔法攻撃を扱う職業"],
                                 appearLv:1, lvupExp:Job.DEF_LVUP_EXP * 2,
@@ -194,6 +195,7 @@ export namespace Job{
             e.tecs = [Tec.ヴァハ, Tec.ヴァハ,Tec.ヴァハ,Tec.ヴァハ, Tec.エヴィン, Tec.エヴィン, Tec.殴る];
         }
     };
+
     export const                         天使 = new class extends Job{
         constructor(){super({uniqueName:"天使", info:["回復に優れる"],
                                 appearLv:8, lvupExp:Job.DEF_LVUP_EXP * 2,
@@ -217,6 +219,7 @@ export namespace Job{
             e.prm(Prm.LIG).base *= 1.5;
         }
     };
+
     export const                         暗黒戦士 = new class extends Job{
         constructor(){super({uniqueName:"暗黒戦士", info:["自分の身を削り強力な攻撃を放つ"],
                                 appearLv:8, lvupExp:Job.DEF_LVUP_EXP * 2,
@@ -240,6 +243,7 @@ export namespace Job{
             e.prm(Prm.DRK).base *= 1.5;
         }
     };
+
     export const                         スネイカー = new class extends Job{
         constructor(){super({uniqueName:"スネイカー", info:["全体攻撃に長ける"],
                                 appearLv:20, lvupExp:Job.DEF_LVUP_EXP * 2,
@@ -262,6 +266,7 @@ export namespace Job{
             e.tecs = [Tec.スネイク, Tec.スネイク, Tec.TP自動回復, Tec.殴る, Tec.コブラ, Tec.コブラ, Tec.コブラ, Tec.ハブ];
         }
     };
+    
     export const                         ダウザー = new class extends Job{
         constructor(){super({uniqueName:"ダウザー", info:["全体攻撃に長ける"],
                                 appearLv:30, lvupExp:Job.DEF_LVUP_EXP * 2,
@@ -284,6 +289,7 @@ export namespace Job{
             e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.殴る, Tec.殴る];
         }
     };
+
     export const                         ガンマン = new class extends Job{
         constructor(){super({uniqueName:"ガンマン", info:["銃攻撃は命中率が低いものの","それを補う手数の多さを持つ"],
                                 appearLv:7, lvupExp:Job.DEF_LVUP_EXP * 2,
@@ -295,6 +301,18 @@ export namespace Job{
             e.tecs = [Tec.撃つ, Tec.撃つ, Tec.撃つ, Tec.二丁拳銃, Tec.二丁拳銃, Tec.殴る, Tec.殴る, Tec.殴る];
         }
     };
+    export const                         測量士 = new class extends Job{
+        constructor(){super({uniqueName:"測量士", info:[""],
+                                appearLv:20, lvupExp:Job.DEF_LVUP_EXP * 2,
+                                grow:()=> [{prm:Prm.MAX_HP, value:2}],
+                                learn:()=> [],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.ガンマン) || p.isMasteredJob(Job.アーチャー),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.撃つ, Tec.撃つ, Tec.撃つ, Tec.二丁拳銃, Tec.射る, Tec.射る, Tec.インドラ, Tec.殴る];
+        }
+    };
+
     export const                         アーチャー = new class extends Job{
         constructor(){super({uniqueName:"アーチャー", info:["致命の一撃を放つ"],
                                 appearLv:10, lvupExp:Job.DEF_LVUP_EXP * 2,

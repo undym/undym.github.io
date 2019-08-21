@@ -13,8 +13,8 @@ export class Battle {
         this.turn = 0;
         this.firstPhase = randomInt(0, Unit.all.length);
         this.phase = (Battle.firstPhase + Unit.all.length - 1) % Unit.all.length;
-        this.attacker = Unit.all[0];
-        this.target = Unit.all[0];
+        // this.attacker = Unit.all[0];
+        // this.target = Unit.all[0];
         // this.item.use = false;
     }
 }

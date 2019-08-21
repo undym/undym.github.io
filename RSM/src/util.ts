@@ -97,7 +97,8 @@ export class SceneType{
         return this._valueOf.get(uniqueName);
     }
 
-    static now:SceneType;
+    private static _now:SceneType;
+    static get now(){return this._now;}
 
     /**
      * actionLoadSaveData: 読み込み時の処理。
@@ -114,11 +115,10 @@ export class SceneType{
     }
 
     set(){
-        SceneType.now = this;
+        SceneType._now = this;
     }
 
-    static TOWN = new SceneType("TOWN", ()=> Scene.load( TownScene.ins ));
-    static DUNGEON = new SceneType("DUNGEON", ()=>{
-        Scene.load( DungeonScene.ins )
-    });
+    static TOWN = new SceneType("TOWN", ()=>Scene.load( TownScene.ins ));
+    static DUNGEON = new SceneType("DUNGEON", ()=>Scene.load( DungeonScene.ins ));
+    static BATTLE = new SceneType("BATTLE", ()=>Scene.load( DungeonScene.ins ));
 }

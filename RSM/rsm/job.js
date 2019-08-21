@@ -280,6 +280,19 @@ Job.DEF_LVUP_EXP = 5;
             };
         }
     };
+    Job.測量士 = new class extends Job {
+        constructor() {
+            super({ uniqueName: "測量士", info: [""],
+                appearLv: 20, lvupExp: Job.DEF_LVUP_EXP * 2,
+                grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
+                learn: () => [],
+                canJobChange: (p) => p.isMasteredJob(Job.ガンマン) || p.isMasteredJob(Job.アーチャー),
+            });
+            this.setEnemyInner = (e) => {
+                e.tecs = [Tec.撃つ, Tec.撃つ, Tec.撃つ, Tec.二丁拳銃, Tec.射る, Tec.射る, Tec.インドラ, Tec.殴る];
+            };
+        }
+    };
     Job.アーチャー = new class extends Job {
         constructor() {
             super({ uniqueName: "アーチャー", info: ["致命の一撃を放つ"],

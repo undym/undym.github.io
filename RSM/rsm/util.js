@@ -86,6 +86,5 @@ export class SceneType {
     }
 }
 SceneType.TOWN = new SceneType("TOWN", () => Scene.load(TownScene.ins));
-SceneType.DUNGEON = new SceneType("DUNGEON", () => {
-    Scene.load(DungeonScene.ins);
-});
+SceneType.DUNGEON = new SceneType("DUNGEON", () => Scene.load(DungeonScene.ins));
+SceneType.BATTLE = new SceneType("BATTLE", () => Scene.load(DungeonScene.ins));
