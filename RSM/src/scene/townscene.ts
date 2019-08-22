@@ -121,7 +121,7 @@ class TownBtn{
                         if(item.targetings & Targeting.SELECT){
                             await item.use( user, [user] );
                         }else{
-                            let targets = Targeting.filter( item.targetings, user, Unit.players );
+                            let targets = Targeting.filter( item.targetings, user, Unit.players, /*num*/1 );
                             
                             if(targets.length > 0){
                                 await item.use( user, targets );

@@ -159,7 +159,7 @@ export class BattleScene extends Scene {
                                 if (!targets[0].dead
                                     || (tec.targetings & Targeting.WITH_DEAD || tec.targetings & Targeting.ONLY_DEAD)) {
                                     Util.msg.set(`＞${targets[0].name}を選択`);
-                                    yield tec.use(attacker, targets);
+                                    yield tec.use(attacker, new Array(tec.rndAttackNum()).fill(targets[0]));
                                     yield this.phaseEnd();
                                 }
                             }));
@@ -167,11 +167,7 @@ export class BattleScene extends Scene {
                         }
                         else {
                             let targets = [];
-                            const attackNum = tec.rndAttackNum();
-                            for (let i = 0; i < attackNum; i++) { //攻撃回数分ターゲットを追加
-                                targets = targets.concat(Targeting.filter(tec.targetings, attacker, Unit.all));
-                            }
-                            // let targets = Targeting.filter( tec.targetings, attacker, Unit.all, tec.rndAttackNum() );
+                            targets = targets.concat(Targeting.filter(tec.targetings, attacker, Unit.all, tec.rndAttackNum()));
                             yield tec.use(attacker, targets);
                             yield this.phaseEnd();
                         }
@@ -223,7 +219,7 @@ export class BattleScene extends Scene {
                             }));
                         }
                         else {
-                            let targets = Targeting.filter(item.targetings, user, Unit.players);
+                            let targets = Targeting.filter(item.targetings, user, Unit.players, /*num*/ 1);
                             yield item.use(user, targets);
                             yield this.phaseEnd();
                         }

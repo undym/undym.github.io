@@ -186,19 +186,20 @@ export class Unit {
                 return;
             }
             const result = dmg.calc();
+            const font = new Font(80, Font.BOLD);
             const p = {
-                x: this.bounds.cx + (1 / Graphics.pixelW) * 20 * (Math.random() * 2 - 1),
-                y: this.bounds.cy + (1 / Graphics.pixelH) * 20 * (Math.random() * 2 - 1),
+                x: this.bounds.cx + (1 / Graphics.pixelW) * font.size * (Math.random() * 2 - 1),
+                y: this.bounds.cy + (1 / Graphics.pixelH) * font.size * (Math.random() * 2 - 1),
             };
             if (result.isHit) {
                 this.hp -= result.value;
                 FX_Shake(this.bounds);
-                FX_RotateStr(new Font(60, Font.BOLD), `${result.value}`, p, Color.RED);
+                FX_RotateStr(font, `${result.value}`, p, Color.RED);
                 Util.msg.set(`${this.name}に${result.value}のダメージ`, Color.RED.bright);
                 yield wait();
             }
             else {
-                FX_RotateStr(new Font(60, Font.BOLD), `MISS`, p, Color.RED);
+                FX_RotateStr(font, `MISS`, p, Color.RED);
                 Util.msg.set("MISS");
                 yield wait();
             }
@@ -511,7 +512,7 @@ EUnit.DEF_AI = (attacker, targetCandidates) => __awaiter(this, void 0, void 0, f
     for (let i = 0; i < 7; i++) {
         let tec = choice(activeTecs);
         if (tec.checkCost(attacker)) {
-            let targets = Targeting.filter(tec.targetings, attacker, targetCandidates);
+            let targets = Targeting.filter(tec.targetings, attacker, targetCandidates, tec.rndAttackNum());
             if (targets.length === 0) {
                 continue;
             }

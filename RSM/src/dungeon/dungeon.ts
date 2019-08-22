@@ -54,8 +54,8 @@ class Event{
 
         if(this.events & Event.BOX      && Math.random() < 0.20){return DungeonEvent.BOX;}
         
-        if(this.events & Event.BATTLE   && Math.random() < 0.25){return DungeonEvent.BATTLE;}
-        if(this.events & Event.TRAP     && Math.random() < 0.04){return DungeonEvent.BATTLE;}
+        if(this.events & Event.BATTLE   && Math.random() < 0.20){return DungeonEvent.BATTLE;}
+        if(this.events & Event.TRAP     && Math.random() < 0.04){return DungeonEvent.TRAP;}
         
         if(this.events & Event.TREE     && Math.random() < 0.06){return DungeonEvent.TREE;}
 

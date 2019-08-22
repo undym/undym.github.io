@@ -105,34 +105,42 @@ export class Dmg {
 export class Action {
 }
 export class Targeting {
-    static filter(targetings, attacker, targets) {
+    static filter(targetings, attacker, targets, num) {
         if (targetings & Targeting.SELF) {
-            return [attacker];
+            return new Array(num).fill(attacker);
         }
-        let res = targets.filter(t => t.exists);
+        let filtered = targets.filter(t => t.exists);
         if (targetings & Targeting.WITH_DEAD) { }
         else if (targetings & Targeting.ONLY_DEAD) {
-            res = res.filter(t => t.dead);
+            filtered = filtered.filter(t => t.dead);
         }
         else {
-            res = res.filter(t => !t.dead);
+            filtered = filtered.filter(t => !t.dead);
         }
         if (targetings & Targeting.WITH_FRIEND) { }
         else if (targetings & Targeting.ONLY_FRIEND) {
-            res = res.filter(t => t.isFriend(attacker));
+            filtered = filtered.filter(t => t.isFriend(attacker));
         }
         else {
-            res = res.filter(t => !t.isFriend(attacker));
+            filtered = filtered.filter(t => !t.isFriend(attacker));
+        }
+        if (filtered.length === 0) {
+            return [];
         }
         if (targetings & Targeting.RANDOM) {
-            if (res.length <= 0) {
-                return [];
+            let res = [];
+            for (let i = 0; i < num; i++) {
+                res.push(choice(filtered));
             }
-            return [choice(res)];
+            return res;
         }
-        if ((targetings & Targeting.SELECT)
-            && res.length > 0) {
-            return [res[0]];
+        if (targetings & Targeting.SELECT) {
+            return new Array(num).fill(choice(filtered));
+        }
+        //all
+        let res = [];
+        for (let i = 0; i < num; i++) {
+            res = res.concat(filtered);
         }
         return res;
     }

@@ -13,7 +13,7 @@ import { Mix } from "./mix.js";
 
 
 export class Version{
-    static readonly NOW = new Version(0,3,2);
+    static readonly NOW = new Version(0,3,3);
 
     private values:number[];
 

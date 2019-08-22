@@ -10,6 +10,7 @@ import { Font } from "./graphics/graphics.js";
 import { Num, Mix } from "./mix.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import { SaveData } from "./savedata.js";
+import DungeonScene from "./scene/dungeonscene.js";
 
 
 
@@ -308,6 +309,7 @@ export namespace Item{
                                 type:ItemType.ダンジョン, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=>{
+                                    Scene.load( DungeonScene.ins );
                                     await DungeonEvent.ESCAPE_DUNGEON.happen();
                                 },
         })}

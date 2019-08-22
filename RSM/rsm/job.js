@@ -60,6 +60,7 @@ export class Job {
         e.prm(Prm.MAX_TP).base = Unit.DEF_MAX_TP;
         e.tp = 0;
         e.ep = 0;
+        e.clearAllCondition();
         this.setEnemyInner(e);
         e.hp = e.prm(Prm.MAX_HP).total;
         e.mp = Math.random() * e.prm(Prm.MAX_MP).total;

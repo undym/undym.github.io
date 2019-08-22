@@ -137,31 +137,40 @@ export class Targeting{
     static readonly ONLY_FRIEND = 1 << 6;
     static readonly RANDOM      = 1 << 7;
 
-    static filter(targetings:number, attacker:Unit, targets:Unit[]|ReadonlyArray<Unit>):Unit[]{
-        if(targetings & Targeting.SELF){return [attacker];}
+    static filter(targetings:number, attacker:Unit, targets:Unit[]|ReadonlyArray<Unit>, num:number):Unit[]{
+        
+        if(targetings & Targeting.SELF){
+            return new Array<Unit>(num).fill(attacker);
+        }
 
-        let res = targets.filter(t=> t.exists);
-    
+
+        let filtered = targets.filter(t=> t.exists);
              if(targetings & Targeting.WITH_DEAD){}
-        else if(targetings & Targeting.ONLY_DEAD){res = res.filter(t=> t.dead);}
-        else                                     {res = res.filter(t=> !t.dead);}
+        else if(targetings & Targeting.ONLY_DEAD){filtered = filtered.filter(t=> t.dead);}
+        else                                     {filtered = filtered.filter(t=> !t.dead);}
 
              if(targetings & Targeting.WITH_FRIEND){}
-        else if(targetings & Targeting.ONLY_FRIEND){res = res.filter(t=> t.isFriend(attacker));}
-        else                                       {res = res.filter(t=> !t.isFriend(attacker));}
+        else if(targetings & Targeting.ONLY_FRIEND){filtered = filtered.filter(t=> t.isFriend(attacker));}
+        else                                       {filtered = filtered.filter(t=> !t.isFriend(attacker));}
+
+        if(filtered.length === 0){return [];}
 
         if(targetings & Targeting.RANDOM){
-            if(res.length <= 0){return [];}
-            return [choice( res )];
+            let res:Unit[] = [];
+            for(let i = 0; i < num; i++){
+                res.push( choice(filtered) );
+            }
+            return res;
         }
-    
-        if(
-               (targetings & Targeting.SELECT) 
-            && res.length > 0
-        ){
-            return [res[0]];
+        
+        if(targetings & Targeting.SELECT){
+            return new Array<Unit>(num).fill( choice(filtered) );
         }
-    
+        //all
+        let res:Unit[] = [];
+        for(let i = 0; i < num; i++){
+            res = res.concat( filtered );
+        }
         return res;
     }
 }

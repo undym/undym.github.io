@@ -184,7 +184,7 @@ export class BattleScene extends Scene{
             if(tec instanceof ActiveTec){
                 btn = new Btn(tec.toString(), async()=>{
                     this.tecInfo.tec = undefined;
-        
+                    
                     if(tec.targetings & Targeting.SELECT){
         
                         Util.msg.set(`[${tec}]のターゲットを選択してください`);
@@ -195,7 +195,7 @@ export class BattleScene extends Scene{
                                 || (tec.targetings & Targeting.WITH_DEAD || tec.targetings & Targeting.ONLY_DEAD)
                             ){
                                 Util.msg.set(`＞${targets[0].name}を選択`);
-                                await tec.use(attacker, targets);
+                                await tec.use(attacker, new Array<Unit>( tec.rndAttackNum() ).fill( targets[0] ));
                                 await this.phaseEnd();
                             }
                         });
@@ -203,11 +203,7 @@ export class BattleScene extends Scene{
                         return;
                     }else{
                         let targets:Unit[] = [];
-                        const attackNum = tec.rndAttackNum();
-                        for(let i = 0; i < attackNum; i++){//攻撃回数分ターゲットを追加
-                            targets = targets.concat( Targeting.filter( tec.targetings, attacker, Unit.all ) );
-                        }
-                        // let targets = Targeting.filter( tec.targetings, attacker, Unit.all, tec.rndAttackNum() );
+                        targets = targets.concat( Targeting.filter( tec.targetings, attacker, Unit.all, tec.rndAttackNum() ) );
                         await tec.use(attacker, targets);
                         await this.phaseEnd();
                     }
@@ -264,7 +260,7 @@ export class BattleScene extends Scene{
                             await this.phaseEnd();
                         });
                     }else{
-                        let targets = Targeting.filter( item.targetings, user, Unit.players );
+                        let targets = Targeting.filter( item.targetings, user, Unit.players, /*num*/1 );
                         
                         await item.use( user, targets );
                         await this.phaseEnd();

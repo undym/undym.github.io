@@ -189,7 +189,7 @@ const initGoods = ()=>{
     };
 
     
-    createItemGoods(Item.スティックパン, ()=>(Item.スティックパン.num+1) * 50, ()=>Item.スティックパン.num < 5);
+    createItemGoods(Item.スティックパン, ()=>(Item.スティックパン.num+1) * 30, ()=>Item.スティックパン.num < 5);
     createItemGoods(Item.脱出ポッド, ()=>10, ()=> Item.脱出ポッド.num < 1);
 
     createEqGoods(Eq.う棒,      　()=>500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10);

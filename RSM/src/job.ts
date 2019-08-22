@@ -97,6 +97,7 @@ export abstract class Job{
         e.tp = 0;
         e.ep = 0;
         
+        e.clearAllCondition();
         
         this.setEnemyInner(e);
 

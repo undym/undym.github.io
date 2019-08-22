@@ -8,13 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Util, SceneType } from "./util.js";
 import { Color } from "./undym/type.js";
-import { wait } from "./undym/scene.js";
+import { Scene, wait } from "./undym/scene.js";
 import { FX_RotateStr } from "./fx/fx.js";
 import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
 import { Num } from "./mix.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
+import DungeonScene from "./scene/dungeonscene.js";
 export class ItemType {
     constructor(name) {
         this.toString = () => name;
@@ -265,6 +266,7 @@ Item.DROP_TREE = 1 << 1;
                 type: ItemType.ダンジョン, rank: 0,
                 consumable: true, drop: Item.DROP_NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                    Scene.load(DungeonScene.ins);
                     yield DungeonEvent.ESCAPE_DUNGEON.happen();
                 }),
             });

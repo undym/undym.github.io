@@ -138,7 +138,7 @@ const initGoods = () => {
         let info = [`＜${eq.pos}＞`];
         new Goods(eq.toString(), info.concat(eq.info), price, isVisible, () => eq.add(1), () => eq.num);
     };
-    createItemGoods(Item.スティックパン, () => (Item.スティックパン.num + 1) * 50, () => Item.スティックパン.num < 5);
+    createItemGoods(Item.スティックパン, () => (Item.スティックパン.num + 1) * 30, () => Item.スティックパン.num < 5);
     createItemGoods(Item.脱出ポッド, () => 10, () => Item.脱出ポッド.num < 1);
     createEqGoods(Eq.う棒, () => 500, () => Unit.getFirstPlayer().prm(Prm.LV).base > 10);
     createEqGoods(Eq.銅剣, () => 3000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 20);
