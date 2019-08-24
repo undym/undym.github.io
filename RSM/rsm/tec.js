@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Prm } from "./unit.js";
+import { Prm, PUnit } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
 import { Dmg, Targeting } from "./force.js";
@@ -14,6 +14,7 @@ import { Condition } from "./condition.js";
 import { Color } from "./undym/type.js";
 import { randomInt } from "./undym/random.js";
 import { Battle } from "./battle.js";
+import { Item } from "./item.js";
 export class TecType {
     constructor(name) {
         this.toString = () => name;
@@ -247,9 +248,11 @@ export class ActiveTec extends Tec {
     //
     //--------------------------------------------------------------------------
     checkCost(u) {
-        for (const set of this.itemCost) {
-            if (set.item.num < set.num) {
-                return false;
+        if (u instanceof PUnit) {
+            for (const set of this.itemCost) {
+                if (set.item.remainingUseCount < set.num) {
+                    return false;
+                }
             }
         }
         return (u.mp >= this.mpCost
@@ -260,8 +263,10 @@ export class ActiveTec extends Tec {
         u.mp -= this.mpCost;
         u.tp -= this.tpCost;
         u.ep -= this.epCost;
-        for (const set of this.itemCost) {
-            set.item.num -= set.num;
+        if (u instanceof PUnit) {
+            for (const set of this.itemCost) {
+                set.item.remainingUseCount -= set.num;
+            }
         }
     }
     use(attacker, targets) {
@@ -686,6 +691,33 @@ ActiveTec._valueOf = new Map();
             });
         }
     };
+    //未設定
+    Tec.ショットガン = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "ショットガン", info: ["ランダムに銃術攻撃4回x0.7", "散弾-1"],
+                type: TecType.銃術, targetings: Targeting.RANDOM,
+                mul: 0.7, num: 4, hit: 0.8,
+                item: () => [[Item.散弾, 1]],
+            });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //銃術Passive
+    //
+    //--------------------------------------------------------------------------
+    Tec.テーブルシールド = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "テーブルシールド", info: ["被銃・弓攻撃-30%"],
+                type: TecType.銃術,
+            });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.銃術, TecType.弓術)) {
+                dmg.pow.mul *= 0.7;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //弓術Active
@@ -848,6 +880,19 @@ ActiveTec._valueOf = new Map();
                 // target.setCondition(condition, value);
                 // FX_Str(ConditionFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
                 // Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+            });
+        }
+    };
+    Tec.スコープ = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "スコープ", info: ["自分を<狙4>（命中上昇）状態にする"],
+                type: TecType.状態, targetings: Targeting.SELF,
+                mul: 1, num: 1, hit: 10, mp: 10, tp: 10,
+            });
+        }
+        run(attacker, target) {
+            return __awaiter(this, void 0, void 0, function* () {
+                Battle.setCondition(target, Condition.狙, 4);
             });
         }
     };
@@ -1126,8 +1171,3 @@ ActiveTec._valueOf = new Map();
     //
     //--------------------------------------------------------------------------
 })(Tec || (Tec = {}));
-// const setCondition = (target:Unit, condition:Condition, value:number):void=>{
-//     target.setCondition(condition, value);
-//     FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-//     Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.WHITE.bright);
-// };

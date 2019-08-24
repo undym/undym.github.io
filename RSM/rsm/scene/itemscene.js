@@ -50,7 +50,7 @@ export class ItemScene extends Scene {
                 font.draw(`[${item}]`, p, Color.WHITE);
                 {
                     const num = item.consumable
-                        ? `${item.num - item.usedNum}/${item.num}`
+                        ? `${item.remainingUseCount}/${item.num}`
                         : `${item.num}`;
                     const limit = item.num >= item.numLimit ? "（所持上限）" : "";
                     font.draw(`${num}個${limit}`, movedP(), Color.WHITE);
@@ -120,7 +120,7 @@ export class ItemScene extends Scene {
                 this.list.add({
                     left: () => {
                         if (item.consumable) {
-                            return `${item.num - item.usedNum}/${item.num}`;
+                            return `${item.remainingUseCount}/${item.num}`;
                         }
                         return `${item.num}`;
                     },

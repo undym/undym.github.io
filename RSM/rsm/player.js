@@ -69,6 +69,7 @@ Player._values = [];
                 Tec.empty,
                 Tec.empty,
                 Tec.empty,
+                Tec.empty,
             ];
         }
     };
@@ -82,6 +83,7 @@ Player._values = [];
             p.tecs = [
                 Tec.殴る,
                 Tec.マジカルパンチ,
+                Tec.empty,
                 Tec.empty,
                 Tec.empty,
             ];

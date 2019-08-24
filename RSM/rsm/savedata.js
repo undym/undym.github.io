@@ -38,7 +38,7 @@ export class Version {
     }
     toString() { return `${this.major}.${this.minior}.${this.mentener}`; }
 }
-Version.NOW = new Version(0, 3, 3);
+Version.NOW = new Version(0, 4, 0);
 let saveDataVersion;
 export class SaveData {
     static exists() {
@@ -129,7 +129,7 @@ const strageItem = (save, item) => {
     const name = `${strageItem.name}_${item.uniqueName}`;
     ioInt(save, `${name}_num`, item.num, load => item.num = load);
     ioInt(save, `${name}_totalGetNum`, item.totalGetNum, load => item.totalGetNum = load);
-    ioInt(save, `${name}_usedNum`, item.usedNum, load => item.usedNum = load);
+    ioInt(save, `${name}_remainingUseCount`, item.remainingUseCount, load => item.remainingUseCount = load);
     // const mix = item.mix;
     // if(mix){
     //     ioInt(save, `${name}_mixCount`, mix.count, load=> mix.count = load);

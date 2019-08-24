@@ -299,11 +299,11 @@ Job.DEF_LVUP_EXP = 5;
             super({ uniqueName: "砲撃手", info: [],
                 appearLv: 37, lvupExp: Job.DEF_LVUP_EXP * 3,
                 grow: () => [{ prm: Prm.GUN, value: 1 }],
-                learn: () => [],
+                learn: () => [Tec.テーブルシールド, Tec.スコープ],
                 canJobChange: (p) => p.isMasteredJob(Job.ガンマン),
             });
             this.setEnemyInner = (e) => {
-                e.tecs = [Tec.撃つ, Tec.撃つ, Tec.撃つ, Tec.二丁拳銃, Tec.二丁拳銃, Tec.殴る, Tec.殴る, Tec.殴る];
+                e.tecs = [Tec.撃つ, Tec.撃つ, Tec.撃つ, Tec.二丁拳銃, Tec.二丁拳銃, Tec.殴る, Tec.殴る, Tec.テーブルシールド];
             };
         }
     };

@@ -154,7 +154,7 @@ class TownBtn {
             Dungeon.auNow = 0;
             DungeonEvent.now = DungeonEvent.empty;
             for (let item of Item.consumableValues()) {
-                item.usedNum = 0;
+                item.remainingUseCount = item.num;
             }
             Util.msg.set(`${choosedDungeon}に侵入しました`);
             Scene.load(DungeonScene.ins);

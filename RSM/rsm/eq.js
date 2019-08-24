@@ -596,7 +596,7 @@ Eq._valueOf = new Map();
     };
     Eq.ミュータント = new class extends Eq {
         constructor() {
-            super({ uniqueName: "ミュータント", info: ["戦闘開始時＜盾＞化"],
+            super({ uniqueName: "ミュータント", info: ["戦闘開始時<盾>化"],
                 pos: EqPos.指, lv: 10 });
         }
         battleStart(unit) {
@@ -616,7 +616,7 @@ Eq._valueOf = new Map();
     };
     Eq.安全靴 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "安全靴", info: ["被攻撃時稀に＜盾＞化"],
+            super({ uniqueName: "安全靴", info: ["被攻撃時稀に<盾>化"],
                 pos: EqPos.脚, lv: 40 });
         }
         afterBeAtk(action, attacker, target, dmg) {

@@ -68,8 +68,8 @@ export class Item {
     constructor(args) {
         this.num = 0;
         this.totalGetNum = 0;
-        /**そのダンジョン内で使用した数. */
-        this.usedNum = 0;
+        /**残り使用回数。*/
+        this.remainingUseCount = 0;
         this.uniqueName = args.uniqueName;
         this.toString = () => this.uniqueName;
         this.info = args.info;
@@ -149,14 +149,11 @@ export class Item {
             if (!this.canUse()) {
                 return;
             }
-            if (this.num <= 0 || this.usedNum >= this.num) {
-                return;
-            }
             for (let t of targets) {
                 yield this.useInner(user, t);
             }
             if (this.consumable) {
-                this.usedNum++;
+                this.remainingUseCount--;
             }
             else {
                 this.num--;
@@ -167,7 +164,10 @@ export class Item {
         if (this.useInner === undefined) {
             return false;
         }
-        if (this.num - this.usedNum <= 0) {
+        if (this.consumable && this.remainingUseCount <= 0) {
+            return false;
+        }
+        if (!this.consumable && this.num <= 0) {
             return false;
         }
         return true;
@@ -279,9 +279,10 @@ Item.DROP_TREE = 1 << 1;
     //弾
     //
     //-----------------------------------------------------------------
-    Item.砲弾 = new class extends Item {
+    //未設定
+    Item.散弾 = new class extends Item {
         constructor() {
-            super({ uniqueName: "砲弾", info: ["大砲に使用"],
+            super({ uniqueName: "散弾", info: ["ショットガンに使用"],
                 type: ItemType.鍵, rank: 0, consumable: true, drop: Item.DROP_NO, });
         }
     };

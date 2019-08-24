@@ -107,6 +107,17 @@ Condition._valueOf = new Map();
             });
         }
     };
+    Condition.狙 = new class extends Condition {
+        constructor() { super("狙", ConditionType.GOOD_LV1); }
+        beforeDoAtk(action, attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof ActiveTec) {
+                    dmg.hit.mul *= 1.2;
+                    attacker.addConditionValue(this, -1);
+                }
+            });
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //GOOD_LV2
