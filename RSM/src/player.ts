@@ -91,6 +91,7 @@ export namespace Player{
                 Tec.empty,
                 Tec.empty,
                 Tec.empty,
+                Tec.empty,
             ];
         }
     };
@@ -105,6 +106,7 @@ export namespace Player{
             p.tecs = [
                 Tec.殴る,
                 Tec.マジカルパンチ,
+                Tec.empty,
                 Tec.empty,
                 Tec.empty,
             ];

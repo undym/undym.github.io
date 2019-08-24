@@ -2,7 +2,8 @@ import { Prm } from "./unit.js";
 import { Num } from "./mix.js";
 import { ActiveTec, TecType } from "./tec.js";
 import { Condition } from "./condition.js";
-import { PlayData } from "./util.js";
+import { Util, PlayData } from "./util.js";
+import { Battle } from "./battle.js";
 export class EqPos {
     constructor(name) {
         this.toString = () => name;
@@ -43,15 +44,10 @@ export class Eq {
         this.pos = args.pos;
         this.appearLv = args.lv;
         Eq._values.push(this);
+        Eq._valueOf.set(this.uniqueName, this);
     }
     static values() { return this._values; }
     static valueOf(uniqueName) {
-        if (!this._valueOf) {
-            this._valueOf = new Map();
-            for (let eq of this.values()) {
-                this._valueOf.set(eq.uniqueName, eq);
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
     static posValues(pos) {
@@ -115,6 +111,7 @@ export class Eq {
     }
 }
 Eq._values = [];
+Eq._valueOf = new Map();
 (function (Eq) {
     //--------------------------------------------------------------------------
     //
@@ -197,6 +194,18 @@ Eq._values = [];
         }
         equip(unit) {
             unit.prm(Prm.MAX_TP).eq += 200;
+        }
+    };
+    Eq.千里ゴーグル = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "千里ゴーグル", info: ["銃・弓攻撃時稀にクリティカル"],
+                pos: EqPos.頭, lv: 120 });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.格闘) && Math.random() < 0.2) {
+                Util.msg.set("＞千里ゴーグル");
+                dmg.pow.mul *= 1.5;
+            }
         }
     };
     //--------------------------------------------------------------------------
@@ -478,6 +487,69 @@ Eq._values = [];
                 pos: EqPos.体, lv: 0 });
         }
     };
+    Eq.草の服 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "草の服", info: ["最大HP+10"],
+                pos: EqPos.体, lv: 15 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 10; }
+    };
+    Eq.布の服 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "布の服", info: ["最大HP+30"],
+                pos: EqPos.体, lv: 35 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 30; }
+    };
+    Eq.皮の服 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "皮の服", info: ["最大HP+50"],
+                pos: EqPos.体, lv: 55 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 50; }
+    };
+    Eq.木の鎧 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "木の鎧", info: ["最大HP+100"],
+                pos: EqPos.体, lv: 95 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 100; }
+    };
+    Eq.青銅の鎧 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "青銅の鎧", info: ["最大HP+200"],
+                pos: EqPos.体, lv: 125 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 200; }
+    };
+    Eq.鉄の鎧 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "鉄の鎧", info: ["最大HP+300"],
+                pos: EqPos.体, lv: 145 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 300; }
+    };
+    Eq.鋼鉄の鎧 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "鋼鉄の鎧", info: ["最大HP+400"],
+                pos: EqPos.体, lv: 160 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 400; }
+    };
+    Eq.銀の鎧 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "銀の鎧", info: ["最大HP+500"],
+                pos: EqPos.体, lv: 180 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 500; }
+    };
+    Eq.金の鎧 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "金の鎧", info: ["最大HP+600"],
+                pos: EqPos.体, lv: 200 });
+        }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 600; }
+    };
     //--------------------------------------------------------------------------
     //
     //腰
@@ -522,6 +594,15 @@ Eq._values = [];
                 pos: EqPos.指, lv: 0 });
         }
     };
+    Eq.ミュータント = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "ミュータント", info: ["戦闘開始時＜盾＞化"],
+                pos: EqPos.指, lv: 10 });
+        }
+        battleStart(unit) {
+            unit.setCondition(Condition.盾, 1);
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //脚
@@ -540,7 +621,7 @@ Eq._values = [];
         }
         afterBeAtk(action, attacker, target, dmg) {
             if (action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.7) {
-                target.setCondition(Condition.盾, 1);
+                Battle.setCondition(target, Condition.盾, 1);
             }
         }
     };

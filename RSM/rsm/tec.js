@@ -29,6 +29,15 @@ export class TecType {
         }
         return this._tecs;
     }
+    /**一つでも当てはまればtrue. */
+    any(...types) {
+        for (const t of types) {
+            if (this === t) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 TecType._values = [];
 (function (TecType) {
@@ -173,19 +182,18 @@ export class PassiveTec extends Tec {
         this.info = args.info;
         this.type = args.type;
         PassiveTec._values.push(this);
+        if (PassiveTec._valueOf.has(this.uniqueName)) {
+            console.log(`PassiveTec already has uniqueName "${this.uniqueName}".`);
+        }
+        PassiveTec._valueOf.set(this.uniqueName, this);
     }
     static values() { return this._values; }
     static valueOf(uniqueName) {
-        if (!this._valueOf) {
-            this._valueOf = new Map();
-            for (const tec of this.values()) {
-                this._valueOf.set(tec.uniqueName, tec);
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
 }
 PassiveTec._values = [];
+PassiveTec._valueOf = new Map();
 export class ActiveTec extends Tec {
     //--------------------------------------------------------------------------
     //
@@ -194,27 +202,15 @@ export class ActiveTec extends Tec {
     //--------------------------------------------------------------------------
     constructor(args) {
         super();
-        this.uniqueName = args.uniqueName;
-        this.info = args.info;
-        this.type = args.type;
-        this.targetings = args.targetings;
-        this.mul = args.mul;
-        const num = args.num;
-        this.rndAttackNum = () => num;
-        this.hit = args.hit;
-        this.mpCost = args.mp ? args.mp : 0;
-        this.tpCost = args.tp ? args.tp : 0;
-        this.epCost = args.ep ? args.ep : 0;
+        this.args = args;
         ActiveTec._values.push(this);
+        if (ActiveTec._valueOf.has(this.uniqueName)) {
+            console.log(`!!ActiveTec already has uniqueName "${this.uniqueName}".`);
+        }
+        ActiveTec._valueOf.set(this.uniqueName, this);
     }
     static values() { return this._values; }
     static valueOf(uniqueName) {
-        if (!this._valueOf) {
-            this._valueOf = new Map();
-            for (const tec of this.values()) {
-                this._valueOf.set(tec.uniqueName, tec);
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
     //--------------------------------------------------------------------------
@@ -222,7 +218,40 @@ export class ActiveTec extends Tec {
     //
     //
     //--------------------------------------------------------------------------
+    get uniqueName() { return this.args.uniqueName; }
+    get info() { return this.args.info; }
+    get type() { return this.args.type; }
+    get mpCost() { return this.args.mp ? this.args.mp : 0; }
+    get tpCost() { return this.args.tp ? this.args.tp : 0; }
+    get epCost() { return this.args.ep ? this.args.ep : 0; }
+    ;
+    get itemCost() {
+        if (this.args.item) {
+            let res = [];
+            for (const set of this.args.item()) {
+                res.push({ item: set[0], num: set[1] });
+            }
+            return res;
+        }
+        return [];
+    }
+    /**攻撃倍率 */
+    get mul() { return this.args.mul; }
+    /**攻撃回数生成 */
+    rndAttackNum() { return this.args.num; }
+    get hit() { return this.args.hit; }
+    get targetings() { return this.args.targetings; }
+    //--------------------------------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------------------------------
     checkCost(u) {
+        for (const set of this.itemCost) {
+            if (set.item.num < set.num) {
+                return false;
+            }
+        }
         return (u.mp >= this.mpCost
             && u.tp >= this.tpCost
             && u.ep >= this.epCost);
@@ -231,6 +260,9 @@ export class ActiveTec extends Tec {
         u.mp -= this.mpCost;
         u.tp -= this.tpCost;
         u.ep -= this.epCost;
+        for (const set of this.itemCost) {
+            set.item.num -= set.num;
+        }
     }
     use(attacker, targets) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -274,6 +306,7 @@ export class ActiveTec extends Tec {
     toString() { return this.uniqueName; }
 }
 ActiveTec._values = [];
+ActiveTec._valueOf = new Map();
 (function (Tec) {
     //--------------------------------------------------------------------------
     //
@@ -464,7 +497,7 @@ ActiveTec._values = [];
                 _super.run.call(this, attacker, target);
                 Util.msg.set(">反動");
                 const cdmg = new Dmg({
-                    pow: target.prm(Prm.LIG).total,
+                    absPow: target.prm(Prm.LIG).total + target.prm(Prm.LV).total,
                     counter: true,
                 });
                 attacker.doDmg(cdmg);
@@ -501,6 +534,56 @@ ActiveTec._values = [];
             return __awaiter(this, void 0, void 0, function* () {
                 Tec.吸血.runInner(attacker, target, dmg);
             });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
+    //暗黒Passive
+    //
+    //--------------------------------------------------------------------------
+    Tec.宵闇 = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "宵闇", info: ["暗黒攻撃x2", "攻撃時HP-20%"],
+                type: TecType.暗黒,
+            });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.暗黒)) {
+                Util.msg.set("＞宵闇");
+                attacker.hp -= attacker.prm(Prm.MAX_HP).total * 0.2;
+                dmg.pow.mul *= 2;
+            }
+        }
+    };
+    Tec.影の鎧 = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "影の鎧", info: ["自分と相手の暗黒値に応じて", "与・被ダメージが増減", "高い側に有利に働く"],
+                type: TecType.暗黒,
+            });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.暗黒)) {
+                let mul = 1 + attacker.prm(Prm.DRK).total / target.prm(Prm.DRK).total * 0.05;
+                if (mul < 0.5) {
+                    mul = 0.5;
+                }
+                if (mul > 1.5) {
+                    mul = 1.5;
+                }
+                dmg.pow.mul *= mul;
+            }
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.暗黒)) {
+                let mul = 1 + target.prm(Prm.DRK).total / attacker.prm(Prm.DRK).total * 0.05;
+                if (mul < 0.5) {
+                    mul = 0.5;
+                }
+                if (mul > 1.5) {
+                    mul = 1.5;
+                }
+                dmg.pow.mul *= mul;
+            }
         }
     };
     //--------------------------------------------------------------------------
@@ -1008,6 +1091,33 @@ ActiveTec._values = [];
         }
         beforeBeAtk(action, attacker, target, dmg) {
             dmg.def.add += 99;
+        }
+    };
+    Tec.トランシット = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "トランシット", info: ["攻撃命中率上昇"],
+                type: TecType.その他,
+            });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            dmg.hit.add += 0.07;
+        }
+    };
+    Tec.カイゼルの目 = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "カイゼルの目", info: ["銃・弓攻撃時稀にクリティカル"],
+                type: TecType.その他,
+            });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof ActiveTec
+                    && (action.type === TecType.銃術 || action.type === TecType.弓術)
+                    && Math.random() < 0.25) {
+                    Util.msg.set("＞カイゼルの目");
+                    dmg.pow.mul *= 1.5;
+                }
+            });
         }
     };
     //--------------------------------------------------------------------------

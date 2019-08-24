@@ -146,7 +146,7 @@ const strageItem = (save:boolean, item:Item)=>{
     const name = `${strageItem.name}_${item.uniqueName}`;
     ioInt(save, `${name}_num`,         item.num,         load=> item.num = load);
     ioInt(save, `${name}_totalGetNum`, item.totalGetNum, load=> item.totalGetNum = load);
-    ioInt(save, `${name}_usedNum`,     item.usedNum,     load=> item.usedNum = load);
+    ioInt(save, `${name}_remainingUseCount`,     item.remainingUseCount,     load=> item.remainingUseCount = load);
 
     // const mix = item.mix;
     // if(mix){
@@ -211,25 +211,22 @@ const stragePlayer = (save:boolean, p:Player)=>{
     }
 
     for(let i = 0; i < tecLen; i++){
+        const isPassiveKey = `${name}_tec_${i}_isPassive`;
+        let isPassive:boolean = u.tecs[i] instanceof PassiveTec;
+        ioBool(save, isPassiveKey, isPassive, load=> isPassive = load);
+
         const key = `${name}_tec_${i}`;
         const value = u.tecs[i].uniqueName;
-        if(u.tecs[i] === Tec.empty){
-            ioStr(save, key, value, load=> u.tecs[i] = Tec.empty);
-        }else if(u.tecs[i] instanceof PassiveTec){
-            ioStr(save, key, value, load=>{
-                const tec = PassiveTec.valueOf(load);
-                if(tec){
-                    u.tecs[i] = tec;
-                }
-            });
-        }else if(u.tecs[i] instanceof ActiveTec){
-            ioStr(save, key, value, load=>{
-                const tec = ActiveTec.valueOf(load);
-                if(tec){
-                    u.tecs[i] = tec;
-                }
-            });
-        }
+
+        ioStr(save, key, value, load=>{
+            if(isPassive){
+                const loadTec = PassiveTec.valueOf(load);
+                if(loadTec){u.tecs[i] = loadTec;}
+            }else{
+                const loadTec = ActiveTec.valueOf(load);
+                if(loadTec){u.tecs[i] = loadTec;}
+            }
+        });
     }
 
     for(const tec of PassiveTec.values()){

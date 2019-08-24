@@ -56,15 +56,10 @@ export class Condition {
         this.uniqueName = uniqueName;
         this.type = type;
         Condition._values.push(this);
+        Condition._valueOf.set(this.uniqueName, this);
     }
     static values() { return this._values; }
     static valueOf(uniqueName) {
-        if (!this._valueOf) {
-            this._valueOf = new Map();
-            for (let condition of this.values()) {
-                this._valueOf.set(condition.uniqueName, condition);
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
     toString() { return `${this.uniqueName}`; }
@@ -83,6 +78,7 @@ export class Condition {
     phaseEnd(unit) { }
 }
 Condition._values = [];
+Condition._valueOf = new Map();
 (function (Condition) {
     //--------------------------------------------------------------------------
     //

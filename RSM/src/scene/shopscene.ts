@@ -4,7 +4,7 @@ import { Btn } from "../widget/btn.js";
 import { Unit, PUnit, Prm } from "../unit.js";
 import { Input } from "../undym/input.js";
 import { Rect, Color } from "../undym/type.js";
-import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
+import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
 import { Place, PlayData } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 import { List } from "../widget/list.js";
@@ -40,8 +40,10 @@ export class ShopScene extends Scene{
 
     init(){
         super.clear();
+
+        super.add(Place.TOP, DrawPlayInfo.ins);
         
-        const mainBounds = new Rect(0, 0, 1, 0.8);
+        const mainBounds = new Rect(0, Place.TOP.yh, 1, 0.75);
 
         super.add(mainBounds, 
             new XLayout()
@@ -52,19 +54,16 @@ export class ShopScene extends Scene{
                     return new RatioLayout()
                         .add(infoBounds, ILayout.create({draw:(bounds)=>{
                             Graphics.fillRect(bounds, Color.D_GRAY);
+
+                            const goods = this.choosedGoods;
+                            if(!goods){return;}
                             
                             let font = Font.def;
                             let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
                             const movedP = ()=> p = p.move(0, font.ratioH);
-
-                            font.draw(`所持金:${PlayData.yen|0}円`, p, Color.YELLOW);
-
-                            const goods = this.choosedGoods;
-                            if(!goods){return;}
-
                             
                             font.draw(`[${goods}]`, movedP(), Color.WHITE);
-                            font.draw(`${goods.price}円`, movedP(), Color.WHITE);
+                            font.draw(`${goods.price()}円`, movedP(), Color.WHITE);
                             if(goods.num()){
                                 font.draw(`所持:${goods.num()}`, movedP(), Color.WHITE);
                             }else{
@@ -147,7 +146,6 @@ class Goods{
         return this._values;
     }
 
-    
     constructor(
         private readonly name:string,
         public readonly info:string[],
@@ -226,5 +224,15 @@ const initGoods = ()=>{
     createEqGoods(Eq.山男の高級とんかつ帽,       ()=>3000,     ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 50);
     createEqGoods(Eq.山男の最高級とんかつ帽,    ()=>10000,     ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 70);
     createEqGoods(Eq.山男の超最高級とんかつ帽,  ()=>100000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 90);
+    
+    createEqGoods(Eq.草の服,      ()=>300,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 3);
+    createEqGoods(Eq.布の服,     ()=>1200,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20);
+    createEqGoods(Eq.皮の服,     ()=>8000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 40);
+    createEqGoods(Eq.木の鎧,    ()=>16000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 60);
+    createEqGoods(Eq.青銅の鎧,  ()=>26000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 80);
+    createEqGoods(Eq.鉄の鎧,    ()=>36000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 100);
+    createEqGoods(Eq.鋼鉄の鎧,  ()=>46000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 120);
+    createEqGoods(Eq.銀の鎧,    ()=>56000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 140);
+    createEqGoods(Eq.金の鎧,    ()=>66000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 160);
 };
 

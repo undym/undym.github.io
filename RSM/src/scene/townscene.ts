@@ -104,7 +104,7 @@ class TownBtn{
                     Scene.load(new EqScene());
                 }));
             }
-            if(Dungeon.再構成トンネル.clearNum > 0 || Debug.debugMode){
+            if(Dungeon.リテの門.clearNum > 0 || Debug.debugMode){
                 l.add(new Btn("合成", ()=>{
                     Scene.load(new MixScene());
                 }));
@@ -189,7 +189,7 @@ class TownBtn{
             Dungeon.auNow = 0;
             DungeonEvent.now = DungeonEvent.empty;
             for(let item of Item.consumableValues()){
-                item.usedNum = 0;
+                item.remainingUseCount = item.num;
             }
 
             Util.msg.set(`${choosedDungeon}に侵入しました`);

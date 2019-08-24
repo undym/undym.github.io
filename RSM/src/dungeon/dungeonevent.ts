@@ -286,6 +286,8 @@ export namespace DungeonEvent{
             Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright); await cwait();
 
             Dungeon.now.clearItem().add(1); await cwait();
+
+            await Dungeon.now.dungeonClearEvent();
             
             DungeonEvent.ESCAPE_DUNGEON.happen();
         };

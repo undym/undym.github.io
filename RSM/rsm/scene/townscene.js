@@ -78,7 +78,7 @@ class TownBtn {
                 Scene.load(new EqScene());
             }));
         }
-        if (Dungeon.再構成トンネル.clearNum > 0 || Debug.debugMode) {
+        if (Dungeon.リテの門.clearNum > 0 || Debug.debugMode) {
             l.add(new Btn("合成", () => {
                 Scene.load(new MixScene());
             }));

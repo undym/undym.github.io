@@ -5,6 +5,7 @@ import { Item } from "./item.js";
 import { ActiveTec, TecType } from "./tec.js";
 import { Condition } from "./condition.js";
 import { Util, PlayData } from "./util.js";
+import { Battle } from "./battle.js";
 
 
 export class EqPos{
@@ -47,15 +48,8 @@ export abstract class Eq implements Force, Num{
     private static _values:Eq[] = [];
     static values(){return this._values;}
 
-    private static _valueOf:Map<string,Eq>;
+    private static _valueOf = new Map<string,Eq>();
     static valueOf(uniqueName:string):Eq|undefined{
-        if(!this._valueOf){
-            this._valueOf = new Map<string,Eq>();
-
-            for(let eq of this.values()){
-                this._valueOf.set(eq.uniqueName, eq);
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
 
@@ -116,6 +110,7 @@ export abstract class Eq implements Force, Num{
         this.appearLv = args.lv;
 
         Eq._values.push(this);
+        Eq._valueOf.set( this.uniqueName, this );
     }
     //--------------------------------------------------------------------------
     //
@@ -208,6 +203,16 @@ export namespace Eq{
         equip(unit:Unit){
             unit.prm(Prm.MAX_TP).eq += 200;
         }
+    }
+    export const                         千里ゴーグル = new class extends Eq{
+        constructor(){super({uniqueName:"千里ゴーグル", info:["銃・弓攻撃時稀にクリティカル"], 
+                                pos:EqPos.頭, lv:120});}
+        beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any(TecType.格闘) && Math.random() < 0.2){
+                Util.msg.set("＞千里ゴーグル");
+                dmg.pow.mul *= 1.5;
+            }
+        }   
     }
     //--------------------------------------------------------------------------
     //
@@ -438,6 +443,51 @@ export namespace Eq{
         constructor(){super({uniqueName:"襤褸切れ", info:[],
                                 pos:EqPos.体, lv:0});}
     }
+    export const                         草の服 = new class extends Eq{
+        constructor(){super({uniqueName:"草の服", info:["最大HP+10"],
+                                pos:EqPos.体, lv:15});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 10;}
+    }
+    export const                         布の服 = new class extends Eq{
+        constructor(){super({uniqueName:"布の服", info:["最大HP+30"],
+                                pos:EqPos.体, lv:35});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 30;}
+    }
+    export const                         皮の服 = new class extends Eq{
+        constructor(){super({uniqueName:"皮の服", info:["最大HP+50"],
+                                pos:EqPos.体, lv:55});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 50;}
+    }
+    export const                         木の鎧 = new class extends Eq{
+        constructor(){super({uniqueName:"木の鎧", info:["最大HP+100"],
+                                pos:EqPos.体, lv:95});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 100;}
+    }
+    export const                         青銅の鎧 = new class extends Eq{
+        constructor(){super({uniqueName:"青銅の鎧", info:["最大HP+200"],
+                                pos:EqPos.体, lv:125});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 200;}
+    }
+    export const                         鉄の鎧 = new class extends Eq{
+        constructor(){super({uniqueName:"鉄の鎧", info:["最大HP+300"],
+                                pos:EqPos.体, lv:145});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 300;}
+    }
+    export const                         鋼鉄の鎧 = new class extends Eq{
+        constructor(){super({uniqueName:"鋼鉄の鎧", info:["最大HP+400"],
+                                pos:EqPos.体, lv:160});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 400;}
+    }
+    export const                         銀の鎧 = new class extends Eq{
+        constructor(){super({uniqueName:"銀の鎧", info:["最大HP+500"],
+                                pos:EqPos.体, lv:180});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 500;}
+    }
+    export const                         金の鎧 = new class extends Eq{
+        constructor(){super({uniqueName:"金の鎧", info:["最大HP+600"],
+                                pos:EqPos.体, lv:200});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 600;}
+    }
     //--------------------------------------------------------------------------
     //
     //腰
@@ -474,6 +524,13 @@ export namespace Eq{
         constructor(){super({uniqueName:"肩身の指輪", info:[],
                                 pos:EqPos.指, lv:0});}
     }
+    export const                         ミュータント = new class extends Eq{
+        constructor(){super({uniqueName:"ミュータント", info:["戦闘開始時<盾>化"],
+                                pos:EqPos.指, lv:10});}
+        battleStart(unit:Unit){
+            unit.setCondition( Condition.盾, 1 );
+        }
+    }
     //--------------------------------------------------------------------------
     //
     //脚
@@ -484,11 +541,11 @@ export namespace Eq{
                                 pos:EqPos.脚, lv:0});}
     }
     export const                         安全靴 = new class extends Eq{
-        constructor(){super({uniqueName:"安全靴", info:["被攻撃時稀に＜盾＞化"],
+        constructor(){super({uniqueName:"安全靴", info:["被攻撃時稀に<盾>化"],
                                 pos:EqPos.脚, lv:40});}
         afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.7){
-                target.setCondition(Condition.盾, 1);
+                Battle.setCondition(target, Condition.盾, 1);
             }
         }
     }

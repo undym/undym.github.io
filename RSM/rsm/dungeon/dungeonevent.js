@@ -297,6 +297,7 @@ DungeonEvent._values = [];
                 yield cwait();
                 Dungeon.now.clearItem().add(1);
                 yield cwait();
+                yield Dungeon.now.dungeonClearEvent();
                 DungeonEvent.ESCAPE_DUNGEON.happen();
             });
             this.createBtnLayout = () => ILayout.empty;

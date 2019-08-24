@@ -182,27 +182,25 @@ const stragePlayer = (save, p) => {
         }
     }
     for (let i = 0; i < tecLen; i++) {
+        const isPassiveKey = `${name}_tec_${i}_isPassive`;
+        let isPassive = u.tecs[i] instanceof PassiveTec;
+        ioBool(save, isPassiveKey, isPassive, load => isPassive = load);
         const key = `${name}_tec_${i}`;
         const value = u.tecs[i].uniqueName;
-        if (u.tecs[i] === Tec.empty) {
-            ioStr(save, key, value, load => u.tecs[i] = Tec.empty);
-        }
-        else if (u.tecs[i] instanceof PassiveTec) {
-            ioStr(save, key, value, load => {
-                const tec = PassiveTec.valueOf(load);
-                if (tec) {
-                    u.tecs[i] = tec;
+        ioStr(save, key, value, load => {
+            if (isPassive) {
+                const loadTec = PassiveTec.valueOf(load);
+                if (loadTec) {
+                    u.tecs[i] = loadTec;
                 }
-            });
-        }
-        else if (u.tecs[i] instanceof ActiveTec) {
-            ioStr(save, key, value, load => {
-                const tec = ActiveTec.valueOf(load);
-                if (tec) {
-                    u.tecs[i] = tec;
+            }
+            else {
+                const loadTec = ActiveTec.valueOf(load);
+                if (loadTec) {
+                    u.tecs[i] = loadTec;
                 }
-            });
-        }
+            }
+        });
     }
     for (const tec of PassiveTec.values()) {
         ioBool(save, `${name}_masteredPassiveTec_${tec.uniqueName}`, u.isMasteredTec(tec), load => {

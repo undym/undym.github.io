@@ -1,8 +1,19 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { DungeonEvent } from "./dungeonevent.js";
 import { Job } from "../job.js";
 import { Unit, Prm } from "../unit.js";
 import { Item } from "../item.js";
 import { Eq } from "../eq.js";
+import { Util } from "../util.js";
+import { cwait } from "../undym/scene.js";
+import { Player } from "../player.js";
 class Event {
     constructor(events) {
         this.events = events;
@@ -24,7 +35,7 @@ class Event {
     // has(ev:number):boolean{
     //     return this.events & ev ? true : false;
     // }
-    create() {
+    rnd() {
         if (this.events & Event.TREASURE) {
             if (Math.random() < 0.001) {
                 return DungeonEvent.TREASURE;
@@ -99,7 +110,7 @@ export class Dungeon {
     //
     //-----------------------------------------------------------------
     rndEvent() {
-        return this.event.create();
+        return this.event.rnd();
     }
     rndEnemyNum() {
         const prob = 1.0 - (this.rank + 4) / (this.rank * this.rank + 5);
@@ -132,6 +143,10 @@ export class Dungeon {
         for (let e of Unit.enemies) {
             e.hp = e.prm(Prm.MAX_HP).total;
         }
+    }
+    dungeonClearEvent() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
     }
 }
 Dungeon._values = [];
@@ -188,6 +203,13 @@ Dungeon.auNow = 0;
                     Unit.enemies[i].exists = false;
                 }
             };
+            this.dungeonClearEvent = () => __awaiter(this, void 0, void 0, function* () {
+                if (!Player.よしこ.member) {
+                    Player.よしこ.join();
+                    Util.msg.set(`よしこが仲間になった`);
+                    yield cwait();
+                }
+            });
         }
     };
     Dungeon.リテの門 = new class extends Dungeon {

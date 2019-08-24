@@ -1,7 +1,6 @@
 import { Util } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Item } from "./item.js";
-import { Player } from "./player.js";
 export class Num {
     static add(obj, v) {
         v = v | 0;
@@ -112,14 +111,6 @@ Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
     //建築
     //
     //--------------------------------------------------------
-    const よしこ = new Mix({
-        uniqueName: "よしこ", info: ["よしこが仲間になる"],
-        limit: 1,
-        materials: () => [[Item.再構成トンネルの玉, 1]],
-        action: () => {
-            Player.よしこ.join();
-        }
-    });
     //--------------------------------------------------------
     //
     //装備
@@ -133,11 +124,11 @@ Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
     const サンタクララ薬 = new Mix({
         uniqueName: "サンタクララ薬", limit: 5,
         result: () => [Item.サンタクララ薬, 1],
-        materials: () => [[Item.ヒノキ, 5], [Item.しいたけ, 5], [Item.水, 5]],
+        materials: () => [[Item.再構成トンネルの玉, 1], [Item.ヒノキ, 5], [Item.しいたけ, 5], [Item.水, 5]],
     });
     const 硬化スティックパン = new Mix({
         uniqueName: "硬化スティックパン", limit: 5,
         result: () => [Item.硬化スティックパン, 1],
-        materials: () => [[Item.石, 5], [Item.土, 5]],
+        materials: () => [[Item.はじまりの丘の玉, 1], [Item.石, 5], [Item.土, 5]],
     });
 })(Mix || (Mix = {}));

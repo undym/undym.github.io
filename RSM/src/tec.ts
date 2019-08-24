@@ -1,4 +1,4 @@
-import { Unit, Prm } from "./unit.js";
+import { Unit, Prm, PUnit } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
 import { Force, Dmg, Targeting, Action } from "./force.js";
@@ -8,6 +8,8 @@ import { FX_Str } from "./fx/fx.js";
 import { Font } from "./graphics/graphics.js";
 import { randomInt } from "./undym/random.js";
 import { Battle } from "./battle.js";
+import { Num } from "./mix.js";
+import { Item } from "./item.js";
 
 
 
@@ -33,6 +35,14 @@ export abstract class TecType{
 
 
     abstract createDmg(attacker:Unit, target:Unit):Dmg;
+
+    /**一つでも当てはまればtrue. */
+    any(...types:TecType[]){
+        for(const t of types){
+            if(this === t){return true;}
+        }
+        return false;
+    }
 }
 
 
@@ -166,14 +176,8 @@ export abstract class Tec implements Force{
 export abstract class PassiveTec extends Tec{
     private static _values:PassiveTec[] = [];
     static values():ReadonlyArray<PassiveTec>{return this._values;}
-    private static _valueOf:Map<string,PassiveTec>;
+    private static _valueOf = new Map<string,PassiveTec>();
     static valueOf(uniqueName:string):PassiveTec|undefined{
-        if(!this._valueOf){
-            this._valueOf = new Map<string,PassiveTec>();
-            for(const tec of this.values()){
-                this._valueOf.set( tec.uniqueName, tec );
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
     
@@ -193,6 +197,10 @@ export abstract class PassiveTec extends Tec{
         this.type = args.type;
 
         PassiveTec._values.push(this);
+        if(PassiveTec._valueOf.has(this.uniqueName)){
+            console.log(`PassiveTec already has uniqueName "${this.uniqueName}".`);
+        }
+        PassiveTec._valueOf.set( this.uniqueName, this );
     }
 }
 
@@ -202,14 +210,8 @@ export abstract class ActiveTec extends Tec implements Action{
     private static _values:ActiveTec[] = [];
     static values():ReadonlyArray<ActiveTec>{return this._values;}
     
-    private static _valueOf:Map<string,ActiveTec>;
+    private static _valueOf = new Map<string,ActiveTec>();
     static valueOf(uniqueName:string):ActiveTec|undefined{
-        if(!this._valueOf){
-            this._valueOf = new Map<string,ActiveTec>();
-            for(const tec of this.values()){
-                this._valueOf.set( tec.uniqueName, tec );
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
     
@@ -218,52 +220,56 @@ export abstract class ActiveTec extends Tec implements Action{
     //
     //
     //--------------------------------------------------------------------------
-    readonly uniqueName:string;
-    readonly info:string[];
-    readonly type:TecType;
+    get uniqueName():string{return this.args.uniqueName;}
+    get info():string[]{return this.args.info;}
+    get type():TecType{return this.args.type;}
 
-    readonly mpCost:number;
-    readonly tpCost:number;
-    readonly epCost:number;
+    get mpCost():number{return this.args.mp ? this.args.mp : 0;}
+    get tpCost():number{return this.args.tp ? this.args.tp : 0;}
+    get epCost():number{return this.args.ep ? this.args.ep : 0};
+    get itemCost():{item:Item, num:number}[]{
+        if(this.args.item){
+            let res:{item:Item, num:number}[] = [];
+            for(const set of this.args.item()){
+                res.push( {item:set[0], num:set[1]} );
+            }
+            return res;
+        }
+        return [];
+    }
     
     /**攻撃倍率 */
-    readonly mul:number;
+    get mul():number{return this.args.mul;}
     /**攻撃回数生成 */
-    readonly rndAttackNum:()=>number;
-    readonly hit:number;
-    readonly targetings:number;
+    rndAttackNum():number{return this.args.num;}
+    get hit():number{return this.args.hit;}
+    get targetings():number{return this.args.targetings;}
     //--------------------------------------------------------------------------
     //
     //
     //
     //--------------------------------------------------------------------------
-    protected constructor(args:{
-        uniqueName:string,
-        info:string[],
-        type:TecType,
-        targetings:number,
-        mul:number,
-        num:number,
-        hit:number,
-        mp?:number,
-        tp?:number,
-        ep?:number,
+    protected constructor(
+        private args:{
+            uniqueName:string,
+            info:string[],
+            type:TecType,
+            targetings:number,
+            mul:number,
+            num:number,
+            hit:number,
+            mp?:number,
+            tp?:number,
+            ep?:number,
+            item?:()=>[Item,number][],
     }){
         super();
-        this.uniqueName = args.uniqueName;
-        this.info = args.info;
-        this.type = args.type;
-        this.targetings = args.targetings;
-        this.mul = args.mul;
-        const num = args.num;
-        this.rndAttackNum = ()=>num;
-        this.hit = args.hit;
-
-        this.mpCost = args.mp ? args.mp : 0;
-        this.tpCost = args.tp ? args.tp : 0;
-        this.epCost = args.ep ? args.ep : 0;
 
         ActiveTec._values.push(this);
+        if(ActiveTec._valueOf.has(this.uniqueName)){
+            console.log(`!!ActiveTec already has uniqueName "${this.uniqueName}".`);
+        }
+        ActiveTec._valueOf.set( this.uniqueName, this );
     }
 
     //--------------------------------------------------------------------------
@@ -272,6 +278,14 @@ export abstract class ActiveTec extends Tec implements Action{
     //
     //--------------------------------------------------------------------------
     checkCost(u:Unit):boolean{
+        if(u instanceof PUnit){       
+            for(const set of this.itemCost){
+                if(set.item.remainingUseCount < set.num){
+                    return false;
+                }
+            }
+        }
+
         return (
                        u.mp >= this.mpCost
                     && u.tp >= this.tpCost
@@ -283,6 +297,12 @@ export abstract class ActiveTec extends Tec implements Action{
         u.mp -= this.mpCost;
         u.tp -= this.tpCost;
         u.ep -= this.epCost;
+
+        if(u instanceof PUnit){       
+            for(const set of this.itemCost){
+                set.item.remainingUseCount -= set.num;
+            }
+        }
     }
 
     async use(attacker:Unit, targets:Unit[]){
@@ -492,7 +512,7 @@ export namespace Tec{
 
             Util.msg.set(">反動");
             const cdmg = new Dmg({
-                            pow:target.prm(Prm.LIG).total,
+                            absPow:target.prm(Prm.LIG).total + target.prm(Prm.LV).total,
                             counter:true,
                         });
             attacker.doDmg(cdmg);
@@ -520,6 +540,44 @@ export namespace Tec{
             Tec.吸血.runInner(attacker, target, dmg);
         }
     }
+    //--------------------------------------------------------------------------
+    //
+    //暗黒Passive
+    //
+    //--------------------------------------------------------------------------
+    export const                         宵闇:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"宵闇", info:["暗黒攻撃x2", "攻撃時HP-20%"],
+                                type:TecType.暗黒,
+        });}
+        beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any( TecType.暗黒 )){
+                Util.msg.set("＞宵闇");
+                attacker.hp -= attacker.prm(Prm.MAX_HP).total * 0.2;
+                dmg.pow.mul *= 2;
+            }
+        }
+    };
+    export const                         影の鎧:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"影の鎧", info:["自分と相手の暗黒値に応じて", "与・被ダメージが増減", "高い側に有利に働く"],
+                                type:TecType.暗黒,
+        });}
+        beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any( TecType.暗黒 )){
+                let mul = 1 + attacker.prm(Prm.DRK).total / target.prm(Prm.DRK).total * 0.05;
+                if(mul < 0.5){mul = 0.5;}
+                if(mul > 1.5){mul = 1.5;}
+                dmg.pow.mul *= mul;
+            }
+        }
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any( TecType.暗黒 )){
+                let mul = 1 + target.prm(Prm.DRK).total / attacker.prm(Prm.DRK).total * 0.05;
+                if(mul < 0.5){mul = 0.5;}
+                if(mul > 1.5){mul = 1.5;}
+                dmg.pow.mul *= mul;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //練術Active
@@ -597,6 +655,29 @@ export namespace Tec{
                               mul:1, num:2, hit:0.7, ep:1,
         });}
     }
+    //未設定
+    export const                          ショットガン:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"ショットガン", info:["ランダムに銃術攻撃4回x0.7", "散弾-1"],
+                              type:TecType.銃術, targetings:Targeting.RANDOM,
+                              mul:0.7, num:4, hit:0.8,
+                              item:()=>[[Item.散弾, 1]],
+        });}
+    }
+    //--------------------------------------------------------------------------
+    //
+    //銃術Passive
+    //
+    //--------------------------------------------------------------------------
+    export const                         テーブルシールド:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"テーブルシールド", info:["被銃・弓攻撃-30%"],
+                                type:TecType.銃術,
+        });}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any(TecType.銃術, TecType.弓術)){
+                dmg.pow.mul *= 0.7;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //弓術Active
@@ -718,6 +799,15 @@ export namespace Tec{
             // target.setCondition(condition, value);
             // FX_Str(ConditionFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
             // Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+        }
+    }
+    export const                          スコープ:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"スコープ", info:["自分を<狙4>（命中上昇）状態にする"],
+                              type:TecType.状態, targetings:Targeting.SELF,
+                              mul:1, num:1, hit:10, mp:10, tp:10,
+        });}
+        async run(attacker:Unit, target:Unit){
+            Battle.setCondition( target, Condition.狙, 4 );
         }
     }
     //--------------------------------------------------------------------------
@@ -910,18 +1000,32 @@ export namespace Tec{
             dmg.def.add += 99;
         }
     };
+    export const                         トランシット:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"トランシット", info:["攻撃命中率上昇"],
+                                type:TecType.その他,
+        });}
+        beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.hit.add += 0.07;
+        }
+    };
+    export const                         カイゼルの目:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"カイゼルの目", info:["銃・弓攻撃時稀にクリティカル"],
+                                type:TecType.その他,
+        });}
+        async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(
+                action instanceof ActiveTec 
+                && (action.type === TecType.銃術 || action.type === TecType.弓術)
+                && Math.random() < 0.25
+            ){
+                Util.msg.set("＞カイゼルの目");
+                dmg.pow.mul *= 1.5;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //
     //
     //--------------------------------------------------------------------------
 }
-
-// const setCondition = (target:Unit, condition:Condition, value:number):void=>{
-//     target.setCondition(condition, value);
-//     FX_Str(Font.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-
-
-//     Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.WHITE.bright);
-// };
-

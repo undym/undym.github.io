@@ -8,6 +8,9 @@ import { Tec } from "../tec.js";
 import { Item } from "../item.js";
 import { Num } from "../mix.js";
 import { Eq } from "../eq.js";
+import { Util } from "../util.js";
+import { cwait } from "../undym/scene.js";
+import { Player } from "../player.js";
 
 
 
@@ -46,7 +49,7 @@ class Event{
     //     return this.events & ev ? true : false;
     // }
 
-    create():DungeonEvent{
+    rnd():DungeonEvent{
         if(this.events & Event.TREASURE){
             if(Math.random() < 0.001){return DungeonEvent.TREASURE;}
             if(Math.random() < 0.001){return DungeonEvent.GET_TREASURE_KEY;}
@@ -152,7 +155,7 @@ export abstract class Dungeon{
     //
     //-----------------------------------------------------------------
     rndEvent():DungeonEvent{
-        return this.event.create();
+        return this.event.rnd();
     }
 
     rndEnemyNum():number{
@@ -193,8 +196,10 @@ export abstract class Dungeon{
             e.hp = e.prm(Prm.MAX_HP).total;
         }
     }
-    
 
+    async dungeonClearEvent(){
+
+    }
     
 
     //-----------------------------------------------------------------
@@ -251,6 +256,12 @@ export namespace Dungeon{
             //ボス以外の雑魚は1体
             for(let i = 2; i < Unit.enemies.length; i++){
                 Unit.enemies[i].exists = false;
+            }
+        };
+        dungeonClearEvent = async()=>{
+            if(!Player.よしこ.member){
+                Player.よしこ.join();
+                Util.msg.set(`よしこが仲間になった`); await cwait();
             }
         };
     };

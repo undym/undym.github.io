@@ -71,7 +71,7 @@ export class ItemScene extends Scene{
 
             {
                 const num = item.consumable 
-                            ? `${item.num - item.usedNum}/${item.num}`
+                            ? `${item.remainingUseCount}/${item.num}`
                             : `${item.num}`
                             ;
                 const limit = item.num >= item.numLimit ? "（所持上限）" : "";
@@ -153,7 +153,7 @@ export class ItemScene extends Scene{
                 const color = ()=> this.selectedItem === item ? Color.CYAN : Color.WHITE;
                 this.list.add({
                     left:()=>{
-                        if(item.consumable){return `${item.num - item.usedNum}/${item.num}`;}
+                        if(item.consumable){return `${item.remainingUseCount}/${item.num}`;}
                         return `${item.num}`;
                     },
                     leftColor:color,

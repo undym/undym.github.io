@@ -59,15 +59,8 @@ export abstract class Condition implements Force{
     private static _values:Condition[] = [];
     static values():ReadonlyArray<Condition>{return this._values;}
 
-    private static _valueOf:Map<string,Condition>;
+    private static _valueOf = new Map<string,Condition>();
     static valueOf(uniqueName:string):Condition|undefined{
-        if(!this._valueOf){
-            this._valueOf = new Map<string,Condition>();
-
-            for(let condition of this.values()){
-                this._valueOf.set( condition.uniqueName, condition );
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
 
@@ -76,6 +69,7 @@ export abstract class Condition implements Force{
         public readonly type:ConditionType
     ){
         Condition._values.push(this);
+        Condition._valueOf.set( this.uniqueName, this );
     }
 
     toString():string{return `${this.uniqueName}`;}
@@ -117,6 +111,16 @@ export namespace Condition{
                 
                 Util.msg.set("＞練"); await wait();
                 dmg.pow.mul *= (1 + attacker.getConditionValue(this) * 0.5)
+
+                attacker.addConditionValue(this, -1);
+            }
+        }
+    };
+    export const             狙 = new class extends Condition{
+        constructor(){super("狙", ConditionType.GOOD_LV1);}
+        async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec){
+                dmg.hit.mul *= 1.2;
 
                 attacker.addConditionValue(this, -1);
             }

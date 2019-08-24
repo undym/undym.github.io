@@ -33,6 +33,7 @@ ItemType.蘇生 = new ItemType("蘇生");
 ItemType.HP回復 = new ItemType("HP回復");
 ItemType.MP回復 = new ItemType("MP回復");
 ItemType.ダンジョン = new ItemType("ダンジョン");
+ItemType.弾 = new ItemType("弾");
 ItemType.鍵 = new ItemType("鍵");
 ItemType.玉 = new ItemType("玉");
 ItemType.素材 = new ItemType("素材");
@@ -47,6 +48,7 @@ export class ItemParentType {
 ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.蘇生, ItemType.HP回復, ItemType.MP回復]);
 ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン]);
+ItemParentType.戦闘 = new ItemParentType("戦闘", [ItemType.弾]);
 ItemParentType.その他 = new ItemParentType("その他", [ItemType.鍵, ItemType.玉, ItemType.素材]);
 class ItemValues {
     constructor(items) {
@@ -63,9 +65,6 @@ class ItemValues {
     }
 }
 export class Item {
-    // get mix():Mix|undefined{return this._mix ? this._mix : (this._mix = this.createMix());}
-    // private _mix:Mix|undefined;
-    // protected createMix():Mix|undefined{return undefined;}
     constructor(args) {
         this.num = 0;
         this.totalGetNum = 0;
@@ -257,7 +256,7 @@ Item.DROP_TREE = 1 << 1;
     };
     //-----------------------------------------------------------------
     //
-    //その他
+    //ダンジョン
     //
     //-----------------------------------------------------------------
     Item.脱出ポッド = new class extends Item {
@@ -277,24 +276,35 @@ Item.DROP_TREE = 1 << 1;
     };
     //-----------------------------------------------------------------
     //
+    //弾
+    //
+    //-----------------------------------------------------------------
+    Item.砲弾 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "砲弾", info: ["大砲に使用"],
+                type: ItemType.鍵, rank: 0, consumable: true, drop: Item.DROP_NO, });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
     //鍵
     //
     //-----------------------------------------------------------------
     Item.はじまりの丘の鍵 = new class extends Item {
         constructor() {
-            super({ uniqueName: "はじまりの丘の鍵", info: [""],
+            super({ uniqueName: "はじまりの丘の鍵", info: [],
                 type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
         }
     };
     Item.再構成トンネルの鍵 = new class extends Item {
         constructor() {
-            super({ uniqueName: "再構成トンネルの鍵", info: [""],
+            super({ uniqueName: "再構成トンネルの鍵", info: [],
                 type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
         }
     };
     Item.リテの門の鍵 = new class extends Item {
         constructor() {
-            super({ uniqueName: "リ・テの門の鍵", info: [""],
+            super({ uniqueName: "リ・テの門の鍵", info: [],
                 type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
         }
     };
@@ -305,19 +315,19 @@ Item.DROP_TREE = 1 << 1;
     //-----------------------------------------------------------------
     Item.はじまりの丘の玉 = new class extends Item {
         constructor() {
-            super({ uniqueName: "はじまりの丘の玉", info: [""],
+            super({ uniqueName: "はじまりの丘の玉", info: [],
                 type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
         }
     };
     Item.再構成トンネルの玉 = new class extends Item {
         constructor() {
-            super({ uniqueName: "再構成トンネルの玉", info: [""],
+            super({ uniqueName: "再構成トンネルの玉", info: [],
                 type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
         }
     };
     Item.リテの門の玉 = new class extends Item {
         constructor() {
-            super({ uniqueName: "リ・テの門の玉", info: [""],
+            super({ uniqueName: "リ・テの門の玉", info: [],
                 type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
         }
     };
@@ -352,7 +362,7 @@ Item.DROP_TREE = 1 << 1;
     };
     Item.しいたけ = new class extends Item {
         constructor() {
-            super({ uniqueName: "しいたけ", info: [""],
+            super({ uniqueName: "しいたけ", info: [],
                 type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
         }
     };
@@ -370,13 +380,13 @@ Item.DROP_TREE = 1 << 1;
     };
     Item.スギ = new class extends Item {
         constructor() {
-            super({ uniqueName: "スギ", info: [""],
+            super({ uniqueName: "スギ", info: [],
                 type: ItemType.素材, rank: 1, drop: Item.DROP_TREE });
         }
     };
     Item.ヒノキ = new class extends Item {
         constructor() {
-            super({ uniqueName: "ヒノキ", info: [""],
+            super({ uniqueName: "ヒノキ", info: [],
                 type: ItemType.素材, rank: 1, drop: Item.DROP_TREE });
         }
     };
