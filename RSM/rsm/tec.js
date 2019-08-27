@@ -928,7 +928,7 @@ ActiveTec._valueOf = new Map();
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
                 const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-                target.healHP(value);
+                Battle.healHP(target, value);
                 Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
             });
         }
@@ -943,7 +943,7 @@ ActiveTec._valueOf = new Map();
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
                 const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-                target.healHP(value);
+                Battle.healHP(target, value);
                 Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
             });
         }
@@ -1009,7 +1009,7 @@ ActiveTec._valueOf = new Map();
             });
         }
         phaseStart(unit) {
-            unit.healHP(1 + unit.prm(Prm.MAX_HP).total * 0.01);
+            Battle.healHP(unit, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
         }
     };
     Tec.衛生 = new class extends PassiveTec {
@@ -1024,7 +1024,7 @@ ActiveTec._valueOf = new Map();
             for (const u of members) {
                 const value = u.prm(Prm.MAX_HP).total * 0.05 + 1;
                 const v = value < lim ? value : lim;
-                u.healHP(1 + unit.prm(Prm.MAX_HP).total * 0.01);
+                Battle.healHP(u, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
             }
         }
     };

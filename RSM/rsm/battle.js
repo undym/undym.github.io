@@ -1,7 +1,7 @@
 import { Unit } from "./unit.js";
 import { randomInt } from "./undym/random.js";
 import { Condition } from "./condition.js";
-import { FX_Str } from "./fx/fx.js";
+import { FX_Str, FX_RotateStr } from "./fx/fx.js";
 import { Color } from "./undym/type.js";
 import { Util } from "./util.js";
 import { Font } from "./graphics/graphics.js";
@@ -39,7 +39,7 @@ export var BattleResult;
     BattleResult[BattleResult["ESCAPE"] = 2] = "ESCAPE";
 })(BattleResult || (BattleResult = {}));
 (function (Battle) {
-    class ConditionFont {
+    class FXFont {
         static get def() { return this.font ? this.font : (this.font = new Font(60)); }
     }
     Battle.setCondition = (target, condition, value) => {
@@ -51,7 +51,23 @@ export var BattleResult;
             return;
         }
         target.setCondition(condition, value);
-        FX_Str(ConditionFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+        FX_Str(FXFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
         Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+    };
+    Battle.healHP = (target, value) => {
+        if (!target.exists || target.dead) {
+            return;
+        }
+        value = value | 0;
+        FX_RotateStr(FXFont.def, `${value}`, target.bounds.center, Color.GREEN);
+        target.hp += value;
+    };
+    Battle.healMP = (target, value) => {
+        if (!target.exists || target.dead) {
+            return;
+        }
+        value = value | 0;
+        target.mp += value;
+        FX_RotateStr(FXFont.def, `${value}`, target.bounds.center, Color.PINK);
     };
 })(Battle || (Battle = {}));

@@ -168,9 +168,9 @@ const initGoods = () => {
     createEqGoods(Eq.山男の高級とんかつ帽, () => 3000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 50);
     createEqGoods(Eq.山男の最高級とんかつ帽, () => 10000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 70);
     createEqGoods(Eq.山男の超最高級とんかつ帽, () => 100000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 90);
-    createEqGoods(Eq.草の服, () => 300, () => Unit.getFirstPlayer().prm(Prm.LV).base > 3);
-    createEqGoods(Eq.布の服, () => 1200, () => Unit.getFirstPlayer().prm(Prm.LV).base > 20);
-    createEqGoods(Eq.皮の服, () => 8000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 40);
+    createEqGoods(Eq.草の服, () => 200, () => Unit.getFirstPlayer().prm(Prm.LV).base > 3);
+    createEqGoods(Eq.布の服, () => 700, () => Unit.getFirstPlayer().prm(Prm.LV).base > 20);
+    createEqGoods(Eq.皮の服, () => 5000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 40);
     createEqGoods(Eq.木の鎧, () => 16000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 60);
     createEqGoods(Eq.青銅の鎧, () => 26000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 80);
     createEqGoods(Eq.鉄の鎧, () => 36000, () => Unit.getFirstPlayer().prm(Prm.LV).base > 100);

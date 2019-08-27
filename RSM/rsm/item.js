@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Util, SceneType } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Scene, wait } from "./undym/scene.js";
-import { FX_RotateStr } from "./fx/fx.js";
 import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
 import { Font } from "./graphics/graphics.js";
 import { Num } from "./mix.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import DungeonScene from "./scene/dungeonscene.js";
+import { Battle } from "./battle.js";
 export class ItemType {
     constructor(name) {
         this.toString = () => name;
@@ -200,8 +200,11 @@ Item.DROP_TREE = 1 << 1;
                     if (target.dead) {
                         target.dead = false;
                         target.hp = 0;
-                        target.healHP(1);
-                        Util.msg.set(`${target.name}は生き返った`);
+                        Battle.healHP(target, 1);
+                        if (SceneType.now === SceneType.BATTLE) {
+                            Util.msg.set(`${target.name}は生き返った`);
+                            yield wait();
+                        }
                     }
                 })
             });
@@ -219,9 +222,11 @@ Item.DROP_TREE = 1 << 1;
                 consumable: true, drop: Item.DROP_NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                     const value = 10;
-                    yield target.healHP(value);
-                    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
-                    yield wait();
+                    Battle.healHP(target, value);
+                    if (SceneType.now === SceneType.BATTLE) {
+                        Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
+                        yield wait();
+                    }
                 }),
             });
         }
@@ -233,9 +238,11 @@ Item.DROP_TREE = 1 << 1;
                 consumable: true, drop: Item.DROP_NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                     const value = 30;
-                    yield target.healHP(value);
-                    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
-                    yield wait();
+                    Battle.healHP(target, value);
+                    if (SceneType.now === SceneType.BATTLE) {
+                        Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
+                        yield wait();
+                    }
                 }),
             });
         }
@@ -250,7 +257,14 @@ Item.DROP_TREE = 1 << 1;
             super({ uniqueName: "赤い水", info: ["MP+10"],
                 type: ItemType.MP回復, rank: 0,
                 consumable: true, drop: Item.DROP_NO,
-                use: (user, target) => __awaiter(this, void 0, void 0, function* () { return yield healMP(target, 10); }),
+                use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                    const value = 10;
+                    Battle.healMP(target, value);
+                    if (SceneType.now === SceneType.BATTLE) {
+                        Util.msg.set(`${target.name}のMPが${value}回復した`, Color.GREEN.bright);
+                        yield wait();
+                    }
+                }),
             });
         }
     };
@@ -292,22 +306,16 @@ Item.DROP_TREE = 1 << 1;
     //
     //-----------------------------------------------------------------
     Item.はじまりの丘の鍵 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "はじまりの丘の鍵", info: [],
-                type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
-        }
+        constructor() { super({ uniqueName: "はじまりの丘の鍵", info: [], type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, }); }
     };
     Item.再構成トンネルの鍵 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "再構成トンネルの鍵", info: [],
-                type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
-        }
+        constructor() { super({ uniqueName: "再構成トンネルの鍵", info: [], type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, }); }
     };
     Item.リテの門の鍵 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "リ・テの門の鍵", info: [],
-                type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, });
-        }
+        constructor() { super({ uniqueName: "リ・テの門の鍵", info: [], type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, }); }
+    };
+    Item.黒平原の鍵 = new class extends Item {
+        constructor() { super({ uniqueName: "黒平原の鍵", info: [], type: ItemType.鍵, rank: 0, drop: Item.DROP_NO, }); }
     };
     //-----------------------------------------------------------------
     //
@@ -315,22 +323,16 @@ Item.DROP_TREE = 1 << 1;
     //
     //-----------------------------------------------------------------
     Item.はじまりの丘の玉 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "はじまりの丘の玉", info: [],
-                type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
-        }
+        constructor() { super({ uniqueName: "はじまりの丘の玉", info: [], type: ItemType.玉, rank: 0, drop: Item.DROP_NO, }); }
     };
     Item.再構成トンネルの玉 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "再構成トンネルの玉", info: [],
-                type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
-        }
+        constructor() { super({ uniqueName: "再構成トンネルの玉", info: [], type: ItemType.玉, rank: 0, drop: Item.DROP_NO, }); }
     };
     Item.リテの門の玉 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "リ・テの門の玉", info: [],
-                type: ItemType.玉, rank: 0, drop: Item.DROP_NO, });
-        }
+        constructor() { super({ uniqueName: "リ・テの門の玉", info: [], type: ItemType.玉, rank: 0, drop: Item.DROP_NO, }); }
+    };
+    Item.黒平原の玉 = new class extends Item {
+        constructor() { super({ uniqueName: "黒平原の玉", info: [], type: ItemType.玉, rank: 0, drop: Item.DROP_NO, }); }
     };
     //-----------------------------------------------------------------
     //
@@ -367,9 +369,33 @@ Item.DROP_TREE = 1 << 1;
                 type: ItemType.素材, rank: 0, drop: Item.DROP_BOX });
         }
     };
+    Item.朽ち果てた鍵 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "朽ち果てた鍵", info: [],
+                type: ItemType.素材, rank: 1, drop: Item.DROP_BOX });
+        }
+    };
+    Item.エネルギー = new class extends Item {
+        constructor() {
+            super({ uniqueName: "エネルギー", info: ["触るとビリビリする"],
+                type: ItemType.素材, rank: 1, drop: Item.DROP_BOX });
+        }
+    };
     Item.He = new class extends Item {
         constructor() {
             super({ uniqueName: "He", info: ["ヘェッ"],
+                type: ItemType.素材, rank: 2, drop: Item.DROP_BOX });
+        }
+    };
+    Item.黒い石 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "黒い石", info: ["これは黒い！！！！！"],
+                type: ItemType.素材, rank: 2, drop: Item.DROP_BOX });
+        }
+    };
+    Item.黒い砂 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "黒い砂", info: ["黒い！！！！！"],
                 type: ItemType.素材, rank: 2, drop: Item.DROP_BOX });
         }
     };
@@ -405,10 +431,3 @@ class ItemFont {
         return this._font;
     }
 }
-const healMP = (target, value) => __awaiter(this, void 0, void 0, function* () {
-    value = value | 0;
-    target.mp += value;
-    FX_RotateStr(ItemFont.font, `${value}`, target.bounds.center, Color.PINK);
-    Util.msg.set(`${target.name}のMPが${value}回復した`, Color.GREEN.bright);
-    yield wait();
-});

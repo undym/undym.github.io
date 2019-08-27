@@ -247,15 +247,7 @@ export abstract class Unit{
             Util.msg.set("MISS"); await wait();
         }
     }
-    /**回復するときは数値のエフェクトを出すためこの関数を経由して回復する。 */
-    healHP(value:number){
-        value = value|0;
-        if(this.dead){return;}
     
-        FX_Str(Font.def, `${value}`, this.bounds.center, Color.GREEN);
-        this.hp += value;
-    }
-
     async judgeDead(){
         if(!this.exists || this.dead){return;}
         if(this.prm(Prm.HP).base > 0){return;}

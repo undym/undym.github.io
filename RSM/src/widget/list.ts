@@ -25,7 +25,7 @@ export class List extends ILayout{
     private page = 0;
     private update:boolean = true;
 
-    constructor(aPageElmNum:number = 7){
+    constructor(aPageElmNum:number = 9){
         super();
 
         this.aPageElmNum = aPageElmNum|0;

@@ -561,6 +561,15 @@ Eq._valueOf = new Map();
                 pos: EqPos.腰, lv: 0 });
         }
     };
+    Eq.ゲルマンベルト = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "ゲルマンベルト", info: ["攻撃+10%"],
+                pos: EqPos.腰, lv: 50 });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            dmg.pow.mul *= 1.1;
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //腕
@@ -620,7 +629,7 @@ Eq._valueOf = new Map();
                 pos: EqPos.脚, lv: 40 });
         }
         afterBeAtk(action, attacker, target, dmg) {
-            if (action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.7) {
+            if (action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.6) {
                 Battle.setCondition(target, Condition.盾, 1);
             }
         }

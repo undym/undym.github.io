@@ -159,7 +159,7 @@ class TownBtn{
 
                 Util.msg.set("");
                 Util.msg.set(`[${d}]`);
-                Util.msg.set(`Rank:${d.rank}`);
+                Util.msg.set(`Rank:${d.rank} Lv:${d.enemyLv}`);
                 Util.msg.set(`攻略回数:${d.clearNum}`, d.clearNum > 0 ? Color.WHITE : Color.GRAY);
                 if(d.treasure.totalGetNum > 0){
                     Util.msg.set(`財宝:${d.treasure}(${d.treasure.num}個)`);

@@ -91,7 +91,7 @@ export namespace DungeonEvent{
             }
 
             if(Math.random() < 0.15){
-                const trends = Dungeon.now.trendItems();
+                const trends = Dungeon.now.trendItems;
                 if(trends.length > 0){
                     const item = trends[ (Math.random() * trends.length)|0 ];
                     await wait();
@@ -106,7 +106,6 @@ export namespace DungeonEvent{
         createImg = ()=> new Img("img/treasure.png");
         happenInner = async()=>{
             Util.msg.set("財宝の箱だ！")
-            Util.msg.set(`要:${Dungeon.now.treasureKey}(所持:${Dungeon.now.treasureKey.num}個)`);
         };
         createBtnLayout = ()=> createDefLayout()
                                 .set(ReturnBtn.index, new Btn("開ける", async()=>{
@@ -167,6 +166,22 @@ export namespace DungeonEvent{
             Util.msg.set("解除した");
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
+    };
+    export const REST:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
+        happenInner = async()=>{
+            Util.msg.set("休めそうな場所がある...");
+        };
+        createBtnLayout = ()=> createDefLayout()
+                                .set(ReturnBtn.index, new Btn("休む", async()=>{
+                                    for(const p of Unit.players){
+                                        if(p.exists && !p.dead){
+                                            Battle.healHP(p, p.prm(Prm.MAX_HP).total * 0.2);
+                                            Battle.healMP(p, p.prm(Prm.MAX_MP).total * 0.2);
+                                        }
+                                    }
+                                }))
+                                ;
     };
     export const TREE:DungeonEvent = new class extends DungeonEvent{
         constructor(){super();}
@@ -285,7 +300,7 @@ export namespace DungeonEvent{
             PlayData.yen += yen;
             Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright); await cwait();
 
-            Dungeon.now.clearItem().add(1); await cwait();
+            Dungeon.now.dungeonClearItem.add(1); await cwait();
 
             await Dungeon.now.dungeonClearEvent();
             

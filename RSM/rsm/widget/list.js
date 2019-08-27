@@ -22,7 +22,7 @@ import { Graphics, Font } from "../graphics/graphics.js";
 //     hold?:(elm:Elm)=>void,
 // };
 export class List extends ILayout {
-    constructor(aPageElmNum = 7) {
+    constructor(aPageElmNum = 9) {
         super();
         this.elms = [];
         this.page = 0;

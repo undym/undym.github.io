@@ -210,7 +210,7 @@ export namespace Condition{
             const value = unit.getConditionValue(this);
             if(value < unit.prm(Prm.DRK).total + 1){
                 unit.clearCondition(this);
-                Util.msg.set(`${unit.name}の＜毒＞が解除された`); await wait();
+                Util.msg.set(`${unit.name}の<毒>が解除された`); await wait();
                 return;
             }
 

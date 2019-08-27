@@ -210,7 +210,7 @@ Condition._valueOf = new Map();
                 const value = unit.getConditionValue(this);
                 if (value < unit.prm(Prm.DRK).total + 1) {
                     unit.clearCondition(this);
-                    Util.msg.set(`${unit.name}の＜毒＞が解除された`);
+                    Util.msg.set(`${unit.name}の<毒>が解除された`);
                     yield wait();
                     return;
                 }

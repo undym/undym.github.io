@@ -15,53 +15,55 @@ import { Player } from "../player.js";
 
 
 class Event{
-    static createDef(){
-        return  new Event(
-                      this.BATTLE
-                    | this.BOX
-                    | this.TRAP
-                    | this.TREASURE
-                );
-    }
-    static readonly BATTLE  = 1 << 0;
-    static readonly BOX     = 1 << 1;
-    static readonly TREE    = 1 << 2;
-    static readonly TRAP    = 1 << 3;
-    static readonly TREASURE= 1 << 4;
+    static createDef(rank:number){
+        const events:[DungeonEvent,number][] = [];
+        events.push([DungeonEvent.TREASURE,         0.001]);
+        events.push([DungeonEvent.GET_TREASURE_KEY, 0.001]);
+        events.push([DungeonEvent.BOX,              0.15]);
+        events.push([DungeonEvent.BATTLE,           0.15]);
+        events.push([DungeonEvent.TRAP,             0.04]);
 
-    private events:number;
-    
-    constructor(events:number){
-        this.events = events;
-    }
-
-    remove(ev:number):this{
-        this.events = this.events & (~ev);
-        return this;
-    }
-
-    add(ev:number):this{
-        this.events = this.events | ev;
-        return this;
-    }
-
-    // has(ev:number):boolean{
-    //     return this.events & ev ? true : false;
-    // }
-
-    rnd():DungeonEvent{
-        if(this.events & Event.TREASURE){
-            if(Math.random() < 0.001){return DungeonEvent.TREASURE;}
-            if(Math.random() < 0.001){return DungeonEvent.GET_TREASURE_KEY;}
+        if(rank >= 1){
+            events.push([DungeonEvent.TREE,         0.04]);
         }
 
-        if(this.events & Event.BOX      && Math.random() < 0.20){return DungeonEvent.BOX;}
-        
-        if(this.events & Event.BATTLE   && Math.random() < 0.20){return DungeonEvent.BATTLE;}
-        if(this.events & Event.TRAP     && Math.random() < 0.04){return DungeonEvent.TRAP;}
-        
-        if(this.events & Event.TREE     && Math.random() < 0.06){return DungeonEvent.TREE;}
+        events.push([DungeonEvent.REST,             0.04]);
 
+        return new Event(events);
+    }
+
+
+    private events:{ev:DungeonEvent, prob:number}[] = [];
+    
+
+    constructor(events:[DungeonEvent,number][]){
+        for(const set of events){
+            this.events.push( {ev:set[0], prob:set[1]} );
+        }
+    }
+
+
+    remove(ev:DungeonEvent):this{
+        this.events = this.events.filter(set=> set.ev !== ev);
+        return this;
+    }
+
+    add(ev:DungeonEvent, prob:number):this{
+        this.events.push( {ev:ev, prob:prob} );
+        return this;
+    }
+
+    addFirst(ev:DungeonEvent, prob:number):this{
+        this.events.unshift( {ev:ev, prob:prob} );
+        return this;
+    }
+
+    rnd():DungeonEvent{
+        for(const set of this.events){
+            if(Math.random() < set.prob){
+                return set.ev;
+            }
+        }
         return DungeonEvent.empty;
     }
 }
@@ -98,50 +100,40 @@ export abstract class Dungeon{
 
     clearNum:number = 0;
 
-    readonly uniqueName:string;
-    readonly rank:number;
-    readonly enemyLv:number;
-    readonly au:number;
-    readonly clearItem:()=>Num;
-    private  _treasure:()=>Num;
-    get treasure():Num{return this._treasure();}
-    private _treasureKey:()=>Num;
-    get treasureKey():Num{return this._treasureKey();}
-    readonly trendItems:()=>Item[];
+    get uniqueName():string{return this.args.uniqueName;}
+    get rank():number{return this.args.rank;}
+    get enemyLv():number{return this.args.enemyLv;}
+    get au():number{return this.args.au;}
+    get dungeonClearItem():Num{return this.args.clearItem();}
+    get treasure():Num{return this.args.treasure();}
+    get treasureKey():Num{return this.args.treasureKey();}
+    get trendItems():Item[]{return this.args.trendItems();}
 
-    private readonly event:Event;
+    private event:Event;
     //-----------------------------------------------------------------
     //
     //
     //
     //-----------------------------------------------------------------
     // private constructor(name:string, protected rank:number, protected enemyLv:number, protected au:number){
-    protected constructor(args:{
-        uniqueName:string,
-        rank:number,
-        enemyLv:number,
-        au:number,
-        clearItem:()=>Num,
-        treasure:()=>Num,
-        treasureKey:()=>Num,
-        trendItems:()=>Item[],
-        event:Event,
-    }){
-        this.uniqueName = args.uniqueName;
-        this.toString = ()=>this.uniqueName;
-
-        this.rank        = args.rank;
-        this.enemyLv     = args.enemyLv;
-        this.au          = args.au;
-        this.clearItem   = args.clearItem;
-        this._treasure   = args.treasure;
-        this._treasureKey= args.treasureKey;
-        this.trendItems  = args.trendItems;
-        this.event       = args.event;
+    protected constructor(
+        private args:{
+            uniqueName:string,
+            rank:number,
+            enemyLv:number,
+            au:number,
+            clearItem:()=>Num,
+            treasure:()=>Num,
+            treasureKey:()=>Num,
+            trendItems:()=>Item[],
+            event?:()=>Event,
+        }
+    ){
 
         Dungeon._values.push(this);
     }
 
+    toString():string{return this.args.uniqueName;}
     //-----------------------------------------------------------------
     //
     //
@@ -155,6 +147,9 @@ export abstract class Dungeon{
     //
     //-----------------------------------------------------------------
     rndEvent():DungeonEvent{
+        if(!this.event){
+            this.event = this.args.event ? this.args.event() : Event.createDef(this.rank);
+        }
         return this.event.rnd();
     }
 
@@ -222,7 +217,6 @@ export namespace Dungeon{
                                 treasure:()=>Eq.棒,
                                 treasureKey:()=>Item.はじまりの丘の鍵,
                                 trendItems:()=>[Item.石, Item.土, Item.枝,],
-                                event:Event.createDef(),
         });}
         isVisible = ()=>true;
         setBossInner = ()=>{
@@ -244,7 +238,6 @@ export namespace Dungeon{
                                 treasure:()=>Eq.安全靴,
                                 treasureKey:()=>Item.再構成トンネルの鍵,
                                 trendItems:()=>[Item.水],
-                                event:Event.createDef().add(Event.TREE),
         });}
         isVisible = ()=>Dungeon.はじまりの丘.clearNum > 0;
         setBossInner = ()=>{
@@ -267,12 +260,11 @@ export namespace Dungeon{
     };
     export const                         リテの門:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"リ・テの門",
-                                rank:1, enemyLv:5, au:70,
+                                rank:1, enemyLv:7, au:70,
                                 clearItem:()=>Item.リテの門の玉,
                                 treasure:()=>Eq.魔法の杖,
                                 treasureKey:()=>Item.リテの門の鍵,
-                                trendItems:()=>[],
-                                event:Event.createDef().add(Event.TREE),
+                                trendItems:()=>[Item.朽ち果てた鍵],
         });}
         isVisible = ()=>Dungeon.再構成トンネル.clearNum > 0;
         setBossInner = ()=>{
@@ -286,6 +278,22 @@ export namespace Dungeon{
             for(let i = 3; i < Unit.enemies.length; i++){
                 Unit.enemies[i].exists = false;
             }
+        };
+    };
+    export const                         黒平原:Dungeon = new class extends Dungeon{
+        constructor(){super({uniqueName:"黒平原",
+                                rank:2, enemyLv:14, au:100,
+                                clearItem:()=>Item.黒平原の玉,
+                                treasure:()=>Eq.ゲルマンベルト,
+                                treasureKey:()=>Item.黒平原の鍵,
+                                trendItems:()=>[Item.黒い石, Item.黒い砂],
+        });}
+        isVisible = ()=>Dungeon.再構成トンネル.clearNum > 0;
+        setBossInner = ()=>{
+            let e = Unit.enemies[0];
+            Job.スネイカー.setEnemy(e, e.prm(Prm.LV).base);
+            e.name = "牛";
+            e.prm(Prm.MAX_HP).base = 120;
         };
     };
 }

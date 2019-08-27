@@ -83,7 +83,7 @@ DungeonEvent._values = [];
                     }
                 }
                 if (Math.random() < 0.15) {
-                    const trends = Dungeon.now.trendItems();
+                    const trends = Dungeon.now.trendItems;
                     if (trends.length > 0) {
                         const item = trends[(Math.random() * trends.length) | 0];
                         yield wait();
@@ -100,7 +100,6 @@ DungeonEvent._values = [];
             this.createImg = () => new Img("img/treasure.png");
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
                 Util.msg.set("財宝の箱だ！");
-                Util.msg.set(`要:${Dungeon.now.treasureKey}(所持:${Dungeon.now.treasureKey.num}個)`);
             });
             this.createBtnLayout = () => createDefLayout()
                 .set(ReturnBtn.index, new Btn("開ける", () => __awaiter(this, void 0, void 0, function* () {
@@ -168,6 +167,23 @@ DungeonEvent._values = [];
                 Util.msg.set("解除した");
             };
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.REST = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set("休めそうな場所がある...");
+            });
+            this.createBtnLayout = () => createDefLayout()
+                .set(ReturnBtn.index, new Btn("休む", () => __awaiter(this, void 0, void 0, function* () {
+                for (const p of Unit.players) {
+                    if (p.exists && !p.dead) {
+                        Battle.healHP(p, p.prm(Prm.MAX_HP).total * 0.2);
+                        Battle.healMP(p, p.prm(Prm.MAX_MP).total * 0.2);
+                    }
+                }
+            })));
         }
     };
     DungeonEvent.TREE = new class extends DungeonEvent {
@@ -295,7 +311,7 @@ DungeonEvent._values = [];
                 PlayData.yen += yen;
                 Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright);
                 yield cwait();
-                Dungeon.now.clearItem().add(1);
+                Dungeon.now.dungeonClearItem.add(1);
                 yield cwait();
                 yield Dungeon.now.dungeonClearEvent();
                 DungeonEvent.ESCAPE_DUNGEON.happen();

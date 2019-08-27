@@ -16,54 +16,45 @@ import { cwait } from "../undym/scene.js";
 import { Player } from "../player.js";
 class Event {
     constructor(events) {
-        this.events = events;
+        this.events = [];
+        for (const set of events) {
+            this.events.push({ ev: set[0], prob: set[1] });
+        }
     }
-    static createDef() {
-        return new Event(this.BATTLE
-            | this.BOX
-            | this.TRAP
-            | this.TREASURE);
+    static createDef(rank) {
+        const events = [];
+        events.push([DungeonEvent.TREASURE, 0.001]);
+        events.push([DungeonEvent.GET_TREASURE_KEY, 0.001]);
+        events.push([DungeonEvent.BOX, 0.15]);
+        events.push([DungeonEvent.BATTLE, 0.15]);
+        events.push([DungeonEvent.TRAP, 0.04]);
+        if (rank >= 1) {
+            events.push([DungeonEvent.TREE, 0.04]);
+        }
+        events.push([DungeonEvent.REST, 0.04]);
+        return new Event(events);
     }
     remove(ev) {
-        this.events = this.events & (~ev);
+        this.events = this.events.filter(set => set.ev !== ev);
         return this;
     }
-    add(ev) {
-        this.events = this.events | ev;
+    add(ev, prob) {
+        this.events.push({ ev: ev, prob: prob });
         return this;
     }
-    // has(ev:number):boolean{
-    //     return this.events & ev ? true : false;
-    // }
+    addFirst(ev, prob) {
+        this.events.unshift({ ev: ev, prob: prob });
+        return this;
+    }
     rnd() {
-        if (this.events & Event.TREASURE) {
-            if (Math.random() < 0.001) {
-                return DungeonEvent.TREASURE;
+        for (const set of this.events) {
+            if (Math.random() < set.prob) {
+                return set.ev;
             }
-            if (Math.random() < 0.001) {
-                return DungeonEvent.GET_TREASURE_KEY;
-            }
-        }
-        if (this.events & Event.BOX && Math.random() < 0.20) {
-            return DungeonEvent.BOX;
-        }
-        if (this.events & Event.BATTLE && Math.random() < 0.20) {
-            return DungeonEvent.BATTLE;
-        }
-        if (this.events & Event.TRAP && Math.random() < 0.04) {
-            return DungeonEvent.TRAP;
-        }
-        if (this.events & Event.TREE && Math.random() < 0.06) {
-            return DungeonEvent.TREE;
         }
         return DungeonEvent.empty;
     }
 }
-Event.BATTLE = 1 << 0;
-Event.BOX = 1 << 1;
-Event.TREE = 1 << 2;
-Event.TRAP = 1 << 3;
-Event.TREASURE = 1 << 4;
 export class Dungeon {
     //-----------------------------------------------------------------
     //
@@ -72,22 +63,13 @@ export class Dungeon {
     //-----------------------------------------------------------------
     // private constructor(name:string, protected rank:number, protected enemyLv:number, protected au:number){
     constructor(args) {
+        this.args = args;
         //-----------------------------------------------------------------
         //
         //
         //
         //-----------------------------------------------------------------
         this.clearNum = 0;
-        this.uniqueName = args.uniqueName;
-        this.toString = () => this.uniqueName;
-        this.rank = args.rank;
-        this.enemyLv = args.enemyLv;
-        this.au = args.au;
-        this.clearItem = args.clearItem;
-        this._treasure = args.treasure;
-        this._treasureKey = args.treasureKey;
-        this.trendItems = args.trendItems;
-        this.event = args.event;
         Dungeon._values.push(this);
     }
     static values() {
@@ -102,14 +84,24 @@ export class Dungeon {
         }
         return this._valueOf.get(uniqueName);
     }
-    get treasure() { return this._treasure(); }
-    get treasureKey() { return this._treasureKey(); }
+    get uniqueName() { return this.args.uniqueName; }
+    get rank() { return this.args.rank; }
+    get enemyLv() { return this.args.enemyLv; }
+    get au() { return this.args.au; }
+    get dungeonClearItem() { return this.args.clearItem(); }
+    get treasure() { return this.args.treasure(); }
+    get treasureKey() { return this.args.treasureKey(); }
+    get trendItems() { return this.args.trendItems(); }
+    toString() { return this.args.uniqueName; }
     //-----------------------------------------------------------------
     //
     //
     //
     //-----------------------------------------------------------------
     rndEvent() {
+        if (!this.event) {
+            this.event = this.args.event ? this.args.event() : Event.createDef(this.rank);
+        }
         return this.event.rnd();
     }
     rndEnemyNum() {
@@ -165,7 +157,6 @@ Dungeon.auNow = 0;
                 treasure: () => Eq.棒,
                 treasureKey: () => Item.はじまりの丘の鍵,
                 trendItems: () => [Item.石, Item.土, Item.枝,],
-                event: Event.createDef(),
             });
             this.isVisible = () => true;
             this.setBossInner = () => {
@@ -189,7 +180,6 @@ Dungeon.auNow = 0;
                 treasure: () => Eq.安全靴,
                 treasureKey: () => Item.再構成トンネルの鍵,
                 trendItems: () => [Item.水],
-                event: Event.createDef().add(Event.TREE),
             });
             this.isVisible = () => Dungeon.はじまりの丘.clearNum > 0;
             this.setBossInner = () => {
@@ -215,12 +205,11 @@ Dungeon.auNow = 0;
     Dungeon.リテの門 = new class extends Dungeon {
         constructor() {
             super({ uniqueName: "リ・テの門",
-                rank: 1, enemyLv: 5, au: 70,
+                rank: 1, enemyLv: 7, au: 70,
                 clearItem: () => Item.リテの門の玉,
                 treasure: () => Eq.魔法の杖,
                 treasureKey: () => Item.リテの門の鍵,
-                trendItems: () => [],
-                event: Event.createDef().add(Event.TREE),
+                trendItems: () => [Item.朽ち果てた鍵],
             });
             this.isVisible = () => Dungeon.再構成トンネル.clearNum > 0;
             this.setBossInner = () => {
@@ -234,6 +223,24 @@ Dungeon.auNow = 0;
                 for (let i = 3; i < Unit.enemies.length; i++) {
                     Unit.enemies[i].exists = false;
                 }
+            };
+        }
+    };
+    Dungeon.黒平原 = new class extends Dungeon {
+        constructor() {
+            super({ uniqueName: "黒平原",
+                rank: 2, enemyLv: 14, au: 100,
+                clearItem: () => Item.黒平原の玉,
+                treasure: () => Eq.ゲルマンベルト,
+                treasureKey: () => Item.黒平原の鍵,
+                trendItems: () => [Item.黒い石, Item.黒い砂],
+            });
+            this.isVisible = () => Dungeon.再構成トンネル.clearNum > 0;
+            this.setBossInner = () => {
+                let e = Unit.enemies[0];
+                Job.スネイカー.setEnemy(e, e.prm(Prm.LV).base);
+                e.name = "牛";
+                e.prm(Prm.MAX_HP).base = 120;
             };
         }
     };

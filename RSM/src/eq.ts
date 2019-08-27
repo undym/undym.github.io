@@ -497,6 +497,13 @@ export namespace Eq{
         constructor(){super({uniqueName:"ひも", info:[],
                                 pos:EqPos.腰, lv:0});}
     }
+    export const                         ゲルマンベルト = new class extends Eq{//黒平原財宝
+        constructor(){super({uniqueName:"ゲルマンベルト", info:["攻撃+10%"],
+                                pos:EqPos.腰, lv:50});}
+        beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.pow.mul *= 1.1;
+        }
+    }
     //--------------------------------------------------------------------------
     //
     //腕
@@ -544,7 +551,7 @@ export namespace Eq{
         constructor(){super({uniqueName:"安全靴", info:["被攻撃時稀に<盾>化"],
                                 pos:EqPos.脚, lv:40});}
         afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-            if(action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.7){
+            if(action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.6){
                 Battle.setCondition(target, Condition.盾, 1);
             }
         }

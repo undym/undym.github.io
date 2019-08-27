@@ -11,6 +11,7 @@ import { Num, Mix } from "./mix.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import { SaveData } from "./savedata.js";
 import DungeonScene from "./scene/dungeonscene.js";
+import { Battle } from "./battle.js";
 
 
 
@@ -245,7 +246,7 @@ export namespace Item{
     //蘇生
     //
     //-----------------------------------------------------------------
-    export const                         サンタクララ薬 = new class extends Item{
+    export const                         サンタクララ薬:Item = new class extends Item{
         constructor(){super({uniqueName:"サンタクララ薬", info:["一体をHP1で蘇生"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
@@ -253,8 +254,10 @@ export namespace Item{
                                     if(target.dead){
                                         target.dead = false;
                                         target.hp = 0;
-                                        target.healHP(1);
-                                        Util.msg.set(`${target.name}は生き返った`);
+                                        Battle.healHP(target, 1);
+                                        if(SceneType.now === SceneType.BATTLE){
+                                            Util.msg.set(`${target.name}は生き返った`); await wait();
+                                        }
                                     }
                                 }
         })}
@@ -264,25 +267,29 @@ export namespace Item{
     //HP回復
     //
     //-----------------------------------------------------------------
-    export const                         スティックパン = new class extends Item{
+    export const                         スティックパン:Item = new class extends Item{
         constructor(){super({uniqueName:"スティックパン", info:["HP+10"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=>{
                                     const value = 10;
-                                    await target.healHP(value);
-                                    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
+                                    Battle.healHP(target, value);
+                                    if(SceneType.now === SceneType.BATTLE){
+                                        Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
+                                    }
                                 },
         })}
     };
-    export const                         硬化スティックパン = new class extends Item{
+    export const                         硬化スティックパン:Item = new class extends Item{
         constructor(){super({uniqueName:"硬化スティックパン", info:["HP+30"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
                                 use:async(user,target)=>{
                                     const value = 30;
-                                    await target.healHP(value);
-                                    Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
+                                    Battle.healHP(target, value);
+                                    if(SceneType.now === SceneType.BATTLE){
+                                        Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
+                                    }
                                 },
         })}
     };
@@ -291,11 +298,17 @@ export namespace Item{
     //MP回復
     //
     //-----------------------------------------------------------------
-    export const                         赤い水 = new class extends Item{
+    export const                         赤い水:Item = new class extends Item{
         constructor(){super({uniqueName:"赤い水", info:["MP+10"],
                                 type:ItemType.MP回復, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
-                                use:async(user,target)=> await healMP(target, 10),
+                                use:async(user,target)=>{
+                                    const value = 10;
+                                    Battle.healMP(target, value)
+                                    if(SceneType.now === SceneType.BATTLE){
+                                        Util.msg.set(`${target.name}のMPが${value}回復した`, Color.GREEN.bright); await wait();
+                                    }
+                                },
         })}
     };
     //-----------------------------------------------------------------
@@ -303,7 +316,7 @@ export namespace Item{
     //ダンジョン
     //
     //-----------------------------------------------------------------
-    export const                         脱出ポッド = new class extends Item{
+    export const                         脱出ポッド:Item = new class extends Item{
         constructor(){super({uniqueName:"脱出ポッド", info:["ダンジョンから脱出する"],
                                 type:ItemType.ダンジョン, rank:0,
                                 consumable:true, drop:Item.DROP_NO,
@@ -322,7 +335,7 @@ export namespace Item{
     //
     //-----------------------------------------------------------------
     //未設定
-    export const                         散弾 = new class extends Item{
+    export const                         散弾:Item = new class extends Item{
         constructor(){super({uniqueName:"散弾", info:["ショットガンに使用"],
                                 type:ItemType.鍵, rank:0, consumable:true, drop:Item.DROP_NO,})}
     };
@@ -331,73 +344,89 @@ export namespace Item{
     //鍵
     //
     //-----------------------------------------------------------------
-    export const                         はじまりの丘の鍵 = new class extends Item{
-        constructor(){super({uniqueName:"はじまりの丘の鍵", info:[],
-                                type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
+    export const                         はじまりの丘の鍵:Item = new class extends Item{
+        constructor(){super({uniqueName:"はじまりの丘の鍵", info:[], type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
-    export const                         再構成トンネルの鍵 = new class extends Item{
-        constructor(){super({uniqueName:"再構成トンネルの鍵", info:[],
-                                type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
+    export const                         再構成トンネルの鍵:Item = new class extends Item{
+        constructor(){super({uniqueName:"再構成トンネルの鍵", info:[], type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
-    export const                         リテの門の鍵 = new class extends Item{
-        constructor(){super({uniqueName:"リ・テの門の鍵", info:[],
-                                type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
+    export const                         リテの門の鍵:Item = new class extends Item{
+        constructor(){super({uniqueName:"リ・テの門の鍵", info:[], type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
+    };
+    export const                         黒平原の鍵:Item = new class extends Item{
+        constructor(){super({uniqueName:"黒平原の鍵", info:[], type:ItemType.鍵, rank:0, drop:Item.DROP_NO,})}
     };
     //-----------------------------------------------------------------
     //
     //玉
     //
     //-----------------------------------------------------------------
-    export const                         はじまりの丘の玉 = new class extends Item{
-        constructor(){super({uniqueName:"はじまりの丘の玉", info:[],
-                                type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
+    export const                         はじまりの丘の玉:Item = new class extends Item{
+        constructor(){super({uniqueName:"はじまりの丘の玉", info:[], type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
-    export const                         再構成トンネルの玉 = new class extends Item{
-        constructor(){super({uniqueName:"再構成トンネルの玉", info:[],
-                                type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
+    export const                         再構成トンネルの玉:Item = new class extends Item{
+        constructor(){super({uniqueName:"再構成トンネルの玉", info:[], type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
-    export const                         リテの門の玉 = new class extends Item{
-        constructor(){super({uniqueName:"リ・テの門の玉", info:[],
-                                type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
+    export const                         リテの門の玉:Item = new class extends Item{
+        constructor(){super({uniqueName:"リ・テの門の玉", info:[], type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
+    };
+    export const                         黒平原の玉:Item = new class extends Item{
+        constructor(){super({uniqueName:"黒平原の玉", info:[], type:ItemType.玉, rank:0, drop:Item.DROP_NO,})}
     };
     //-----------------------------------------------------------------
     //
     //素材
     //
     //-----------------------------------------------------------------
-    export const                         石 = new class extends Item{
+    export const                         石:Item = new class extends Item{
         constructor(){super({uniqueName:"石", info:["いし"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    export const                         枝 = new class extends Item{
+    export const                         枝:Item = new class extends Item{
         constructor(){super({uniqueName:"枝", info:["えだ"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    export const                         土 = new class extends Item{
+    export const                         土:Item = new class extends Item{
         constructor(){super({uniqueName:"土", info:["つち"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    export const                         水 = new class extends Item{
+    export const                         水:Item = new class extends Item{
         constructor(){super({uniqueName:"水", info:["水"],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    export const                         しいたけ = new class extends Item{
+    export const                         しいたけ:Item = new class extends Item{
         constructor(){super({uniqueName:"しいたけ", info:[],
                                 type:ItemType.素材, rank:0, drop:Item.DROP_BOX})}
     };
-    export const                         He = new class extends Item{
+    export const                         朽ち果てた鍵:Item = new class extends Item{
+        constructor(){super({uniqueName:"朽ち果てた鍵", info:[],
+                                type:ItemType.素材, rank:1, drop:Item.DROP_BOX})}
+    };
+    export const                         エネルギー:Item = new class extends Item{
+        constructor(){super({uniqueName:"エネルギー", info:["触るとビリビリする"],
+                                type:ItemType.素材, rank:1, drop:Item.DROP_BOX})}
+    };
+    export const                         He:Item = new class extends Item{
         constructor(){super({uniqueName:"He", info:["ヘェッ"],
                                 type:ItemType.素材, rank:2, drop:Item.DROP_BOX})}
     };
-    export const                         少女の心を持ったおっさん = new class extends Item{
+    export const                         黒い石:Item = new class extends Item{
+        constructor(){super({uniqueName:"黒い石", info:["これは黒い！！！！！"],
+                                type:ItemType.素材, rank:2, drop:Item.DROP_BOX})}
+    };
+    export const                         黒い砂:Item = new class extends Item{
+        constructor(){super({uniqueName:"黒い砂", info:["黒い！！！！！"],
+                                type:ItemType.素材, rank:2, drop:Item.DROP_BOX})}
+    };
+    export const                         少女の心を持ったおっさん:Item = new class extends Item{
         constructor(){super({uniqueName:"少女の心を持ったおっさん", info:["いつもプリキュアの話をしている"],
                                 type:ItemType.素材, rank:5, drop:Item.DROP_BOX})}
     };
-    export const                         スギ = new class extends Item{
+    export const                         スギ:Item = new class extends Item{
         constructor(){super({uniqueName:"スギ", info:[],
                                 type:ItemType.素材, rank:1, drop:Item.DROP_TREE})}
     };
-    export const                         ヒノキ = new class extends Item{
+    export const                         ヒノキ:Item = new class extends Item{
         constructor(){super({uniqueName:"ヒノキ", info:[],
                                 type:ItemType.素材, rank:1, drop:Item.DROP_TREE})}
     };
@@ -418,12 +447,3 @@ class ItemFont{
     }
 }
 
-
-
-const healMP = async(target:Unit, value:number)=>{
-    value = value|0;
-    target.mp += value;
-
-    FX_RotateStr(ItemFont.font, `${value}`, target.bounds.center, Color.PINK);
-    Util.msg.set(`${target.name}のMPが${value}回復した`, Color.GREEN.bright); await wait();
-};

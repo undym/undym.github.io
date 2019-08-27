@@ -837,7 +837,7 @@ export namespace Tec{
         });}
         async run(attacker:Unit, target:Unit){
             const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-            target.healHP(value);
+            Battle.healHP(target, value);
             Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
         }
     }
@@ -848,7 +848,7 @@ export namespace Tec{
         });}
         async run(attacker:Unit, target:Unit){
             const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-            target.healHP(value);
+            Battle.healHP(target, value);
             Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
         }
     }
@@ -898,7 +898,7 @@ export namespace Tec{
                                 type:TecType.回復,
         });}
         phaseStart(unit:Unit){
-            unit.healHP(1 + unit.prm(Prm.MAX_HP).total * 0.01);
+            Battle.healHP(unit, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
         }
     };
     export const                         衛生:PassiveTec = new class extends PassiveTec{
@@ -911,7 +911,7 @@ export namespace Tec{
             for(const u of members){
                 const value = u.prm(Prm.MAX_HP).total * 0.05 + 1;
                 const v = value < lim ? value : lim;
-                u.healHP(1 + unit.prm(Prm.MAX_HP).total * 0.01);
+                Battle.healHP(u, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
             }
         }
     };

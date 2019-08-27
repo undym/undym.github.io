@@ -13,7 +13,7 @@ import { Color, Rect } from "./undym/type.js";
 import { Tec, ActiveTec, PassiveTec } from "./tec.js";
 import { Targeting } from "./force.js";
 import { Job } from "./job.js";
-import { FX_RotateStr, FX_Shake, FX_Str } from "./fx/fx.js";
+import { FX_RotateStr, FX_Shake } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos } from "./eq.js";
 import { choice } from "./undym/random.js";
@@ -204,15 +204,6 @@ export class Unit {
                 yield wait();
             }
         });
-    }
-    /**回復するときは数値のエフェクトを出すためこの関数を経由して回復する。 */
-    healHP(value) {
-        value = value | 0;
-        if (this.dead) {
-            return;
-        }
-        FX_Str(Font.def, `${value}`, this.bounds.center, Color.GREEN);
-        this.hp += value;
     }
     judgeDead() {
         return __awaiter(this, void 0, void 0, function* () {

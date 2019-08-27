@@ -36,11 +36,10 @@ export class DrawDungeonData extends InnerLayout {
     constructor() {
         super();
         super.add(new YLayout()
-            .setOutsidePixelMargin(1, 1, 1, 1)
+            .setOutsidePixelMargin(1, 1, 2, 1)
             .add(ILayout.empty)
             .add(new Label(Font.def, () => `[${Dungeon.now}] Rank:${Dungeon.now.rank}`))
-            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.au, () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.au}`, () => Color.D_CYAN.bright(), Font.def))
-            .add(ILayout.empty));
+            .add(new Gage(() => Dungeon.auNow, () => Dungeon.now.au, () => "AU", () => `${Dungeon.auNow}/${Dungeon.now.au}`, () => Color.D_CYAN.bright(), Font.def)));
     }
 }
 class DrawSTBox extends InnerLayout {
