@@ -334,9 +334,12 @@ export namespace Item{
     //弾
     //
     //-----------------------------------------------------------------
-    //未設定
     export const                         散弾:Item = new class extends Item{
         constructor(){super({uniqueName:"散弾", info:["ショットガンに使用"],
+                                type:ItemType.鍵, rank:0, consumable:true, drop:Item.DROP_NO,})}
+    };
+    export const                         夜叉の矢:Item = new class extends Item{
+        constructor(){super({uniqueName:"夜叉の矢", info:["ヤクシャに使用"],
                                 type:ItemType.鍵, rank:0, consumable:true, drop:Item.DROP_NO,})}
     };
     //-----------------------------------------------------------------

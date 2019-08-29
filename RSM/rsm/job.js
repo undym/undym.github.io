@@ -299,7 +299,7 @@ Job.DEF_LVUP_EXP = 5;
             super({ uniqueName: "砲撃手", info: [],
                 appearLv: 37, lvupExp: Job.DEF_LVUP_EXP * 3,
                 grow: () => [{ prm: Prm.GUN, value: 1 }],
-                learn: () => [Tec.テーブルシールド, Tec.スコープ],
+                learn: () => [Tec.テーブルシールド, Tec.スコープ, Tec.ショットガン],
                 canJobChange: (p) => p.isMasteredJob(Job.ガンマン),
             });
             this.setEnemyInner = (e) => {
@@ -313,6 +313,19 @@ Job.DEF_LVUP_EXP = 5;
                 appearLv: 10, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.ARR, value: 1 }],
                 learn: () => [Tec.射る, Tec.インドラ, Tec.キャンドラ],
+                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+            });
+            this.setEnemyInner = (e) => {
+                e.tecs = [Tec.射る, Tec.射る, Tec.射る, Tec.射る, Tec.殴る, Tec.殴る, Tec.殴る];
+            };
+        }
+    };
+    Job.クピド = new class extends Job {
+        constructor() {
+            super({ uniqueName: "クピド", info: [],
+                appearLv: 60, lvupExp: Job.DEF_LVUP_EXP * 3,
+                grow: () => [{ prm: Prm.ARR, value: 1 }],
+                learn: () => [],
                 canJobChange: (p) => p.isMasteredJob(Job.しんまい),
             });
             this.setEnemyInner = (e) => {

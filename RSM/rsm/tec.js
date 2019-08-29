@@ -691,13 +691,12 @@ ActiveTec._valueOf = new Map();
             });
         }
     };
-    //未設定
     Tec.ショットガン = new class extends ActiveTec {
         constructor() {
-            super({ uniqueName: "ショットガン", info: ["ランダムに銃術攻撃4回x0.7", "散弾-1"],
+            super({ uniqueName: "ショットガン", info: ["ランダムに銃術攻撃4回x0.7", "散弾-4"],
                 type: TecType.銃術, targetings: Targeting.RANDOM,
                 mul: 0.7, num: 4, hit: 0.8,
-                item: () => [[Item.散弾, 1]],
+                item: () => [[Item.散弾, 4]],
             });
         }
     };
@@ -744,6 +743,14 @@ ActiveTec._valueOf = new Map();
             super({ uniqueName: "キャンドラ", info: ["一体に弓術攻撃x6"],
                 type: TecType.弓術, targetings: Targeting.SELECT,
                 mul: 6, num: 1, hit: 0.9, ep: 1,
+            });
+        }
+    };
+    Tec.ヤクシャ = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "ヤクシャ", info: ["一体に弓術攻撃2回"],
+                type: TecType.弓術, targetings: Targeting.SELECT,
+                mul: 1.5, num: 2, hit: 0.9, tp: 10, item: () => [[Item.夜叉の矢, 2]],
             });
         }
     };

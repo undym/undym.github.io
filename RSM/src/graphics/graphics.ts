@@ -66,7 +66,9 @@ export class Texture{
         Graphics.setRenderTarget(bak);
     }
 
+    /**canvas.width */
     get pixelW(){return this.canvas.width;}
+    /**canvas.height */
     get pixelH(){return this.canvas.height;}
 }
 
@@ -285,6 +287,14 @@ export class Graphics{
         return new Texture({imageData:imageData});
     }
     
+    static setAlpha(alpha:number, run:()=>void){
+        const ctx = this.texture.ctx;
+        const bak = ctx.globalAlpha;
+        ctx.globalAlpha = alpha;
+        run();
+        ctx.globalAlpha = bak;
+    }
+    
     static get pixelW(){return this.texture.pixelW;}
     static get pixelH(){return this.texture.pixelH;}
 }
@@ -322,8 +332,9 @@ export class Font{
     static readonly BOTTOM      = "bottom";
     static readonly LOWER_RIGHT = "lowerRight";
 
-    static readonly NORMAL = "normal";
-    static readonly BOLD = "bold";
+    static readonly NORMAL  = "normal";
+    static readonly BOLD    = "bold";
+    static readonly ITALIC  = "italic";
 
 
     constructor(

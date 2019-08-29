@@ -317,7 +317,7 @@ export namespace Job{
         constructor(){super({uniqueName:"砲撃手", info:[],
                                 appearLv:37, lvupExp:Job.DEF_LVUP_EXP * 3,
                                 grow:()=> [{prm:Prm.GUN, value:1}],
-                                learn:()=> [Tec.テーブルシールド, Tec.スコープ],
+                                learn:()=> [Tec.テーブルシールド, Tec.スコープ, Tec.ショットガン],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.ガンマン),
         });}
         setEnemyInner   = (e:EUnit)=>{
@@ -330,6 +330,17 @@ export namespace Job{
                                 appearLv:10, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.ARR, value:1}],
                                 learn:()=> [Tec.射る, Tec.インドラ, Tec.キャンドラ],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.射る, Tec.射る, Tec.射る, Tec.射る, Tec.殴る, Tec.殴る, Tec.殴る];
+        }
+    };
+    export const                         クピド = new class extends Job{
+        constructor(){super({uniqueName:"クピド", info:[],
+                                appearLv:60, lvupExp:Job.DEF_LVUP_EXP * 3,
+                                grow:()=> [{prm:Prm.ARR, value:1}],
+                                learn:()=> [],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
         });}
         setEnemyInner   = (e:EUnit)=>{

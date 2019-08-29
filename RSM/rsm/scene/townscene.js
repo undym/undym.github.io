@@ -11,7 +11,7 @@ import { ILayout, VariableLayout, FlowLayout } from "../undym/layout.js";
 import { Place, Util, PlayData, Debug, SceneType } from "../util.js";
 import { Btn } from "../widget/btn.js";
 import { Dungeon } from "../dungeon/dungeon.js";
-import { Color } from "../undym/type.js";
+import { Rect, Color, Point } from "../undym/type.js";
 import DungeonScene from "./dungeonscene.js";
 import { DungeonEvent } from "../dungeon/dungeonevent.js";
 import { DrawUnitDetail, DrawSTBoxes, DrawPlayInfo } from "./sceneutil.js";
@@ -19,6 +19,7 @@ import { Unit, Prm } from "../unit.js";
 import { createOptionBtn } from "./optionscene.js";
 import { ItemScene } from "./itemscene.js";
 import { Targeting } from "../force.js";
+import { Font, Graphics, Texture } from "../graphics/graphics.js";
 import { Item } from "../item.js";
 import { JobChangeScene } from "./jobchangescene.js";
 import { SetTecScene } from "./settecscene.js";
@@ -26,6 +27,7 @@ import { MixScene } from "./mixscene.js";
 import { EqScene } from "./eqscene.js";
 import { ConditionType } from "../condition.js";
 import { ShopScene } from "./shopscene.js";
+import { FX } from "../fx/fx.js";
 let choosedDungeon;
 let visibleDungeonEnterBtn = false;
 export class TownScene extends Scene {
@@ -85,6 +87,9 @@ class TownBtn {
         }
         l.add(new Btn("お店", () => {
             Scene.load(new ShopScene());
+        }));
+        l.add(new Btn("test", () => {
+            setDungeonNameFX("はじまりの丘", Place.MAIN);
         }));
         l.add(new Btn("アイテム", () => {
             Scene.load(ItemScene.ins({
@@ -157,6 +162,7 @@ class TownBtn {
                 item.remainingUseCount = item.num;
             }
             Util.msg.set(`${choosedDungeon}に侵入しました`);
+            setDungeonNameFX(choosedDungeon.toString(), Place.MAIN);
             Scene.load(DungeonScene.ins);
         });
         l.addFromLast(new VariableLayout(() => {
@@ -181,3 +187,69 @@ class TownBtn {
     }
 }
 TownBtn.dungeonPage = 0;
+const setDungeonNameFX = (name, bounds) => {
+    const fontSize = 60;
+    const font = new Font(fontSize, Font.ITALIC);
+    const tex = new Texture({ pixelSize: { w: font.measurePixelW(name), h: fontSize } });
+    tex.setRenderTarget(() => {
+        font.draw(name, Point.ZERO, Color.WHITE);
+    });
+    const flash = () => {
+        const addX = 0.01;
+        const addY = 0.01;
+        const b = new Rect(bounds.x - addX, bounds.y - addY, bounds.w + addX * 2, bounds.h + addY * 2);
+        let alpha = 1.0;
+        FX.set((count) => {
+            Graphics.setAlpha(alpha, () => {
+                tex.draw(b);
+            });
+            alpha -= 0.1;
+            return alpha > 0;
+        });
+    };
+    let alpha = 1.0;
+    FX.set((count) => {
+        const countLim = 20;
+        let w = count / countLim * tex.pixelW;
+        if (w > tex.pixelW) {
+            w = tex.pixelW;
+            if (alpha === 1.0) {
+                flash();
+            }
+            alpha -= 0.03;
+            if (alpha <= 0) {
+                return false;
+            }
+        }
+        Graphics.setAlpha(alpha, () => {
+            for (let i = 0; i < w; i += 2) {
+                tex.draw({
+                    x: bounds.x + i / tex.pixelW * bounds.w,
+                    y: bounds.y,
+                    w: 1 / tex.pixelW * bounds.w,
+                    h: bounds.h,
+                }, {
+                    x: i / tex.pixelW,
+                    y: 0,
+                    w: 1 / tex.pixelW,
+                    h: 1,
+                });
+            }
+            const add = tex.pixelW % 2 + 1;
+            for (let i = tex.pixelW - add; i > tex.pixelW - w; i -= 2) {
+                tex.draw({
+                    x: bounds.x + i / tex.pixelW * bounds.w,
+                    y: bounds.y,
+                    w: 1 / tex.pixelW * bounds.w,
+                    h: bounds.h,
+                }, {
+                    x: i / tex.pixelW,
+                    y: 0,
+                    w: 1 / tex.pixelW,
+                    h: 1,
+                });
+            }
+        });
+        return true;
+    });
+};

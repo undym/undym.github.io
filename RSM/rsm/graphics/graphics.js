@@ -42,7 +42,9 @@ export class Texture {
         run();
         Graphics.setRenderTarget(bak);
     }
+    /**canvas.width */
     get pixelW() { return this.canvas.width; }
+    /**canvas.height */
     get pixelH() { return this.canvas.height; }
 }
 export class Img {
@@ -189,6 +191,13 @@ export class Graphics {
         const imageData = this.texture.ctx.getImageData(ratio.x * this.pixelW, ratio.y * this.pixelH, ratio.w * this.pixelW, ratio.h * this.pixelH);
         return new Texture({ imageData: imageData });
     }
+    static setAlpha(alpha, run) {
+        const ctx = this.texture.ctx;
+        const bak = ctx.globalAlpha;
+        ctx.globalAlpha = alpha;
+        run();
+        ctx.globalAlpha = bak;
+    }
     static get pixelW() { return this.texture.pixelW; }
     static get pixelH() { return this.texture.pixelH; }
 }
@@ -286,3 +295,4 @@ Font.BOTTOM = "bottom";
 Font.LOWER_RIGHT = "lowerRight";
 Font.NORMAL = "normal";
 Font.BOLD = "bold";
+Font.ITALIC = "italic";

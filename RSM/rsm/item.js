@@ -293,10 +293,15 @@ Item.DROP_TREE = 1 << 1;
     //弾
     //
     //-----------------------------------------------------------------
-    //未設定
     Item.散弾 = new class extends Item {
         constructor() {
             super({ uniqueName: "散弾", info: ["ショットガンに使用"],
+                type: ItemType.鍵, rank: 0, consumable: true, drop: Item.DROP_NO, });
+        }
+    };
+    Item.夜叉の矢 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "夜叉の矢", info: ["ヤクシャに使用"],
                 type: ItemType.鍵, rank: 0, consumable: true, drop: Item.DROP_NO, });
         }
     };
