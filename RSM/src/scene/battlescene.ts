@@ -225,7 +225,7 @@ export class BattleScene extends Scene{
             return new Layout()
                     .add(btn)
                     .add(ILayout.create({ctrl:(bounds)=>{
-                        if(bounds.contains(Input.point) && Input.holding() >= 4){
+                        if(bounds.contains(Input.point) && Input.holding >= 4){
                             this.tecInfo.tec = tec;
                             this.tecInfo.user = attacker;
                         }

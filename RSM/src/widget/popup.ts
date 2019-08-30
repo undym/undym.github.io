@@ -30,7 +30,7 @@ export class Popup extends ILayout{
     }
 
     drawInner(bounds:Rect){
-        if(Input.holding() > 3 && bounds.contains( Input.point )){
+        if(Input.holding > 3 && bounds.contains( Input.point )){
             let r = (()=>{
                 let x = 0;
                 let y = 0;

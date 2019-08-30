@@ -754,6 +754,29 @@ ActiveTec._valueOf = new Map();
             });
         }
     };
+    Tec.フェニックスアロー = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "フェニックスアロー", info: ["一体に弓術攻撃", "攻撃後光依存で回復"],
+                type: TecType.弓術, targetings: Targeting.SELECT,
+                mul: 1.5, num: 1, hit: 0.9, mp: 20, tp: 10,
+            });
+        }
+        runInner(attacker, target, dmg) {
+            const _super = Object.create(null, {
+                runInner: { get: () => super.runInner }
+            });
+            return __awaiter(this, void 0, void 0, function* () {
+                _super.runInner.call(this, attacker, target, dmg);
+                const value = attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total / 2;
+                if (dmg.result.isHit) {
+                    Battle.healHP(attacker, value);
+                }
+                else {
+                    Battle.healHP(attacker, value / 3);
+                }
+            });
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //状態Active

@@ -342,6 +342,7 @@ export class Font{
         public weight:string=Font.NORMAL,
         public name:string=Font.MONOSPACE,
     ){
+        size = size|0;
         const htmlString = Font.createHTMLString(size, weight, name);
         this.toString = ()=>htmlString;
     }

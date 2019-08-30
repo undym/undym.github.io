@@ -38,9 +38,9 @@ export class Btn extends ILayout {
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {
             let contains = bounds.contains(Input.point);
-            this.cursorON = contains && Input.holding() > 0;
+            this.cursorON = contains && Input.holding > 0;
             if (contains) {
-                if (Input.pushed()) {
+                if (Input.pushed) {
                     yield this.push();
                 }
             }

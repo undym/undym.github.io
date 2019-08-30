@@ -96,7 +96,7 @@ export class ItemScene extends Scene {
                 if (!this.selectUser) {
                     return;
                 }
-                if (!Input.pushed()) {
+                if (!Input.pushed) {
                     return;
                 }
                 for (let p of Unit.players.filter(p => p.exists)) {

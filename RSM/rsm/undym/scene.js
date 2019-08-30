@@ -62,10 +62,10 @@ export const wait = (frame = 5) => __awaiter(this, void 0, void 0, function* () 
 export const cwait = () => __awaiter(this, void 0, void 0, function* () {
     let canPush = false;
     yield Scene.wait(() => {
-        if (canPush && Input.holding() > 0) {
+        if (canPush && Input.holding > 0) {
             return false;
         }
-        if (Input.holding() === 0) {
+        if (Input.holding === 0) {
             canPush = true;
         }
         return true;

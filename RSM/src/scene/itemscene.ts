@@ -124,7 +124,7 @@ export class ItemScene extends Scene{
         }}));
         super.add(Rect.FULL, ILayout.create({ctrl:(noUsed)=>{
             if(!this.selectUser){return;}
-            if(!Input.pushed()){return;}
+            if(!Input.pushed){return;}
 
             for(let p of Unit.players.filter(p=> p.exists)){
                 if(p.bounds.contains( Input.point )){

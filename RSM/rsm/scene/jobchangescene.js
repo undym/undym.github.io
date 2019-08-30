@@ -93,7 +93,7 @@ export class JobChangeScene extends Scene {
                 Graphics.fillRect(this.target.bounds, new Color(0, 1, 1, 0.2));
             } }));
         super.add(Rect.FULL, ILayout.create({ ctrl: (bounds) => {
-                if (!Input.pushed()) {
+                if (!Input.pushed) {
                     return;
                 }
                 for (let p of Unit.players.filter(p => p.exists)) {

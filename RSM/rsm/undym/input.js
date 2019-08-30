@@ -98,8 +98,8 @@ export class Input {
     static get x() { return this._x / this.canvas.clientWidth; }
     static get y() { return this._y / this.canvas.clientHeight; }
     /**押されたフレームはtrue. */
-    static pushed() { return this._pushed; }
-    static holding() { return this.hold; }
+    static get pushed() { return this._pushed; }
+    static get holding() { return this.hold; }
 }
 Input._x = 0;
 Input._y = 0;

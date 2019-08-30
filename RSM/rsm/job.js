@@ -325,7 +325,7 @@ Job.DEF_LVUP_EXP = 5;
             super({ uniqueName: "クピド", info: [],
                 appearLv: 60, lvupExp: Job.DEF_LVUP_EXP * 3,
                 grow: () => [{ prm: Prm.ARR, value: 1 }],
-                learn: () => [],
+                learn: () => [Tec.ヤクシャ, Tec.フェニックスアロー],
                 canJobChange: (p) => p.isMasteredJob(Job.しんまい),
             });
             this.setEnemyInner = (e) => {

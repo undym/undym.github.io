@@ -50,9 +50,9 @@ export class Btn extends ILayout{
 
     async ctrlInner(bounds:Rect){
         let contains = bounds.contains( Input.point );
-        this.cursorON = contains && Input.holding() > 0;
+        this.cursorON = contains && Input.holding > 0;
         if(contains){
-            if(Input.pushed()){
+            if(Input.pushed){
                 await this.push();
             }
         }

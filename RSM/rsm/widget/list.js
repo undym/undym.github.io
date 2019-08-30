@@ -113,10 +113,10 @@ class Elm extends ILayout {
     }
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (Input.holding() > 4) {
+            if (Input.holding > 4) {
                 this.hold(this);
             }
-            if (Input.pushed() && bounds.contains(Input.point)) {
+            if (Input.pushed && bounds.contains(Input.point)) {
                 this.push(this);
             }
         });

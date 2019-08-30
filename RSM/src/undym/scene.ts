@@ -75,10 +75,10 @@ export const wait = async(frame:number = 5)=>{
 export const cwait = async()=>{
     let canPush = false;
     await Scene.wait(()=>{
-        if(canPush && Input.holding() > 0){
+        if(canPush && Input.holding > 0){
             return false;
         }
-        if(Input.holding() === 0){
+        if(Input.holding === 0){
             canPush = true;
         }
         return true;

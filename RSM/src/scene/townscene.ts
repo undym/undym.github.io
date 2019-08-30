@@ -45,17 +45,14 @@ export class TownScene extends Scene{
         super.add(Place.MSG, Util.msg);
 
 
-        super.add(Place.BTN,
-            new VariableLayout(()=>TownBtn.ins)
-        );
+        super.add(Place.BTN,new VariableLayout(()=>TownBtn.ins));
         
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
 
 
-
         //----------------------------------------------------
-
+        
         SceneType.TOWN.set();
         TownBtn.reset();
         fullCare();
@@ -260,7 +257,7 @@ const setDungeonNameFX = (name:string, bounds:{x:number, y:number, w:number, h:n
     let alpha = 1.0;
 
     FX.set((count)=>{
-        const countLim = 20;
+        const countLim = 35;
         let w = count / countLim * tex.pixelW;
         if(w > tex.pixelW){
             w = tex.pixelW;

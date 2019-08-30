@@ -3,7 +3,7 @@ import { Btn } from "../widget/btn.js";
 import { Dungeon } from "./dungeon.js";
 import { Scene, cwait, wait } from "../undym/scene.js";
 import { TownScene } from "../scene/townscene.js";
-import { Item } from "../item.js";
+import { Item, ItemDrop } from "../item.js";
 import { ILayout, YLayout, XLayout, VariableLayout, FlowLayout } from "../undym/layout.js";
 import { Color } from "../undym/type.js";
 import { Unit, Prm } from "../unit.js";
@@ -15,6 +15,7 @@ import { ItemScene } from "../scene/itemscene.js";
 import { Targeting, Dmg } from "../force.js";
 import { Img } from "../graphics/graphics.js";
 import { SaveData } from "../savedata.js";
+import { Input } from "../undym/input.js";
 
 
 export abstract class DungeonEvent{
@@ -78,10 +79,10 @@ export namespace DungeonEvent{
                 openNum++;
                 openBoost /= 2;
             }
-            let dungeonRank = Dungeon.now.rank;
+            let baseRank = Dungeon.now.rank / 2;
             for(let i = 0; i < openNum; i++){
-                const itemRank = Item.fluctuateRank( dungeonRank );
-                let item = Item.rndItem( Item.DROP_BOX, itemRank );
+                const itemRank = Item.fluctuateRank( baseRank );
+                let item = Item.rndItem( ItemDrop.BOX, itemRank );
                 let addNum = 1;
                 item.add( addNum );
 
@@ -180,6 +181,7 @@ export namespace DungeonEvent{
                                             Battle.healMP(p, p.prm(Prm.MAX_MP).total * 0.2);
                                         }
                                     }
+                                    DungeonEvent.empty.happen();
                                 }))
                                 ;
     };
@@ -217,10 +219,10 @@ export namespace DungeonEvent{
                 openNum++;
                 openBoost /= 2;
             }
-            let dungeonRank = Dungeon.now.rank;
+            let baseRank = Dungeon.now.rank / 2;
             for(let i = 0; i < openNum; i++){
-                const itemRank = Item.fluctuateRank( dungeonRank );
-                let item = Item.rndItem( Item.DROP_TREE, itemRank );
+                const itemRank = Item.fluctuateRank( baseRank );
+                let item = Item.rndItem( ItemDrop.TREE, itemRank );
                 let addNum = 1;
                 item.add( addNum );
 
@@ -284,7 +286,7 @@ export namespace DungeonEvent{
             
             SaveData.save(); await cwait();
 
-            Scene.load( TownScene.ins );
+            Scene.load( TownScene.ins ); await wait();
         };
         createBtnLayout = ()=> ILayout.empty;
     };

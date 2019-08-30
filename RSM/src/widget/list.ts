@@ -183,10 +183,10 @@ class Elm extends ILayout{
     }
 
     async ctrlInner(bounds:Rect){
-        if(Input.holding() > 4){
+        if(Input.holding > 4){
             this.hold(this);
         }
-        if(Input.pushed() && bounds.contains( Input.point )){
+        if(Input.pushed && bounds.contains( Input.point )){
             this.push(this);
         }
     }

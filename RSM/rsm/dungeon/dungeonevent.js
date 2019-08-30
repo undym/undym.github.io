@@ -11,7 +11,7 @@ import { Btn } from "../widget/btn.js";
 import { Dungeon } from "./dungeon.js";
 import { Scene, cwait, wait } from "../undym/scene.js";
 import { TownScene } from "../scene/townscene.js";
-import { Item } from "../item.js";
+import { Item, ItemDrop } from "../item.js";
 import { ILayout, FlowLayout } from "../undym/layout.js";
 import { Color } from "../undym/type.js";
 import { Unit, Prm } from "../unit.js";
@@ -72,10 +72,10 @@ DungeonEvent._values = [];
                     openNum++;
                     openBoost /= 2;
                 }
-                let dungeonRank = Dungeon.now.rank;
+                let baseRank = Dungeon.now.rank / 2;
                 for (let i = 0; i < openNum; i++) {
-                    const itemRank = Item.fluctuateRank(dungeonRank);
-                    let item = Item.rndItem(Item.DROP_BOX, itemRank);
+                    const itemRank = Item.fluctuateRank(baseRank);
+                    let item = Item.rndItem(ItemDrop.BOX, itemRank);
                     let addNum = 1;
                     item.add(addNum);
                     if (i < openNum - 1) {
@@ -183,6 +183,7 @@ DungeonEvent._values = [];
                         Battle.healMP(p, p.prm(Prm.MAX_MP).total * 0.2);
                     }
                 }
+                DungeonEvent.empty.happen();
             })));
         }
     };
@@ -223,10 +224,10 @@ DungeonEvent._values = [];
                     openNum++;
                     openBoost /= 2;
                 }
-                let dungeonRank = Dungeon.now.rank;
+                let baseRank = Dungeon.now.rank / 2;
                 for (let i = 0; i < openNum; i++) {
-                    const itemRank = Item.fluctuateRank(dungeonRank);
-                    let item = Item.rndItem(Item.DROP_TREE, itemRank);
+                    const itemRank = Item.fluctuateRank(baseRank);
+                    let item = Item.rndItem(ItemDrop.TREE, itemRank);
                     let addNum = 1;
                     item.add(addNum);
                     if (i < openNum - 1) {
@@ -295,6 +296,7 @@ DungeonEvent._values = [];
                 SaveData.save();
                 yield cwait();
                 Scene.load(TownScene.ins);
+                yield wait();
             });
             this.createBtnLayout = () => ILayout.empty;
         }

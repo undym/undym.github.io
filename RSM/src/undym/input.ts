@@ -112,7 +112,7 @@ export class Input{
     static get x(){return this._x / this.canvas.clientWidth;}
     static get y(){return this._y / this.canvas.clientHeight;}
     /**押されたフレームはtrue. */
-    static pushed():boolean{return this._pushed;}
+    static get pushed():boolean{return this._pushed;}
 
-    static holding():number{return this.hold;}
+    static get holding():number{return this.hold;}
 }

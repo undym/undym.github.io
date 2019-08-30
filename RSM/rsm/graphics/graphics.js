@@ -213,6 +213,7 @@ export class Font {
         this.size = size;
         this.weight = weight;
         this.name = name;
+        size = size | 0;
         const htmlString = Font.createHTMLString(size, weight, name);
         this.toString = () => htmlString;
     }

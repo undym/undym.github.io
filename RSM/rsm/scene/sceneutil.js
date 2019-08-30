@@ -102,7 +102,7 @@ export class DrawSTBoxes extends InnerLayout {
             return x;
         })())
             .add(ILayout.create({ ctrl: (noUsed) => {
-                if (Input.holding() < 4) {
+                if (Input.holding < 4) {
                     return;
                 }
                 for (let i = 0; i < len; i++) {
@@ -193,7 +193,7 @@ export class DrawUnitDetail extends InnerLayout {
                     } }))
                     .add(new Label(font, () => `${pos}:${getUnit().getEq(pos)}`))
                     .add(ILayout.create({ ctrl: (bounds) => {
-                        if (Input.holding() > 0 && bounds.contains(Input.point)) {
+                        if (Input.holding > 0 && bounds.contains(Input.point)) {
                             infoPos = pos;
                         }
                     } })));
@@ -204,7 +204,7 @@ export class DrawUnitDetail extends InnerLayout {
             return y;
         })()))
             .add(ILayout.create({ ctrl: (bounds) => {
-                if (DrawUnitDetail.target && !Input.holding()) {
+                if (DrawUnitDetail.target && !Input.holding) {
                     DrawUnitDetail.target = undefined;
                 }
             } }));

@@ -706,6 +706,22 @@ export namespace Tec{
                               mul:1.5, num:2, hit:0.9, tp:10, item:()=>[[Item.夜叉の矢, 2]],
         });}
     }
+    export const                          フェニックスアロー:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"フェニックスアロー", info:["一体に弓術攻撃","攻撃後光依存で回復"],
+                              type:TecType.弓術, targetings:Targeting.SELECT,
+                              mul:1.5, num:1, hit:0.9, mp:20, tp:10,
+        });}
+        async runInner(attacker:Unit, target:Unit, dmg:Dmg){
+            super.runInner(attacker, target, dmg);
+
+            const value = attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total / 2;
+            if(dmg.result.isHit){
+                Battle.healHP(attacker, value);
+            }else{
+                Battle.healHP(attacker, value / 3);
+            }
+        }
+    }
     //--------------------------------------------------------------------------
     //
     //状態Active
