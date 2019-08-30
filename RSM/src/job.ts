@@ -341,10 +341,10 @@ export namespace Job{
                                 appearLv:60, lvupExp:Job.DEF_LVUP_EXP * 3,
                                 grow:()=> [{prm:Prm.ARR, value:1}],
                                 learn:()=> [Tec.ヤクシャ, Tec.フェニックスアロー],
-                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.アーチャー),
         });}
         setEnemyInner   = (e:EUnit)=>{
-            e.tecs = [Tec.射る, Tec.射る, Tec.射る, Tec.射る, Tec.殴る, Tec.殴る, Tec.殴る];
+            e.tecs = [Tec.射る, Tec.射る, Tec.射る, Tec.射る, Tec.インドラ, Tec.殴る, Tec.フェニックスアロー];
         }
     };
     
