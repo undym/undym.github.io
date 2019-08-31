@@ -30,6 +30,7 @@ export class DungeonEvent {
     static values() {
         return this._values;
     }
+    static get btnLayout() { return this.btnLayouts[this.btnLayoutType]; }
     getImg() { return this.img ? this.img : (this.img = this.createImg()); }
     createImg() { return Img.empty; }
     happen() {
@@ -41,6 +42,24 @@ export class DungeonEvent {
     isZoomImg() { return true; }
 }
 DungeonEvent._values = [];
+DungeonEvent.btnLayouts = [
+    {
+        get advance() { return 1; },
+        get return() { return 4; },
+        get item() { return 3; },
+    },
+    {
+        get advance() { return 0; },
+        get return() { return 1; },
+        get item() { return 2; },
+    },
+    {
+        get advance() { return 2; },
+        get return() { return 1; },
+        get item() { return 0; },
+    },
+];
+DungeonEvent.btnLayoutType = 0;
 (function (DungeonEvent) {
     DungeonEvent.empty = new class extends DungeonEvent {
         constructor() {
@@ -331,6 +350,7 @@ const createDefLayout = () => {
         .set(AdvanceBtn.index, AdvanceBtn.ins);
 };
 class AdvanceBtn {
+    static get index() { return DungeonEvent.btnLayout.advance; }
     static get ins() {
         if (!this._ins) {
             this._ins = new Btn(() => "進む", () => __awaiter(this, void 0, void 0, function* () {
@@ -347,8 +367,8 @@ class AdvanceBtn {
         return this._ins;
     }
 }
-AdvanceBtn.index = 0;
 class ReturnBtn {
+    static get index() { return DungeonEvent.btnLayout.return; }
     static get ins() {
         if (!this._ins) {
             this._ins = new Btn(() => "戻る", () => __awaiter(this, void 0, void 0, function* () {
@@ -365,8 +385,8 @@ class ReturnBtn {
         return this._ins;
     }
 }
-ReturnBtn.index = 1;
 class ItemBtn {
+    static get index() { return DungeonEvent.btnLayout.item; }
     static get ins() {
         if (!this._ins) {
             this._ins = new Btn(() => "アイテム", () => __awaiter(this, void 0, void 0, function* () {
@@ -393,4 +413,3 @@ class ItemBtn {
         return this._ins;
     }
 }
-ItemBtn.index = 2;

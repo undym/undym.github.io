@@ -26,6 +26,25 @@ export abstract class DungeonEvent{
 
     static now:DungeonEvent;
 
+    static btnLayouts = [
+        {
+            get advance(){return 1;},
+            get return() {return 4;},
+            get item()   {return 3;},
+        },
+        {
+            get advance(){return 0;},
+            get return() {return 1;},
+            get item()   {return 2;},
+        },
+        {
+            get advance(){return 2;},
+            get return() {return 1;},
+            get item()   {return 0;},
+        },
+    ];
+    static btnLayoutType = 0;
+    static get btnLayout(){return this.btnLayouts[ this.btnLayoutType ];}
 
 
     private img:Img;
@@ -326,7 +345,7 @@ const createDefLayout = ()=>{
 };
 
 class AdvanceBtn{
-    static readonly index = 0;
+    static get index(){return DungeonEvent.btnLayout.advance;}
 
     private static _ins:Btn;
     static get ins():Btn{
@@ -351,7 +370,7 @@ class AdvanceBtn{
 
 
 class ReturnBtn{
-    static readonly index = 1;
+    static get index(){return DungeonEvent.btnLayout.return;}
     
     private static _ins:Btn;
     static get ins():Btn{
@@ -374,7 +393,7 @@ class ReturnBtn{
 
 
 class ItemBtn{
-    static readonly index = 2;
+    static get index(){return DungeonEvent.btnLayout.item;}
 
     private static _ins:Btn;
     static get ins():Btn{

@@ -13,6 +13,7 @@ import { Font, Graphics } from "../graphics/graphics.js";
 import { ActiveTec, PassiveTec } from "../tec.js";
 import { Player } from "../player.js";
 import { SaveData } from "../savedata.js";
+import { DungeonEvent } from "../dungeon/dungeonevent.js";
 
 
 export const createOptionBtn = ()=>{
@@ -33,6 +34,24 @@ const setOptionBtn = (l:FlowLayout)=>{
     // }));
     l.add(new Btn("データ削除", ()=>{
         setSaveDataDeleteBtn(l);
+    }));
+    l.add(new Btn("ボタン配置", ()=>{
+        DungeonEvent.btnLayoutType = (DungeonEvent.btnLayoutType+1) % DungeonEvent.btnLayouts.length;
+        const layout = DungeonEvent.btnLayout;
+        const loop = (start:number, end:number)=>{
+            Util.msg.set("");
+            for(let i = start; i < end; i++){
+                if(i === layout.advance){Util.msg.add("[進む]"); continue;}
+                if(i === layout.return) {Util.msg.add("[戻る]"); continue;}
+                if(i === layout.item)   {Util.msg.add("[道具]"); continue;}
+    
+                Util.msg.add("[　　]");
+            }
+        };
+
+        Util.msg.set(`タイプ${DungeonEvent.btnLayoutType}`);
+        loop(0,3);
+        loop(3,6);
     }));
 
 
