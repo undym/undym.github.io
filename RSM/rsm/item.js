@@ -34,6 +34,7 @@ ItemType.HP回復 = new ItemType("HP回復");
 ItemType.MP回復 = new ItemType("MP回復");
 ItemType.ダンジョン = new ItemType("ダンジョン");
 ItemType.弾 = new ItemType("弾");
+ItemType.メモ = new ItemType("メモ");
 ItemType.鍵 = new ItemType("鍵");
 ItemType.玉 = new ItemType("玉");
 ItemType.素材 = new ItemType("素材");
@@ -49,7 +50,7 @@ ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.蘇生, ItemType.HP回復, ItemType.MP回復]);
 ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン]);
 ItemParentType.戦闘 = new ItemParentType("戦闘", [ItemType.弾]);
-ItemParentType.その他 = new ItemParentType("その他", [ItemType.鍵, ItemType.玉, ItemType.素材]);
+ItemParentType.その他 = new ItemParentType("その他", [ItemType.メモ, ItemType.鍵, ItemType.玉, ItemType.素材]);
 export const ItemDrop = {
     get NO() { return 0; },
     get BOX() { return 1 << 0; },
@@ -115,14 +116,17 @@ export class Item {
         if (itemValues) {
             const rankValues = itemValues.get(rank);
             if (rankValues) {
-                return choice(rankValues);
-            }
-            else {
-                if (rank <= 0) {
-                    return Item.石;
+                for (let i = 0; i < 10; i++) {
+                    let tmp = choice(rankValues);
+                    if (tmp.num < tmp.numLimit) {
+                        return tmp;
+                    }
                 }
-                return this.rndItem(dropType, rank - 1);
             }
+            if (rank <= 0) {
+                return Item.石;
+            }
+            return this.rndItem(dropType, rank - 1);
         }
         return Item.石;
     }
@@ -309,6 +313,17 @@ Item.DEF_NUM_LIMIT = 999;
     };
     //-----------------------------------------------------------------
     //
+    //メモ
+    //
+    //-----------------------------------------------------------------
+    Item.消耗品のメモ = new class extends Item {
+        constructor() {
+            super({ uniqueName: "消耗品のメモ", info: ["スティックパンなどの消耗品は", "ダンジョンに入る度に補充される"],
+                type: ItemType.メモ, rank: 0, drop: ItemDrop.NO, numLimit: 1 });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
     //鍵
     //
     //-----------------------------------------------------------------
@@ -323,6 +338,9 @@ Item.DEF_NUM_LIMIT = 999;
     };
     Item.黒平原の鍵 = new class extends Item {
         constructor() { super({ uniqueName: "黒平原の鍵", info: [], type: ItemType.鍵, rank: 0, drop: ItemDrop.NO, }); }
+    };
+    Item.黒遺跡の鍵 = new class extends Item {
+        constructor() { super({ uniqueName: "黒遺跡の鍵", info: [], type: ItemType.鍵, rank: 0, drop: ItemDrop.NO, }); }
     };
     //-----------------------------------------------------------------
     //
@@ -340,6 +358,9 @@ Item.DEF_NUM_LIMIT = 999;
     };
     Item.黒平原の玉 = new class extends Item {
         constructor() { super({ uniqueName: "黒平原の玉", info: [], type: ItemType.玉, rank: 0, drop: ItemDrop.NO, }); }
+    };
+    Item.黒遺跡の玉 = new class extends Item {
+        constructor() { super({ uniqueName: "黒遺跡の玉", info: [], type: ItemType.玉, rank: 0, drop: ItemDrop.NO, }); }
     };
     //-----------------------------------------------------------------
     //
@@ -409,6 +430,18 @@ Item.DEF_NUM_LIMIT = 999;
     Item.黒い砂 = new class extends Item {
         constructor() {
             super({ uniqueName: "黒い砂", info: ["黒い！！！！！"],
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX });
+        }
+    };
+    Item.黒い枝 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "黒い枝", info: ["とても黒い！！！！！"],
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX });
+        }
+    };
+    Item.黒い青空 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "黒い青空", info: ["すごく黒い！！！！！"],
                 type: ItemType.素材, rank: 2, drop: ItemDrop.BOX });
         }
     };

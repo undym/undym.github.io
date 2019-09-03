@@ -10,8 +10,9 @@ import { Prm, PUnit } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
 import { Dmg, Targeting } from "./force.js";
-import { Condition } from "./condition.js";
+import { Condition, ConditionType } from "./condition.js";
 import { Color } from "./undym/type.js";
+import { FX_格闘 } from "./fx/fx.js";
 import { randomInt } from "./undym/random.js";
 import { Battle } from "./battle.js";
 import { Item } from "./item.js";
@@ -49,9 +50,10 @@ TecType._values = [];
                 pow: attacker.prm(Prm.STR).total + attacker.prm(Prm.LV).total,
                 def: target.prm(Prm.MAG).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.魔法 = new class extends TecType {
         constructor() { super("魔法"); }
@@ -60,9 +62,10 @@ TecType._values = [];
                 pow: attacker.prm(Prm.MAG).total + attacker.prm(Prm.LV).total,
                 def: target.prm(Prm.STR).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.神格 = new class extends TecType {
         constructor() { super("神格"); }
@@ -71,9 +74,10 @@ TecType._values = [];
                 pow: attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total,
                 def: target.prm(Prm.DRK).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.暗黒 = new class extends TecType {
         constructor() { super("暗黒"); }
@@ -82,9 +86,10 @@ TecType._values = [];
                 pow: attacker.prm(Prm.DRK).total + attacker.prm(Prm.LV).total,
                 def: target.prm(Prm.LIG).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.練術 = new class extends TecType {
         constructor() { super("練術"); }
@@ -93,9 +98,10 @@ TecType._values = [];
                 pow: attacker.prm(Prm.CHN).total + attacker.prm(Prm.LV).total,
                 def: target.prm(Prm.PST).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.過去 = new class extends TecType {
         constructor() { super("過去"); }
@@ -104,9 +110,10 @@ TecType._values = [];
                 pow: attacker.prm(Prm.PST).total + attacker.prm(Prm.LV).total,
                 def: target.prm(Prm.CHN).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.銃術 = new class extends TecType {
         constructor() { super("銃術"); }
@@ -115,9 +122,10 @@ TecType._values = [];
                 pow: attacker.prm(Prm.GUN).total + attacker.prm(Prm.LV).total,
                 def: target.prm(Prm.ARR).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.弓術 = new class extends TecType {
         constructor() { super("弓術"); }
@@ -126,14 +134,17 @@ TecType._values = [];
                 pow: attacker.prm(Prm.ARR).total + attacker.prm(Prm.LV).total,
                 def: target.prm(Prm.GUN).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.状態 = new class extends TecType {
         constructor() { super("状態"); }
         createDmg(attacker, target) { return new Dmg(); }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.回復 = new class extends TecType {
         constructor() { super("回復"); }
@@ -141,14 +152,17 @@ TecType._values = [];
             return new Dmg({
                 pow: attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total,
             });
-            ;
         }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
     TecType.その他 = new class extends TecType {
         constructor() { super("その他"); }
         createDmg(attacker, target) { return new Dmg(); }
-        ;
+        effect(attacker, target, dmg) {
+            FX_格闘(target.bounds.center);
+        }
     };
 })(TecType || (TecType = {}));
 export class Tec {
@@ -269,6 +283,9 @@ export class ActiveTec extends Tec {
             }
         }
     }
+    effect(attacker, target, dmg) {
+        this.type.effect(attacker, target, dmg);
+    }
     use(attacker, targets) {
         return __awaiter(this, void 0, void 0, function* () {
             Util.msg.set(`${attacker.name}の[${this}]`, Color.D_GREEN.bright);
@@ -300,6 +317,7 @@ export class ActiveTec extends Tec {
     runInner(attacker, target, dmg) {
         return __awaiter(this, void 0, void 0, function* () {
             yield target.doDmg(dmg);
+            this.effect(attacker, target, dmg);
         });
     }
     createDmg(attacker, target) {
@@ -664,6 +682,31 @@ ActiveTec._valueOf = new Map();
     };
     //--------------------------------------------------------------------------
     //
+    //過去Passive
+    //
+    //--------------------------------------------------------------------------
+    Tec.ネガティヴフィードバック = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "ネガティヴフィードバック", info: ["過去攻撃時", "状態異常一つにつき、消費MPの10%を還元"],
+                type: TecType.過去,
+            });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof ActiveTec && (action.type === TecType.過去)) {
+                    let num = ConditionType.badConditions()
+                        .filter(type => attacker.existsCondition(type))
+                        .length;
+                    if (num === 0) {
+                        return;
+                    }
+                    Battle.healMP(attacker, action.mpCost * 0.1 * num);
+                }
+            });
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
     //銃術Active
     //
     //--------------------------------------------------------------------------
@@ -905,11 +948,7 @@ ActiveTec._valueOf = new Map();
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                // const condition = Condition.防御低下;
-                // const value = 5;
-                // target.setCondition(condition, value);
-                // FX_Str(ConditionFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-                // Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+                Battle.setCondition(target, Condition.防御低下, 5);
             });
         }
     };
@@ -1187,7 +1226,7 @@ ActiveTec._valueOf = new Map();
         beforeDoAtk(action, attacker, target, dmg) {
             return __awaiter(this, void 0, void 0, function* () {
                 if (action instanceof ActiveTec
-                    && (action.type === TecType.銃術 || action.type === TecType.弓術)
+                    && (action.type.any(TecType.銃術, TecType.弓術))
                     && Math.random() < 0.25) {
                     Util.msg.set("＞カイゼルの目");
                     dmg.pow.mul *= 1.5;

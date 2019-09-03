@@ -1,5 +1,6 @@
 import { EUnit, Prm, Unit } from "./unit.js";
 import { Tec } from "./tec.js";
+import { Player } from "./player.js";
 export class Job {
     constructor(args) {
         this.uniqueName = args.uniqueName;
@@ -142,7 +143,14 @@ Job.DEF_LVUP_EXP = 5;
                 appearLv: 1, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.MAG, value: 1 }],
                 learn: () => [Tec.ヴァハ, Tec.MP自動回復, Tec.ジョンD],
-                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+                canJobChange: (p) => {
+                    if (p.player === Player.スメラギ) {
+                        return p.isMasteredJob(Job.格闘家);
+                    }
+                    else {
+                        return p.isMasteredJob(Job.しんまい);
+                    }
+                },
             });
             this.setEnemyInner = (e) => {
                 e.tecs = [Tec.ヴァハ, Tec.ヴァハ, Tec.殴る, Tec.殴る, Tec.殴る];
@@ -168,10 +176,17 @@ Job.DEF_LVUP_EXP = 5;
                 appearLv: 8, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.LIG, value: 1 }],
                 learn: () => [Tec.天籟, Tec.ばんそうこう, Tec.ユグドラシル],
-                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+                canJobChange: (p) => {
+                    if (p.player === Player.スメラギ) {
+                        return p.isMasteredJob(Job.格闘家);
+                    }
+                    else {
+                        return p.isMasteredJob(Job.しんまい);
+                    }
+                },
             });
             this.setEnemyInner = (e) => {
-                e.tecs = [Tec.天籟, Tec.ばんそうこう, Tec.殴る, Tec.殴る, Tec.殴る];
+                e.tecs = [Tec.天籟, Tec.ばんそうこう, Tec.殴る, Tec.殴る, Tec.殴る, Tec.ユグドラシル];
             };
         }
     };
@@ -195,7 +210,14 @@ Job.DEF_LVUP_EXP = 5;
                 appearLv: 8, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.DRK, value: 1 }],
                 learn: () => [Tec.暗黒剣, Tec.ポイズンバタフライ, Tec.自爆],
-                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+                canJobChange: (p) => {
+                    if (p.player === Player.スメラギ) {
+                        return p.isMasteredJob(Job.格闘家);
+                    }
+                    else {
+                        return p.isMasteredJob(Job.しんまい);
+                    }
+                },
             });
             this.setEnemyInner = (e) => {
                 e.tecs = [Tec.暗黒剣, Tec.暗黒剣, Tec.殴る, Tec.殴る, Tec.殴る];
@@ -235,10 +257,17 @@ Job.DEF_LVUP_EXP = 5;
                 appearLv: 20, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.CHN, value: 1 }],
                 learn: () => [Tec.スネイク, Tec.TP自動回復, Tec.凍てつく波動],
-                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+                canJobChange: (p) => {
+                    if (p.player === Player.スメラギ) {
+                        return p.isMasteredJob(Job.格闘家);
+                    }
+                    else {
+                        return p.isMasteredJob(Job.しんまい);
+                    }
+                },
             });
             this.setEnemyInner = (e) => {
-                e.tecs = [Tec.スネイク, Tec.スネイク, Tec.TP自動回復, Tec.殴る, Tec.殴る];
+                e.tecs = [Tec.スネイク, Tec.スネイク, Tec.TP自動回復, Tec.殴る, Tec.殴る, Tec.凍てつく波動];
             };
         }
     };
@@ -261,7 +290,14 @@ Job.DEF_LVUP_EXP = 5;
                 appearLv: 30, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.PST, value: 1 }],
                 learn: () => [Tec.念力, Tec.念, Tec.メテオ],
-                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+                canJobChange: (p) => {
+                    if (p.player === Player.スメラギ) {
+                        return p.isMasteredJob(Job.格闘家);
+                    }
+                    else {
+                        return p.isMasteredJob(Job.しんまい);
+                    }
+                },
             });
             this.setEnemyInner = (e) => {
                 e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.殴る, Tec.殴る];
@@ -281,13 +317,33 @@ Job.DEF_LVUP_EXP = 5;
             };
         }
     };
+    Job.ハイパー = new class extends Job {
+        constructor() {
+            super({ uniqueName: "ハイパー", info: [],
+                appearLv: 80, lvupExp: Job.DEF_LVUP_EXP * 4,
+                grow: () => [{ prm: Prm.PST, value: 1 }],
+                learn: () => [],
+                canJobChange: (p) => p.isMasteredJob(Job.エスパー),
+            });
+            this.setEnemyInner = (e) => {
+                e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.殴る, Tec.殴る];
+            };
+        }
+    };
     Job.ガンマン = new class extends Job {
         constructor() {
             super({ uniqueName: "ガンマン", info: ["銃攻撃は命中率が低いものの", "それを補う手数の多さを持つ"],
                 appearLv: 7, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.GUN, value: 1 }],
                 learn: () => [Tec.撃つ, Tec.二丁拳銃, Tec.あがらない雨],
-                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+                canJobChange: (p) => {
+                    if (p.player === Player.スメラギ) {
+                        return p.isMasteredJob(Job.格闘家);
+                    }
+                    else {
+                        return p.isMasteredJob(Job.しんまい);
+                    }
+                },
             });
             this.setEnemyInner = (e) => {
                 e.tecs = [Tec.撃つ, Tec.撃つ, Tec.撃つ, Tec.二丁拳銃, Tec.二丁拳銃, Tec.殴る, Tec.殴る, Tec.殴る];
@@ -313,7 +369,14 @@ Job.DEF_LVUP_EXP = 5;
                 appearLv: 10, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.ARR, value: 1 }],
                 learn: () => [Tec.射る, Tec.インドラ, Tec.キャンドラ],
-                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+                canJobChange: (p) => {
+                    if (p.player === Player.スメラギ) {
+                        return p.isMasteredJob(Job.格闘家);
+                    }
+                    else {
+                        return p.isMasteredJob(Job.しんまい);
+                    }
+                },
             });
             this.setEnemyInner = (e) => {
                 e.tecs = [Tec.射る, Tec.射る, Tec.射る, Tec.射る, Tec.殴る, Tec.殴る, Tec.殴る];

@@ -226,7 +226,6 @@ Eq._valueOf = new Map();
         }
         beforeDoAtk(action, attacker, target, dmg) {
             if (action instanceof ActiveTec && action.type === TecType.格闘) {
-                dmg.pow.add += 2;
                 dmg.pow.mul *= 1.3;
             }
         }
@@ -489,24 +488,24 @@ Eq._valueOf = new Map();
     };
     Eq.草の服 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "草の服", info: ["最大HP+10"],
+            super({ uniqueName: "草の服", info: ["最大HP+20"],
                 pos: EqPos.体, lv: 15 });
         }
-        equip(unit) { unit.prm(Prm.MAX_HP).eq += 10; }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 20; }
     };
     Eq.布の服 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "布の服", info: ["最大HP+30"],
+            super({ uniqueName: "布の服", info: ["最大HP+40"],
                 pos: EqPos.体, lv: 35 });
         }
-        equip(unit) { unit.prm(Prm.MAX_HP).eq += 30; }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 40; }
     };
     Eq.皮の服 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "皮の服", info: ["最大HP+50"],
+            super({ uniqueName: "皮の服", info: ["最大HP+70"],
                 pos: EqPos.体, lv: 55 });
         }
-        equip(unit) { unit.prm(Prm.MAX_HP).eq += 50; }
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 70; }
     };
     Eq.木の鎧 = new class extends Eq {
         constructor() {
@@ -610,6 +609,15 @@ Eq._valueOf = new Map();
         }
         battleStart(unit) {
             unit.setCondition(Condition.盾, 1);
+        }
+    };
+    Eq.魔ヶ玉の指輪 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "魔ヶ玉の指輪", info: ["行動開始時MP+10%"],
+                pos: EqPos.指, lv: 20 });
+        }
+        phaseStart(unit) {
+            Battle.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1);
         }
     };
     //--------------------------------------------------------------------------

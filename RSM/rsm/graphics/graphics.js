@@ -130,6 +130,15 @@ export class Graphics {
         ctx.closePath();
         ctx.stroke();
     }
+    /**rはtextureのwを基準にする。 */
+    static fillOval(ratioCenter, ratioR, color) {
+        const ctx = this.texture.ctx;
+        ctx.beginPath();
+        ctx.arc(ratioCenter.x * this.texture.pixelW, ratioCenter.y * this.texture.pixelH, ratioR * this.texture.pixelW, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fillStyle = toHTMLColorString(color);
+        ctx.fill();
+    }
     static fillPolygon(points, color) {
         if (points.length === 0) {
             return;

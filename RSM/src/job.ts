@@ -1,5 +1,6 @@
 import { EUnit, Prm, PUnit, Unit } from "./unit.js";
 import { Tec } from "./tec.js";
+import { Player } from "./player.js";
 
 
 
@@ -179,7 +180,10 @@ export namespace Job{
                                 appearLv:1, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.MAG, value:1}],
                                 learn:()=> [Tec.ヴァハ, Tec.MP自動回復, Tec.ジョンD],
-                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+                                canJobChange:(p:PUnit)=>{
+                                    if(p.player === Player.スメラギ) {return p.isMasteredJob(Job.格闘家);}
+                                    else                            {return p.isMasteredJob(Job.しんまい);}
+                                },
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.ヴァハ, Tec.ヴァハ, Tec.殴る, Tec.殴る, Tec.殴る];
@@ -202,10 +206,13 @@ export namespace Job{
                                 appearLv:8, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.LIG, value:1}],
                                 learn:()=> [Tec.天籟, Tec.ばんそうこう, Tec.ユグドラシル],
-                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+                                canJobChange:(p:PUnit)=>{
+                                    if(p.player === Player.スメラギ) {return p.isMasteredJob(Job.格闘家);}
+                                    else                            {return p.isMasteredJob(Job.しんまい);}
+                                },
         });}
         setEnemyInner   = (e:EUnit)=>{
-            e.tecs = [Tec.天籟, Tec.ばんそうこう, Tec.殴る, Tec.殴る, Tec.殴る];
+            e.tecs = [Tec.天籟, Tec.ばんそうこう, Tec.殴る, Tec.殴る, Tec.殴る, Tec.ユグドラシル];
         }
     };
     export const                         女神 = new class extends Job{
@@ -226,7 +233,10 @@ export namespace Job{
                                 appearLv:8, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.DRK, value:1}],
                                 learn:()=> [Tec.暗黒剣, Tec.ポイズンバタフライ, Tec.自爆],
-                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+                                canJobChange:(p:PUnit)=>{
+                                    if(p.player === Player.スメラギ) {return p.isMasteredJob(Job.格闘家);}
+                                    else                            {return p.isMasteredJob(Job.しんまい);}
+                                },
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.暗黒剣, Tec.暗黒剣, Tec.殴る, Tec.殴る, Tec.殴る];
@@ -261,10 +271,13 @@ export namespace Job{
                                 appearLv:20, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.CHN, value:1}],
                                 learn:()=> [Tec.スネイク, Tec.TP自動回復, Tec.凍てつく波動],
-                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+                                canJobChange:(p:PUnit)=>{
+                                    if(p.player === Player.スメラギ) {return p.isMasteredJob(Job.格闘家);}
+                                    else                            {return p.isMasteredJob(Job.しんまい);}
+                                },
         });}
         setEnemyInner   = (e:EUnit)=>{
-            e.tecs = [Tec.スネイク, Tec.スネイク, Tec.TP自動回復, Tec.殴る, Tec.殴る];
+            e.tecs = [Tec.スネイク, Tec.スネイク, Tec.TP自動回復, Tec.殴る, Tec.殴る, Tec.凍てつく波動];
         }
     };
     export const                         蛇使い = new class extends Job{
@@ -284,7 +297,10 @@ export namespace Job{
                                 appearLv:30, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.PST, value:1}],
                                 learn:()=> [Tec.念力, Tec.念, Tec.メテオ],
-                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+                                canJobChange:(p:PUnit)=>{
+                                    if(p.player === Player.スメラギ) {return p.isMasteredJob(Job.格闘家);}
+                                    else                            {return p.isMasteredJob(Job.しんまい);}
+                                },
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.殴る, Tec.殴る];
@@ -301,13 +317,27 @@ export namespace Job{
             e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.殴る, Tec.殴る];
         }
     };
+    export const                         ハイパー = new class extends Job{
+        constructor(){super({uniqueName:"ハイパー", info:[],
+                                appearLv:80, lvupExp:Job.DEF_LVUP_EXP * 4,
+                                grow:()=> [{prm:Prm.PST, value:1}],
+                                learn:()=> [],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.エスパー),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.殴る, Tec.殴る];
+        }
+    };
 
     export const                         ガンマン = new class extends Job{
         constructor(){super({uniqueName:"ガンマン", info:["銃攻撃は命中率が低いものの","それを補う手数の多さを持つ"],
                                 appearLv:7, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.GUN, value:1}],
                                 learn:()=> [Tec.撃つ, Tec.二丁拳銃, Tec.あがらない雨],
-                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+                                canJobChange:(p:PUnit)=>{
+                                    if(p.player === Player.スメラギ) {return p.isMasteredJob(Job.格闘家);}
+                                    else                            {return p.isMasteredJob(Job.しんまい);}
+                                },
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.撃つ, Tec.撃つ, Tec.撃つ, Tec.二丁拳銃, Tec.二丁拳銃, Tec.殴る, Tec.殴る, Tec.殴る];
@@ -330,7 +360,10 @@ export namespace Job{
                                 appearLv:10, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.ARR, value:1}],
                                 learn:()=> [Tec.射る, Tec.インドラ, Tec.キャンドラ],
-                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.しんまい),
+                                canJobChange:(p:PUnit)=>{
+                                    if(p.player === Player.スメラギ) {return p.isMasteredJob(Job.格闘家);}
+                                    else                            {return p.isMasteredJob(Job.しんまい);}
+                                },
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.射る, Tec.射る, Tec.射る, Tec.射る, Tec.殴る, Tec.殴る, Tec.殴る];

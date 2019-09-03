@@ -167,22 +167,26 @@ export abstract class Dungeon{
     setEnemy(){
         let enemyNum = this.rndEnemyNum();
         for(let i = 0; i < enemyNum; i++){
-            this.setEnemyInner( Unit.enemies[i] );
+            this.setEnemyInner( Unit.enemies[i], i );
         }
     }
 
-    setEnemyInner(e:EUnit){
+    setEnemyInner(e:EUnit, ordinal:number){
         let lv = (Math.random() * 0.5 + 0.75) * this.enemyLv;
         let job = Job.rndJob(lv);
         job.setEnemy( e, lv );
+
+        e.name += String.fromCharCode("A".charCodeAt(0) + ordinal);
     }
 
     setBoss(){
-        for(let e of Unit.enemies){
-            this.setEnemyInner(e);
+        for(let i = 0; i < Unit.enemies.length; i++){
+            const e = Unit.enemies[i];
+            this.setEnemyInner(e, i);
 
             e.prm(Prm.MAX_HP).base *= 3;
             e.hp = e.prm(Prm.MAX_HP).total;
+            e.ep = Unit.DEF_MAX_EP;
         }
 
         this.setBossInner();
@@ -288,11 +292,31 @@ export namespace Dungeon{
                                 treasureKey:()=>Item.黒平原の鍵,
                                 trendItems:()=>[Item.黒い石, Item.黒い砂],
         });}
-        isVisible = ()=>Dungeon.再構成トンネル.clearNum > 0;
+        isVisible = ()=>Dungeon.リテの門.clearNum > 0;
         setBossInner = ()=>{
             let e = Unit.enemies[0];
             Job.スネイカー.setEnemy(e, e.prm(Prm.LV).base);
             e.name = "牛";
+            e.prm(Prm.MAX_HP).base = 120;
+            //ボス以外の雑魚は2体
+            for(let i = 3; i < Unit.enemies.length; i++){
+                Unit.enemies[i].exists = false;
+            }
+        };
+    };
+    export const                         黒遺跡:Dungeon = new class extends Dungeon{
+        constructor(){super({uniqueName:"黒遺跡",
+                                rank:1, enemyLv:18, au:120,
+                                clearItem:()=>Item.黒遺跡の玉,
+                                treasure:()=>Eq.魔ヶ玉の指輪,
+                                treasureKey:()=>Item.黒遺跡の鍵,
+                                trendItems:()=>[Item.黒い枝, Item.黒い青空],
+        });}
+        isVisible = ()=>Dungeon.黒平原.clearNum > 0;
+        setBossInner = ()=>{
+            let e = Unit.enemies[0];
+            Job.ダウザー.setEnemy(e, e.prm(Prm.LV).base);
+            e.name = "古代兵器";
             e.prm(Prm.MAX_HP).base = 120;
         };
     };

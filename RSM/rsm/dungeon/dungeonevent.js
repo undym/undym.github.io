@@ -316,6 +316,7 @@ DungeonEvent.btnLayoutType = 0;
                 yield cwait();
                 Scene.load(TownScene.ins);
                 yield wait();
+                yield wait();
             });
             this.createBtnLayout = () => ILayout.empty;
         }

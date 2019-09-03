@@ -228,7 +228,6 @@ export namespace Eq{
                                 pos:EqPos.武, lv:20});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type === TecType.格闘){
-                dmg.pow.add += 2;
                 dmg.pow.mul *= 1.3;
             }
         }
@@ -444,19 +443,19 @@ export namespace Eq{
                                 pos:EqPos.体, lv:0});}
     }
     export const                         草の服 = new class extends Eq{
-        constructor(){super({uniqueName:"草の服", info:["最大HP+10"],
+        constructor(){super({uniqueName:"草の服", info:["最大HP+20"],
                                 pos:EqPos.体, lv:15});}
-        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 10;}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 20;}
     }
     export const                         布の服 = new class extends Eq{
-        constructor(){super({uniqueName:"布の服", info:["最大HP+30"],
+        constructor(){super({uniqueName:"布の服", info:["最大HP+40"],
                                 pos:EqPos.体, lv:35});}
-        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 30;}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 40;}
     }
     export const                         皮の服 = new class extends Eq{
-        constructor(){super({uniqueName:"皮の服", info:["最大HP+50"],
+        constructor(){super({uniqueName:"皮の服", info:["最大HP+70"],
                                 pos:EqPos.体, lv:55});}
-        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 50;}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 70;}
     }
     export const                         木の鎧 = new class extends Eq{
         constructor(){super({uniqueName:"木の鎧", info:["最大HP+100"],
@@ -536,6 +535,13 @@ export namespace Eq{
                                 pos:EqPos.指, lv:10});}
         battleStart(unit:Unit){
             unit.setCondition( Condition.盾, 1 );
+        }
+    }
+    export const                         魔ヶ玉の指輪 = new class extends Eq{
+        constructor(){super({uniqueName:"魔ヶ玉の指輪", info:["行動開始時MP+10%"],
+                                pos:EqPos.指, lv:20});}
+        phaseStart(unit:Unit){
+            Battle.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1);
         }
     }
     //--------------------------------------------------------------------------

@@ -80,7 +80,7 @@ class TownBtn {
                 Scene.load(new EqScene());
             }));
         }
-        if (Dungeon.リテの門.clearNum > 0 || Debug.debugMode) {
+        if (Dungeon.黒平原.clearNum > 0 || Debug.debugMode) {
             l.add(new Btn("合成", () => {
                 Scene.load(new MixScene());
             }));
@@ -199,7 +199,7 @@ const setDungeonNameFX = (name, bounds) => {
         const addY = 0.01;
         const b = new Rect(bounds.x - addX, bounds.y - addY, bounds.w + addX * 2, bounds.h + addY * 2);
         let alpha = 1.0;
-        FX.set((count) => {
+        FX.add((count) => {
             Graphics.setAlpha(alpha, () => {
                 tex.draw(b);
             });
@@ -208,7 +208,7 @@ const setDungeonNameFX = (name, bounds) => {
         });
     };
     let alpha = 1.0;
-    FX.set((count) => {
+    FX.add((count) => {
         const countLim = 35;
         let w = count / countLim * tex.pixelW;
         if (w > tex.pixelW) {

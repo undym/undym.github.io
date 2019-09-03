@@ -4,7 +4,7 @@ import { wait } from "./undym/scene.js";
 import { Force, Dmg, Targeting, Action } from "./force.js";
 import { Condition, ConditionType } from "./condition.js";
 import { Color } from "./undym/type.js";
-import { FX_Str } from "./fx/fx.js";
+import { FX_Str, FX_格闘 } from "./fx/fx.js";
 import { Font } from "./graphics/graphics.js";
 import { randomInt } from "./undym/random.js";
 import { Battle } from "./battle.js";
@@ -35,6 +35,7 @@ export abstract class TecType{
 
 
     abstract createDmg(attacker:Unit, target:Unit):Dmg;
+    abstract effect(attacker:Unit, target:Unit, dmg:Dmg):void;
 
     /**一つでも当てはまればtrue. */
     any(...types:TecType[]){
@@ -54,8 +55,11 @@ export namespace TecType{
             return new Dmg({
                 pow:attacker.prm(Prm.STR).total + attacker.prm(Prm.LV).total,
                 def:target.prm(Prm.MAG).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             魔法 = new class extends TecType{
         constructor(){super("魔法");}
@@ -63,8 +67,11 @@ export namespace TecType{
             return new Dmg({
                 pow:attacker.prm(Prm.MAG).total + attacker.prm(Prm.LV).total,
                 def:target.prm(Prm.STR).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             神格 = new class extends TecType{
         constructor(){super("神格");}
@@ -72,8 +79,11 @@ export namespace TecType{
             return new Dmg({
                 pow:attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total,
                 def:target.prm(Prm.DRK).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             暗黒 = new class extends TecType{
         constructor(){super("暗黒");}
@@ -81,8 +91,11 @@ export namespace TecType{
             return new Dmg({
                 pow:attacker.prm(Prm.DRK).total + attacker.prm(Prm.LV).total,
                 def:target.prm(Prm.LIG).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             練術 = new class extends TecType{
         constructor(){super("練術");}
@@ -90,8 +103,11 @@ export namespace TecType{
             return new Dmg({
                 pow:attacker.prm(Prm.CHN).total + attacker.prm(Prm.LV).total,
                 def:target.prm(Prm.PST).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             過去 = new class extends TecType{
         constructor(){super("過去");}
@@ -99,8 +115,11 @@ export namespace TecType{
             return new Dmg({
                 pow:attacker.prm(Prm.PST).total + attacker.prm(Prm.LV).total,
                 def:target.prm(Prm.CHN).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             銃術 = new class extends TecType{
         constructor(){super("銃術");}
@@ -108,8 +127,11 @@ export namespace TecType{
             return new Dmg({
                 pow:attacker.prm(Prm.GUN).total + attacker.prm(Prm.LV).total,
                 def:target.prm(Prm.ARR).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             弓術 = new class extends TecType{
         constructor(){super("弓術");}
@@ -117,24 +139,36 @@ export namespace TecType{
             return new Dmg({
                 pow:attacker.prm(Prm.ARR).total + attacker.prm(Prm.LV).total,
                 def:target.prm(Prm.GUN).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             状態 = new class extends TecType{
         constructor(){super("状態");}
-        createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();};
+        createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();}
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             回復 = new class extends TecType{
         constructor(){super("回復");}
         createDmg(attacker:Unit, target:Unit):Dmg{
             return new Dmg({
                 pow:attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total,
-            });;
-        };
+            });
+        }
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
     export const             その他 = new class extends TecType{
         constructor(){super("その他");}
-        createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();};
+        createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();}
+        effect(attacker:Unit, target:Unit, dmg:Dmg){
+            FX_格闘(target.bounds.center);
+        }
     };
 }
 
@@ -305,6 +339,10 @@ export abstract class ActiveTec extends Tec implements Action{
         }
     }
 
+    effect(attacker:Unit, target:Unit, dmg:Dmg):void{
+        this.type.effect(attacker, target, dmg);
+    }
+
     async use(attacker:Unit, targets:Unit[]){
 
         Util.msg.set(`${attacker.name}の[${this}]`, Color.D_GREEN.bright); await wait();
@@ -336,6 +374,7 @@ export abstract class ActiveTec extends Tec implements Action{
 
     async runInner(attacker:Unit, target:Unit, dmg:Dmg){
         await target.doDmg(dmg);
+        this.effect(attacker, target, dmg);
     }
 
     createDmg(attacker:Unit, target:Unit):Dmg{
@@ -634,6 +673,25 @@ export namespace Tec{
     }
     //--------------------------------------------------------------------------
     //
+    //過去Passive
+    //
+    //--------------------------------------------------------------------------
+    export const                         ネガティヴフィードバック:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"ネガティヴフィードバック", info:["過去攻撃時","状態異常一つにつき、消費MPの10%を還元"],
+                                type:TecType.過去,
+        });}
+        async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && (action.type === TecType.過去)){
+                let num = ConditionType.badConditions()
+                                        .filter(type=> attacker.existsCondition(type))
+                                        .length;
+                if(num === 0){return;}
+                Battle.healMP( attacker, action.mpCost * 0.1 * num);
+            }
+        }
+    };
+    //--------------------------------------------------------------------------
+    //
     //銃術Active
     //
     //--------------------------------------------------------------------------
@@ -813,13 +871,7 @@ export namespace Tec{
                               mul:1, num:1, hit:10, mp:10,
         });}
         async run(attacker:Unit, target:Unit){
-            
-            // const condition = Condition.防御低下;
-            // const value = 5;
-
-            // target.setCondition(condition, value);
-            // FX_Str(ConditionFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
-            // Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+            Battle.setCondition( target, Condition.防御低下, 5 );
         }
     }
     export const                          スコープ:ActiveTec = new class extends ActiveTec{
@@ -1036,7 +1088,7 @@ export namespace Tec{
         async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(
                 action instanceof ActiveTec 
-                && (action.type === TecType.銃術 || action.type === TecType.弓術)
+                && (action.type.any(TecType.銃術, TecType.弓術))
                 && Math.random() < 0.25
             ){
                 Util.msg.set("＞カイゼルの目");

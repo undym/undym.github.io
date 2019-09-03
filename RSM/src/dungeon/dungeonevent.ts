@@ -305,7 +305,7 @@ export namespace DungeonEvent{
             
             SaveData.save(); await cwait();
 
-            Scene.load( TownScene.ins ); await wait();
+            Scene.load( TownScene.ins ); await wait(); await wait();
         };
         createBtnLayout = ()=> ILayout.empty;
     };

@@ -52,7 +52,7 @@ export class TownScene extends Scene{
 
 
         //----------------------------------------------------
-        
+
         SceneType.TOWN.set();
         TownBtn.reset();
         fullCare();
@@ -102,7 +102,7 @@ class TownBtn{
                     Scene.load(new EqScene());
                 }));
             }
-            if(Dungeon.リテの門.clearNum > 0 || Debug.debugMode){
+            if(Dungeon.黒平原.clearNum > 0 || Debug.debugMode){
                 l.add(new Btn("合成", ()=>{
                     Scene.load(new MixScene());
                 }));
@@ -245,7 +245,7 @@ const setDungeonNameFX = (name:string, bounds:{x:number, y:number, w:number, h:n
             bounds.h + addY * 2,
         );
         let alpha = 1.0;
-        FX.set((count)=>{
+        FX.add((count)=>{
             Graphics.setAlpha(alpha, ()=>{
                 tex.draw(b);
             });
@@ -256,7 +256,7 @@ const setDungeonNameFX = (name:string, bounds:{x:number, y:number, w:number, h:n
 
     let alpha = 1.0;
 
-    FX.set((count)=>{
+    FX.add((count)=>{
         const countLim = 35;
         let w = count / countLim * tex.pixelW;
         if(w > tex.pixelW){
