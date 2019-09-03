@@ -209,14 +209,14 @@ const setDungeonNameFX = (name, bounds) => {
     };
     let alpha = 1.0;
     FX.add((count) => {
-        const countLim = 35;
+        const countLim = 15;
         let w = count / countLim * tex.pixelW;
         if (w > tex.pixelW) {
             w = tex.pixelW;
             if (alpha === 1.0) {
                 flash();
             }
-            alpha -= 0.03;
+            alpha -= 0.04;
             if (alpha <= 0) {
                 return false;
             }

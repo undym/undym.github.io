@@ -257,7 +257,7 @@ const setDungeonNameFX = (name:string, bounds:{x:number, y:number, w:number, h:n
     let alpha = 1.0;
 
     FX.add((count)=>{
-        const countLim = 35;
+        const countLim = 15;
         let w = count / countLim * tex.pixelW;
         if(w > tex.pixelW){
             w = tex.pixelW;
@@ -266,7 +266,7 @@ const setDungeonNameFX = (name:string, bounds:{x:number, y:number, w:number, h:n
                 flash();
             }
 
-            alpha -= 0.03;
+            alpha -= 0.04;
             if(alpha <= 0){return false;}
         }
         Graphics.setAlpha(alpha, ()=>{
