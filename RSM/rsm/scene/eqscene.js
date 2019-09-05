@@ -51,19 +51,6 @@ export class EqScene extends Scene {
                     }
                 } }))
                 .add(btnBounds, (() => {
-                const otherBtns = ["装備/外す", "<<"];
-                const w = 2;
-                const h = ((otherBtns.length + EqPos.values().length + 1) / w) | 0;
-                const l = new FlowLayout(w, h);
-                for (let pos of EqPos.values()) {
-                    l.add(new Btn(`${pos}`, () => {
-                        this.list.clear();
-                        this.setList(this.target, pos);
-                    }));
-                }
-                l.addFromLast(new Btn("<<", () => {
-                    Scene.load(TownScene.ins);
-                }));
                 const set = new Btn("装備", () => __awaiter(this, void 0, void 0, function* () {
                     if (!this.choosedEq) {
                         return;
@@ -78,12 +65,35 @@ export class EqScene extends Scene {
                     equip(this.target, Eq.getDef(this.pos));
                     FX_Str(Font.def, `${this.choosedEq}を外しました`, Point.CENTER, Color.WHITE);
                 }));
-                l.addFromLast(new VariableLayout(() => {
-                    if (this.target.getEq(this.pos) === this.choosedEq) {
-                        return unset;
-                    }
-                    return set;
-                }));
+                const otherBtns = [
+                    new Btn("<<", () => {
+                        Scene.load(TownScene.ins);
+                    }),
+                    new VariableLayout(() => {
+                        if (this.target.getEq(this.pos) === this.choosedEq) {
+                            return unset;
+                        }
+                        return set;
+                    }),
+                    new Btn("全て", () => {
+                        this.list.clear();
+                        for (const pos of EqPos.values()) {
+                            this.setList(this.target, pos);
+                        }
+                    }),
+                ];
+                const w = 2;
+                const h = ((otherBtns.length + EqPos.values().length + 1) / w) | 0;
+                const l = new FlowLayout(w, h);
+                for (let pos of EqPos.values()) {
+                    l.add(new Btn(`${pos}`, () => {
+                        this.list.clear();
+                        this.setList(this.target, pos);
+                    }));
+                }
+                for (const o of otherBtns) {
+                    l.addFromLast(o);
+                }
                 return l;
             })());
         })()));

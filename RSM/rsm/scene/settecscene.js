@@ -65,64 +65,75 @@ export class SetTecScene extends Scene {
                     }
                 } }))
                 .add(btnBounds, (() => {
-                const otherBtns = ["全て", "セット中", "set/unset", "<<"];
+                const otherBtns1 = [
+                    new Btn("全て", () => {
+                        this.setList(this.target, u => {
+                            let res = [];
+                            for (let type of TecType.values()) {
+                                res = res.concat(type.tecs.filter(t => u.isMasteredTec(t)));
+                            }
+                            return res;
+                        });
+                    }),
+                    new Btn("セット中", () => {
+                        this.setList(this.target, u => u.tecs);
+                    }),
+                ];
+                const otherBtns2 = [
+                    new Btn("<<", () => {
+                        Scene.load(TownScene.ins);
+                    }),
+                    (() => {
+                        const choosedTecIsSetting = () => this.target.tecs.some(t => t === this.choosedTec);
+                        const set = new Btn("セット", () => __awaiter(this, void 0, void 0, function* () {
+                            if (!this.choosedTec) {
+                                return;
+                            }
+                            for (let i = 0; i < this.target.tecs.length; i++) {
+                                if (this.target.tecs[i] === Tec.empty) {
+                                    this.target.tecs[i] = this.choosedTec;
+                                    FX_Str(Font.def, `${this.choosedTec}をセットしました`, { x: 0.5, y: 0.5 }, Color.WHITE);
+                                    // this.setList(this.target, this.getListTecs ,/*keepPage*/true);
+                                    return;
+                                }
+                            }
+                            FX_Str(Font.def, `技欄に空きがありません`, { x: 0.5, y: 0.5 }, Color.WHITE);
+                        }));
+                        const unset = new Btn("外す", () => __awaiter(this, void 0, void 0, function* () {
+                            if (!this.choosedTec) {
+                                return;
+                            }
+                            for (let i = 0; i < this.target.tecs.length; i++) {
+                                if (this.target.tecs[i] === this.choosedTec) {
+                                    this.target.tecs[i] = Tec.empty;
+                                    FX_Str(Font.def, `${this.choosedTec}を外しました`, { x: 0.5, y: 0.5 }, Color.WHITE);
+                                    // this.setList(this.target, this.getListTecs, /*keepPage*/true);
+                                    return;
+                                }
+                            }
+                        }));
+                        return new VariableLayout(() => {
+                            if (choosedTecIsSetting()) {
+                                return unset;
+                            }
+                            return set;
+                        });
+                    })(),
+                ];
                 const w = 2;
-                const h = ((otherBtns.length + TecType.values().length + 1) / w) | 0;
+                const h = ((otherBtns1.length + otherBtns2.length + TecType.values().length + 1) / w) | 0;
                 const l = new FlowLayout(w, h);
                 for (let type of TecType.values()) {
                     l.add(new Btn(`${type}`, () => {
                         this.setList(this.target, u => type.tecs.filter(t => u.isMasteredTec(t)));
                     }));
                 }
-                l.add(new Btn("全て", () => {
-                    this.setList(this.target, u => {
-                        let res = [];
-                        for (let type of TecType.values()) {
-                            res = res.concat(type.tecs.filter(t => u.isMasteredTec(t)));
-                        }
-                        return res;
-                    });
-                }));
-                l.add(new Btn("セット中", () => {
-                    this.setList(this.target, u => u.tecs);
-                }));
-                l.addFromLast(new Btn("<<", () => {
-                    Scene.load(TownScene.ins);
-                }));
-                const choosedTecIsSetting = () => this.target.tecs.some(t => t === this.choosedTec);
-                const set = new Btn("セット", () => __awaiter(this, void 0, void 0, function* () {
-                    if (!this.choosedTec) {
-                        return;
-                    }
-                    for (let i = 0; i < this.target.tecs.length; i++) {
-                        if (this.target.tecs[i] === Tec.empty) {
-                            this.target.tecs[i] = this.choosedTec;
-                            FX_Str(Font.def, `${this.choosedTec}をセットしました`, { x: 0.5, y: 0.5 }, Color.WHITE);
-                            // this.setList(this.target, this.getListTecs ,/*keepPage*/true);
-                            return;
-                        }
-                    }
-                    FX_Str(Font.def, `技欄に空きがありません`, { x: 0.5, y: 0.5 }, Color.WHITE);
-                }));
-                const unset = new Btn("外す", () => __awaiter(this, void 0, void 0, function* () {
-                    if (!this.choosedTec) {
-                        return;
-                    }
-                    for (let i = 0; i < this.target.tecs.length; i++) {
-                        if (this.target.tecs[i] === this.choosedTec) {
-                            this.target.tecs[i] = Tec.empty;
-                            FX_Str(Font.def, `${this.choosedTec}を外しました`, { x: 0.5, y: 0.5 }, Color.WHITE);
-                            // this.setList(this.target, this.getListTecs, /*keepPage*/true);
-                            return;
-                        }
-                    }
-                }));
-                l.addFromLast(new VariableLayout(() => {
-                    if (choosedTecIsSetting()) {
-                        return unset;
-                    }
-                    return set;
-                }));
+                for (const o of otherBtns1) {
+                    l.add(o);
+                }
+                for (const o of otherBtns2) {
+                    l.addFromLast(o);
+                }
                 return l;
             })());
         })()));

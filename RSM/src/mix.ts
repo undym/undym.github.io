@@ -148,11 +148,6 @@ export namespace Mix{
     //アイテム
     //
     //--------------------------------------------------------
-    const           サンタクララ薬 = new Mix({
-        uniqueName:"サンタクララ薬", limit:5,
-        result:()=>[Item.サンタクララ薬, 1],
-        materials:()=>[[Item.再構成トンネルの玉, 1], [Item.ヒノキ, 5], [Item.しいたけ, 5], [Item.水, 5]],
-    });
     const           硬化スティックパン = new Mix({
         uniqueName:"硬化スティックパン", limit:5,
         result:()=>[Item.硬化スティックパン, 1],

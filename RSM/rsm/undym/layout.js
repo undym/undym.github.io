@@ -366,8 +366,9 @@ export class YLayout extends ILayout {
     }
 }
 export class FlowLayout extends ILayout {
-    constructor(w, h) {
+    constructor(w, h, variableH = false) {
         super();
+        this.variableH = variableH;
         this.layouts = [];
         this.index = 0;
         this.updateBounds = true;
@@ -396,6 +397,9 @@ export class FlowLayout extends ILayout {
         this.updateBounds = true;
     }
     set(index, l) {
+        for (let i = this.layouts.length; i < index + 1; i++) {
+            this.layouts.push(ILayout.empty);
+        }
         this.layouts[index] = l;
         return this;
     }
@@ -407,6 +411,11 @@ export class FlowLayout extends ILayout {
         if (this.index < this.layouts.length) {
             this.layouts[this.index] = l;
             this.index++;
+        }
+        else {
+            this.layouts.push(l);
+            this.index++;
+            this.updateBounds = true;
         }
         return this;
     }
@@ -425,17 +434,18 @@ export class FlowLayout extends ILayout {
         return this;
     }
     get length() { return this.layouts.length; }
+    get indexNow() { return this.index; }
     ctrlInner(origin) {
         return __awaiter(this, void 0, void 0, function* () {
             let bounds = this.getBounds(origin);
-            for (let i = 0; i < bounds.length; i++) {
+            for (let i = 0; i < this.layouts.length; i++) {
                 yield this.layouts[i].ctrl(bounds[i]);
             }
         });
     }
     drawInner(origin) {
         let bounds = this.getBounds(origin);
-        for (let i = 0; i < bounds.length; i++) {
+        for (let i = 0; i < this.layouts.length; i++) {
             this.layouts[i].draw(bounds[i]);
         }
     }

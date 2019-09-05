@@ -408,7 +408,7 @@ export namespace Item{
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
     };
     export const                         少女の心を持ったおっさん:Item = new class extends Item{
-        constructor(){super({uniqueName:"少女の心を持ったおっさん", info:["いつもプリキュアの話をしている"],
+        constructor(){super({uniqueName:"少女の心を持ったおっさん", info:["いつもプリキュアの","話をしている"],
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
     };
     export const                         枝:Item = new class extends Item{

@@ -88,9 +88,9 @@ class TownBtn {
         l.add(new Btn("お店", () => {
             Scene.load(new ShopScene());
         }));
-        l.add(new Btn("test", () => {
-            setDungeonNameFX("はじまりの丘", Place.MAIN);
-        }));
+        // l.add(new Btn("test", ()=>{
+        //     setDungeonNameFX("はじまりの丘", Place.MAIN );
+        // }));
         l.add(new Btn("アイテム", () => {
             Scene.load(ItemScene.ins({
                 selectUser: true,

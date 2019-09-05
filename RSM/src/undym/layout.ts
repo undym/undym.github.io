@@ -464,7 +464,7 @@ export class FlowLayout extends ILayout{
     private xMargin = 0;
     private yMargin = 0;
 
-    constructor(w:number, h:number){
+    constructor(w:number, h:number, private variableH:boolean = false){
         super();
 
         this.boundsBak = Rect.FULL;
@@ -496,6 +496,9 @@ export class FlowLayout extends ILayout{
     }
 
     set(index:number, l:ILayout):this{
+        for(let i = this.layouts.length; i < index + 1; i++){
+            this.layouts.push(ILayout.empty);
+        }
         this.layouts[index] = l;
         return this;
     }
@@ -510,6 +513,10 @@ export class FlowLayout extends ILayout{
         if(this.index < this.layouts.length){
             this.layouts[this.index] = l;
             this.index++;
+        }else{
+            this.layouts.push(l);
+            this.index++;
+            this.updateBounds = true;
         }
         return this;
     }
@@ -530,18 +537,19 @@ export class FlowLayout extends ILayout{
     }
 
     get length(){return this.layouts.length;}
+    get indexNow(){return this.index;}
 
 
     async ctrlInner(origin:Rect){
         let bounds:Rect[] = this.getBounds(origin);
-        for(let i = 0; i < bounds.length; i++){
+        for(let i = 0; i < this.layouts.length; i++){
             await this.layouts[i].ctrl( bounds[i] );
         }
     }
 
     drawInner(origin:Rect){
         let bounds:Rect[] = this.getBounds(origin);
-        for(let i = 0; i < bounds.length; i++){
+        for(let i = 0; i < this.layouts.length; i++){
             this.layouts[i].draw( bounds[i] );
         }
     }

@@ -244,7 +244,7 @@ Job.DEF_LVUP_EXP = 5;
                 appearLv: 80, lvupExp: Job.DEF_LVUP_EXP * 4,
                 grow: () => [{ prm: Prm.DRK, value: 1 }],
                 learn: () => [Tec.宵闇, Tec.影の鎧],
-                canJobChange: (p) => p.isMasteredJob(Job.しんまい),
+                canJobChange: (p) => p.isMasteredJob(Job.ヴァンパイア),
             });
             this.setEnemyInner = (e) => {
                 e.tecs = [Tec.暗黒剣, Tec.暗黒剣, Tec.吸血, Tec.殴る, Tec.宵闇];

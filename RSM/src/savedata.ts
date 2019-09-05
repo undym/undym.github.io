@@ -21,7 +21,7 @@ export class Version{
     get minior()    {return this.values[1];}
     get mentener()  {return this.values[2];}
 
-    /**整数。 */
+    /**Integer. */
     constructor(major:number, minior:number, mentener:number){
         this.values = [major|0, minior|0, mentener|0];
     }

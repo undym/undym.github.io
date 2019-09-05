@@ -200,6 +200,8 @@ const initGoods = ()=>{
     
     createItemGoods(Item.スティックパン, ()=>(Item.スティックパン.num+1) * 30, ()=>Item.スティックパン.num < 5);
     createItemGoods(Item.脱出ポッド, ()=>10, ()=> Item.脱出ポッド.num < 1);
+    createItemGoods(Item.赤い水, ()=>(Item.赤い水.num+1) * 100, ()=>Item.赤い水.num < 10 && Dungeon.リテの門.clearNum > 0);
+    createItemGoods(Item.サンタクララ薬, ()=>(Item.サンタクララ薬.num+1) * 50, ()=>Item.サンタクララ薬.num < 4 && Dungeon.リテの門.clearNum > 0);
 
     createEqGoods(Eq.う棒,      　()=>500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10 && Eq.う棒.totalGetNum === 0);
     createEqGoods(Eq.銅剣,       ()=>3000,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 20 && Eq.銅剣.totalGetNum === 0);

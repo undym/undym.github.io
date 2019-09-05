@@ -375,7 +375,7 @@ Item.DEF_NUM_LIMIT = 999;
     };
     Item.少女の心を持ったおっさん = new class extends Item {
         constructor() {
-            super({ uniqueName: "少女の心を持ったおっさん", info: ["いつもプリキュアの話をしている"],
+            super({ uniqueName: "少女の心を持ったおっさん", info: ["いつもプリキュアの", "話をしている"],
                 type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
         }
     };

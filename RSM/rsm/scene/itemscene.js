@@ -34,7 +34,7 @@ export class ItemScene extends Scene {
         this.selectedItem = undefined;
         super.clear();
         const listBounds = new Rect(0, 0, 0.5, 0.8);
-        const infoBounds = new Rect(listBounds.xw, 0, 1 - listBounds.w, 0.25);
+        const infoBounds = new Rect(listBounds.xw, 0, 1 - listBounds.w, 0.3);
         const btnBounds = new Rect(infoBounds.x, infoBounds.yh, infoBounds.w, listBounds.yh - infoBounds.yh);
         const pboxBounds = new Rect(Place.P_BOX.x, listBounds.yh, Place.P_BOX.w, 1 - listBounds.yh);
         super.add(listBounds, this.list);
@@ -63,7 +63,23 @@ export class ItemScene extends Scene {
                 }
             } }));
         super.add(btnBounds, (() => {
-            const otherBtns = ["使用", "<<"];
+            const otherBtns = [
+                new Btn("<<", () => {
+                    this.returnScene();
+                }),
+                (() => {
+                    const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
+                        yield this.use(this.selectedItem, this.user);
+                    }));
+                    const cantUse = new Btn(() => "-", () => { });
+                    return new VariableLayout(() => {
+                        if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
+                            return cantUse;
+                        }
+                        return canUse;
+                    });
+                })(),
+            ];
             const w = 2;
             const h = ((otherBtns.length + ItemParentType.values().length + 1) / w) | 0;
             const l = new FlowLayout(w, h);
@@ -72,19 +88,9 @@ export class ItemScene extends Scene {
                     this.setList(type);
                 }));
             }
-            l.addFromLast(new Btn("<<", () => {
-                this.returnScene();
-            }));
-            const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
-                yield this.use(this.selectedItem, this.user);
-            }));
-            const cantUse = new Btn(() => "-", () => { });
-            l.addFromLast(new VariableLayout(() => {
-                if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
-                    return cantUse;
-                }
-                return canUse;
-            }));
+            for (const o of otherBtns) {
+                l.addFromLast(o);
+            }
             return l;
         })());
         super.add(pboxBounds, DrawSTBoxes.players);
