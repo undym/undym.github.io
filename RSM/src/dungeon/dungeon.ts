@@ -317,7 +317,7 @@ export namespace Dungeon{
             let e = Unit.enemies[0];
             Job.ダウザー.setEnemy(e, e.prm(Prm.LV).base);
             e.name = "古代兵器";
-            e.prm(Prm.MAX_HP).base = 120;
+            e.prm(Prm.MAX_HP).base = 130;
         };
     };
 }

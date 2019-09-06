@@ -10,7 +10,7 @@ import { PlayData, SceneType, Util } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Mix } from "./mix.js";
 export class Version {
-    /**整数。 */
+    /**Integer. */
     constructor(major, minior, mentener) {
         this.values = [major | 0, minior | 0, mentener | 0];
     }
@@ -38,7 +38,7 @@ export class Version {
     }
     toString() { return `${this.major}.${this.minior}.${this.mentener}`; }
 }
-Version.NOW = new Version(0, 7, 0);
+Version.NOW = new Version(0, 8, 0);
 let saveDataVersion;
 export class SaveData {
     static exists() {
