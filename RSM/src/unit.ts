@@ -271,7 +271,7 @@ export abstract class Unit{
     beforeDoAtk(action:Action, target:Unit, dmg:Dmg)  {this.force(f=> f.beforeDoAtk(action, this, target, dmg));}
     beforeBeAtk(action:Action, attacker:Unit, dmg:Dmg){this.force(f=> f.beforeBeAtk(action, attacker, this, dmg));}
     afterDoAtk(action:Action, target:Unit, dmg:Dmg)   {this.force(f=> f.afterDoAtk(action, this, target, dmg));}
-    afterBeAtk(action:Action, attacker:Unit, dmg:Dmg) {this.force(f=> f.afterBeAtk(action, this, attacker, dmg));}
+    afterBeAtk(action:Action, attacker:Unit, dmg:Dmg) {this.force(f=> f.afterBeAtk(action, attacker, this, dmg));}
 
     protected force(forceDlgt:(f:Force)=>void){
         for(const tec of this.tecs){

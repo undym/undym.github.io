@@ -234,7 +234,7 @@ export class Unit {
     beforeDoAtk(action, target, dmg) { this.force(f => f.beforeDoAtk(action, this, target, dmg)); }
     beforeBeAtk(action, attacker, dmg) { this.force(f => f.beforeBeAtk(action, attacker, this, dmg)); }
     afterDoAtk(action, target, dmg) { this.force(f => f.afterDoAtk(action, this, target, dmg)); }
-    afterBeAtk(action, attacker, dmg) { this.force(f => f.afterBeAtk(action, this, attacker, dmg)); }
+    afterBeAtk(action, attacker, dmg) { this.force(f => f.afterBeAtk(action, attacker, this, dmg)); }
     force(forceDlgt) {
         for (const tec of this.tecs) {
             forceDlgt(tec);
