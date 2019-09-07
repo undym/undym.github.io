@@ -373,8 +373,8 @@ export abstract class ActiveTec extends Tec implements Action{
     }
 
     async runInner(attacker:Unit, target:Unit, dmg:Dmg){
-        await target.doDmg(dmg);
         this.effect(attacker, target, dmg);
+        await target.doDmg(dmg);
     }
 
     createDmg(attacker:Unit, target:Unit):Dmg{

@@ -316,8 +316,8 @@ export class ActiveTec extends Tec {
     }
     runInner(attacker, target, dmg) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield target.doDmg(dmg);
             this.effect(attacker, target, dmg);
+            yield target.doDmg(dmg);
         });
     }
     createDmg(attacker, target) {

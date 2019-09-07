@@ -70,6 +70,10 @@ export class Texture{
     get pixelW(){return this.canvas.width;}
     /**canvas.height */
     get pixelH(){return this.canvas.height;}
+    /**1/canvas.width */
+    get dotW(){return 1 / this.canvas.width;}
+    /**1/canvas.height */
+    get dotH(){return 1 / this.canvas.height;}
 }
 
 
