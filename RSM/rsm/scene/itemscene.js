@@ -95,10 +95,10 @@ export class ItemScene extends Scene {
         })());
         super.add(pboxBounds, DrawSTBoxes.players);
         super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
-        super.add(Rect.FULL, ILayout.create({ draw: (noUsed) => {
+        super.add(Rect.FULL, ILayout.create({ draw: (bounds) => {
                 Graphics.fillRect(this.user.bounds, new Color(0, 1, 1, 0.2));
             } }));
-        super.add(Rect.FULL, ILayout.create({ ctrl: (noUsed) => {
+        super.add(Rect.FULL, ILayout.create({ ctrl: (bounds) => {
                 if (!this.selectUser) {
                     return;
                 }

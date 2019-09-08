@@ -16,6 +16,7 @@ export class Btn extends ILayout {
         this.cursorON = false;
         this.count = 0;
         this.noMove = false;
+        this.boundsContainsHold = false;
         if (typeof name === "string") {
             this.name = () => name;
         }
@@ -31,18 +32,24 @@ export class Btn extends ILayout {
         this.frameColor = () => new Color(0.5, 0.5, 0.5);
         this.stringColor = () => Color.BLACK;
     }
-    setNoMove() {
+    dontMove() {
         this.noMove = true;
         return this;
     }
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {
             let contains = bounds.contains(Input.point);
-            this.cursorON = contains && Input.holding > 0;
+            this.cursorON = contains && Input.holding > 0 && this.boundsContainsHold;
             if (contains) {
-                if (Input.pushed) {
+                if (Input.holding === 1) {
+                    this.boundsContainsHold = true;
+                }
+                if (Input.holding === 0 && this.boundsContainsHold) {
                     yield this.push();
                 }
+            }
+            if (Input.holding === 0) {
+                this.boundsContainsHold = false;
             }
         });
     }

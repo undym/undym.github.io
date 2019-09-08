@@ -242,28 +242,25 @@ export class Graphics{
         ctx.stroke();
     }
 
-    static clip(
-        bounds:{
-            rect?:{x:number, y:number, w:number, h:number},
-            arc?:{cx:number, cy:number, r:number, startRad:number, endRad:number},
-            polygon?:{x:number, y:number}[],
-        }
-        ,run:()=>void
-    ){
+    static clip(rect:{x:number, y:number, w:number, h:number}, run:()=>void):void;
+    static clip(arc:{cx:number, cy:number, r:number, startRad:number, endRad:number}, run:()=>void):void;
+    static clip(polygon:{x:number, y:number}[], run:()=>void):void;
+    static clip(bounds:any ,run:()=>void):void{
         const ctx = this.texture.ctx;
         ctx.save();
 
         ctx.beginPath();
-        if(bounds.rect !== undefined){
-            const rect = bounds.rect;
-            ctx.rect( rect.x, rect.y, rect.w, rect.h );
+        
+        if(bounds.w){
+            const rect:{x:number, y:number, w:number, h:number} = bounds;
+            ctx.rect( rect.x * Graphics.pixelW, rect.y * Graphics.pixelH, rect.w * Graphics.pixelW, rect.h * Graphics.pixelH );
         }
-        if(bounds.arc !== undefined){
-            const arc = bounds.arc;
+        else if(bounds.arc){
+            const arc:{cx:number, cy:number, r:number, startRad:number, endRad:number} = bounds;
             ctx.arc( arc.cx, arc.cy, arc.r, arc.startRad, arc.endRad );
         }
-        if(bounds.polygon !== undefined){
-            const polygon = bounds.polygon;
+        else{//polygon
+            const polygon:{x:number, y:number}[] = bounds;
             if(polygon.length > 0){
                 ctx.moveTo( polygon[0].x, polygon[0].y );
                 for(let i = 0; i < polygon.length; i++){

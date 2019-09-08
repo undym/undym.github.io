@@ -151,7 +151,7 @@ export class DrawSTBoxes extends InnerLayout{
                 }
                 return x;
             })())
-            .add(ILayout.create({ctrl:(noUsed)=>{
+            .add(ILayout.create({ctrl:(bounds)=>{
                 if(Input.holding < 4){return;}
 
                 for(let i = 0; i < len; i++){

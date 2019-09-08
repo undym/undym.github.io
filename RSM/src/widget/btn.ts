@@ -15,6 +15,7 @@ export class Btn extends ILayout{
     stringColor:()=>Color;
     count:number = 0;
     noMove = false;
+    boundsContainsHold = false;
 
     constructor(name:()=>string, push:()=>void);
     constructor(name:string, push:()=>void);
@@ -43,18 +44,27 @@ export class Btn extends ILayout{
     }
     
 
-    setNoMove():Btn{
+    dontMove():Btn{
         this.noMove = true;
         return this;
     }
 
     async ctrlInner(bounds:Rect){
         let contains = bounds.contains( Input.point );
-        this.cursorON = contains && Input.holding > 0;
+        this.cursorON = contains && Input.holding > 0 && this.boundsContainsHold;
+        
         if(contains){
-            if(Input.pushed){
+            if(Input.holding === 1){
+                this.boundsContainsHold = true;
+            }
+
+            if(Input.holding === 0 && this.boundsContainsHold){
                 await this.push();
             }
+        }
+
+        if(Input.holding === 0){
+            this.boundsContainsHold = false;
         }
     }
 

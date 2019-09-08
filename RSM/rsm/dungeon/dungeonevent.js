@@ -174,7 +174,7 @@ DungeonEvent.btnLayoutType = 0;
                     yield p.judgeDead();
                 }
                 DungeonEvent.empty.happen();
-            })).setNoMove());
+            })).dontMove());
         }
     };
     DungeonEvent.TRAP_BROKEN = new class extends DungeonEvent {
@@ -228,7 +228,7 @@ DungeonEvent.btnLayoutType = 0;
                     yield p.doDmg(dmg);
                     yield p.judgeDead();
                 }
-            })).setNoMove());
+            })).dontMove());
         }
     };
     DungeonEvent.TREE_BROKEN = new class extends DungeonEvent {

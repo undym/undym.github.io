@@ -96,14 +96,14 @@ export class BattleScene extends Scene{
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
 
-        super.add(Rect.FULL, ILayout.create({draw:(noUsed)=>{
+        super.add(Rect.FULL, ILayout.create({draw:(bounds)=>{
             if(!Battle.getPhaseUnit().exists){return;}
 
             Graphics.fillRect(Battle.getPhaseUnit().bounds, new Color(0,1,1,0.2));
         }}));
 
 
-        super.add(Rect.FULL, ILayout.create({ctrl:async(noUsed)=>{
+        super.add(Rect.FULL, ILayout.create({ctrl:async(bounds)=>{
             if(Battle.start){
                 Battle.start = false;
                 SceneType.BATTLE.set();

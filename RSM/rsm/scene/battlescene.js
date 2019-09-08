@@ -77,13 +77,13 @@ export class BattleScene extends Scene {
         super.add(Place.E_BOX, DrawSTBoxes.enemies);
         super.add(Place.P_BOX, DrawSTBoxes.players);
         super.add(Place.MAIN, DrawUnitDetail.ins);
-        super.add(Rect.FULL, ILayout.create({ draw: (noUsed) => {
+        super.add(Rect.FULL, ILayout.create({ draw: (bounds) => {
                 if (!Battle.getPhaseUnit().exists) {
                     return;
                 }
                 Graphics.fillRect(Battle.getPhaseUnit().bounds, new Color(0, 1, 1, 0.2));
             } }));
-        super.add(Rect.FULL, ILayout.create({ ctrl: (noUsed) => __awaiter(this, void 0, void 0, function* () {
+        super.add(Rect.FULL, ILayout.create({ ctrl: (bounds) => __awaiter(this, void 0, void 0, function* () {
                 if (Battle.start) {
                     Battle.start = false;
                     SceneType.BATTLE.set();

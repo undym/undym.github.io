@@ -56,7 +56,7 @@ export class Job {
         e.prm(Prm.LV).base = lv;
         e.prm(Prm.EXP).base = lv + 1;
         e.yen = lv + 1;
-        e.prm(Prm.MAX_HP).base = 3 + (lv * lv * 0.55);
+        e.prm(Prm.MAX_HP).base = 3 + (lv * lv * 0.35);
         e.prm(Prm.MAX_MP).base = Unit.DEF_MAX_MP;
         e.prm(Prm.MAX_TP).base = Unit.DEF_MAX_TP;
         e.tp = 0;

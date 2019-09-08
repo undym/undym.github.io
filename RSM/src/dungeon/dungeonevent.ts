@@ -175,7 +175,7 @@ export namespace DungeonEvent{
                                     }
 
                                     DungeonEvent.empty.happen();
-                                }).setNoMove())
+                                }).dontMove())
                                 ;
     };
     export const TRAP_BROKEN:DungeonEvent = new class extends DungeonEvent{
@@ -224,7 +224,7 @@ export namespace DungeonEvent{
                                         await p.doDmg(dmg);
                                         await p.judgeDead();
                                     }
-                                }).setNoMove())
+                                }).dontMove())
                                 ;
     };
     export const TREE_BROKEN:DungeonEvent = new class extends DungeonEvent{
