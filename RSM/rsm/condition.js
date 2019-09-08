@@ -217,6 +217,7 @@ Condition._valueOf = new Map();
                 let dmg = new Dmg({ absPow: value });
                 Util.msg.set("＞毒", Color.RED);
                 unit.doDmg(dmg);
+                yield wait();
                 unit.setCondition(this, value * 0.666);
             });
         }

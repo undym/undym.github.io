@@ -196,12 +196,10 @@ export class Unit {
                 FX_Shake(this.bounds);
                 FX_RotateStr(font, `${result.value}`, p, Color.RED);
                 Util.msg.set(`${this.name}に${result.value}のダメージ`, Color.RED.bright);
-                yield wait();
             }
             else {
                 FX_RotateStr(font, `MISS`, p, Color.RED);
                 Util.msg.set("MISS");
-                yield wait();
             }
         });
     }

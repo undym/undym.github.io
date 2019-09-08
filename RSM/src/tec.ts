@@ -373,8 +373,9 @@ export abstract class ActiveTec extends Tec implements Action{
     }
 
     async runInner(attacker:Unit, target:Unit, dmg:Dmg){
+        await target.doDmg(dmg); 
         this.effect(attacker, target, dmg);
-        await target.doDmg(dmg);
+        await wait();
     }
 
     createDmg(attacker:Unit, target:Unit):Dmg{
@@ -467,12 +468,12 @@ export namespace Tec{
         constructor(){super({uniqueName:"カウンター", info:["被格闘攻撃時反撃"],
                                 type:TecType.格闘,
         });}
-        afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+        async afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof Tec && action.type === TecType.格闘 && !dmg.counter){
                 Util.msg.set(">カウンター");
                 let cdmg = TecType.格闘.createDmg(target, attacker);
                 cdmg.counter = true;
-                attacker.doDmg(cdmg);
+                attacker.doDmg(cdmg); await wait();
             }
         }
     };
@@ -554,7 +555,7 @@ export namespace Tec{
                             absPow:target.prm(Prm.LIG).total + target.prm(Prm.LV).total,
                             counter:true,
                         });
-            attacker.doDmg(cdmg);
+            attacker.doDmg(cdmg); await wait();
         }
     }
     export const                          吸血:ActiveTec = new class extends ActiveTec{
@@ -1010,10 +1011,10 @@ export namespace Tec{
         constructor(){super({uniqueName:"頭痛", info:["行動開始時MP+10%","回復MP分のダメージを受ける"],
                                 type:TecType.回復,
         });}
-        phaseStart(unit:Unit){
+        async phaseStart(unit:Unit){
             const value = unit.prm(Prm.MAX_MP).total * 0.1;
             unit.mp += value;
-            unit.doDmg(new Dmg({absPow:value}));
+            unit.doDmg(new Dmg({absPow:value})); await wait();
         }
     };
     export const                         TP自動回復:PassiveTec = new class extends PassiveTec{
@@ -1057,7 +1058,7 @@ export namespace Tec{
         }
         async run(attacker:Unit, target:Unit){
             const dmg = new Dmg({absPow:attacker.hp});
-            target.doDmg(dmg);
+            target.doDmg(dmg); await wait();
         }
     }
     //--------------------------------------------------------------------------

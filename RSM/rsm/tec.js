@@ -316,8 +316,9 @@ export class ActiveTec extends Tec {
     }
     runInner(attacker, target, dmg) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.effect(attacker, target, dmg);
             yield target.doDmg(dmg);
+            this.effect(attacker, target, dmg);
+            yield wait();
         });
     }
     createDmg(attacker, target) {
@@ -420,12 +421,15 @@ ActiveTec._valueOf = new Map();
             });
         }
         afterBeAtk(action, attacker, target, dmg) {
-            if (action instanceof Tec && action.type === TecType.格闘 && !dmg.counter) {
-                Util.msg.set(">カウンター");
-                let cdmg = TecType.格闘.createDmg(target, attacker);
-                cdmg.counter = true;
-                attacker.doDmg(cdmg);
-            }
+            return __awaiter(this, void 0, void 0, function* () {
+                if (action instanceof Tec && action.type === TecType.格闘 && !dmg.counter) {
+                    Util.msg.set(">カウンター");
+                    let cdmg = TecType.格闘.createDmg(target, attacker);
+                    cdmg.counter = true;
+                    attacker.doDmg(cdmg);
+                    yield wait();
+                }
+            });
         }
     };
     Tec.急所 = new class extends PassiveTec {
@@ -524,6 +528,7 @@ ActiveTec._valueOf = new Map();
                     counter: true,
                 });
                 attacker.doDmg(cdmg);
+                yield wait();
             });
         }
     };
@@ -1126,9 +1131,12 @@ ActiveTec._valueOf = new Map();
             });
         }
         phaseStart(unit) {
-            const value = unit.prm(Prm.MAX_MP).total * 0.1;
-            unit.mp += value;
-            unit.doDmg(new Dmg({ absPow: value }));
+            return __awaiter(this, void 0, void 0, function* () {
+                const value = unit.prm(Prm.MAX_MP).total * 0.1;
+                unit.mp += value;
+                unit.doDmg(new Dmg({ absPow: value }));
+                yield wait();
+            });
         }
     };
     Tec.TP自動回復 = new class extends PassiveTec {
@@ -1189,6 +1197,7 @@ ActiveTec._valueOf = new Map();
             return __awaiter(this, void 0, void 0, function* () {
                 const dmg = new Dmg({ absPow: attacker.hp });
                 target.doDmg(dmg);
+                yield wait();
             });
         }
     };
