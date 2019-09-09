@@ -2,7 +2,7 @@ import { Point } from "./type.js";
 
 
 export class Input{
-    private static _pushed:boolean;
+    private static _click:boolean = false;
     private static _x:number = 0;
     private static _y:number = 0;
     private static canvas:HTMLCanvasElement;
@@ -57,7 +57,7 @@ export class Input{
         this.canvas.addEventListener("click", (ev)=>{
             if(this.touch){return;}
 
-            this._pushed = true;
+            this._click = true;
             
             setXYMouse(ev);
         });
@@ -87,7 +87,7 @@ export class Input{
             this.hold = 0;
             if(ev.touches.length >= 2){return;}
 
-            this._pushed = true;
+            this._click = true;
             
             setXYTouch(ev);
         });
@@ -96,7 +96,7 @@ export class Input{
     }
 
     static update(){
-        this._pushed = false;
+        this._click = false;
 
         if(this._holding){
             this.hold++;
@@ -104,15 +104,15 @@ export class Input{
     }
 
     static clear(){
-        this._pushed = false;
+        this._click = false;
         this.hold = 0;
     }
 
     static get point(){return new Point(this.x, this.y);}
     static get x(){return this._x / this.canvas.clientWidth;}
     static get y(){return this._y / this.canvas.clientHeight;}
-    /**押されたフレームはtrue. */
-    static get pushed():boolean{return this._pushed;}
+    
+    static get click():boolean{return this._click;}
 
     static get holding():number{return this.hold;}
 }

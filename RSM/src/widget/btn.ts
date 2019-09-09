@@ -6,16 +6,18 @@ import { Font, Graphics } from "../graphics/graphics.js";
 
 export class Btn extends ILayout{
 
-    private name:()=>string;
-    private push:()=>void;
-    private font:Font;
-    private cursorON:boolean = false;
     groundColor:()=>Color;
     frameColor:()=>Color;
     stringColor:()=>Color;
     count:number = 0;
     noMove = false;
     boundsContainsHold = false;
+
+    private name:()=>string;
+    private push:()=>void;
+    private font:Font;
+    private cursorON:boolean = false;
+    private beforeFrameHolding = 0;
 
     constructor(name:()=>string, push:()=>void);
     constructor(name:string, push:()=>void);
@@ -51,14 +53,17 @@ export class Btn extends ILayout{
 
     async ctrlInner(bounds:Rect){
         let contains = bounds.contains( Input.point );
-        this.cursorON = contains && Input.holding > 0 && this.boundsContainsHold;
+        this.cursorON = contains && Input.holding > 0;
         
         if(contains){
             if(Input.holding === 1){
                 this.boundsContainsHold = true;
             }
 
-            if(Input.holding === 0 && this.boundsContainsHold){
+            if(
+                   (Input.holding === 0 && this.boundsContainsHold)
+                || (Input.click && this.beforeFrameHolding === 0)
+            ){
                 await this.push();
             }
         }
@@ -66,6 +71,8 @@ export class Btn extends ILayout{
         if(Input.holding === 0){
             this.boundsContainsHold = false;
         }
+
+        this.beforeFrameHolding = Input.holding;
     }
 
     drawInner(bounds:Rect){

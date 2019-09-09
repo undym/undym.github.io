@@ -50,7 +50,7 @@ export class Input {
             if (this.touch) {
                 return;
             }
-            this._pushed = true;
+            this._click = true;
             setXYMouse(ev);
         });
         this.canvas.addEventListener("mousemove", (ev) => {
@@ -80,27 +80,27 @@ export class Input {
             if (ev.touches.length >= 2) {
                 return;
             }
-            this._pushed = true;
+            this._click = true;
             setXYTouch(ev);
         });
     }
     static update() {
-        this._pushed = false;
+        this._click = false;
         if (this._holding) {
             this.hold++;
         }
     }
     static clear() {
-        this._pushed = false;
+        this._click = false;
         this.hold = 0;
     }
     static get point() { return new Point(this.x, this.y); }
     static get x() { return this._x / this.canvas.clientWidth; }
     static get y() { return this._y / this.canvas.clientHeight; }
-    /**押されたフレームはtrue. */
-    static get pushed() { return this._pushed; }
+    static get click() { return this._click; }
     static get holding() { return this.hold; }
 }
+Input._click = false;
 Input._x = 0;
 Input._y = 0;
 Input.hold = 0;

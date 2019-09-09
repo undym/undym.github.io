@@ -171,6 +171,7 @@ DungeonEvent.btnLayoutType = 0;
                     }
                     const dmg = new Dmg({ absPow: p.prm(Prm.MAX_HP).total / 5 });
                     yield p.doDmg(dmg);
+                    yield wait();
                     yield p.judgeDead();
                 }
                 DungeonEvent.empty.happen();
@@ -226,6 +227,7 @@ DungeonEvent.btnLayoutType = 0;
                     }
                     const dmg = new Dmg({ absPow: p.prm(Prm.MAX_HP).total / 10 });
                     yield p.doDmg(dmg);
+                    yield wait();
                     yield p.judgeDead();
                 }
             })).dontMove());

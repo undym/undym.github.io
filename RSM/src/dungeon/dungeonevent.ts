@@ -170,7 +170,7 @@ export namespace DungeonEvent{
                                         if(!p.exists || p.dead){continue;}
 
                                         const dmg = new Dmg({absPow: p.prm(Prm.MAX_HP).total / 5});
-                                        await p.doDmg(dmg);
+                                        await p.doDmg(dmg); await wait();
                                         await p.judgeDead();
                                     }
 
@@ -221,7 +221,7 @@ export namespace DungeonEvent{
                                         if(!p.exists || p.dead){continue;}
 
                                         const dmg = new Dmg({absPow: p.prm(Prm.MAX_HP).total / 10});
-                                        await p.doDmg(dmg);
+                                        await p.doDmg(dmg); await wait();
                                         await p.judgeDead();
                                     }
                                 }).dontMove())

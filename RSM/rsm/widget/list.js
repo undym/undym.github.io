@@ -79,8 +79,8 @@ export class List extends ILayout {
                 this.slide.x = Input.x - this.holdPoint.x;
             }
             else {
-                this.slide.x *= 0.80;
-                this.slide.y *= 0.80;
+                this.slide.x *= 0.50;
+                this.slide.y *= 0.50;
             }
             if (this.update) {
                 this.update = false;
@@ -152,7 +152,7 @@ class Elm extends ILayout {
             if (Input.holding > 4) {
                 this.hold(this);
             }
-            if (Input.pushed && bounds.contains(Input.point)) {
+            if (Input.click && bounds.contains(Input.point)) {
                 this.push(this);
             }
         });

@@ -98,7 +98,6 @@ window.onload = ()=>{
 
     if(SaveData.exists()){
         continueGame();
-        Scene.load( TownScene.ins );
         ctrl();
     }else{
         newGame();

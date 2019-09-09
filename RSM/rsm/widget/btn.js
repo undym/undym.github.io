@@ -13,10 +13,11 @@ import { Font, Graphics } from "../graphics/graphics.js";
 export class Btn extends ILayout {
     constructor(name, push) {
         super();
-        this.cursorON = false;
         this.count = 0;
         this.noMove = false;
         this.boundsContainsHold = false;
+        this.cursorON = false;
+        this.beforeFrameHolding = 0;
         if (typeof name === "string") {
             this.name = () => name;
         }
@@ -39,18 +40,20 @@ export class Btn extends ILayout {
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {
             let contains = bounds.contains(Input.point);
-            this.cursorON = contains && Input.holding > 0 && this.boundsContainsHold;
+            this.cursorON = contains && Input.holding > 0;
             if (contains) {
                 if (Input.holding === 1) {
                     this.boundsContainsHold = true;
                 }
-                if (Input.holding === 0 && this.boundsContainsHold) {
+                if ((Input.holding === 0 && this.boundsContainsHold)
+                    || (Input.click && this.beforeFrameHolding === 0)) {
                     yield this.push();
                 }
             }
             if (Input.holding === 0) {
                 this.boundsContainsHold = false;
             }
+            this.beforeFrameHolding = Input.holding;
         });
     }
     drawInner(bounds) {
