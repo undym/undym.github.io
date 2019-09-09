@@ -273,7 +273,7 @@ FXTest.add(FX_格闘.name, ()=> FX_格闘(FXTest.target));
 
 
 
-export const FX_魔法 = (center) => {
+export const FX_魔法 = (center:{x:number, y:number}) => {
     let particles:{r:number, rad:number, ordinal:number, color:Color}[] = [];
     const iLoop = 5;
     const i2Loop = 10;
@@ -310,3 +310,87 @@ export const FX_魔法 = (center) => {
     });
 };
 FXTest.add(FX_魔法.name, () => FX_魔法(FXTest.target));
+
+
+export const FX_鎖 = (attacker:{x:number, y:number}, target:{x:number, y:number})=>{
+    FX.add((count)=>{
+        const over = 20;
+
+        
+
+        return count < over;
+    });
+};
+FXTest.add(FX_鎖.name, () => FX_鎖( FXTest.attacker, FXTest.target ));
+
+
+export const FX_銃 = (attacker:{x:number, y:number}, target:{x:number, y:number}) => {
+    let particles:{
+        x:number,
+        y:number,
+        vx:number,
+        vy:number,
+        lifeTime:number,
+        lifeTimeLim:number,
+        points:{x:number,y:number}[],
+    }[] = [];
+    for (let i = 0; i < 20; i++) {
+        const vecBase = 0.08;
+        let vec = Math.random() * vecBase;
+        if(Math.random() < 0.1){vec *= 3;}
+        const vecRad = Math.PI * 2 * Math.random();
+        const lifeTime = 2 + ((vecBase - vec) * 250)|0;
+
+        let points:{x:number, y:number}[] = [];
+        const vertex = 3 + (Math.random() * 6)|0;
+        for(let i = 0; i < vertex; i++){
+            const rad = Math.PI * 2 * (i+1) / vertex;
+            points.push({
+                x:Math.cos(rad + Math.random() * 0.01) * (lifeTime * Math.random()) * 0.001,
+                y:Math.sin(rad + Math.random() * 0.01) * (lifeTime * Math.random()) * 0.001,
+            });
+        }
+
+        particles.push({
+            x: target.x,
+            y: target.y,
+            vx: Math.cos(vecRad) * vec,
+            vy: Math.sin(vecRad) * vec,
+            lifeTime: lifeTime,
+            lifeTimeLim: lifeTime,
+            points:points,
+        });
+    }
+    FX.add((count) => {
+        let exists = false;
+        for (const p of particles) {
+            if (p.lifeTime-- > 0) {
+                exists = true;
+                
+                let points:{x:number, y:number}[] = [];
+                for(let _p of p.points){
+                    points.push({
+                        x:p.x + _p.x,
+                        y:p.y + _p.y,
+                    });
+                }
+                Graphics.fillPolygon(points, new Color(1,0,0, p.lifeTime / p.lifeTimeLim));
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.5;
+                p.vy *= 0.5;
+            }
+        }
+        return exists;
+    });
+
+    FX.add((count) => {
+        const over = 10;
+        const a = 1.0 - count / over;
+        Graphics.line(attacker, target, new Color(1, 1, 1, a));
+        const r = 0.07 * count / over;
+        Graphics.drawOval(target, r, new Color(1, 1, 1, a));
+        return count < over;
+    });
+};
+FXTest.add(FX_銃.name, () => FX_銃(FXTest.attacker, FXTest.target));

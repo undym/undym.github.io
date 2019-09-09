@@ -19,7 +19,7 @@ import { JobChangeScene } from "./jobchangescene.js";
 import { SetTecScene } from "./settecscene.js";
 import { MixScene } from "./mixscene.js";
 import { EqScene } from "./eqscene.js";
-import { ConditionType } from "../condition.js";
+import { ConditionType, Condition } from "../condition.js";
 import { ShopScene } from "./shopscene.js";
 import { FX } from "../fx/fx.js";
 
@@ -69,8 +69,8 @@ const fullCare = ()=>{
         u.hp = u.prm(Prm.MAX_HP).total;
         u.mp = u.prm(Prm.MAX_MP).total;
         u.ep = u.prm(Prm.MAX_EP).total;
-
-        for(const type of ConditionType.badConditions()){
+        
+        for(const type of ConditionType.values()){
             u.clearCondition(type);
         }
     }

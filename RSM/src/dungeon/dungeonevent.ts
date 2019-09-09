@@ -303,9 +303,9 @@ export namespace DungeonEvent{
 
             Util.msg.set(`${Dungeon.now.toString()}を脱出します...`); await cwait();
             
+            Scene.load( TownScene.ins ); await wait();
+            
             SaveData.save(); await cwait();
-
-            Scene.load( TownScene.ins ); await wait(); await wait();
         };
         createBtnLayout = ()=> ILayout.empty;
     };

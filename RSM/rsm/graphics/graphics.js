@@ -135,6 +135,15 @@ export class Graphics {
         ctx.stroke();
     }
     /**rはtextureのwを基準にする。 */
+    static drawOval(ratioCenter, ratioR, color) {
+        const ctx = this.texture.ctx;
+        ctx.beginPath();
+        ctx.arc(ratioCenter.x * this.texture.pixelW, ratioCenter.y * this.texture.pixelH, ratioR * this.texture.pixelW, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.strokeStyle = toHTMLColorString(color);
+        ctx.stroke();
+    }
+    /**rはtextureのwを基準にする。 */
     static fillOval(ratioCenter, ratioR, color) {
         const ctx = this.texture.ctx;
         ctx.beginPath();
@@ -157,7 +166,7 @@ export class Graphics {
             ctx.lineTo(points[i].x * w, points[i].y * h);
         }
         ctx.closePath();
-        ctx.stroke();
+        ctx.fill();
     }
     static clip(bounds, run) {
         const ctx = this.texture.ctx;

@@ -56,14 +56,14 @@ export class List extends ILayout {
             const contains = bounds.contains(Input.point);
             if (Input.holding === 0 && this.hold) {
                 this.hold = false;
-                if (this.slide.x >= bounds.w * 0.4) {
+                if (this.slide.x >= bounds.w * 0.35) {
                     const pageBak = this.page;
                     this.movePage(-1);
                     if (pageBak !== this.page) {
                         this.slide.x -= bounds.w;
                     }
                 }
-                else if (this.slide.x <= -bounds.w * 0.4) {
+                else if (this.slide.x <= -bounds.w * 0.35) {
                     const pageBak = this.page;
                     this.movePage(1);
                     if (pageBak !== this.page) {

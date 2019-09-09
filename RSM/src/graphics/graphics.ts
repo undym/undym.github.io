@@ -143,6 +143,16 @@ export class Graphics{
     static getRenderTarget()                {return this.texture;}
     static setRenderTarget(texture:Texture) {this.texture = texture;}
 
+    static set lineWidth(width:number){this.texture.ctx.lineWidth = width;}
+    static setLineWidth(width:number, run:()=>void){
+        const ctx = this.texture.ctx;
+        const bak = ctx.lineWidth;
+        ctx.lineWidth = width;
+
+        run();
+
+        ctx.lineWidth = bak;
+    }
 
     static clear(bounds:{x:number, y:number, w:number, h:number}){
         this.texture.ctx.clearRect(
@@ -209,6 +219,21 @@ export class Graphics{
     }
 
     /**rはtextureのwを基準にする。 */
+    static drawOval(ratioCenter:{x:number, y:number}, ratioR:number, color:{r:number, g:number, b:number, a:number}){
+        const ctx = this.texture.ctx;
+        ctx.beginPath();
+        ctx.arc(
+            ratioCenter.x * this.texture.pixelW, 
+            ratioCenter.y * this.texture.pixelH, 
+            ratioR * this.texture.pixelW, 
+            0, 
+            Math.PI * 2);
+        ctx.closePath();
+
+        ctx.strokeStyle = toHTMLColorString(color);
+        ctx.stroke();
+    }
+    /**rはtextureのwを基準にする。 */
     static fillOval(ratioCenter:{x:number, y:number}, ratioR:number, color:{r:number, g:number, b:number, a:number}){
         const ctx = this.texture.ctx;
         ctx.beginPath();
@@ -239,7 +264,7 @@ export class Graphics{
         }
 
         ctx.closePath();
-        ctx.stroke();
+        ctx.fill();
     }
 
     static clip(rect:{x:number, y:number, w:number, h:number}, run:()=>void):void;

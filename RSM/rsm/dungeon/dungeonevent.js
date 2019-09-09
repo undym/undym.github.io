@@ -314,11 +314,10 @@ DungeonEvent.btnLayoutType = 0;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
                 Util.msg.set(`${Dungeon.now.toString()}を脱出します...`);
                 yield cwait();
-                SaveData.save();
-                yield cwait();
                 Scene.load(TownScene.ins);
                 yield wait();
-                yield wait();
+                SaveData.save();
+                yield cwait();
             });
             this.createBtnLayout = () => ILayout.empty;
         }

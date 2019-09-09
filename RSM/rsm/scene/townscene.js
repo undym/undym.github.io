@@ -55,7 +55,7 @@ const fullCare = () => {
         u.hp = u.prm(Prm.MAX_HP).total;
         u.mp = u.prm(Prm.MAX_MP).total;
         u.ep = u.prm(Prm.MAX_EP).total;
-        for (const type of ConditionType.badConditions()) {
+        for (const type of ConditionType.values()) {
             u.clearCondition(type);
         }
     }
