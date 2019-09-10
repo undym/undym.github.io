@@ -257,9 +257,16 @@ export const FX_魔法 = (center) => {
     });
 };
 FXTest.add(FX_魔法.name, () => FX_魔法(FXTest.target));
+export const FX_鎖 = (attacker, target) => {
+    FX.add((count) => {
+        const over = 20;
+        return count < over;
+    });
+};
+FXTest.add(FX_鎖.name, () => FX_鎖(FXTest.attacker, FXTest.target));
 export const FX_銃 = (attacker, target) => {
     let particles = [];
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 20; i++) {
         const vecBase = 0.08;
         let vec = Math.random() * vecBase;
         if (Math.random() < 0.1) {

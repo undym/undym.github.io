@@ -12,7 +12,7 @@ import { Graphics, Texture, Font } from "./graphics/graphics.js";
 import { Item } from "./item.js";
 import { SaveData, Version } from "./savedata.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
-
+import { XLayout } from "./undym/layout.js";
 
 
 window.onload = ()=>{
@@ -25,7 +25,6 @@ window.onload = ()=>{
         const sw = ctx.measureText(s).width;
         ctx.fillText(s, canvas.width / 2 - sw, canvas.height - 2);
     }
-    
     
     // {
     //     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;

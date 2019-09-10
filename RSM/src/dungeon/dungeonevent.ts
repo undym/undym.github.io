@@ -26,27 +26,6 @@ export abstract class DungeonEvent{
 
     static now:DungeonEvent;
 
-    static btnLayouts = [
-        {
-            get advance(){return 1;},
-            get return() {return 4;},
-            get item()   {return 3;},
-        },
-        {
-            get advance(){return 0;},
-            get return() {return 1;},
-            get item()   {return 2;},
-        },
-        {
-            get advance(){return 2;},
-            get return() {return 1;},
-            get item()   {return 0;},
-        },
-    ];
-    static btnLayoutType = 0;
-    static get btnLayout(){return this.btnLayouts[ this.btnLayoutType ];}
-
-
     private img:Img;
     getImg():Img{return this.img ? this.img : (this.img = this.createImg());}
     protected createImg():Img{return Img.empty;}
@@ -301,11 +280,11 @@ export namespace DungeonEvent{
         constructor(){super();}
         happenInner = async()=>{
 
-            Util.msg.set(`${Dungeon.now.toString()}を脱出します...`); await cwait();
+            Util.msg.set(`${Dungeon.now.toString()}を脱出します...`); await cwait(); await wait();
             
-            Scene.load( TownScene.ins ); await wait();
+            Scene.load( TownScene.ins );
             
-            SaveData.save(); await cwait();
+            SaveData.save();
         };
         createBtnLayout = ()=> ILayout.empty;
     };
@@ -345,7 +324,7 @@ const createDefLayout = ()=>{
 };
 
 class AdvanceBtn{
-    static get index(){return DungeonEvent.btnLayout.advance;}
+    static get index(){return 1;}
 
     private static _ins:Btn;
     static get ins():Btn{
@@ -370,7 +349,7 @@ class AdvanceBtn{
 
 
 class ReturnBtn{
-    static get index(){return DungeonEvent.btnLayout.return;}
+    static get index(){return 4;}
     
     private static _ins:Btn;
     static get ins():Btn{
@@ -393,7 +372,7 @@ class ReturnBtn{
 
 
 class ItemBtn{
-    static get index(){return DungeonEvent.btnLayout.item;}
+    static get index(){return 3;}
 
     private static _ins:Btn;
     static get ins():Btn{

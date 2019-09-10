@@ -56,7 +56,9 @@ export class DrawDungeonData extends InnerLayout{
                 ,()=> `${Dungeon.auNow}/${Dungeon.now.au}`
                 ,()=> Color.D_CYAN.bright()
                 ,Font.def
+                ,2
             ))
+            .add(ILayout.empty)
         );
     }
 }

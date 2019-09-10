@@ -96,6 +96,14 @@ export class Graphics {
     constructor() { }
     static getRenderTarget() { return this.texture; }
     static setRenderTarget(texture) { this.texture = texture; }
+    static set lineWidth(width) { this.texture.ctx.lineWidth = width; }
+    static setLineWidth(width, run) {
+        const ctx = this.texture.ctx;
+        const bak = ctx.lineWidth;
+        ctx.lineWidth = width;
+        run();
+        ctx.lineWidth = bak;
+    }
     static clear(bounds) {
         this.texture.ctx.clearRect(bounds.x * this.texture.pixelW, bounds.y * this.texture.pixelH, bounds.w * this.texture.pixelW, bounds.h * this.texture.pixelH);
     }
@@ -222,6 +230,10 @@ export class Graphics {
     }
     static get pixelW() { return this.texture.pixelW; }
     static get pixelH() { return this.texture.pixelH; }
+    /**1/canvas.width */
+    static get dotW() { return this.texture.dotW; }
+    /**1/canvas.height */
+    static get dotH() { return this.texture.dotH; }
 }
 const toHTMLColorString = (color) => {
     const r = (color.r * 255) | 0;

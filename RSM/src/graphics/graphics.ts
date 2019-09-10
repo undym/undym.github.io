@@ -339,6 +339,10 @@ export class Graphics{
     
     static get pixelW(){return this.texture.pixelW;}
     static get pixelH(){return this.texture.pixelH;}
+    /**1/canvas.width */
+    static get dotW(){return this.texture.dotW;}
+    /**1/canvas.height */
+    static get dotH(){return this.texture.dotH;}
 }
 
 const toHTMLColorString = (color:{r:number, g:number, b:number, a:number})=>{
