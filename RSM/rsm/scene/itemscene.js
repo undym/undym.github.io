@@ -12,7 +12,7 @@ import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
 import { ILayout, VariableLayout, FlowLayout } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
-import { List } from "../widget/list.js";
+import { YList } from "../widget/list.js";
 import { Rect, Color } from "../undym/type.js";
 import { ItemParentType } from "../item.js";
 import { Input } from "../undym/input.js";
@@ -28,7 +28,7 @@ export class ItemScene extends Scene {
     }
     constructor() {
         super();
-        this.list = new List();
+        this.list = new YList();
     }
     init() {
         this.selectedItem = undefined;

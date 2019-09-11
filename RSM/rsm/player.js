@@ -7,15 +7,10 @@ export class Player {
         this.member = false;
         this.toString = () => this.uniqueName;
         Player._values.push(this);
+        Player._valueOf.set(this.uniqueName, this);
     }
     static values() { return this._values; }
     static valueOf(uniqueName) {
-        if (!this._valueOf) {
-            this._valueOf = new Map();
-            for (const p of this.values()) {
-                this._valueOf.set(p.uniqueName, p);
-            }
-        }
         return this._valueOf.get(uniqueName);
     }
     get ins() {
@@ -51,6 +46,7 @@ export class Player {
     }
 }
 Player._values = [];
+Player._valueOf = new Map();
 (function (Player) {
     Player.empty = new class extends Player {
         constructor() { super("empty"); }

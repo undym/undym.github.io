@@ -7,44 +7,34 @@ import { Graphics, Font, Texture } from "../graphics/graphics.js";
 
 
 export class List extends ILayout{
-    private readonly LEFT   = 0;
-    private readonly CENTER = 1;
-    private readonly RIGHT  = 2;
     private elms:ILayout[] = [];
     private aPageElmNum:number;
-    private panels:ILayout[] = [];
-    private elmPanels:YLayout[] = [];
-    private pageLayout:ILayout;
-    private page = 0;
+    private panel:ILayout;
+    private elmPanel:YLayout;
     private update:boolean = true;
     private hold = false;
-    private holdPoint = Point.ZERO;
-    private slide = {x:0, y:0};
+    private holdY = 0;
+    private scroll = 0;
+    private vec = 0;
 
     constructor(aPageElmNum:number = 12){
         super();
 
         this.aPageElmNum = aPageElmNum|0;
 
-        for(let i = 0; i < 3; i++){
-            const yLayout = new YLayout();
-            this.elmPanels.push(yLayout);
-            this.panels.push(
-                new RatioLayout()
-                    .add(new Rect(0, 0, 1, 0.95), yLayout)
-            );
-        }
 
-        this.pageLayout = new RatioLayout()
-                            .add(new Rect(0, 0.95, 1, 0.05), new Label(Font.def, ()=>`${this.page}/${this.pageLim}`).setBase(Font.CENTER));
+        this.elmPanel = new YLayout();
+        this.panel = new RatioLayout()
+                        .add(Rect.FULL, this.elmPanel);
+
     }
 
-    clear(keepPage = false){
+    clear(keepScroll = false){
         this.elms = [];
         
         this.update = true;
-        if(!keepPage){
-            this.page = 0;
+        if(!keepScroll){
+            this.scroll = 0;
         }
     }
 
@@ -80,94 +70,83 @@ export class List extends ILayout{
         this.update = true;
     }
 
+
     async ctrlInner(bounds:Rect){
         const contains = bounds.contains( Input.point );
 
-        if(Input.holding === 0 && this.hold){
+        if(Input.holding === 0){
             this.hold = false;
-            if(this.slide.x >= bounds.w * 0.35){
-                const pageBak = this.page;
-                this.movePage(-1);
-                if(pageBak !== this.page){this.slide.x -= bounds.w;}
-        }else if(this.slide.x <= -bounds.w * 0.35){
-                const pageBak = this.page;
-                this.movePage(1);
-                if(pageBak !== this.page){this.slide.x += bounds.w;}
-            }
         }
-        if(Input.holding === 1 && contains){
+
+        if(contains && Input.holding === 1){
             this.hold = true;
-            this.holdPoint = Input.point;
+            this.holdY = Input.y;
         }
 
         if(this.hold){
-            this.slide.x = Input.x - this.holdPoint.x;
+            this.vec = 0;
+            const min = bounds.h / this.aPageElmNum;
+            const addScroll = (this.holdY - Input.y) / min;
+            if(addScroll !== 0){
+                this.scroll += addScroll;
+                this.vec = addScroll;
+                this.holdY = Input.y;
+                this.update = true;
+            }
         }else{
-            this.slide.x *= 0.50;
-            this.slide.y *= 0.50;
+            if(this.vec !== 0){
+                this.scroll += this.vec;
+                this.vec *= 0.7;
+                this.update = true;
+            }
         }
+
 
 
         if(this.update){
             this.update = false;
 
-            let _page = this.page - 1;
-            for(const e of this.elmPanels){
-                e.clear();
-                if(_page >= 0){
-                    for(let i = _page * this.aPageElmNum; i < (_page+1) * this.aPageElmNum; i++){
-                        if(i < this.elms.length){
-                            e.add( this.elms[i] );
-                        }else{
-                            e.add( ILayout.empty );
-                        }
-                    }
+            if(this.scroll > this.elms.length - this.aPageElmNum){
+                this.scroll = this.elms.length - this.aPageElmNum;
+            }
+            if(this.scroll < 0){
+                this.scroll = 0;
+            }
+            
+            const e = this.elmPanel;
+            const page = this.scroll|0;
+            e.clear();
+            for(let i = page - 1; i < page + this.aPageElmNum + 1; i++){
+                if(0 <= i && i < this.elms.length){
+                    e.add( this.elms[i] );
+                }else{
+                    e.add( ILayout.empty );
                 }
-
-                _page++;
             }
 
         }
 
-
-        await this.panels[this.CENTER].ctrl(bounds);
+        if(contains){
+            await this.panel.ctrl( this.scrolledBounds(bounds) );
+        }
 
     }
 
     drawInner(bounds:Rect){
-
-        Graphics.clip(bounds, ()=>{    
-            let x = bounds.x - bounds.w + this.slide.x;
-            let y = bounds.y + this.slide.y;
-            for(const p of this.panels){
-                const r = new Rect(x, y, bounds.w, bounds.h);
-                p.draw(r);
-                x += bounds.w;
-            }
+        
+        Graphics.clip(bounds, ()=>{ 
+            this.panel.draw( this.scrolledBounds(bounds) );
         });
-
-        this.pageLayout.draw(bounds);
     }
 
-    private get pageLim():number{
-        let res = ((this.elms.length - 1) / this.aPageElmNum)|0;
-        return res >= 0 ? res : 0;
-    }
+    private oneElmH(bounds:Rect){return bounds.h / this.aPageElmNum;}
 
-    private movePage(value:number){
-        this.page += value;
-        this.update = true;
-
-        if(this.page < 0){this.page = 0;}
-
-        let lim = this.pageLim;
-        if(this.page > lim){this.page = lim;}
-
+    private scrolledBounds(bounds:Rect):Rect{
+        const oneElmH = this.oneElmH(bounds);
+        const s = this.scroll|0;
+        return new Rect(bounds.x, bounds.y - oneElmH - (this.scroll - s) * oneElmH, bounds.w, bounds.h + oneElmH * 2);
     }
 }
-
-
-
 
 
 
@@ -227,11 +206,13 @@ class Elm extends ILayout{
     }
 
     async ctrlInner(bounds:Rect){
-        if(Input.holding > 4){
-            this.hold(this);
-        }
-        if(Input.click && bounds.contains( Input.point )){
-            this.push(this);
+        if(bounds.contains( Input.point )){
+            if(Input.holding > 4){
+                this.hold(this);
+            }
+            if(Input.click){
+                this.push(this);
+            }
         }
     }
 

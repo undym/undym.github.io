@@ -10,6 +10,125 @@ import { Rect, Color, Point } from "../undym/type.js";
 import { ILayout, YLayout, RatioLayout, Label } from "../undym/layout.js";
 import { Input } from "../undym/input.js";
 import { Graphics, Font } from "../graphics/graphics.js";
+export class YList extends ILayout {
+    constructor(aPageElmNum = 12) {
+        super();
+        this.elms = [];
+        // private pageLayout:ILayout;
+        this.update = true;
+        this.hold = false;
+        // private holdPoint = Point.ZERO;
+        // private slide = {x:0, y:0};
+        this.holdY = 0;
+        this.scroll = 0;
+        this.vec = 0;
+        this.aPageElmNum = aPageElmNum | 0;
+        this.elmPanel = new YLayout();
+        this.panel = new RatioLayout()
+            .add(Rect.FULL, this.elmPanel);
+        // this.pageLayout = new RatioLayout()
+        //                     .add(new Rect(0, 0.95, 1, 0.05), new Label(Font.def, ()=>`${this.page}/${this.pageLim}`).setBase(Font.CENTER));
+    }
+    clear(keepScroll = false) {
+        this.elms = [];
+        this.update = true;
+        if (!keepScroll) {
+            this.scroll = 0;
+        }
+    }
+    add(args) {
+        const e = new Elm(args);
+        this.elms.push(e);
+        this.update = true;
+        return e;
+    }
+    addLayout(l) {
+        this.elms.push(l);
+        this.update = true;
+    }
+    ctrlInner(bounds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const contains = bounds.contains(Input.point);
+            if (Input.holding === 0) {
+                this.hold = false;
+            }
+            if (contains && Input.holding === 1) {
+                this.hold = true;
+                this.holdY = Input.y;
+            }
+            if (this.hold) {
+                this.vec = 0;
+                const min = bounds.h / this.aPageElmNum;
+                const addScroll = (this.holdY - Input.y) / min;
+                if (addScroll !== 0) {
+                    this.scroll += addScroll;
+                    this.vec = addScroll;
+                    this.holdY = Input.y;
+                    this.update = true;
+                }
+            }
+            else {
+                if (this.vec !== 0) {
+                    this.scroll += this.vec;
+                    this.vec *= 0.7;
+                    this.update = true;
+                }
+            }
+            // else{
+            //     if(
+            //            this.scroll < 0 
+            //         || (this.scroll > this.elms.length - this.aPageElmNum && this.scroll > 0)){
+            //         this.scroll *= 0.5;   
+            //     }
+            // }
+            if (this.update) {
+                this.update = false;
+                if (this.scroll > this.elms.length - this.aPageElmNum) {
+                    this.scroll = this.elms.length - this.aPageElmNum;
+                }
+                if (this.scroll < 0) {
+                    this.scroll = 0;
+                }
+                const e = this.elmPanel;
+                const page = this.scroll | 0;
+                e.clear();
+                for (let i = page - 1; i < page + this.aPageElmNum + 1; i++) {
+                    if (0 <= i && i < this.elms.length) {
+                        e.add(this.elms[i]);
+                    }
+                    else {
+                        e.add(ILayout.empty);
+                    }
+                }
+            }
+            if (contains) {
+                yield this.panel.ctrl(this.scrolledBounds(bounds));
+            }
+            // await this.panels[this.CENTER].ctrl(bounds);
+        });
+    }
+    drawInner(bounds) {
+        Graphics.clip(bounds, () => {
+            this.panel.draw(this.scrolledBounds(bounds));
+        });
+        // Graphics.clip(bounds, ()=>{    
+        //     let x = bounds.x - bounds.w + this.slide.x;
+        //     let y = bounds.y + this.slide.y;
+        //     for(const p of this.panels){
+        //         const r = new Rect(x, y, bounds.w, bounds.h);
+        //         p.draw(r);
+        //         x += bounds.w;
+        //     }
+        // });
+        // this.pageLayout.draw(bounds);
+    }
+    oneElmH(bounds) { return bounds.h / this.aPageElmNum; }
+    scrolledBounds(bounds) {
+        const oneElmH = this.oneElmH(bounds);
+        const s = this.scroll | 0;
+        return new Rect(bounds.x, bounds.y - oneElmH - (this.scroll - s) * oneElmH, bounds.w, bounds.h + oneElmH * 2);
+    }
+}
 export class List extends ILayout {
     constructor(aPageElmNum = 12) {
         super();
@@ -27,7 +146,6 @@ export class List extends ILayout {
         this.aPageElmNum = aPageElmNum | 0;
         for (let i = 0; i < 3; i++) {
             const yLayout = new YLayout();
-            this.elmPanels.push(yLayout);
             this.panels.push(new RatioLayout()
                 .add(new Rect(0, 0, 1, 0.95), yLayout));
         }
@@ -149,11 +267,13 @@ class Elm extends ILayout {
     }
     ctrlInner(bounds) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (Input.holding > 4) {
-                this.hold(this);
-            }
-            if (Input.click && bounds.contains(Input.point)) {
-                this.push(this);
+            if (bounds.contains(Input.point)) {
+                if (Input.holding > 4) {
+                    this.hold(this);
+                }
+                if (Input.click) {
+                    this.push(this);
+                }
             }
         });
     }

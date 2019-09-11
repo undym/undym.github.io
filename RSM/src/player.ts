@@ -7,14 +7,8 @@ import { Job } from "./job.js";
 export abstract class Player{
     private static _values:Player[] = [];
     static values():ReadonlyArray<Player>{return this._values;}
-    private static _valueOf:Map<string,Player>;
+    private static _valueOf = new Map<string,Player>();
     static valueOf(uniqueName:string):Player|undefined{
-        if(!this._valueOf){
-            this._valueOf = new Map<string,Player>();
-            for(const p of this.values()){
-                this._valueOf.set( p.uniqueName, p );
-            }
-        }
         return this._valueOf.get( uniqueName );
     }
 
@@ -32,6 +26,7 @@ export abstract class Player{
         this.toString = ()=>this.uniqueName;
 
         Player._values.push(this);
+        Player._valueOf.set( this.uniqueName, this );
     }
     
     abstract createInner(p:PUnit):void;
