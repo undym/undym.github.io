@@ -1,18 +1,19 @@
 import { EUnit, Prm, PUnit, Unit } from "./unit.js";
 import { Tec } from "./tec.js";
 import { Player } from "./player.js";
+import { EqPos, Eq } from "./eq.js";
 
 
 
 export abstract class Job{
     private static _values:Job[] = [];
-    static values():ReadonlyArray<Job>{return this._values;}
+    static get values():ReadonlyArray<Job>{return this._values;}
     private static _valueOf:Map<string,Job>;
     static valueOf(uniqueName:string):Job|undefined{
         if(!this._valueOf){
             this._valueOf = new Map<string,Job>();
 
-            for(const job of this.values()){
+            for(const job of this.values){
                 this._valueOf.set( job.uniqueName, job );
             }
         }
@@ -22,7 +23,7 @@ export abstract class Job{
     static readonly DEF_LVUP_EXP = 5;
 
     static rndJob(lv:number):Job{
-        for(let job of Job.values()){
+        for(let job of Job.values){
             if(job.appearLv <= lv){
                 return job;
             }
@@ -31,35 +32,34 @@ export abstract class Job{
         return Job.しんまい;
     }
 
-    readonly uniqueName:string;
-    readonly info:string[];
-    readonly appearLv:number;
-    readonly lvupExp:number;
-    readonly getGrowthPrms:()=>{prm:Prm, value:number}[];
-    readonly getLearningTecs:()=>Tec[];
-    readonly canJobChange:(p:PUnit)=>boolean;
+    static rndSetEnemy(unit:EUnit, lv:number):void{
+        this.rndJob(lv).setEnemy(unit, lv);
+    }
 
-    protected constructor(args:{
-        uniqueName:string,
-        info:string[],
-        appearLv:number,
-        lvupExp:number,
-        grow:()=>{prm:Prm, value:number}[],
-        learn:()=>Tec[],
-        canJobChange:(p:PUnit)=>boolean,
-    }){
-        this.uniqueName = args.uniqueName;
-        this.info = args.info;
-        this.toString = ()=>this.uniqueName;
-        this.appearLv = args.appearLv;
-        this.lvupExp = args.lvupExp;
-        this.getGrowthPrms = args.grow;
-        this.getLearningTecs = args.learn;
-        this.canJobChange = args.canJobChange;
+    get uniqueName():string{return this.args.uniqueName;}
+    get info():string[]{return this.args.info;}
+    get appearLv():number{return this.args.appearLv;}
+    get lvupExp():number{return this.args.lvupExp;}
+    get growthPrms():{prm:Prm, value:number}[]{return this.args.grow();}
+    get learningTecs():Tec[]{return this.args.learn();}
+    canJobChange(p:PUnit):boolean{return this.args.canJobChange(p);}
+
+    protected constructor(
+        private args:{
+            uniqueName:string,
+            info:string[],
+            appearLv:number,
+            lvupExp:number,
+            grow:()=>{prm:Prm, value:number}[],
+            learn:()=>Tec[],
+            canJobChange:(p:PUnit)=>boolean,
+        }
+    ){
 
         Job._values.push(this);
     }
 
+    toString(){return this.args.uniqueName;}
     //------------------------------------------------------------------
     //
     //
@@ -97,11 +97,16 @@ export abstract class Job{
 
         e.tp = 0;
         e.ep = 0;
+
+        for(const pos of EqPos.values()){
+            e.setEq(pos, Eq.rnd(pos, lv));
+        }
         
         e.clearAllCondition();
         
         this.setEnemyInner(e);
 
+        e.equip();
         e.hp = e.prm(Prm.MAX_HP).total;
         e.mp = Math.random() * e.prm(Prm.MAX_MP).total;
     }
@@ -267,7 +272,7 @@ export namespace Job{
     };
 
     export const                         スネイカー = new class extends Job{
-        constructor(){super({uniqueName:"スネイカー", info:["蛇を奴隷のように扱うなんてひどいジョブだ！","蛇に自由を！"],
+        constructor(){super({uniqueName:"スネイカー", info:["蛇を虐待してる"],
                                 appearLv:20, lvupExp:Job.DEF_LVUP_EXP * 2,
                                 grow:()=> [{prm:Prm.CHN, value:1}],
                                 learn:()=> [Tec.スネイク, Tec.TP自動回復, Tec.凍てつく波動],

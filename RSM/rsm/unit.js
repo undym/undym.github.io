@@ -15,7 +15,7 @@ import { Targeting } from "./force.js";
 import { Job } from "./job.js";
 import { FX_RotateStr, FX_Shake } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
-import { Eq, EqPos } from "./eq.js";
+import { Eq, EqPos, EqEar } from "./eq.js";
 import { choice } from "./undym/random.js";
 import { Graphics, Font } from "./graphics/graphics.js";
 class PrmSet {
@@ -82,6 +82,7 @@ export class Unit {
         // protected prmSets = new Map<Prm,PrmSet>();
         this.prmSets = [];
         this.equips = [];
+        this.eqEars = [];
         this.conditions = [];
         this.bounds = Rect.ZERO;
         for (const prm of Prm.values()) {
@@ -89,11 +90,14 @@ export class Unit {
         }
         this.prm(Prm.MAX_EP).base = Unit.DEF_MAX_EP;
         this.job = Job.しんまい;
-        for (let type of ConditionType.values()) {
+        for (let type of ConditionType.values) {
             this.conditions.push({ condition: Condition.empty, value: 0 });
         }
         for (const pos of EqPos.values()) {
             this.equips.push(Eq.getDef(pos));
+        }
+        for (let i = 0; i < Unit.EAR_NUM; i++) {
+            this.eqEars.push(EqEar.getDef());
         }
     }
     static get players() { return this._players; }
@@ -240,6 +244,9 @@ export class Unit {
         for (const eq of this.equips.values()) {
             forceDlgt(eq);
         }
+        for (const ear of this.eqEars.values()) {
+            forceDlgt(ear);
+        }
         for (const cond of this.conditions.values()) {
             forceDlgt(cond.condition);
         }
@@ -332,6 +339,13 @@ export class Unit {
     setEq(pos, eq) { this.equips[pos.ordinal] = eq; }
     //---------------------------------------------------------
     //
+    //EqEar
+    //
+    //---------------------------------------------------------
+    getEqEar(index) { return this.eqEars[index]; }
+    setEqEar(index, ear) { this.eqEars[index] = ear; }
+    //---------------------------------------------------------
+    //
     //
     //
     //---------------------------------------------------------
@@ -362,14 +376,15 @@ export class Unit {
 Unit.DEF_MAX_MP = 100;
 Unit.DEF_MAX_TP = 100;
 Unit.DEF_MAX_EP = 1;
+Unit.EAR_NUM = 2;
 export class PUnit extends Unit {
     // private jobExps = new Map<Job,number>();
     constructor(player) {
         super();
+        this.player = player;
         this.jobLvs = new Map();
         this.masteredTecs = new Map();
-        this.player = player;
-        for (let job of Job.values()) {
+        for (let job of Job.values) {
             this.jobLvs.set(job, { lv: 0, exp: 0 });
         }
         for (let tec of ActiveTec.values()) {
@@ -395,7 +410,7 @@ export class PUnit extends Unit {
                 yield wait();
                 const growHP = this.prm(Prm.LV).base / 100 + 1;
                 this.growPrm(Prm.MAX_HP, growHP | 0);
-                for (let grow of this.job.getGrowthPrms()) {
+                for (let grow of this.job.growthPrms) {
                     this.growPrm(grow.prm, grow.value);
                 }
             }
@@ -427,10 +442,10 @@ export class PUnit extends Unit {
                 set.exp = 0;
                 Util.msg.set(`${this.name}の${this.job}Lvが${set.lv}になった`, Color.ORANGE.bright);
                 yield wait();
-                for (let grow of this.job.getGrowthPrms()) {
+                for (let grow of this.job.growthPrms) {
                     this.growPrm(grow.prm, grow.value);
                 }
-                const learnings = this.job.getLearningTecs();
+                const learnings = this.job.learningTecs;
                 const ratio = set.lv / this.job.getMaxLv();
                 for (let i = 0; i < learnings.length; i++) {
                     if (i + 1 > ((learnings.length * ratio) | 0)) {

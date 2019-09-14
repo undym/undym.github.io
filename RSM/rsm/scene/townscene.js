@@ -38,6 +38,18 @@ export class TownScene extends Scene {
     init() {
         super.clear();
         super.add(Place.TOP, DrawPlayInfo.ins);
+        // const drawBG:(bounds:Rect)=>void = (()=>{
+        //     if(Battle.type === BattleType.BOSS){
+        //     }
+        //     if(Battle.type === BattleType.EX){
+        //     }
+        //     return (bounds)=>{};
+        // })();
+        // super.add(Place.MAIN, ILayout.create({draw:(bounds)=>{
+        //     Graphics.clip(bounds,()=>{
+        //         drawBG(bounds); 
+        //     });
+        // }}));
         super.add(Place.MSG, Util.msg);
         super.add(Place.BTN, new VariableLayout(() => TownBtn.ins));
         super.add(Place.P_BOX, DrawSTBoxes.players);
@@ -55,7 +67,7 @@ const fullCare = () => {
         u.hp = u.prm(Prm.MAX_HP).total;
         u.mp = u.prm(Prm.MAX_MP).total;
         u.ep = u.prm(Prm.MAX_EP).total;
-        for (const type of ConditionType.values()) {
+        for (const type of ConditionType.values) {
             u.clearCondition(type);
         }
     }
@@ -80,7 +92,7 @@ class TownBtn {
                 Scene.load(new EqScene());
             }));
         }
-        if (Dungeon.黒平原.clearNum > 0 || Debug.debugMode) {
+        if (Item.合成許可証.num > 0 || Debug.debugMode) {
             l.add(new Btn("合成", () => {
                 Scene.load(new MixScene());
             }));
@@ -88,9 +100,6 @@ class TownBtn {
         l.add(new Btn("お店", () => {
             Scene.load(new ShopScene());
         }));
-        // l.add(new Btn("test", ()=>{
-        //     setDungeonNameFX("はじまりの丘", Place.MAIN );
-        // }));
         l.add(new Btn("アイテム", () => {
             Scene.load(ItemScene.ins({
                 selectUser: true,
@@ -136,13 +145,14 @@ class TownBtn {
                 Util.msg.set(`[${d}]`);
                 Util.msg.set(`Rank:${d.rank}`);
                 Util.msg.set(`Lv:${d.enemyLv}`);
-                Util.msg.set(`攻略回数:${d.clearNum}`, d.clearNum > 0 ? Color.WHITE : Color.GRAY);
+                Util.msg.set(`攻略回数:${d.dungeonClearCount}`, d.dungeonClearCount > 0 ? Color.WHITE : Color.GRAY);
                 if (d.treasure.totalGetNum > 0) {
                     Util.msg.set(`財宝:${d.treasure}(${d.treasure.num}個)`);
                 }
                 else {
                     Util.msg.set(`財宝:${"？".repeat(d.treasure.toString().length)}`, Color.GRAY);
                 }
+                Util.msg.set(`EX討伐回数:${d.exKillCount}`, d.exKillCount > 0 ? Color.WHITE : Color.GRAY);
             }));
             if (++num >= onePageDrawDungeonNum) {
                 break;

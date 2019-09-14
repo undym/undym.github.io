@@ -19,6 +19,7 @@ import { Graphics } from "../graphics/graphics.js";
 import { ActiveTec, PassiveTec } from "../tec.js";
 import { Player } from "../player.js";
 import { SaveData } from "../savedata.js";
+import { EqEar, Eq } from "../eq.js";
 export const createOptionBtn = () => {
     const w = 4;
     const h = 3;
@@ -73,19 +74,19 @@ const setSaveDataDeleteBtn2 = (l) => {
 const setDebugBtn = (l) => {
     l.clear();
     l.add(new Btn("GetAllItmes", () => {
-        for (let item of Item.values()) {
+        for (let item of Item.values) {
             item.num = item.numLimit;
         }
         Util.msg.set("GetAllItems");
     }));
     l.add(new Btn("GetMaterials", () => {
-        for (let item of ItemType.素材.values()) {
+        for (let item of ItemType.素材.values) {
             item.num = item.numLimit;
         }
         Util.msg.set("GetMaterials");
     }));
     l.add(new Btn("技習得", () => {
-        for (let p of Player.values()) {
+        for (let p of Player.values) {
             for (let tec of ActiveTec.values()) {
                 p.ins.setMasteredTec(tec, true);
             }
@@ -94,6 +95,15 @@ const setDebugBtn = (l) => {
             }
         }
         Util.msg.set("技習得");
+    }));
+    l.add(new Btn("装備入手", () => {
+        for (const eq of EqEar.values()) {
+            eq.num += 1;
+        }
+        for (const eq of Eq.values) {
+            eq.num += 1;
+        }
+        Util.msg.set("装備入手");
     }));
     l.add(new Btn("金", () => {
         const value = 99999;
@@ -123,7 +133,7 @@ const setDebugBtn = (l) => {
 //             super.add(new Rect(0, 0, 0.2, 1),new YLayout()
 //                 .add(new Label(Font.def, ()=>this.info))
 //                 .add(new Btn(()=>"ITEM+99",()=>{
-//                     for(let item of Item.values()){
+//                     for(let item of Item.values){
 //                         item.num += 99;
 //                     }
 //                     this.info = "ITEM+99";

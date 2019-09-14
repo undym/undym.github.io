@@ -103,7 +103,7 @@ window.onload = () => {
 const ctrl = () => __awaiter(this, void 0, void 0, function* () {
     yield Scene.now.ctrl(Rect.FULL);
     Input.update();
-    setTimeout(ctrl, 1000 / 30);
+    setTimeout(ctrl, 1000 / 60);
 });
 const draw = () => {
     Graphics.fillRect(Rect.FULL, Color.BLACK);

@@ -18,7 +18,7 @@ export class ConditionType {
         this.ordinal = ConditionType.ordinalNow++;
         ConditionType._values.push(this);
     }
-    static values() {
+    static get values() {
         return ConditionType._values;
     }
     static goodConditions() {
@@ -58,7 +58,7 @@ export class Condition {
         Condition._values.push(this);
         Condition._valueOf.set(this.uniqueName, this);
     }
-    static values() { return this._values; }
+    static get values() { return this._values; }
     static valueOf(uniqueName) {
         return this._valueOf.get(uniqueName);
     }

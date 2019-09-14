@@ -2,7 +2,7 @@ import { Unit } from "./unit.js";
 import { randomInt } from "./undym/random.js";
 import { Condition } from "./condition.js";
 import { FX_Str, FX_RotateStr } from "./fx/fx.js";
-import { Color } from "./undym/type.js";
+import { Color, Point } from "./undym/type.js";
 import { Util } from "./util.js";
 import { Font } from "./graphics/graphics.js";
 export class Battle {
@@ -59,7 +59,8 @@ export var BattleResult;
             return;
         }
         value = value | 0;
-        FX_RotateStr(FXFont.def, `${value}`, target.bounds.center, Color.GREEN);
+        const p = new Point(target.bounds.cx, (target.bounds.y + target.bounds.cy) / 2);
+        FX_RotateStr(FXFont.def, `${value}`, p, Color.GREEN);
         target.hp += value;
     };
     Battle.healMP = (target, value) => {
@@ -69,5 +70,14 @@ export var BattleResult;
         value = value | 0;
         target.mp += value;
         FX_RotateStr(FXFont.def, `${value}`, target.bounds.center, Color.PINK);
+    };
+    Battle.healTP = (target, value) => {
+        if (!target.exists || target.dead) {
+            return;
+        }
+        value = value | 0;
+        target.tp += value;
+        const p = new Point(target.bounds.cx, (target.bounds.cy + target.bounds.yh) / 2);
+        FX_RotateStr(FXFont.def, `${value}`, p, Color.CYAN);
     };
 })(Battle || (Battle = {}));

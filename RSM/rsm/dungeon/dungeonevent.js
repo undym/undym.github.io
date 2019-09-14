@@ -289,6 +289,31 @@ DungeonEvent._values = [];
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
     };
+    DungeonEvent.EX_BATTLE = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                Util.msg.set(`[${Dungeon.now}]のエクストラエネミーが現れた！`, Color.WHITE.bright);
+                Dungeon.now.setEx();
+                Battle.setup(BattleType.EX, (result) => __awaiter(this, void 0, void 0, function* () {
+                    switch (result) {
+                        case BattleResult.WIN:
+                            Dungeon.now.exKillCount++;
+                            Dungeon.now.exItem.add(1);
+                            break;
+                        case BattleResult.LOSE:
+                            yield DungeonEvent.ESCAPE_DUNGEON.happen();
+                            break;
+                        case BattleResult.ESCAPE:
+                            yield DungeonEvent.ESCAPE_DUNGEON.happen();
+                            break;
+                    }
+                }));
+                Scene.load(BattleScene.ins);
+            });
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
     DungeonEvent.ESCAPE_DUNGEON = new class extends DungeonEvent {
         constructor() {
             super();
@@ -306,9 +331,9 @@ DungeonEvent._values = [];
         constructor() {
             super();
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                let yen = Dungeon.now.au * (Dungeon.now.enemyLv / 10 + 1) * (1 + Dungeon.now.clearNum * 0.02);
+                let yen = Dungeon.now.au * (Dungeon.now.enemyLv / 10 + 1) * (1 + Dungeon.now.dungeonClearCount * 0.02);
                 yen = yen | 0;
-                Dungeon.now.clearNum++;
+                Dungeon.now.dungeonClearCount++;
                 Util.msg.set(`[${Dungeon.now}]を踏破した！`, Color.WHITE.bright);
                 yield cwait();
                 PlayData.yen += yen;

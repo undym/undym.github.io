@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Util, SceneType } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Scene, wait } from "./undym/scene.js";
+import { Prm } from "./unit.js";
 import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
-import { Font } from "./graphics/graphics.js";
 import { Num } from "./mix.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import DungeonScene from "./scene/dungeonscene.js";
@@ -20,9 +20,9 @@ export class ItemType {
     constructor(name) {
         this.toString = () => name;
     }
-    values() {
+    get values() {
         if (this._values === undefined) {
-            this._values = Item.values()
+            this._values = Item.values
                 .filter(item => item.itemType === this);
         }
         return this._values;
@@ -44,7 +44,7 @@ export class ItemParentType {
         this.toString = () => name;
         ItemParentType._values.push(this);
     }
-    static values() { return this._values; }
+    static get values() { return this._values; }
 }
 ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.蘇生, ItemType.HP回復, ItemType.MP回復]);
@@ -96,9 +96,7 @@ export class Item {
         }
         Item._values.push(this);
     }
-    static values() {
-        return this._values;
-    }
+    static get values() { return this._values; }
     static consumableValues() {
         return this._consumableValues;
     }
@@ -109,7 +107,7 @@ export class Item {
      */
     static rndItem(dropType, rank) {
         if (!this._dropTypeValues.has(dropType)) {
-            const typeValues = this.values().filter(item => item.dropType & dropType);
+            const typeValues = this.values.filter(item => item.dropType & dropType);
             this._dropTypeValues.set(dropType, new ItemValues(typeValues));
         }
         const itemValues = this._dropTypeValues.get(dropType);
@@ -223,11 +221,11 @@ Item.DEF_NUM_LIMIT = 999;
     //-----------------------------------------------------------------
     Item.スティックパン = new class extends Item {
         constructor() {
-            super({ uniqueName: "スティックパン", info: ["HP+10"],
+            super({ uniqueName: "スティックパン", info: ["HP+10+5%"],
                 type: ItemType.HP回復, rank: 0,
                 consumable: true, drop: ItemDrop.NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
-                    const value = 10;
+                    const value = (10 + target.prm(Prm.MAX_HP).total * 0.05) | 0;
                     Battle.healHP(target, value);
                     if (SceneType.now === SceneType.BATTLE) {
                         Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
@@ -239,11 +237,11 @@ Item.DEF_NUM_LIMIT = 999;
     };
     Item.硬化スティックパン = new class extends Item {
         constructor() {
-            super({ uniqueName: "硬化スティックパン", info: ["HP+30"],
+            super({ uniqueName: "硬化スティックパン", info: ["HP+30+5%"],
                 type: ItemType.HP回復, rank: 0,
                 consumable: true, drop: ItemDrop.NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
-                    const value = 30;
+                    const value = (30 + target.prm(Prm.MAX_HP).total * 0.05) | 0;
                     Battle.healHP(target, value);
                     if (SceneType.now === SceneType.BATTLE) {
                         Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
@@ -316,10 +314,16 @@ Item.DEF_NUM_LIMIT = 999;
     //メモ
     //
     //-----------------------------------------------------------------
+    Item.合成許可証 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "合成許可証", info: ["合成が解放される"],
+                type: ItemType.メモ, rank: 0, drop: ItemDrop.NO, numLimit: 1 });
+        }
+    };
     Item.消耗品のメモ = new class extends Item {
         constructor() {
             super({ uniqueName: "消耗品のメモ", info: ["スティックパンなどの消耗品は", "ダンジョンに入る度に補充される"],
-                type: ItemType.メモ, rank: 0, drop: ItemDrop.NO, numLimit: 1 });
+                type: ItemType.メモ, rank: 0, drop: ItemDrop.BOX, numLimit: 1 });
         }
     };
     //-----------------------------------------------------------------
@@ -487,11 +491,3 @@ Item.DEF_NUM_LIMIT = 999;
     //
     //-----------------------------------------------------------------
 })(Item || (Item = {}));
-class ItemFont {
-    static get font() {
-        if (!this._font) {
-            this._font = new Font(30, Font.BOLD);
-        }
-        return this._font;
-    }
-}

@@ -46,7 +46,7 @@ export class JobChangeScene extends Scene {
                 const lv = unit.getJobLv(job) >= job.getMaxLv() ? "Lv:★" : `Lv:${unit.getJobLv(job)}`;
                 font.draw(lv, movedP(), Color.WHITE);
                 font.draw("成長ステータス:", movedP(), Color.WHITE);
-                for (let set of job.getGrowthPrms()) {
+                for (let set of job.growthPrms) {
                     font.draw(` [${set.prm}]+${set.value}`, movedP(), Color.WHITE);
                 }
                 movedP();
@@ -113,7 +113,7 @@ export class JobChangeScene extends Scene {
             center: () => `${unit.name}`,
             groundColor: () => Color.D_GRAY,
         });
-        Job.values()
+        Job.values
             .filter(job => job.canJobChange(unit) || unit.getJobLv(job) > 0 || Debug.debugMode)
             .forEach((job) => {
             let color = () => {

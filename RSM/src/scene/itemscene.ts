@@ -107,10 +107,10 @@ export class ItemScene extends Scene{
                 })(),
             ];
             const w = 2;
-            const h = ((otherBtns.length + ItemParentType.values().length + 1) / w)|0;
+            const h = ((otherBtns.length + ItemParentType.values.length + 1) / w)|0;
             const l = new FlowLayout(w,h);
 
-            for(let type of ItemParentType.values()){
+            for(let type of ItemParentType.values){
                 l.add(new Btn(type.toString(), ()=>{
                     this.setList(type);
                 }));
@@ -155,7 +155,7 @@ export class ItemScene extends Scene{
                 groundColor:()=>Color.D_GRAY,
             });
 
-            for(let item of type.values().filter(item=> item.num > 0)){
+            for(let item of type.values.filter(item=> item.num > 0)){
                 const color = ()=> this.selectedItem === item ? Color.CYAN : Color.WHITE;
                 this.list.add({
                     left:()=>{

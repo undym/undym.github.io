@@ -6,28 +6,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Rect, Color, Point } from "../undym/type.js";
-import { ILayout, YLayout, RatioLayout, Label } from "../undym/layout.js";
+import { Rect, Color } from "../undym/type.js";
+import { ILayout, YLayout, RatioLayout } from "../undym/layout.js";
 import { Input } from "../undym/input.js";
 import { Graphics, Font } from "../graphics/graphics.js";
-export class YList extends ILayout {
-    constructor(aPageElmNum = 12) {
+export class List extends ILayout {
+    constructor(aPageElmNum = 13) {
         super();
         this.elms = [];
-        // private pageLayout:ILayout;
         this.update = true;
         this.hold = false;
-        // private holdPoint = Point.ZERO;
-        // private slide = {x:0, y:0};
         this.holdY = 0;
+        //scrollの値1につき1項目スクロールする。少数有効。
         this.scroll = 0;
         this.vec = 0;
         this.aPageElmNum = aPageElmNum | 0;
         this.elmPanel = new YLayout();
         this.panel = new RatioLayout()
             .add(Rect.FULL, this.elmPanel);
-        // this.pageLayout = new RatioLayout()
-        //                     .add(new Rect(0, 0.95, 1, 0.05), new Label(Font.def, ()=>`${this.page}/${this.pageLim}`).setBase(Font.CENTER));
     }
     clear(keepScroll = false) {
         this.elms = [];
@@ -68,27 +64,34 @@ export class YList extends ILayout {
                 }
             }
             else {
+                //下の限界を超えたら下の限界まで戻る
+                let bottomLim = this.elms.length - this.aPageElmNum;
+                if (bottomLim < 0) {
+                    bottomLim = 0;
+                }
+                if (this.scroll > bottomLim) {
+                    this.scroll -= 0.5;
+                    if (this.scroll < bottomLim) {
+                        this.scroll = bottomLim;
+                    }
+                    this.update = true;
+                }
+                //上の限界を超えたら上の限界まで戻る
+                if (this.scroll < 0) {
+                    this.scroll += 0.5;
+                    if (this.scroll > 0) {
+                        this.scroll = 0;
+                    }
+                    this.update = true;
+                }
                 if (this.vec !== 0) {
                     this.scroll += this.vec;
                     this.vec *= 0.7;
                     this.update = true;
                 }
             }
-            // else{
-            //     if(
-            //            this.scroll < 0 
-            //         || (this.scroll > this.elms.length - this.aPageElmNum && this.scroll > 0)){
-            //         this.scroll *= 0.5;   
-            //     }
-            // }
             if (this.update) {
                 this.update = false;
-                if (this.scroll > this.elms.length - this.aPageElmNum) {
-                    this.scroll = this.elms.length - this.aPageElmNum;
-                }
-                if (this.scroll < 0) {
-                    this.scroll = 0;
-                }
                 const e = this.elmPanel;
                 const page = this.scroll | 0;
                 e.clear();
@@ -104,149 +107,18 @@ export class YList extends ILayout {
             if (contains) {
                 yield this.panel.ctrl(this.scrolledBounds(bounds));
             }
-            // await this.panels[this.CENTER].ctrl(bounds);
         });
     }
     drawInner(bounds) {
         Graphics.clip(bounds, () => {
             this.panel.draw(this.scrolledBounds(bounds));
         });
-        // Graphics.clip(bounds, ()=>{    
-        //     let x = bounds.x - bounds.w + this.slide.x;
-        //     let y = bounds.y + this.slide.y;
-        //     for(const p of this.panels){
-        //         const r = new Rect(x, y, bounds.w, bounds.h);
-        //         p.draw(r);
-        //         x += bounds.w;
-        //     }
-        // });
-        // this.pageLayout.draw(bounds);
     }
     oneElmH(bounds) { return bounds.h / this.aPageElmNum; }
     scrolledBounds(bounds) {
         const oneElmH = this.oneElmH(bounds);
         const s = this.scroll | 0;
         return new Rect(bounds.x, bounds.y - oneElmH - (this.scroll - s) * oneElmH, bounds.w, bounds.h + oneElmH * 2);
-    }
-}
-export class List extends ILayout {
-    constructor(aPageElmNum = 12) {
-        super();
-        this.LEFT = 0;
-        this.CENTER = 1;
-        this.RIGHT = 2;
-        this.elms = [];
-        this.panels = [];
-        this.elmPanels = [];
-        this.page = 0;
-        this.update = true;
-        this.hold = false;
-        this.holdPoint = Point.ZERO;
-        this.slide = { x: 0, y: 0 };
-        this.aPageElmNum = aPageElmNum | 0;
-        for (let i = 0; i < 3; i++) {
-            const yLayout = new YLayout();
-            this.panels.push(new RatioLayout()
-                .add(new Rect(0, 0, 1, 0.95), yLayout));
-        }
-        this.pageLayout = new RatioLayout()
-            .add(new Rect(0, 0.95, 1, 0.05), new Label(Font.def, () => `${this.page}/${this.pageLim}`).setBase(Font.CENTER));
-    }
-    clear(keepPage = false) {
-        this.elms = [];
-        this.update = true;
-        if (!keepPage) {
-            this.page = 0;
-        }
-    }
-    add(args) {
-        const e = new Elm(args);
-        this.elms.push(e);
-        this.update = true;
-        return e;
-    }
-    addLayout(l) {
-        this.elms.push(l);
-        this.update = true;
-    }
-    ctrlInner(bounds) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const contains = bounds.contains(Input.point);
-            if (Input.holding === 0 && this.hold) {
-                this.hold = false;
-                if (this.slide.x >= bounds.w * 0.35) {
-                    const pageBak = this.page;
-                    this.movePage(-1);
-                    if (pageBak !== this.page) {
-                        this.slide.x -= bounds.w;
-                    }
-                }
-                else if (this.slide.x <= -bounds.w * 0.35) {
-                    const pageBak = this.page;
-                    this.movePage(1);
-                    if (pageBak !== this.page) {
-                        this.slide.x += bounds.w;
-                    }
-                }
-            }
-            if (Input.holding === 1 && contains) {
-                this.hold = true;
-                this.holdPoint = Input.point;
-            }
-            if (this.hold) {
-                this.slide.x = Input.x - this.holdPoint.x;
-            }
-            else {
-                this.slide.x *= 0.50;
-                this.slide.y *= 0.50;
-            }
-            if (this.update) {
-                this.update = false;
-                let _page = this.page - 1;
-                for (const e of this.elmPanels) {
-                    e.clear();
-                    if (_page >= 0) {
-                        for (let i = _page * this.aPageElmNum; i < (_page + 1) * this.aPageElmNum; i++) {
-                            if (i < this.elms.length) {
-                                e.add(this.elms[i]);
-                            }
-                            else {
-                                e.add(ILayout.empty);
-                            }
-                        }
-                    }
-                    _page++;
-                }
-            }
-            yield this.panels[this.CENTER].ctrl(bounds);
-        });
-    }
-    drawInner(bounds) {
-        Graphics.clip(bounds, () => {
-            let x = bounds.x - bounds.w + this.slide.x;
-            let y = bounds.y + this.slide.y;
-            for (const p of this.panels) {
-                const r = new Rect(x, y, bounds.w, bounds.h);
-                p.draw(r);
-                x += bounds.w;
-            }
-        });
-        this.pageLayout.draw(bounds);
-    }
-    get pageLim() {
-        let res = ((this.elms.length - 1) / this.aPageElmNum) | 0;
-        return res >= 0 ? res : 0;
-    }
-    movePage(value) {
-        this.page += value;
-        this.update = true;
-        if (this.page < 0) {
-            this.page = 0;
-        }
-        let lim = this.pageLim;
-        if (this.page > lim) {
-            this.page = lim;
-        }
     }
 }
 class Elm extends ILayout {

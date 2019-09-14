@@ -19,7 +19,7 @@ import { Input } from "../undym/input.js";
 
 
 export abstract class DungeonEvent{
-    static _values:DungeonEvent[] = [];
+    private static _values:DungeonEvent[] = [];
     static values():ReadonlyArray<DungeonEvent>{
         return this._values;
     }
@@ -276,6 +276,29 @@ export namespace DungeonEvent{
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
+    export const EX_BATTLE:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
+        happenInner = async()=>{
+            Util.msg.set(`[${Dungeon.now}]のエクストラエネミーが現れた！`, Color.WHITE.bright);
+            Dungeon.now.setEx();
+            Battle.setup( BattleType.EX, async(result)=>{
+                switch(result){
+                    case BattleResult.WIN:
+                        Dungeon.now.exKillCount++;
+                        Dungeon.now.exItem.add(1);
+                        break;
+                    case BattleResult.LOSE:
+                        await DungeonEvent.ESCAPE_DUNGEON.happen();
+                        break;
+                    case BattleResult.ESCAPE:
+                        await DungeonEvent.ESCAPE_DUNGEON.happen();
+                        break;
+                }
+            });
+            Scene.load( BattleScene.ins );
+        };
+        createBtnLayout = DungeonEvent.empty.createBtnLayout;
+    };
     export const ESCAPE_DUNGEON:DungeonEvent = new class extends DungeonEvent{
         constructor(){super();}
         happenInner = async()=>{
@@ -291,10 +314,10 @@ export namespace DungeonEvent{
     export const CLEAR_DUNGEON:DungeonEvent = new class extends DungeonEvent{
         constructor(){super();}
         happenInner = async()=>{
-            let yen = Dungeon.now.au * (Dungeon.now.enemyLv / 10 + 1) * (1 + Dungeon.now.clearNum * 0.02);
+            let yen = Dungeon.now.au * (Dungeon.now.enemyLv / 10 + 1) * (1 + Dungeon.now.dungeonClearCount * 0.02);
             yen = yen|0;
     
-            Dungeon.now.clearNum++;
+            Dungeon.now.dungeonClearCount++;
             Util.msg.set(`[${Dungeon.now}]を踏破した！`, Color.WHITE.bright); await cwait();
     
             PlayData.yen += yen;

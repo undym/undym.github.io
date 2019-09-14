@@ -202,16 +202,18 @@ export class Graphics {
         run();
         ctx.restore();
     }
-    static rotate(rad, center, run) {
+    static rotate(rad, centerRatio, run) {
         const ctx = this.texture.ctx;
-        const pw = center.x * this.pixelW;
-        const ph = center.y * this.pixelH;
+        const pw = centerRatio.x * this.pixelW;
+        const ph = centerRatio.y * this.pixelH;
         ctx.beginPath();
         ctx.translate(pw, ph);
         ctx.rotate(rad);
+        ctx.translate(-pw, -ph);
         ctx.closePath();
         run();
         ctx.beginPath();
+        ctx.translate(pw, ph);
         ctx.rotate(-rad);
         ctx.translate(-pw, -ph);
         ctx.closePath();

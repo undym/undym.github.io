@@ -6,7 +6,7 @@ import { Job } from "./job.js";
 
 export abstract class Player{
     private static _values:Player[] = [];
-    static values():ReadonlyArray<Player>{return this._values;}
+    static get values():ReadonlyArray<Player>{return this._values;}
     private static _valueOf = new Map<string,Player>();
     static valueOf(uniqueName:string):Player|undefined{
         return this._valueOf.get( uniqueName );

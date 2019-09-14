@@ -9,7 +9,7 @@ import { Color } from "./undym/type.js";
 
 export class ConditionType{
     private static _values:ConditionType[] = [];
-    static values():ReadonlyArray<ConditionType>{
+    static get values():ReadonlyArray<ConditionType>{
         return ConditionType._values;
     }
 
@@ -57,7 +57,7 @@ export class ConditionType{
 
 export abstract class Condition implements Force{
     private static _values:Condition[] = [];
-    static values():ReadonlyArray<Condition>{return this._values;}
+    static get values():ReadonlyArray<Condition>{return this._values;}
 
     private static _valueOf = new Map<string,Condition>();
     static valueOf(uniqueName:string):Condition|undefined{

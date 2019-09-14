@@ -1,36 +1,41 @@
 import { EUnit, Prm, Unit } from "./unit.js";
 import { Tec } from "./tec.js";
 import { Player } from "./player.js";
+import { EqPos, Eq } from "./eq.js";
 export class Job {
     constructor(args) {
-        this.uniqueName = args.uniqueName;
-        this.info = args.info;
-        this.toString = () => this.uniqueName;
-        this.appearLv = args.appearLv;
-        this.lvupExp = args.lvupExp;
-        this.getGrowthPrms = args.grow;
-        this.getLearningTecs = args.learn;
-        this.canJobChange = args.canJobChange;
+        this.args = args;
         Job._values.push(this);
     }
-    static values() { return this._values; }
+    static get values() { return this._values; }
     static valueOf(uniqueName) {
         if (!this._valueOf) {
             this._valueOf = new Map();
-            for (const job of this.values()) {
+            for (const job of this.values) {
                 this._valueOf.set(job.uniqueName, job);
             }
         }
         return this._valueOf.get(uniqueName);
     }
     static rndJob(lv) {
-        for (let job of Job.values()) {
+        for (let job of Job.values) {
             if (job.appearLv <= lv) {
                 return job;
             }
         }
         return Job.しんまい;
     }
+    static rndSetEnemy(unit, lv) {
+        this.rndJob(lv).setEnemy(unit, lv);
+    }
+    get uniqueName() { return this.args.uniqueName; }
+    get info() { return this.args.info; }
+    get appearLv() { return this.args.appearLv; }
+    get lvupExp() { return this.args.lvupExp; }
+    get growthPrms() { return this.args.grow(); }
+    get learningTecs() { return this.args.learn(); }
+    canJobChange(p) { return this.args.canJobChange(p); }
+    toString() { return this.args.uniqueName; }
     //------------------------------------------------------------------
     //
     //
@@ -61,8 +66,12 @@ export class Job {
         e.prm(Prm.MAX_TP).base = Unit.DEF_MAX_TP;
         e.tp = 0;
         e.ep = 0;
+        for (const pos of EqPos.values()) {
+            e.setEq(pos, Eq.rnd(pos, lv));
+        }
         e.clearAllCondition();
         this.setEnemyInner(e);
+        e.equip();
         e.hp = e.prm(Prm.MAX_HP).total;
         e.mp = Math.random() * e.prm(Prm.MAX_MP).total;
     }
@@ -253,7 +262,7 @@ Job.DEF_LVUP_EXP = 5;
     };
     Job.スネイカー = new class extends Job {
         constructor() {
-            super({ uniqueName: "スネイカー", info: ["蛇を奴隷のように扱うなんてひどいジョブだ！", "蛇に自由を！"],
+            super({ uniqueName: "スネイカー", info: ["蛇を虐待してる"],
                 appearLv: 20, lvupExp: Job.DEF_LVUP_EXP * 2,
                 grow: () => [{ prm: Prm.CHN, value: 1 }],
                 learn: () => [Tec.スネイク, Tec.TP自動回復, Tec.凍てつく波動],

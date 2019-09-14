@@ -9,7 +9,7 @@ export class Player {
         Player._values.push(this);
         Player._valueOf.set(this.uniqueName, this);
     }
-    static values() { return this._values; }
+    static get values() { return this._values; }
     static valueOf(uniqueName) {
         return this._valueOf.get(uniqueName);
     }

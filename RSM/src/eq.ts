@@ -6,6 +6,7 @@ import { ActiveTec, TecType } from "./tec.js";
 import { Condition } from "./condition.js";
 import { Util, PlayData } from "./util.js";
 import { Battle } from "./battle.js";
+import { choice } from "./undym/random.js";
 
 
 export class EqPos{
@@ -17,7 +18,7 @@ export class EqPos{
     private _eqs:Eq[];
     get eqs():ReadonlyArray<Eq>{
         if(!this._eqs){
-            this._eqs = Eq.values().filter(eq=> eq.pos === this);
+            this._eqs = Eq.values.filter(eq=> eq.pos === this);
         }
         return this._eqs;
     }
@@ -45,8 +46,10 @@ export class EqPos{
 
 
 export abstract class Eq implements Force, Num{
+    static readonly NO_APPEAR_LV = -1;
+
     private static _values:Eq[] = [];
-    static values(){return this._values;}
+    static get values():ReadonlyArray<Eq>{return this._values;}
 
     private static _valueOf = new Map<string,Eq>();
     static valueOf(uniqueName:string):Eq|undefined{
@@ -62,7 +65,7 @@ export abstract class Eq implements Force, Num{
                 this._posValues.set(p, []);
             }
 
-            for(let eq of this.values()){
+            for(let eq of this.values){
                 (this._posValues.get(eq.pos) as Eq[]).push(eq);
             }
         }
@@ -84,11 +87,21 @@ export abstract class Eq implements Force, Num{
         return this.髪;
     }
 
-    readonly uniqueName:string;
-    readonly info:string[];
-    readonly pos:EqPos;
+    static rnd(pos:EqPos, lv:number):Eq{
+        const _posValues = this.posValues(pos);
+
+        for(let i = 0; i < 8; i++){
+            const eq = choice( _posValues );
+            if(eq.appearLv !== this.NO_APPEAR_LV && eq.appearLv <= lv){return eq;}
+        }
+        return this.getDef(pos);
+    }
+
+    get uniqueName():string{return this.args.uniqueName;}
+    get info():string[]    {return this.args.info;}
+    get pos():EqPos        {return this.args.pos;}
     /**敵が装備し始めるレベル. */
-    readonly appearLv:number;
+    get appearLv():number  {return this.args.lv;}
 
     num = 0;
     totalGetNum = 0;
@@ -97,21 +110,21 @@ export abstract class Eq implements Force, Num{
     //
     //
     //--------------------------------------------------------------------------
-    protected constructor(args:{
-        uniqueName:string,
-        info:string[],
-        pos:EqPos,
-        lv:number,
-    }){
-        this.uniqueName = args.uniqueName;
-        this.toString = ()=>this.uniqueName;
-        this.info = args.info;
-        this.pos = args.pos;
-        this.appearLv = args.lv;
+    protected constructor(
+        private args:{
+            uniqueName:string,
+            info:string[],
+            pos:EqPos,
+            lv:number,
+        }
+    ){
 
         Eq._values.push(this);
-        Eq._valueOf.set( this.uniqueName, this );
+        Eq._valueOf.set( args.uniqueName, this );
     }
+
+
+    toString(){return this.args.uniqueName;}
     //--------------------------------------------------------------------------
     //
     //
@@ -138,6 +151,63 @@ export abstract class Eq implements Force, Num{
 }
 
 
+export class EqEar implements Force, Num{
+    private static _values:EqEar[] = [];
+    static values():EqEar[]{return this._values;}
+
+    private static _valueOf = new Map<string,EqEar>();
+    static valueOf(uniqueName:string):EqEar|undefined{
+        return this._valueOf.get(uniqueName);
+    }
+
+    static getDef():EqEar{return EqEar.耳たぶ;}
+
+    get uniqueName():string{return this.args.uniqueName;}
+    get info():string[]    {return this.args.info;}
+    /**敵が装備し始めるレベル. */
+    get appearLv():number  {return this.args.lv;}
+
+    num = 0;
+    totalGetNum = 0;
+    //--------------------------------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------------------------------
+    protected constructor(
+        private args:{
+            uniqueName:string,
+            info:string[],
+            lv:number,
+        }
+    ){
+        EqEar._values.push(this);
+        EqEar._valueOf.set( args.uniqueName, this );
+    }
+    
+    toString(){return this.args.uniqueName;}
+    //--------------------------------------------------------------------------
+    //
+    //
+    //
+    //--------------------------------------------------------------------------
+    equip(unit:Unit){}
+    battleStart(unit:Unit){}
+    phaseStart(unit:Unit){}
+    beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+    beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+    afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+    afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+
+    add(v:number){
+        Num.add(this, v);
+
+        PlayData.gotAnyEq = true;
+    }
+}
+
+
+
 export namespace Eq{
     //--------------------------------------------------------------------------
     //
@@ -145,65 +215,23 @@ export namespace Eq{
     //
     //--------------------------------------------------------------------------
     export const                         髪 = new class extends Eq{
-        constructor(){super({uniqueName:"髪", info:["髪a","髪b"], 
+        constructor(){super({uniqueName:"髪", info:["はげてない","まだはげてない"], 
                                 pos:EqPos.頭, lv:0});}
     }
-    export const                         魔女のとんがり帽 = new class extends Eq{
-        constructor(){super({uniqueName:"魔女のとんがり帽", info:["最大MP+50"], 
-                                pos:EqPos.頭, lv:3});}
-        equip(unit:Unit){
-            unit.prm(Prm.MAX_MP).eq += 50;
-        }
-    }
-    export const                         魔女の高級とんがり帽 = new class extends Eq{
-        constructor(){super({uniqueName:"魔女の高級とんがり帽", info:["最大MP+100"], 
+    export const                         魔女のとんがり帽 = new class extends Eq{//リテの門EX
+        constructor(){super({uniqueName:"魔女のとんがり帽", info:["最大MP+100"], 
                                 pos:EqPos.頭, lv:30});}
         equip(unit:Unit){
             unit.prm(Prm.MAX_MP).eq += 100;
         }
     }
-    export const                         魔女の最高級とんがり帽 = new class extends Eq{
-        constructor(){super({uniqueName:"魔女の最高級とんがり帽", info:["最大MP+150"], 
-                                pos:EqPos.頭, lv:60});}
-        equip(unit:Unit){
-            unit.prm(Prm.MAX_MP).eq += 150;
-        }
-    }
-    export const                         魔女の超最高級とんがり帽 = new class extends Eq{
-        constructor(){super({uniqueName:"魔女の超最高級とんがり帽", info:["最大MP+200"], 
-                                pos:EqPos.頭, lv:90});}
-        equip(unit:Unit){
-            unit.prm(Prm.MAX_MP).eq += 200;
-        }
-    }
-    export const                         山男のとんかつ帽 = new class extends Eq{
-        constructor(){super({uniqueName:"山男のとんかつ帽", info:["最大TP+50"], 
-                                pos:EqPos.頭, lv:3});}
-        equip(unit:Unit){
-            unit.prm(Prm.MAX_TP).eq += 50;
-        }
-    }
-    export const                         山男の高級とんかつ帽 = new class extends Eq{
-        constructor(){super({uniqueName:"山男の高級とんかつ帽", info:["最大TP+100"], 
-                                pos:EqPos.頭, lv:30});}
-        equip(unit:Unit){
-            unit.prm(Prm.MAX_TP).eq += 100;
-        }
-    }
-    export const                         山男の最高級とんかつ帽 = new class extends Eq{
-        constructor(){super({uniqueName:"山男の最高級とんかつ帽", info:["最大TP+150"], 
-                                pos:EqPos.頭, lv:60});}
-        equip(unit:Unit){
-            unit.prm(Prm.MAX_TP).eq += 150;
-        }
-    }
-    export const                         山男の超最高級とんかつ帽 = new class extends Eq{
-        constructor(){super({uniqueName:"山男の超最高級とんかつ帽", info:["最大TP+200"], 
-                                pos:EqPos.頭, lv:90});}
-        equip(unit:Unit){
-            unit.prm(Prm.MAX_TP).eq += 200;
-        }
-    }
+    // export const                         山男のとんかつ帽 = new class extends Eq{
+    //     constructor(){super({uniqueName:"山男のとんかつ帽", info:["最大TP+50"], 
+    //                             pos:EqPos.頭, lv:3});}
+    //     equip(unit:Unit){
+    //         unit.prm(Prm.MAX_TP).eq += 50;
+    //     }
+    // }
     export const                         千里ゴーグル = new class extends Eq{
         constructor(){super({uniqueName:"千里ゴーグル", info:["銃・弓攻撃時稀にクリティカル"], 
                                 pos:EqPos.頭, lv:120});}
@@ -500,9 +528,16 @@ export namespace Eq{
     }
     export const                         ゲルマンベルト = new class extends Eq{//黒平原財宝
         constructor(){super({uniqueName:"ゲルマンベルト", info:["攻撃+10%"],
-                                pos:EqPos.腰, lv:50});}
+                                pos:EqPos.腰, lv:10});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             dmg.pow.mul *= 1.1;
+        }
+    }
+    export const                         オホーツクのひも = new class extends Eq{//黒平原EX
+        constructor(){super({uniqueName:"オホーツクのひも", info:["被攻撃-10%"],
+                                pos:EqPos.腰, lv:10});}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.pow.mul *= 0.9;
         }
     }
     //--------------------------------------------------------------------------
@@ -514,14 +549,38 @@ export namespace Eq{
         constructor(){super({uniqueName:"腕", info:[],
                                 pos:EqPos.腕, lv:0});}
     }
+    export const                         ゴーレムの腕 = new class extends Eq{
+        constructor(){super({uniqueName:"ゴーレムの腕", info:["格闘攻撃+20%"],
+                                pos:EqPos.腕, lv:5});}
+        beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any( TecType.格闘 )){
+                dmg.pow.mul *= 1.2;
+            }
+        }
+    }
     //--------------------------------------------------------------------------
     //
     //手
     //
     //--------------------------------------------------------------------------
     export const                             手 = new class extends Eq{
-            constructor(){super({uniqueName:"手", info:[],
-                                    pos:EqPos.手, lv:0});}
+        constructor(){super({uniqueName:"手", info:[],
+                                pos:EqPos.手, lv:0});}
+    }
+    export const                             手甲 = new class extends Eq{//再構成トンネルEX
+        constructor(){super({uniqueName:"手甲", info:["全ステータス+10"],
+                                pos:EqPos.手, lv:10});}
+        equip(unit:Unit){
+            const prms:Prm[] = [
+                Prm.STR, Prm.MAG,
+                Prm.LIG, Prm.DRK,
+                Prm.CHN, Prm.PST,
+                Prm.GUN, Prm.ARR,
+            ];
+            for(const p of prms){
+                unit.prm(p).eq += 10;
+            }
+        }
     }
     //--------------------------------------------------------------------------
     //
@@ -546,6 +605,13 @@ export namespace Eq{
             Battle.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1);
         }
     }
+    export const                         瑠璃 = new class extends Eq{//はじまりの丘EX
+        constructor(){super({uniqueName:"瑠璃", info:["戦闘開始時TP+10%"],
+                                pos:EqPos.指, lv:50});}
+        battleStart(unit:Unit){
+            Battle.healTP(unit, unit.prm(Prm.MAX_TP).total * 0.1);
+        }
+    }
     //--------------------------------------------------------------------------
     //
     //脚
@@ -555,13 +621,43 @@ export namespace Eq{
         constructor(){super({uniqueName:"きれいな靴", info:[],
                                 pos:EqPos.脚, lv:0});}
     }
-    export const                         安全靴 = new class extends Eq{
+    export const                         安全靴 = new class extends Eq{//再構成トンネルTREASURE
         constructor(){super({uniqueName:"安全靴", info:["被攻撃時稀に<盾>化"],
                                 pos:EqPos.脚, lv:40});}
         afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.6){
                 Battle.setCondition(target, Condition.盾, 1);
             }
+        }
+    }
+}
+
+export namespace EqEar{
+    export const                         耳たぶ:EqEar = new class extends EqEar{
+        constructor(){super({uniqueName:"耳たぶ", info:[], lv:0});}
+    }
+    export const                         おにく:EqEar = new class extends EqEar{//店
+        constructor(){super({uniqueName:"おにく", info:["最大HP+29"], lv:29});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_HP).eq += 29;
+        }
+    }
+    export const                         水晶のピアス:EqEar = new class extends EqEar{//店
+        constructor(){super({uniqueName:"水晶のピアス", info:["行動開始時HP+1%"], lv:29});}
+        phaseStart(unit:Unit){
+            Battle.healHP( unit, unit.prm(Prm.MAX_HP).total * 0.01 + 1 );
+        }
+    }
+    export const                         魔ヶ玉のピアス:EqEar = new class extends EqEar{//店
+        constructor(){super({uniqueName:"魔ヶ玉のピアス", info:["最大MP+50"], lv:29});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_MP).eq += 50;
+        }
+    }
+    export const                         エメラルドのピアス:EqEar = new class extends EqEar{//店
+        constructor(){super({uniqueName:"エメラルドのピアス", info:["最大TP+50"], lv:29});}
+        equip(unit:Unit){
+            unit.prm(Prm.MAX_TP).eq += 50;
         }
     }
 }

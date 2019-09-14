@@ -28,7 +28,6 @@ export class BattleScene extends Scene{
 
 
     private tecInfo:{tec:Tec|undefined, user:Unit} = {tec:undefined, user:Unit.players[0]};
-    // private infoTec:Tec|undefined;
     private battleResult:BattleResult;
 
     private constructor(){
@@ -43,6 +42,21 @@ export class BattleScene extends Scene{
         super.clear();
 
         super.add(Place.TOP, DrawPlayInfo.ins);
+
+        const drawBG:(bounds:Rect)=>void = (()=>{
+            if(Battle.type === BattleType.BOSS){
+                return createBossBG();
+            }
+            if(Battle.type === BattleType.EX){
+
+            }
+            return (bounds)=>{};
+        })();
+        super.add(Place.MAIN, ILayout.create({draw:(bounds)=>{
+            Graphics.clip(bounds, ()=>{
+                drawBG(bounds);
+            });
+        }}));
 
         super.add(Place.DUNGEON_DATA, new VariableLayout(()=>{
             if(!this.tecInfo.tec || this.tecInfo.tec === Tec.empty){return DrawDungeonData.ins;}
@@ -149,8 +163,7 @@ export class BattleScene extends Scene{
             return;
         }
 
-        Util.msg.set(`${attacker.name}`, Color.ORANGE);
-        Util.msg.add(`の行動`);
+        Util.msg.set(`${attacker.name}の行動`, Color.ORANGE);
 
         attacker.prm(Prm.TP).base += 10;
         attacker.phaseStart();
@@ -405,3 +418,77 @@ const finish = async()=>{
 
     btnSpace.clear();
 }
+
+
+const createBossBG:()=>(bounds:Rect)=>void = ()=>{
+    const nextR = (r:number, num:number)=>{
+        if(num <= 0){return r;}
+        return nextR(r * 1.2 + 0.002, num-1);
+    };
+    const nextRad = (rad:number, num:number)=>{
+        if(num <= 0){return rad;}
+        // return nextRad(rad * 1.05, num-1);
+        return nextRad(rad + 0.05, num-1);
+    };
+
+    let center = {x:0.5, y:0.5};
+    let nextCenter = {x:0.5, y:0.5};;
+
+    let elms:{rad:number, r:number}[] = [];
+    const elmNum = 60;
+    for(let i = 0; i < elmNum; i++){
+        elms.push({
+            rad:Math.PI * 2 * (i+1) / elmNum,
+            r:Math.random(),
+        });
+    }
+    
+    return bounds=>{
+        const color = {r:0, g:0, b:0, a:1};
+        const color2 = {r:0, g:0, b:0, a:1};
+        const rotateCenter = {x:bounds.x + bounds.w * center.x, y:bounds.y + bounds.h * center.y};
+        const vertex = 4;
+        let vertexes:{x:number ,y:number}[] = [];
+        for(let i = 0; i < vertex; i++){
+            const rad = Math.PI * 2 * (i+1) / vertex;
+            vertexes.push({
+                x:Math.cos(rad),
+                y:Math.sin(rad),
+            });
+        }
+        for(let i = 0; i < elms.length; i++){
+            const e = elms[i];
+
+            Graphics.setLineWidth(80 * e.r, ()=>{
+                let points:{x:number, y:number}[] = [];
+                const x = bounds.x + center.x * bounds.w + Math.cos(e.rad) * e.r;
+                const y = bounds.y + center.y * bounds.h + Math.sin(e.rad) * e.r;
+                const r = e.r * 0.1;
+                for(let i = 0; i < vertex; i++){
+                    points.push({
+                        x:x + vertexes[i].x * r,
+                        y:y + vertexes[i].y * r,
+                    });
+                }
+
+                color.r = 0.2 + e.r * 0.8;
+                Graphics.lines(points, color);
+            });
+
+            e.r = nextR(e.r, 1);
+            if(e.r > 1){
+                e.r = 0.01 + Math.random() * 0.01;
+            }
+
+
+            e.rad = nextRad(e.rad, 1);
+        }
+
+        center.x = center.x * 0.97 + nextCenter.x * 0.03;
+        center.y = center.y * 0.97 + nextCenter.y * 0.03;
+        if(Math.abs(center.x - nextCenter.x) < 0.001 && Math.abs(center.y - nextCenter.y) < 0.001){
+            nextCenter.x = 0.1 + Math.random() * 0.8;
+            nextCenter.y = 0.1 + Math.random() * 0.8; 
+        }
+    };
+};

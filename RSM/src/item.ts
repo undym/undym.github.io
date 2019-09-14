@@ -23,9 +23,9 @@ export class ItemType{
         this.toString = ()=>name;
     }
 
-    values():ReadonlyArray<Item>{
+    get values():ReadonlyArray<Item>{
         if(this._values === undefined){
-            this._values = Item.values()
+            this._values = Item.values
                                 .filter(item=> item.itemType === this);
         }
         return this._values;
@@ -49,7 +49,7 @@ export class ItemType{
 
 export class ItemParentType{
     private static _values:ItemParentType[] = [];
-    static values():ReadonlyArray<ItemParentType>{return this._values;}
+    static get values():ReadonlyArray<ItemParentType>{return this._values;}
 
 
     private constructor(
@@ -94,9 +94,7 @@ class ItemValues{
 
 export class Item implements Action, Num{
     private static _values:Item[] = [];
-    static values():ReadonlyArray<Item>{
-        return this._values;
-    }
+    static get values():ReadonlyArray<Item>{return this._values;}
 
     // private static _rankValues = new Map<number,Item[]>();
     // // private static _rankValues:{[key:number]:Item[];} = {};
@@ -118,7 +116,7 @@ export class Item implements Action, Num{
      */
     static rndItem(dropType:number, rank:number):Item{
         if(!this._dropTypeValues.has(dropType)){
-            const typeValues = this.values().filter(item=> item.dropType & dropType);
+            const typeValues = this.values.filter(item=> item.dropType & dropType);
             this._dropTypeValues.set(dropType, new ItemValues(typeValues));
         }
 
@@ -275,11 +273,11 @@ export namespace Item{
     //
     //-----------------------------------------------------------------
     export const                         スティックパン:Item = new class extends Item{
-        constructor(){super({uniqueName:"スティックパン", info:["HP+10"],
+        constructor(){super({uniqueName:"スティックパン", info:["HP+10+5%"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
-                                    const value = 10;
+                                    const value = (10 + target.prm(Prm.MAX_HP).total * 0.05)|0;
                                     Battle.healHP(target, value);
                                     if(SceneType.now === SceneType.BATTLE){
                                         Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
@@ -288,11 +286,11 @@ export namespace Item{
         })}
     };
     export const                         硬化スティックパン:Item = new class extends Item{
-        constructor(){super({uniqueName:"硬化スティックパン", info:["HP+30"],
+        constructor(){super({uniqueName:"硬化スティックパン", info:["HP+30+5%"],
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
-                                    const value = 30;
+                                    const value = (30 + target.prm(Prm.MAX_HP).total * 0.05)|0;
                                     Battle.healHP(target, value);
                                     if(SceneType.now === SceneType.BATTLE){
                                         Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
@@ -354,9 +352,13 @@ export namespace Item{
     //メモ
     //
     //-----------------------------------------------------------------
+    export const                         合成許可証:Item = new class extends Item{
+        constructor(){super({uniqueName:"合成許可証", info:["合成が解放される"], 
+                                type:ItemType.メモ, rank:0, drop:ItemDrop.NO, numLimit:1})}
+    };
     export const                         消耗品のメモ:Item = new class extends Item{
         constructor(){super({uniqueName:"消耗品のメモ", info:["スティックパンなどの消耗品は","ダンジョンに入る度に補充される"], 
-                                type:ItemType.メモ, rank:0, drop:ItemDrop.NO, numLimit:1})}
+                                type:ItemType.メモ, rank:0, drop:ItemDrop.BOX, numLimit:1})}
     };
     //-----------------------------------------------------------------
     //
@@ -487,14 +489,3 @@ export namespace Item{
     //
     //-----------------------------------------------------------------
 }
-
-class ItemFont{
-    private static _font:Font;
-    static get font(){
-        if(!this._font){
-            this._font = new Font(30, Font.BOLD);
-        }
-        return this._font;
-    }
-}
-

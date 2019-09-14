@@ -15,6 +15,7 @@ import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import { XLayout } from "./undym/layout.js";
 
 
+
 window.onload = ()=>{
     {
         const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -113,7 +114,7 @@ const ctrl = async()=>{
     await Scene.now.ctrl(Rect.FULL);
     
     Input.update();
-    setTimeout(ctrl, 1000 / 30);
+    setTimeout(ctrl, 1000 / 60);
 };
 
 const draw = ()=>{

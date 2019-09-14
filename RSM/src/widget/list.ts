@@ -14,10 +14,11 @@ export class List extends ILayout{
     private update:boolean = true;
     private hold = false;
     private holdY = 0;
+    //scrollの値1につき1項目スクロールする。少数有効。
     private scroll = 0;
     private vec = 0;
 
-    constructor(aPageElmNum:number = 12){
+    constructor(aPageElmNum:number = 13){
         super();
 
         this.aPageElmNum = aPageElmNum|0;
@@ -94,11 +95,32 @@ export class List extends ILayout{
                 this.update = true;
             }
         }else{
+            //下の限界を超えたら下の限界まで戻る
+            let bottomLim = this.elms.length - this.aPageElmNum;
+            if(bottomLim < 0){bottomLim = 0;}
+            if(this.scroll > bottomLim){
+                this.scroll -= 0.5;
+                if(this.scroll < bottomLim){
+                    this.scroll = bottomLim;
+                }
+                this.update = true;
+            }
+            //上の限界を超えたら上の限界まで戻る
+            if(this.scroll < 0){
+                this.scroll += 0.5;
+                if(this.scroll > 0){
+                    this.scroll = 0;
+                }
+                this.update = true;
+            }
+
             if(this.vec !== 0){
                 this.scroll += this.vec;
                 this.vec *= 0.7;
                 this.update = true;
             }
+
+
         }
 
 
@@ -106,12 +128,6 @@ export class List extends ILayout{
         if(this.update){
             this.update = false;
 
-            if(this.scroll > this.elms.length - this.aPageElmNum){
-                this.scroll = this.elms.length - this.aPageElmNum;
-            }
-            if(this.scroll < 0){
-                this.scroll = 0;
-            }
             
             const e = this.elmPanel;
             const page = this.scroll|0;

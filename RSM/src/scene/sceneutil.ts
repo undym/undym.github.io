@@ -272,25 +272,48 @@ export class DrawUnitDetail extends InnerLayout{
                             .add(ILayout.empty)
                         )
                         .add((()=>{
+                            let infoIsEar = true;
+                            let infoEarIndex = 0;
                             let infoPos:EqPos = EqPos.頭;
                             let y = new YLayout();
+
+                            for(let i = 0; i < Unit.EAR_NUM; i++){
+                                y.add(new Layout()
+                                    .add(ILayout.create({draw:(bounds)=>{
+                                        if(infoIsEar && infoEarIndex === i){
+                                            Graphics.fillRect(bounds, Color.YELLOW.darker().darker());
+                                        }
+                                    }}))
+                                    .add(new Label(font, ()=>`耳:${getUnit().getEqEar(i)}`))
+                                    .add(ILayout.create({ctrl:(bounds)=>{
+                                        if(Input.holding > 0 && bounds.contains( Input.point )){
+                                            infoIsEar = true;
+                                            infoEarIndex = i;
+                                        }
+                                    }}))
+                                )
+                            }
                             for(let pos of EqPos.values()){
                                 y.add(new Layout()
                                     .add(ILayout.create({draw:(bounds)=>{
-                                        if(pos === infoPos){
+                                        if(!infoIsEar && pos === infoPos){
                                             Graphics.fillRect(bounds, Color.YELLOW.darker().darker());
                                         }
                                     }}))
                                     .add(new Label(font, ()=>`${pos}:${getUnit().getEq(pos)}`))
                                     .add(ILayout.create({ctrl:(bounds)=>{
                                         if(Input.holding > 0 && bounds.contains( Input.point )){
+                                            infoIsEar = false;
                                             infoPos = pos;
                                         }
                                     }}))
                                 )
                             }
+
                             y.add(new Label(font, ()=>{
-                                return getUnit().getEq(infoPos).info.join();
+                                return infoIsEar ? getUnit().getEqEar(infoEarIndex).info.join()
+                                                 : getUnit().getEq(infoPos).info.join()
+                                                 ;
                             }, ()=>Color.L_GRAY));
                             return y;
                         })())
