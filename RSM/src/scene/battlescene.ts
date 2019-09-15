@@ -48,7 +48,7 @@ export class BattleScene extends Scene{
                 return createBossBG();
             }
             if(Battle.type === BattleType.EX){
-
+                return createExBG();
             }
             return (bounds)=>{};
         })();
@@ -490,5 +490,48 @@ const createBossBG:()=>(bounds:Rect)=>void = ()=>{
             nextCenter.x = 0.1 + Math.random() * 0.8;
             nextCenter.y = 0.1 + Math.random() * 0.8; 
         }
+    };
+};
+
+
+const createExBG:()=>(bounds:Rect)=>void = ()=>{
+    let count = 0;
+    let vertex = 4;
+    let rads:{x:number, y:number}[] = [];
+    for(let i = 0; i < vertex; i++){
+        const rad = Math.PI * 2 * (i+1) / vertex;
+        rads.push({
+            x:Math.cos(rad),
+            y:Math.sin(rad),
+        });
+    }
+    return bounds=>{
+        const xNum = 8;
+        const yNum = 4;
+        const w = bounds.w / xNum;
+        const h = bounds.h / yNum;
+        const wHalf = w / 2;
+        const hHalf = h / 2;
+        const color = new Color(0,0.25,0.25);
+        const lineWidth = 4;
+        count++;
+            for(let y = 0; y < yNum; y++){
+                for(let x = 0; x < xNum; x++){
+                    let points:{x:number, y:number}[] = [];
+                    const _x = bounds.x + wHalf + w * x;
+                    const _y = bounds.y + hHalf + h * y;
+                    for(let i = 0; i < vertex; i++){
+                        points.push({
+                            x:_x + rads[i].x * w / 2,
+                            y:_y + rads[i].y * h / 2,
+                        });
+                    }
+                    // Graphics.setLineWidth(lineWidth + Math.sin( x * 0.1 + y * 0.1 + count * 0.1 ) * lineWidth, ()=>{    
+                    Graphics.setLineWidth(Math.abs(Math.sin( x * 0.1 + y * 0.1 + count * 0.05 )) * lineWidth, ()=>{    
+                        Graphics.lines(points, color);
+                    });
+                }
+            }
+
     };
 };

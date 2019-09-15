@@ -20,8 +20,8 @@ export abstract class TecType{
     private _tecs:Tec[];
     get tecs():ReadonlyArray<Tec>{
         if(!this._tecs){
-            let actives = ActiveTec.values().filter(tec=> tec.type === this);
-            let passives = PassiveTec.values().filter(tec=> tec.type === this);
+            let actives = ActiveTec.values.filter(tec=> tec.type === this);
+            let passives = PassiveTec.values.filter(tec=> tec.type === this);
             let tmp:Tec[] = [];
             this._tecs = tmp.concat( actives, passives );
         }
@@ -209,7 +209,7 @@ export abstract class Tec implements Force{
 
 export abstract class PassiveTec extends Tec{
     private static _values:PassiveTec[] = [];
-    static values():ReadonlyArray<PassiveTec>{return this._values;}
+    static get values():ReadonlyArray<PassiveTec>{return this._values;}
     private static _valueOf = new Map<string,PassiveTec>();
     static valueOf(uniqueName:string):PassiveTec|undefined{
         return this._valueOf.get(uniqueName);
@@ -242,7 +242,7 @@ export abstract class PassiveTec extends Tec{
 
 export abstract class ActiveTec extends Tec implements Action{
     private static _values:ActiveTec[] = [];
-    static values():ReadonlyArray<ActiveTec>{return this._values;}
+    static get values():ReadonlyArray<ActiveTec>{return this._values;}
     
     private static _valueOf = new Map<string,ActiveTec>();
     static valueOf(uniqueName:string):ActiveTec|undefined{

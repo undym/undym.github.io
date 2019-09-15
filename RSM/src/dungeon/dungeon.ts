@@ -81,16 +81,14 @@ class Event{
 
 export abstract class Dungeon{
     private static _values:Dungeon[] = [];
-    static values():ReadonlyArray<Dungeon>{
-        return this._values;
-    }
+    static get values():ReadonlyArray<Dungeon>{return this._values;}
 
     private static _valueOf:Map<string,Dungeon>;
     static valueOf(uniqueName:string){
         if(!this._valueOf){
             this._valueOf = new Map<string,Dungeon>();
 
-            for(const d of this.values()){
+            for(const d of this.values){
                 this._valueOf.set( d.uniqueName, d );
             }
         }

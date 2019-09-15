@@ -82,13 +82,11 @@ export class Dungeon {
         this.exKillCount = 0;
         Dungeon._values.push(this);
     }
-    static values() {
-        return this._values;
-    }
+    static get values() { return this._values; }
     static valueOf(uniqueName) {
         if (!this._valueOf) {
             this._valueOf = new Map();
-            for (const d of this.values()) {
+            for (const d of this.values) {
                 this._valueOf.set(d.uniqueName, d);
             }
         }

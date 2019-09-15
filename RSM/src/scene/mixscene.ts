@@ -128,12 +128,12 @@ export class MixScene extends Scene{
                             const l = new FlowLayout(2,3);
                             
                             l.add(new Btn("建築", ()=>{
-                                const values = Mix.values()
+                                const values = Mix.values
                                                     .filter(m=> !m.result && m.isVisible());
                                 this.setList("建築", values);
                             }));
                             l.add(new Btn("装備", ()=>{
-                                const values = Mix.values()
+                                const values = Mix.values
                                                     .filter(m=>{
                                                         const result = m.result;
                                                         if(result && result.object instanceof Eq && m.isVisible()){return true;}
@@ -142,7 +142,7 @@ export class MixScene extends Scene{
                                 this.setList("装備", values);
                             }));
                             l.add(new Btn("アイテム", ()=>{
-                                const values = Mix.values()
+                                const values = Mix.values
                                                     .filter(m=>{
                                                         const result = m.result;
                                                         if(result && result.object instanceof Item && m.isVisible()){return true;}

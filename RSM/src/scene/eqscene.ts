@@ -224,7 +224,7 @@ export class EqScene extends Scene{
             groundColor:()=>Color.D_GRAY,
         });
 
-        EqEar.values()
+        EqEar.values
             .filter(ear=>{
                 if(ear.num > 0){return true;}
                 for(let i = 0; i < Unit.EAR_NUM; i++){

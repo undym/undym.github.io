@@ -51,7 +51,7 @@ export class TownScene extends Scene{
 
         //     }
 
-        //     return (bounds)=>{};
+        //     // return (bounds)=>{};
         // })();
         // super.add(Place.MAIN, ILayout.create({draw:(bounds)=>{
         //     Graphics.clip(bounds,()=>{
@@ -165,7 +165,7 @@ class TownBtn{
         // 0, 1, 2, 3,
         // 4, 5, 6, 7,
         // 8, 9,10,11,
-        const visibleDungeons = Dungeon.values().filter(d=> d.isVisible() || Debug.debugMode);
+        const visibleDungeons = Dungeon.values.filter(d=> d.isVisible() || Debug.debugMode);
         for(let i = this.dungeonPage * onePageDrawDungeonNum; i < visibleDungeons.length; i++){
             const d = visibleDungeons[i];
 

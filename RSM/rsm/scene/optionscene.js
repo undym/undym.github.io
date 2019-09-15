@@ -87,17 +87,17 @@ const setDebugBtn = (l) => {
     }));
     l.add(new Btn("技習得", () => {
         for (let p of Player.values) {
-            for (let tec of ActiveTec.values()) {
+            for (let tec of ActiveTec.values) {
                 p.ins.setMasteredTec(tec, true);
             }
-            for (let tec of PassiveTec.values()) {
+            for (let tec of PassiveTec.values) {
                 p.ins.setMasteredTec(tec, true);
             }
         }
         Util.msg.set("技習得");
     }));
     l.add(new Btn("装備入手", () => {
-        for (const eq of EqEar.values()) {
+        for (const eq of EqEar.values) {
             eq.num += 1;
         }
         for (const eq of Eq.values) {

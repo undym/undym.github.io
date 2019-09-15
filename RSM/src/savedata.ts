@@ -13,7 +13,7 @@ import { Mix } from "./mix.js";
 
 
 export class Version{
-    static readonly NOW = new Version(0,9,1);
+    static readonly NOW = new Version(0,9,2);
 
     private values:number[];
 
@@ -83,10 +83,10 @@ export class SaveData{
         strageSaveData(save);
         Item.values.forEach(item=> strageItem(save, item));
         Eq.values.forEach(eq=> strageEq(save, eq));
-        EqEar.values().forEach(ear=> strageEqEar(save, ear));
-        Dungeon.values().forEach(d=> strageDungeon(save, d));
+        EqEar.values.forEach(ear=> strageEqEar(save, ear));
+        Dungeon.values.forEach(d=> strageDungeon(save, d));
         Player.values.forEach(p=> stragePlayer(save, p));
-        Mix.values().forEach(m=> strageMix(save, m));
+        Mix.values.forEach(m=> strageMix(save, m));
         stragePlayData(save);
     }
 }
@@ -228,12 +228,12 @@ const stragePlayer = (save:boolean, p:Player)=>{
         });
     }
 
-    for(const tec of PassiveTec.values()){
+    for(const tec of PassiveTec.values){
         ioBool(save, `${name}_masteredPassiveTec_${tec.uniqueName}`, u.isMasteredTec(tec), load=>{
             u.setMasteredTec(tec, load);
         });
     }
-    for(const tec of ActiveTec.values()){
+    for(const tec of ActiveTec.values){
         ioBool(save, `${name}_masteredActiveTec_${tec.uniqueName}`, u.isMasteredTec(tec), load=>{
             u.setMasteredTec(tec, load);
         });

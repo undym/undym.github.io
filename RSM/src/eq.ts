@@ -153,7 +153,7 @@ export abstract class Eq implements Force, Num{
 
 export class EqEar implements Force, Num{
     private static _values:EqEar[] = [];
-    static values():EqEar[]{return this._values;}
+    static get values():EqEar[]{return this._values;}
 
     private static _valueOf = new Map<string,EqEar>();
     static valueOf(uniqueName:string):EqEar|undefined{

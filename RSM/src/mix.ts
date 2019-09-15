@@ -41,7 +41,7 @@ export class Num{
 
 export class Mix{
     private static _values:Mix[] = [];
-    static values():ReadonlyArray<Mix>{return this._values;}
+    static get values():ReadonlyArray<Mix>{return this._values;}
 
     private static _valueOf = new Map<string,Mix>();
     static valueOf(uniqueName:string):Mix|undefined{

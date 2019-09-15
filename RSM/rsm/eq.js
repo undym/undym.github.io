@@ -139,7 +139,7 @@ export class EqEar {
         EqEar._values.push(this);
         EqEar._valueOf.set(args.uniqueName, this);
     }
-    static values() { return this._values; }
+    static get values() { return this._values; }
     static valueOf(uniqueName) {
         return this._valueOf.get(uniqueName);
     }

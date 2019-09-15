@@ -200,7 +200,7 @@ export class EqScene extends Scene {
             center: () => `耳`,
             groundColor: () => Color.D_GRAY,
         });
-        EqEar.values()
+        EqEar.values
             .filter(ear => {
             if (ear.num > 0) {
                 return true;

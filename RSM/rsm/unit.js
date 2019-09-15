@@ -387,10 +387,10 @@ export class PUnit extends Unit {
         for (let job of Job.values) {
             this.jobLvs.set(job, { lv: 0, exp: 0 });
         }
-        for (let tec of ActiveTec.values()) {
+        for (let tec of ActiveTec.values) {
             this.masteredTecs.set(tec, false);
         }
-        for (let tec of PassiveTec.values()) {
+        for (let tec of PassiveTec.values) {
             this.masteredTecs.set(tec, false);
         }
     }
