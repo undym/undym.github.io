@@ -118,7 +118,13 @@ DungeonEvent._values = [];
             super();
             this.createImg = () => new Img("img/treasure_open.png");
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                yield Dungeon.now.treasure.add(1);
+                const treasure = Dungeon.now.rndTreasure();
+                if (treasure) {
+                    yield treasure.add(1);
+                }
+                else {
+                    Util.msg.set("空だった！");
+                }
             });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }

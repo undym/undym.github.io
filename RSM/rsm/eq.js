@@ -437,7 +437,6 @@ EqEar._valueOf = new Map();
                 pos: EqPos.盾, lv: 0 });
         }
     };
-    //shop
     Eq.銅板 = new class extends Eq {
         constructor() {
             super({ uniqueName: "銅板", info: ["防御値+50"],
@@ -447,7 +446,6 @@ EqEar._valueOf = new Map();
             dmg.def.add += 50;
         }
     };
-    //shop
     Eq.鉄板 = new class extends Eq {
         constructor() {
             super({ uniqueName: "鉄板", info: ["防御値+100"],
@@ -457,7 +455,6 @@ EqEar._valueOf = new Map();
             dmg.def.add += 100;
         }
     };
-    //shop
     Eq.鋼鉄板 = new class extends Eq {
         constructor() {
             super({ uniqueName: "鋼鉄板", info: ["防御値+200"],
@@ -467,7 +464,6 @@ EqEar._valueOf = new Map();
             dmg.def.add += 200;
         }
     };
-    //shop
     Eq.チタン板 = new class extends Eq {
         constructor() {
             super({ uniqueName: "チタン板", info: ["防御値+300"],
@@ -691,6 +687,7 @@ EqEar._valueOf = new Map();
         }
     };
 })(Eq || (Eq = {}));
+//耳は全て店売りにする
 (function (EqEar) {
     EqEar.耳たぶ = new class extends EqEar {
         constructor() { super({ uniqueName: "耳たぶ", info: [], lv: 0 }); }

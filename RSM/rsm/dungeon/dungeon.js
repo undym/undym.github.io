@@ -14,6 +14,7 @@ import { Eq } from "../eq.js";
 import { Util } from "../util.js";
 import { cwait } from "../undym/scene.js";
 import { Player } from "../player.js";
+import { choice } from "../undym/random.js";
 class Event {
     constructor(events) {
         this.events = [];
@@ -109,7 +110,13 @@ export class Dungeon {
     }
     get au() { return this.args.au; }
     get dungeonClearItem() { return this.args.clearItem(); }
-    get treasure() { return this.args.treasure(); }
+    get treasures() { return this.args.treasures(); }
+    rndTreasure() {
+        if (this.treasures.length === 0) {
+            return undefined;
+        }
+        return choice(this.treasures);
+    }
     get treasureKey() { return this.args.treasureKey(); }
     get exItem() { return this.args.exItem(); }
     get trendItems() { return this.args.trendItems(); }
@@ -191,7 +198,7 @@ Dungeon.auNow = 0;
             super({ uniqueName: "はじまりの丘",
                 rank: 0, enemyLv: 1, au: 50,
                 clearItem: () => Item.はじまりの丘の玉,
-                treasure: () => Eq.棒,
+                treasures: () => [Eq.棒],
                 treasureKey: () => Item.はじまりの丘の鍵,
                 exItem: () => Eq.瑠璃,
                 trendItems: () => [Item.石, Item.土, Item.枝,],
@@ -222,7 +229,7 @@ Dungeon.auNow = 0;
             super({ uniqueName: "再構成トンネル",
                 rank: 1, enemyLv: 3, au: 70,
                 clearItem: () => Item.再構成トンネルの玉,
-                treasure: () => Eq.安全靴,
+                treasures: () => [Eq.安全靴],
                 treasureKey: () => Item.再構成トンネルの鍵,
                 exItem: () => Eq.手甲,
                 trendItems: () => [Item.水],
@@ -260,7 +267,7 @@ Dungeon.auNow = 0;
             super({ uniqueName: "リ・テの門",
                 rank: 1, enemyLv: 7, au: 70,
                 clearItem: () => Item.リテの門の玉,
-                treasure: () => Eq.魔法の杖,
+                treasures: () => [Eq.魔法の杖],
                 treasureKey: () => Item.リテの門の鍵,
                 exItem: () => Eq.魔女のとんがり帽,
                 trendItems: () => [Item.朽ち果てた鍵],
@@ -293,7 +300,7 @@ Dungeon.auNow = 0;
             super({ uniqueName: "黒平原",
                 rank: 2, enemyLv: 14, au: 100,
                 clearItem: () => Item.黒平原の玉,
-                treasure: () => Eq.ゲルマンベルト,
+                treasures: () => [Eq.ゲルマンベルト],
                 treasureKey: () => Item.黒平原の鍵,
                 exItem: () => Eq.オホーツクのひも,
                 trendItems: () => [Item.黒い石, Item.黒い砂],
@@ -323,7 +330,7 @@ Dungeon.auNow = 0;
             super({ uniqueName: "黒遺跡",
                 rank: 1, enemyLv: 18, au: 120,
                 clearItem: () => Item.黒遺跡の玉,
-                treasure: () => Eq.魔ヶ玉の指輪,
+                treasures: () => [Eq.魔ヶ玉の指輪],
                 treasureKey: () => Item.黒遺跡の鍵,
                 exItem: () => Eq.ゴーレムの腕,
                 trendItems: () => [Item.黒い枝, Item.黒い青空],

@@ -431,32 +431,28 @@ export namespace Eq{
         constructor(){super({uniqueName:"板", info:[],
                                 pos:EqPos.盾, lv:0});}
     }
-    //shop
-    export const                         銅板 = new class extends Eq{
+    export const                         銅板 = new class extends Eq{//合成
         constructor(){super({uniqueName:"銅板", info:["防御値+50"],
                                 pos:EqPos.盾, lv:12});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             dmg.def.add += 50;
         }
     }
-    //shop
-    export const                         鉄板 = new class extends Eq{
+    export const                         鉄板 = new class extends Eq{//合成
         constructor(){super({uniqueName:"鉄板", info:["防御値+100"],
                                 pos:EqPos.盾, lv:22});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             dmg.def.add += 100;
         }
     }
-    //shop
-    export const                         鋼鉄板 = new class extends Eq{
+    export const                         鋼鉄板 = new class extends Eq{//合成
         constructor(){super({uniqueName:"鋼鉄板", info:["防御値+200"],
                                 pos:EqPos.盾, lv:32});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             dmg.def.add += 200;
         }
     }
-    //shop
-    export const                         チタン板 = new class extends Eq{
+    export const                         チタン板 = new class extends Eq{//合成
         constructor(){super({uniqueName:"チタン板", info:["防御値+300"],
                                 pos:EqPos.盾, lv:42});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -472,7 +468,7 @@ export namespace Eq{
         constructor(){super({uniqueName:"襤褸切れ", info:[],
                                 pos:EqPos.体, lv:0});}
     }
-    export const                         草の服 = new class extends Eq{
+    export const                         草の服 = new class extends Eq{//合成
         constructor(){super({uniqueName:"草の服", info:["最大HP+20"],
                                 pos:EqPos.体, lv:15});}
         equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 20;}
@@ -632,6 +628,7 @@ export namespace Eq{
     }
 }
 
+//耳は全て店売りにする
 export namespace EqEar{
     export const                         耳たぶ:EqEar = new class extends EqEar{
         constructor(){super({uniqueName:"耳たぶ", info:[], lv:0});}

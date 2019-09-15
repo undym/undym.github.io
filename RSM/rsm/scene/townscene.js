@@ -146,11 +146,13 @@ class TownBtn {
                 Util.msg.set(`Rank:${d.rank}`);
                 Util.msg.set(`Lv:${d.enemyLv}`);
                 Util.msg.set(`攻略回数:${d.dungeonClearCount}`, d.dungeonClearCount > 0 ? Color.WHITE : Color.GRAY);
-                if (d.treasure.totalGetNum > 0) {
-                    Util.msg.set(`財宝:${d.treasure}(${d.treasure.num}個)`);
-                }
-                else {
-                    Util.msg.set(`財宝:${"？".repeat(d.treasure.toString().length)}`, Color.GRAY);
+                for (const treasure of d.treasures) {
+                    if (treasure.totalGetNum > 0) {
+                        Util.msg.set(`財宝:${treasure}(${treasure.num}個)`);
+                    }
+                    else {
+                        Util.msg.set(`財宝:${"？".repeat(treasure.toString().length)}`, Color.GRAY);
+                    }
                 }
                 Util.msg.set(`EX討伐回数:${d.exKillCount}`, d.exKillCount > 0 ? Color.WHITE : Color.GRAY);
             }));
@@ -173,7 +175,7 @@ class TownBtn {
                 item.remainingUseCount = item.num;
             }
             Util.msg.set(`${choosedDungeon}に侵入しました`);
-            setDungeonNameFX(choosedDungeon.toString(), Place.MAIN);
+            FX_DungeonName(choosedDungeon.toString(), Place.MAIN);
             Scene.load(DungeonScene.ins);
         });
         l.addFromLast(new VariableLayout(() => {
@@ -198,7 +200,7 @@ class TownBtn {
     }
 }
 TownBtn.dungeonPage = 0;
-const setDungeonNameFX = (name, bounds) => {
+const FX_DungeonName = (name, bounds) => {
     const fontSize = 60;
     const font = new Font(fontSize, Font.ITALIC);
     const tex = new Texture({ pixelSize: { w: font.measurePixelW(name), h: fontSize } });

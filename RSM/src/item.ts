@@ -413,10 +413,6 @@ export namespace Item{
         constructor(){super({uniqueName:"少女の心を持ったおっさん", info:["いつもプリキュアの","話をしている"],
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
     };
-    export const                         枝:Item = new class extends Item{
-        constructor(){super({uniqueName:"枝", info:["えだ"],
-                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX | ItemDrop.TREE})}
-    };
     export const                         土:Item = new class extends Item{
         constructor(){super({uniqueName:"土", info:["つち"],
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
@@ -429,6 +425,15 @@ export namespace Item{
         constructor(){super({uniqueName:"しいたけ", info:[],
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
     };
+    //-----------------------------------------------------------------
+    //
+    //素材BoxRank1
+    //
+    //-----------------------------------------------------------------
+    export const                         銅:Item = new class extends Item{
+        constructor(){super({uniqueName:"銅", info:["やわらかい"],
+                                type:ItemType.素材, rank:1, drop:ItemDrop.BOX})}
+    };
     export const                         朽ち果てた鍵:Item = new class extends Item{
         constructor(){super({uniqueName:"朽ち果てた鍵", info:[],
                                 type:ItemType.素材, rank:1, drop:ItemDrop.BOX})}
@@ -437,6 +442,11 @@ export namespace Item{
         constructor(){super({uniqueName:"エネルギー", info:["触るとビリビリする"],
                                 type:ItemType.素材, rank:1, drop:ItemDrop.BOX})}
     };
+    //-----------------------------------------------------------------
+    //
+    //素材BoxRank2
+    //
+    //-----------------------------------------------------------------
     export const                         He:Item = new class extends Item{
         constructor(){super({uniqueName:"He", info:["ヘェッ"],
                                 type:ItemType.素材, rank:2, drop:ItemDrop.BOX})}
@@ -457,8 +467,43 @@ export namespace Item{
         constructor(){super({uniqueName:"黒い青空", info:["すごく黒い！！！！！"],
                                 type:ItemType.素材, rank:2, drop:ItemDrop.BOX})}
     };
+    export const                         鉄:Item = new class extends Item{
+        constructor(){super({uniqueName:"鉄", info:["かたい"],
+                                type:ItemType.素材, rank:2, drop:ItemDrop.BOX})}
+    };
+    //-----------------------------------------------------------------
+    //
+    //素材BoxRank3
+    //
+    //-----------------------------------------------------------------
+    export const                         鋼鉄:Item = new class extends Item{
+        constructor(){super({uniqueName:"鋼鉄", info:["とてもかたい"],
+                                type:ItemType.素材, rank:3, drop:ItemDrop.BOX})}
+    };
+    //-----------------------------------------------------------------
+    //
+    //素材BoxRank4
+    //
+    //-----------------------------------------------------------------
+    export const                         チタン:Item = new class extends Item{
+        constructor(){super({uniqueName:"チタン", info:["第4族元素"],
+                                type:ItemType.素材, rank:4, drop:ItemDrop.BOX})}
+    };
 
 
+    //-----------------------------------------------------------------
+    //
+    //素材TREE
+    //
+    //-----------------------------------------------------------------
+    export const                         枝:Item = new class extends Item{
+        constructor(){super({uniqueName:"枝", info:["えだ"],
+                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX | ItemDrop.TREE})}
+    };
+    export const                         葉っぱ:Item = new class extends Item{
+        constructor(){super({uniqueName:"葉っぱ", info:[],
+                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX | ItemDrop.TREE})}
+    };
     export const                         竹:Item = new class extends Item{
         constructor(){super({uniqueName:"竹", info:[],
                                 type:ItemType.素材, rank:0, drop:ItemDrop.TREE})}
@@ -482,6 +527,15 @@ export namespace Item{
     export const                         無法松:Item = new class extends Item{
         constructor(){super({uniqueName:"無法松", info:["通りすがりのたい焼き屋サン"],
                                 type:ItemType.素材, rank:8, drop:ItemDrop.TREE})}
+    };
+    //-----------------------------------------------------------------
+    //
+    //合成素材
+    //
+    //-----------------------------------------------------------------
+    export const                         布:Item = new class extends Item{
+        constructor(){super({uniqueName:"布", info:[],
+                                type:ItemType.素材, rank:2, drop:ItemDrop.NO})}
     };
     //-----------------------------------------------------------------
     //

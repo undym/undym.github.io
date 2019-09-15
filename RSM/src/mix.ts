@@ -2,6 +2,7 @@ import { Util } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Item } from "./item.js";
 import { Player } from "./player.js";
+import { Eq } from "./eq.js";
 
 
 export class Num{
@@ -86,22 +87,25 @@ export class Mix{
             result?:()=>[Num, number],
             action?:()=>void,
             info?:string[],
+            isVisible?:()=>boolean,
         }
     ){
-        this.toString = ()=>this.uniqueName;
 
         Mix._values.push(this);
         if(Mix._valueOf.has(args.uniqueName)) {console.log("Mix._valueOf.has:", `"${args.uniqueName}"`);}
         else                                  {Mix._valueOf.set( args.uniqueName, this );}
     }
 
+    toString(){return this.uniqueName;}
+
     isVisible():boolean{
         if(!this.materials){return false;}
+        if(this.args.isVisible && !this.args.isVisible()){return false;}
         return this.materials[0].object.num > 0 && this.count < this.countLimit;
     }
 
     canRun(){
-        if(this.count >= this.countLimit){return false;}
+        if(this.countLimit !== Mix.LIMIT_INF && this.count >= this.countLimit){return false;}
 
         for(let m of this.materials){
             if(m.object.num < m.num){
@@ -143,14 +147,54 @@ export namespace Mix{
     //装備
     //
     //--------------------------------------------------------
+    const           銅板:Mix = new Mix({
+        uniqueName:"銅板", limit:1,
+        result:()=>[Eq.銅板, 1],
+        materials:()=>[[Item.銅, 4], [Item.枝, 5], [Item.土, 3]],
+    });
+    const           鉄板:Mix = new Mix({
+        uniqueName:"鉄板", limit:1,
+        result:()=>[Eq.鉄板, 1],
+        materials:()=>[[Item.鉄, 4], [Item.枝, 5], [Item.土, 3]],
+        isVisible:()=>銅板.count > 0,
+    });
+    const           鋼鉄板:Mix = new Mix({
+        uniqueName:"鋼鉄板", limit:1,
+        result:()=>[Eq.鋼鉄板, 1],
+        materials:()=>[[Item.鋼鉄, 4], [Item.枝, 5], [Item.土, 3]],
+        isVisible:()=>鉄板.count > 0,
+    });
+    const           チタン板:Mix = new Mix({
+        uniqueName:"チタン板", limit:1,
+        result:()=>[Eq.チタン板, 1],
+        materials:()=>[[Item.チタン, 4], [Item.枝, 5], [Item.土, 3]],
+        isVisible:()=>鋼鉄板.count > 0,
+    });
+    
+    const           草の服:Mix = new Mix({
+        uniqueName:"草の服", limit:1,
+        result:()=>[Eq.草の服, 1],
+        materials:()=>[[Item.葉っぱ, 10], [Item.黒い枝, 3], [Item.しいたけ, 5]],
+    });
+    const           布の服:Mix = new Mix({
+        uniqueName:"布の服", limit:1,
+        result:()=>[Eq.布の服, 1],
+        materials:()=>[[Item.布, 5], [Item.黒い石, 3], [Item.しいたけ, 5]],
+    });
     //--------------------------------------------------------
     //
     //アイテム
     //
     //--------------------------------------------------------
-    const           硬化スティックパン = new Mix({
+    const           硬化スティックパン:Mix = new Mix({
         uniqueName:"硬化スティックパン", limit:5,
         result:()=>[Item.硬化スティックパン, 1],
         materials:()=>[[Item.はじまりの丘の玉, 1], [Item.石, 5], [Item.土, 5]],
+    });
+    const           布:Mix = new Mix({
+        uniqueName:"布", limit:Mix.LIMIT_INF,
+        result:()=>[Item.布, 1],
+        materials:()=>[[Item.葉っぱ, 5], [Item.枝, 1]],
+        isVisible:()=>草の服.count > 0,
     });
 }

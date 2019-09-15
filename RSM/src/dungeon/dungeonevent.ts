@@ -16,6 +16,7 @@ import { Targeting, Dmg } from "../force.js";
 import { Img } from "../graphics/graphics.js";
 import { SaveData } from "../savedata.js";
 import { Input } from "../undym/input.js";
+import { Num } from "../mix.js";
 
 
 export abstract class DungeonEvent{
@@ -121,7 +122,12 @@ export namespace DungeonEvent{
         constructor(){super();}
         createImg = ()=> new Img("img/treasure_open.png");
         happenInner = async()=>{
-            await Dungeon.now.treasure.add(1);
+            const treasure:Num|undefined = Dungeon.now.rndTreasure();
+            if(treasure){
+                await treasure.add(1);
+            }else{
+                Util.msg.set("空だった！");
+            }
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
