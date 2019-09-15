@@ -435,7 +435,7 @@ const createBossBG:()=>(bounds:Rect)=>void = ()=>{
     let nextCenter = {x:0.5, y:0.5};;
 
     let elms:{rad:number, r:number}[] = [];
-    const elmNum = 60;
+    const elmNum = 80;
     for(let i = 0; i < elmNum; i++){
         elms.push({
             rad:Math.PI * 2 * (i+1) / elmNum,
@@ -445,8 +445,6 @@ const createBossBG:()=>(bounds:Rect)=>void = ()=>{
     
     return bounds=>{
         const color = {r:0, g:0, b:0, a:1};
-        const color2 = {r:0, g:0, b:0, a:1};
-        const rotateCenter = {x:bounds.x + bounds.w * center.x, y:bounds.y + bounds.h * center.y};
         const vertex = 4;
         let vertexes:{x:number ,y:number}[] = [];
         for(let i = 0; i < vertex; i++){
@@ -456,13 +454,15 @@ const createBossBG:()=>(bounds:Rect)=>void = ()=>{
                 y:Math.sin(rad),
             });
         }
+        const cx = bounds.x + center.x * bounds.w;
+        const cy = bounds.y + center.y * bounds.h;
         for(let i = 0; i < elms.length; i++){
             const e = elms[i];
 
             Graphics.setLineWidth(80 * e.r, ()=>{
                 let points:{x:number, y:number}[] = [];
-                const x = bounds.x + center.x * bounds.w + Math.cos(e.rad) * e.r;
-                const y = bounds.y + center.y * bounds.h + Math.sin(e.rad) * e.r;
+                const x = cx + Math.cos(e.rad) * e.r;
+                const y = cy + Math.sin(e.rad) * e.r;
                 const r = e.r * 0.1;
                 for(let i = 0; i < vertex; i++){
                     points.push({

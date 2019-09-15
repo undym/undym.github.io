@@ -192,7 +192,7 @@ export const FX_RotateStr = (font:Font, str:string, center:{x:number,y:number}, 
             let rad = -Math.PI - PI2 * (count - i) / rotateOver;
             if(rad < -PI2){rad = 0;}
             Graphics.rotate(/*rad*/rad, /*center*/{x:x2, y:y2}, ()=>{
-                font.draw( strings[i], new Point(-measures[i] / 2, -font.ratioH / 2), col );
+                font.draw( strings[i], new Point(x2 - measures[i] / 2, y2 - font.ratioH / 2), col );
             });
             x2 += measures[i];
         }

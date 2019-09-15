@@ -148,7 +148,7 @@ export const FX_RotateStr = (font, str, center, color) => {
                 rad = 0;
             }
             Graphics.rotate(/*rad*/ rad, /*center*/ { x: x2, y: y2 }, () => {
-                font.draw(strings[i], new Point(-measures[i] / 2, -font.ratioH / 2), col);
+                font.draw(strings[i], new Point(x2 - measures[i] / 2, y2 - font.ratioH / 2), col);
             });
             x2 += measures[i];
         }
