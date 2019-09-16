@@ -38,7 +38,7 @@ export class Version {
     }
     toString() { return `${this.major}.${this.minior}.${this.mentener}`; }
 }
-Version.NOW = new Version(0, 10, 1);
+Version.NOW = new Version(0, 10, 2);
 let saveDataVersion;
 export class SaveData {
     static exists() {
@@ -157,6 +157,14 @@ const stragePlayer = (save, p) => {
         ioInt(save, `${name}_prm_${prm}_base`, u.prm(prm).base | 0, load => u.prm(prm).base = load);
         ioInt(save, `${name}_prm_${prm}_eq`, u.prm(prm).eq | 0, load => u.prm(prm).eq = load);
         ioInt(save, `${name}_prm_${prm}_battle`, u.prm(prm).battle | 0, load => u.prm(prm).battle = load);
+    }
+    for (let i = 0; i < Unit.EAR_NUM; i++) {
+        ioStr(save, `${name}_eqear_${i}`, u.getEqEar(i).uniqueName, load => {
+            const ear = EqEar.valueOf(load);
+            if (ear) {
+                u.setEqEar(i, ear);
+            }
+        });
     }
     for (const pos of EqPos.values()) {
         ioStr(save, `${name}_eq_${pos}`, u.getEq(pos).uniqueName, load => {
