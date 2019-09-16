@@ -13,7 +13,7 @@ import { Mix } from "./mix.js";
 
 
 export class Version{
-    static readonly NOW = new Version(0,10,1);
+    static readonly NOW = new Version(0,10,2);
 
     private values:number[];
 
@@ -185,6 +185,15 @@ const stragePlayer = (save:boolean, p:Player)=>{
         ioInt(save, `${name}_prm_${prm}_eq`,     u.prm(prm).eq|0,     load=> u.prm(prm).eq = load);
         ioInt(save, `${name}_prm_${prm}_battle`, u.prm(prm).battle|0, load=> u.prm(prm).battle = load);
     }
+
+
+    for(let i = 0; i < Unit.EAR_NUM; i++){
+        ioStr(save, `${name}_eqear_${i}`, u.getEqEar(i).uniqueName, load=>{
+            const ear = EqEar.valueOf(load);
+            if(ear){u.setEqEar(i, ear);}
+        })
+    }
+
     for(const pos of EqPos.values()){
         ioStr(save, `${name}_eq_${pos}`, u.getEq(pos).uniqueName, load=>{
             const eq = Eq.valueOf(load);
