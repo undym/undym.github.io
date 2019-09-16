@@ -203,6 +203,7 @@ export class EqScene extends Scene{
 
             for(let p of Unit.players.filter(p=> p.exists)){
                 if(p.bounds.contains( Input.point )){
+                    this.target = p;
                     this.resetList();
                     break;
                 }
