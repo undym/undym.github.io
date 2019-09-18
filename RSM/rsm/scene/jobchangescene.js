@@ -12,7 +12,7 @@ import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
 import { Input } from "../undym/input.js";
 import { Rect, Color } from "../undym/type.js";
-import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
+import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
 import { Place, Debug } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 import { List } from "../widget/list.js";
@@ -26,7 +26,25 @@ export class JobChangeScene extends Scene {
     }
     init() {
         super.clear();
-        const mainBounds = new Rect(0, 0, 1, 0.8);
+        super.add(Place.TOP, DrawPlayInfo.ins);
+        const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
+        super.add(pboxBounds, DrawSTBoxes.players);
+        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
+        super.add(Rect.FULL, ILayout.create({ draw: (bounds) => {
+                Graphics.fillRect(this.target.bounds, new Color(0, 1, 1, 0.2));
+            } }));
+        super.add(Rect.FULL, ILayout.create({ ctrl: (bounds) => {
+                if (!Input.click) {
+                    return;
+                }
+                for (let p of Unit.players.filter(p => p.exists)) {
+                    if (p.bounds.contains(Input.point)) {
+                        this.setList(p);
+                        break;
+                    }
+                }
+            } }));
+        const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
         const infoBounds = new Rect(0, 0, 1, 0.7);
         const btnBounds = new Rect(0, infoBounds.yh, 1, 1 - infoBounds.yh);
         super.add(mainBounds, new XLayout()
@@ -41,17 +59,17 @@ export class JobChangeScene extends Scene {
                 let job = this.choosedJob;
                 let font = Font.def;
                 let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                const movedP = () => p = p.move(0, font.ratioH);
+                const moveP = () => p = p.move(0, font.ratioH);
                 font.draw(`[${job}]`, p, Color.WHITE);
                 const lv = unit.getJobLv(job) >= job.getMaxLv() ? "Lv:★" : `Lv:${unit.getJobLv(job)}`;
-                font.draw(lv, movedP(), Color.WHITE);
-                font.draw("成長ステータス:", movedP(), Color.WHITE);
+                font.draw(lv, moveP(), Color.WHITE);
+                font.draw("成長ステータス:", moveP(), Color.WHITE);
                 for (let set of job.growthPrms) {
-                    font.draw(` [${set.prm}]+${set.value}`, movedP(), Color.WHITE);
+                    font.draw(` [${set.prm}]+${set.value}`, moveP(), Color.WHITE);
                 }
-                movedP();
+                moveP();
                 for (let s of job.info) {
-                    font.draw(s, movedP(), Color.WHITE);
+                    font.draw(s, moveP(), Color.WHITE);
                 }
             } }))
             .add(btnBounds, (() => {
@@ -86,23 +104,6 @@ export class JobChangeScene extends Scene {
             }));
             return l;
         })())));
-        const pboxBounds = new Rect(0, mainBounds.yh, 1, 1 - mainBounds.yh);
-        super.add(pboxBounds, DrawSTBoxes.players);
-        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
-        super.add(Rect.FULL, ILayout.create({ draw: (bounds) => {
-                Graphics.fillRect(this.target.bounds, new Color(0, 1, 1, 0.2));
-            } }));
-        super.add(Rect.FULL, ILayout.create({ ctrl: (bounds) => {
-                if (!Input.click) {
-                    return;
-                }
-                for (let p of Unit.players.filter(p => p.exists)) {
-                    if (p.bounds.contains(Input.point)) {
-                        this.setList(p);
-                        break;
-                    }
-                }
-            } }));
         this.setList(this.target);
     }
     setList(unit) {

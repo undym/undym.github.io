@@ -182,11 +182,11 @@ EqEar._valueOf = new Map();
     };
     Eq.魔女のとんがり帽 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "魔女のとんがり帽", info: ["最大MP+100"],
+            super({ uniqueName: "魔女のとんがり帽", info: ["最大MP+10"],
                 pos: EqPos.頭, lv: 30 });
         }
         equip(unit) {
-            unit.prm(Prm.MAX_MP).eq += 100;
+            unit.prm(Prm.MAX_MP).eq += 10;
         }
     };
     // export const                         山男のとんかつ帽 = new class extends Eq{
@@ -652,7 +652,7 @@ EqEar._valueOf = new Map();
                 pos: EqPos.指, lv: 20 });
         }
         phaseStart(unit) {
-            Battle.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1);
+            Battle.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1 + 1);
         }
     };
     Eq.瑠璃 = new class extends Eq {
@@ -661,7 +661,7 @@ EqEar._valueOf = new Map();
                 pos: EqPos.指, lv: 50 });
         }
         battleStart(unit) {
-            Battle.healTP(unit, unit.prm(Prm.MAX_TP).total * 0.1);
+            Battle.healTP(unit, unit.prm(Prm.MAX_TP).total * 0.1 + 1);
         }
     };
     //--------------------------------------------------------------------------
@@ -705,15 +705,15 @@ EqEar._valueOf = new Map();
         }
     };
     EqEar.魔ヶ玉のピアス = new class extends EqEar {
-        constructor() { super({ uniqueName: "魔ヶ玉のピアス", info: ["最大MP+50"], lv: 29 }); }
+        constructor() { super({ uniqueName: "魔ヶ玉のピアス", info: ["最大MP+10"], lv: 29 }); }
         equip(unit) {
-            unit.prm(Prm.MAX_MP).eq += 50;
+            unit.prm(Prm.MAX_MP).eq += 10;
         }
     };
     EqEar.エメラルドのピアス = new class extends EqEar {
-        constructor() { super({ uniqueName: "エメラルドのピアス", info: ["最大TP+50"], lv: 29 }); }
+        constructor() { super({ uniqueName: "エメラルドのピアス", info: ["最大TP+10"], lv: 29 }); }
         equip(unit) {
-            unit.prm(Prm.MAX_TP).eq += 50;
+            unit.prm(Prm.MAX_TP).eq += 10;
         }
     };
 })(EqEar || (EqEar = {}));

@@ -24,8 +24,6 @@ export class Player {
         res.name = this.toString();
         res.exists = true;
         res.dead = false;
-        res.prm(Prm.MAX_MP).base = Unit.DEF_MAX_MP;
-        res.prm(Prm.MAX_TP).base = Unit.DEF_MAX_TP;
         this.createInner(res);
         res.prm(Prm.HP).base = res.prm(Prm.MAX_HP).total;
         for (let tec of res.tecs) {
@@ -59,6 +57,8 @@ Player._valueOf = new Map();
         createInner(p) {
             p.job = Job.しんまい;
             p.prm(Prm.MAX_HP).base = 20;
+            p.prm(Prm.MAX_MP).base = 3;
+            p.prm(Prm.MAX_TP).base = 5;
             p.prm(Prm.STR).base = 2;
             p.tecs = [
                 Tec.殴る,
@@ -74,6 +74,8 @@ Player._valueOf = new Map();
         createInner(p) {
             p.job = Job.魔法使い;
             p.prm(Prm.MAX_HP).base = 16;
+            p.prm(Prm.MAX_MP).base = 10;
+            p.prm(Prm.MAX_TP).base = 2;
             p.prm(Prm.STR).base = 2;
             p.prm(Prm.MAG).base = 4;
             p.tecs = [

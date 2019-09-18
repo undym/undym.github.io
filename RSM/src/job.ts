@@ -91,9 +91,8 @@ export abstract class Job{
         e.yen = lv + 1;
 
         e.prm(Prm.MAX_HP).base = 3 + (lv * lv * 0.35);
-
-        e.prm(Prm.MAX_MP).base = Unit.DEF_MAX_MP;
-        e.prm(Prm.MAX_TP).base = Unit.DEF_MAX_TP;
+        e.prm(Prm.MAX_MP).base = 1 + lv / 20 + Math.random() * lv / 5;
+        e.prm(Prm.MAX_TP).base = 1 + lv / 20 + Math.random() * lv / 5;
 
         e.tp = 0;
         e.ep = 0;
@@ -108,7 +107,7 @@ export abstract class Job{
 
         e.equip();
         e.hp = e.prm(Prm.MAX_HP).total;
-        e.mp = Math.random() * e.prm(Prm.MAX_MP).total;
+        e.mp = Math.random() * (e.prm(Prm.MAX_MP).total + 1);
     }
 
     setEnemyInner(e:EUnit){}

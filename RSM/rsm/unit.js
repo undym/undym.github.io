@@ -373,8 +373,6 @@ export class Unit {
         return [];
     }
 }
-Unit.DEF_MAX_MP = 100;
-Unit.DEF_MAX_TP = 100;
 Unit.DEF_MAX_EP = 1;
 Unit.EAR_NUM = 2;
 export class PUnit extends Unit {
@@ -410,13 +408,16 @@ export class PUnit extends Unit {
                 yield wait();
                 const growHP = this.prm(Prm.LV).base / 100 + 1;
                 this.growPrm(Prm.MAX_HP, growHP | 0);
-                for (let grow of this.job.growthPrms) {
-                    this.growPrm(grow.prm, grow.value);
+                // for(let grow of this.job.growthPrms){
+                //     this.growPrm( grow.prm, grow.value );
+                // }
+                if (this.prm(Prm.LV).base % 10 === 0) {
+                    this.growPrm(Prm.MAX_MP, 1);
+                    this.growPrm(Prm.MAX_TP, 1);
                 }
             }
         });
     }
-    // getNextLvExp():number{return Math.pow(this.prm(Prm.LV).base, 2) * 3;}
     getNextLvExp() {
         const lv = this.prm(Prm.LV).base;
         const res = lv * (lv / 20 + 1) * 5;
@@ -493,6 +494,7 @@ export class PUnit extends Unit {
     //---------------------------------------------------------
     growPrm(prm, value) {
         return __awaiter(this, void 0, void 0, function* () {
+            value = value | 0;
             this.prm(prm).base += value;
             Util.msg.set(`[${prm}]+${value}`, Color.GREEN.bright);
             yield wait();

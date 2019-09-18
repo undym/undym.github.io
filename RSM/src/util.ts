@@ -32,7 +32,7 @@ export class Util{
 export class Place{
     private constructor(){}
     
-    private static ST_H = 0.125;
+    static readonly ST_H = 0.125;
 
     private static get dotW(){return 1 / Graphics.pixelW;}
     private static get dotH(){return 1 / Graphics.pixelH;}

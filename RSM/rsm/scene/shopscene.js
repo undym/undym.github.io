@@ -32,7 +32,10 @@ export class ShopScene extends Scene {
     init() {
         super.clear();
         super.add(Place.TOP, DrawPlayInfo.ins);
-        const mainBounds = new Rect(0, Place.TOP.yh, 1, 0.75);
+        const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
+        super.add(pboxBounds, DrawSTBoxes.players);
+        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
+        const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
         super.add(mainBounds, new XLayout()
             .add(this.list)
             .add((() => {
@@ -47,18 +50,18 @@ export class ShopScene extends Scene {
                     }
                     let font = Font.def;
                     let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                    const movedP = () => p = p.move(0, font.ratioH);
-                    font.draw(`[${goods}]`, movedP(), Color.WHITE);
-                    font.draw(`${goods.price()}円`, movedP(), Color.WHITE);
+                    const moveP = () => p = p.move(0, font.ratioH);
+                    font.draw(`[${goods}]`, moveP(), Color.WHITE);
+                    font.draw(`${goods.price()}円`, moveP(), Color.WHITE);
                     if (goods.num()) {
-                        font.draw(`所持:${goods.num()}`, movedP(), Color.WHITE);
+                        font.draw(`所持:${goods.num()}`, moveP(), Color.WHITE);
                     }
                     else {
-                        movedP();
+                        moveP();
                     }
-                    movedP();
+                    moveP();
                     for (let s of goods.info) {
-                        font.draw(s, movedP(), Color.WHITE);
+                        font.draw(s, moveP(), Color.WHITE);
                     }
                 } }))
                 .add(btnBounds, (() => {
@@ -90,9 +93,6 @@ export class ShopScene extends Scene {
                 return l;
             })());
         })()));
-        const pboxBounds = new Rect(0, mainBounds.yh, 1, 1 - mainBounds.yh);
-        super.add(pboxBounds, DrawSTBoxes.players);
-        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
         this.setList();
     }
     setList() {
@@ -154,15 +154,15 @@ const initGoods = () => {
         let info = [`＜耳＞`];
         new Goods(ear.toString(), info.concat(ear.info), price, isVisible, () => ear.add(1), () => ear.num);
     };
-    createItemGoods(Item.合成許可証, () => 300, () => Dungeon.リテの門.dungeonClearCount > 0 && Item.合成許可証.num === 0);
-    createItemGoods(Item.スティックパン, () => (Item.スティックパン.num + 1) * 30, () => Item.スティックパン.num < 5);
-    createItemGoods(Item.脱出ポッド, () => 10, () => Item.脱出ポッド.num < 1);
-    createItemGoods(Item.赤い水, () => (Item.赤い水.num + 1) * 100, () => Item.赤い水.num < 10 && Dungeon.再構成トンネル.dungeonClearCount > 0);
-    createItemGoods(Item.サンタクララ薬, () => (Item.サンタクララ薬.num + 1) * 50, () => Item.サンタクララ薬.num < 4 && Dungeon.再構成トンネル.dungeonClearCount > 0);
-    createEarGoods(EqEar.おにく, () => 100, () => Dungeon.はじまりの丘.dungeonClearCount > 0 && EqEar.おにく.num < 2);
-    createEarGoods(EqEar.水晶のピアス, () => 200, () => Dungeon.はじまりの丘.dungeonClearCount > 0 && EqEar.水晶のピアス.num < 2);
-    createEarGoods(EqEar.魔ヶ玉のピアス, () => 100, () => Dungeon.リテの門.dungeonClearCount > 0 && EqEar.魔ヶ玉のピアス.num < 2);
-    createEarGoods(EqEar.エメラルドのピアス, () => 100, () => Dungeon.リテの門.dungeonClearCount > 0 && EqEar.エメラルドのピアス.num < 2);
+    createItemGoods(Item.合成許可証, () => 300, () => Dungeon.リテの門.dungeonClearCount > 0 && Item.合成許可証.totalGetNum === 0);
+    createItemGoods(Item.スティックパン, () => (Item.スティックパン.num + 1) * 30, () => Item.スティックパン.totalGetNum < 5);
+    createItemGoods(Item.脱出ポッド, () => 10, () => Item.脱出ポッド.totalGetNum < 1);
+    createItemGoods(Item.赤い水, () => (Item.赤い水.num + 1) * 100, () => Item.赤い水.totalGetNum < 10 && Dungeon.再構成トンネル.dungeonClearCount > 0);
+    createItemGoods(Item.サンタクララ薬, () => (Item.サンタクララ薬.num + 1) * 50, () => Item.サンタクララ薬.totalGetNum < 4 && Dungeon.再構成トンネル.dungeonClearCount > 0);
+    createEarGoods(EqEar.おにく, () => 100, () => Dungeon.はじまりの丘.dungeonClearCount > 0 && EqEar.おにく.totalGetNum < 2);
+    createEarGoods(EqEar.水晶のピアス, () => 200, () => Dungeon.はじまりの丘.dungeonClearCount > 0 && EqEar.水晶のピアス.totalGetNum < 2);
+    createEarGoods(EqEar.魔ヶ玉のピアス, () => 100, () => Dungeon.リテの門.dungeonClearCount > 0 && EqEar.魔ヶ玉のピアス.totalGetNum < 2);
+    createEarGoods(EqEar.エメラルドのピアス, () => 100, () => Dungeon.リテの門.dungeonClearCount > 0 && EqEar.エメラルドのピアス.totalGetNum < 2);
     // createEqGoods(Eq.う棒,      　()=>500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10 && Eq.う棒.totalGetNum === 0);
     if (Player.values.some(p => p.ins.getJobLv(Job.クピド) > 0)) {
         createItemGoods(Item.夜叉の矢, () => (Item.夜叉の矢.num + 1) * 500, () => true);

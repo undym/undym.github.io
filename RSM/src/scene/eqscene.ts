@@ -4,7 +4,7 @@ import { Btn } from "../widget/btn.js";
 import { Unit, PUnit } from "../unit.js";
 import { Input } from "../undym/input.js";
 import { Rect, Color, Point } from "../undym/type.js";
-import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
+import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
 import { Place } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 import { List } from "../widget/list.js";
@@ -35,7 +35,10 @@ export class EqScene extends Scene{
     init(){
         super.clear();
         
-        const mainBounds = new Rect(0, 0, 1, 0.8);
+        super.add(Place.TOP, DrawPlayInfo.ins);
+        
+        const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
+        const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
 
         super.add(mainBounds, 
             new XLayout()
@@ -52,14 +55,14 @@ export class EqScene extends Scene{
                                 const eq = this.choosedEq;
                                 let font = Font.def;
                                 let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                                const movedP = ()=> p = p.move(0, font.ratioH);
+                                const moveP = ()=> p = p.move(0, font.ratioH);
                                 
                                 font.draw(`[${eq}]`, p, Color.WHITE);
-                                font.draw(`<${eq.pos}>`, movedP(), Color.WHITE);
-                                font.draw(`${eq.num}個`, movedP(), Color.WHITE);
+                                font.draw(`<${eq.pos}>`, moveP(), Color.WHITE);
+                                font.draw(`${eq.num}個`, moveP(), Color.WHITE);
                     
                                 for(let s of eq.info){
-                                    font.draw(s, movedP(), Color.WHITE);
+                                    font.draw(s, moveP(), Color.WHITE);
                                 }
                             }
 
@@ -67,14 +70,14 @@ export class EqScene extends Scene{
                                 const ear = this.choosedEq;
                                 let font = Font.def;
                                 let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                                const movedP = ()=> p = p.move(0, font.ratioH);
+                                const moveP = ()=> p = p.move(0, font.ratioH);
                                 
                                 font.draw(`[${ear}]`, p, Color.WHITE);
-                                font.draw(`<耳>`, movedP(), Color.WHITE);
-                                font.draw(`${ear.num}個`, movedP(), Color.WHITE);
+                                font.draw(`<耳>`, moveP(), Color.WHITE);
+                                font.draw(`${ear.num}個`, moveP(), Color.WHITE);
                     
                                 for(let s of ear.info){
-                                    font.draw(s, movedP(), Color.WHITE);
+                                    font.draw(s, moveP(), Color.WHITE);
                                 }
                             }
                         }}))
@@ -191,7 +194,6 @@ export class EqScene extends Scene{
                 })())
         );
         
-        const pboxBounds = new Rect(0, mainBounds.yh, 1, 1 - mainBounds.yh);
         super.add(pboxBounds, DrawSTBoxes.players);
         super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
             

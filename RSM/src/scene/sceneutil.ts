@@ -80,7 +80,16 @@ class DrawSTBox extends InnerLayout{
                 .setOutsidePixelMargin(1,1,1,1)
                 .add(new XLayout()
                     .add(new Label(font, ()=>getUnit().name))
-                    .add(new Label(font, ()=>`Lv${ getUnit().prm(Prm.LV).total|0 }`).setBase(Font.RIGHT))
+                    .add(
+                        new Label(
+                            font,
+                            ()=>`Lv${ getUnit().prm(Prm.LV).total|0 }`,
+                            ()=>{
+                                const u = getUnit();
+                                return (u instanceof PUnit && u.isMasteredJob( u.job )) ? Color.YELLOW : Color.WHITE;
+                            }
+                        ).setBase(Font.RIGHT)
+                    )
                 )
                 .add(new Gage(
                      ()=> getUnit().hp

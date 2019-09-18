@@ -12,7 +12,7 @@ import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
 import { Input } from "../undym/input.js";
 import { Rect, Color } from "../undym/type.js";
-import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
+import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
 import { Place } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 import { List } from "../widget/list.js";
@@ -27,7 +27,25 @@ export class SetTecScene extends Scene {
     }
     init() {
         super.clear();
-        const mainBounds = new Rect(0, 0, 1, 0.8);
+        super.add(Place.TOP, DrawPlayInfo.ins);
+        const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
+        super.add(pboxBounds, DrawSTBoxes.players);
+        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
+        super.add(Rect.FULL, ILayout.create({ draw: (bounds) => {
+                Graphics.fillRect(this.target.bounds, new Color(0, 1, 1, 0.2));
+            } }));
+        super.add(Rect.FULL, ILayout.create({ ctrl: (bounds) => {
+                if (!Input.click) {
+                    return;
+                }
+                for (let p of Unit.players.filter(p => p.exists)) {
+                    if (p.bounds.contains(Input.point)) {
+                        this.setList(p, this.getListTecs);
+                        break;
+                    }
+                }
+            } }));
+        const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
         super.add(mainBounds, new XLayout()
             .add(this.list)
             .add((() => {
@@ -42,11 +60,11 @@ export class SetTecScene extends Scene {
                     const tec = this.choosedTec;
                     let font = Font.def;
                     let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                    const movedP = () => p = p.move(0, font.ratioH);
+                    const moveP = () => p = p.move(0, font.ratioH);
                     font.draw(`[${tec}]`, p, Color.WHITE);
-                    font.draw(`<${tec.type}>`, movedP(), Color.WHITE);
+                    font.draw(`<${tec.type}>`, moveP(), Color.WHITE);
                     if (tec instanceof ActiveTec) {
-                        let _p = movedP();
+                        let _p = moveP();
                         if (tec.mpCost > 0) {
                             font.draw(`MP:${tec.mpCost}`, _p, Color.WHITE);
                         }
@@ -58,10 +76,10 @@ export class SetTecScene extends Scene {
                         }
                     }
                     else {
-                        movedP();
+                        moveP();
                     }
                     for (let s of tec.info) {
-                        font.draw(s, movedP(), Color.WHITE);
+                        font.draw(s, moveP(), Color.WHITE);
                     }
                 } }))
                 .add(btnBounds, (() => {
@@ -137,23 +155,6 @@ export class SetTecScene extends Scene {
                 return l;
             })());
         })()));
-        const pboxBounds = new Rect(0, mainBounds.yh, 1, 1 - mainBounds.yh);
-        super.add(pboxBounds, DrawSTBoxes.players);
-        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
-        super.add(Rect.FULL, ILayout.create({ draw: (bounds) => {
-                Graphics.fillRect(this.target.bounds, new Color(0, 1, 1, 0.2));
-            } }));
-        super.add(Rect.FULL, ILayout.create({ ctrl: (bounds) => {
-                if (!Input.click) {
-                    return;
-                }
-                for (let p of Unit.players.filter(p => p.exists)) {
-                    if (p.bounds.contains(Input.point)) {
-                        this.setList(p, this.getListTecs);
-                        break;
-                    }
-                }
-            } }));
         this.setList(this.target, u => u.tecs);
     }
     setList(unit, getListTecs, keepPage = false) {

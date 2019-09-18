@@ -290,10 +290,10 @@ export namespace Item{
                                 type:ItemType.HP回復, rank:0,
                                 consumable:true, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
-                                    const value = (30 + target.prm(Prm.MAX_HP).total * 0.05)|0;
+                                    const value = 30 + target.prm(Prm.MAX_HP).total * 0.05;
                                     Battle.healHP(target, value);
                                     if(SceneType.now === SceneType.BATTLE){
-                                        Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
+                                        Util.msg.set(`${target.name}のHPが${value|0}回復した`, Color.GREEN.bright); await wait();
                                     }
                                 },
         })}
@@ -304,14 +304,14 @@ export namespace Item{
     //
     //-----------------------------------------------------------------
     export const                         赤い水:Item = new class extends Item{
-        constructor(){super({uniqueName:"赤い水", info:["MP+10"],
+        constructor(){super({uniqueName:"赤い水", info:["MP+10%+5"],
                                 type:ItemType.MP回復, rank:0,
                                 consumable:true, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
-                                    const value = 10;
+                                    const value = target.prm(Prm.MAX_MP).total * 0.05 + 5;
                                     Battle.healMP(target, value)
                                     if(SceneType.now === SceneType.BATTLE){
-                                        Util.msg.set(`${target.name}のMPが${value}回復した`, Color.GREEN.bright); await wait();
+                                        Util.msg.set(`${target.name}のMPが${value|0}回復した`, Color.GREEN.bright); await wait();
                                     }
                                 },
         })}

@@ -10,7 +10,7 @@ import { Scene } from "../undym/scene.js";
 import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Rect, Color } from "../undym/type.js";
-import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
+import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
 import { Place } from "../util.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 import { List } from "../widget/list.js";
@@ -28,7 +28,11 @@ export class MixScene extends Scene {
     }
     init() {
         super.clear();
-        const mainBounds = new Rect(0, 0, 1, 0.8);
+        super.add(Place.TOP, DrawPlayInfo.ins);
+        const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
+        super.add(pboxBounds, DrawSTBoxes.players);
+        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
+        const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
         super.add(mainBounds, new XLayout()
             .add(this.list)
             .add((() => {
@@ -43,7 +47,7 @@ export class MixScene extends Scene {
                     }
                     const font = Font.def;
                     let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                    const movedP = () => p = p.move(0, font.ratioH);
+                    const moveP = () => p = p.move(0, font.ratioH);
                     if (mix.countLimit === Mix.LIMIT_INF) {
                         font.draw(`合成回数(${mix.count}/-)`, p, Color.WHITE);
                     }
@@ -51,35 +55,35 @@ export class MixScene extends Scene {
                         font.draw(`合成回数(${mix.count}/${mix.countLimit})`, p, Color.WHITE);
                     }
                     for (let m of mix.materials) {
-                        const color = m.num >= m.object.num ? Color.WHITE : Color.GRAY;
-                        font.draw(`[${m.object}] ${m.num}/${m.object.num}`, movedP(), color);
+                        const color = m.num <= m.object.num ? Color.WHITE : Color.GRAY;
+                        font.draw(`[${m.object}] ${m.object.num}/${m.num}`, moveP(), color);
                     }
                     const result = mix.result;
                     if (result) {
-                        movedP();
+                        moveP();
                         if (result.object instanceof Eq) {
                             const eq = result.object;
-                            font.draw(`<${eq.pos}>`, movedP(), Color.WHITE);
+                            font.draw(`<${eq.pos}>`, moveP(), Color.WHITE);
                             if (!mix.info) {
                                 for (const info of eq.info) {
-                                    font.draw(info, movedP(), Color.WHITE);
+                                    font.draw(info, moveP(), Color.WHITE);
                                 }
                             }
                         }
                         if (result.object instanceof Item) {
                             const item = result.object;
-                            font.draw(`<${item.itemType}>`, movedP(), Color.WHITE);
+                            font.draw(`<${item.itemType}>`, moveP(), Color.WHITE);
                             if (!mix.info) {
                                 for (const info of item.info) {
-                                    font.draw(info, movedP(), Color.WHITE);
+                                    font.draw(info, moveP(), Color.WHITE);
                                 }
                             }
                         }
                     }
                     if (mix.info) {
-                        movedP();
+                        moveP();
                         for (const info of mix.info) {
-                            font.draw(info, movedP(), Color.WHITE);
+                            font.draw(info, moveP(), Color.WHITE);
                         }
                     }
                     // if(this.choosedObj instanceof Item){
@@ -88,9 +92,9 @@ export class MixScene extends Scene {
                     //     const item = result.object;
                     //     if(!(item instanceof Item)){return;}
                     //     const limit = item.num >= item.numLimit ? "（所持上限）" : "";
-                    //     font.draw(`[${item}]x${result.num} <${item.itemType}> ${limit}`, movedP(), Color.WHITE);
+                    //     font.draw(`[${item}]x${result.num} <${item.itemType}> ${limit}`, moveP(), Color.WHITE);
                     //     for(let info of item.info){
-                    //         font.draw(info, movedP(), Color.WHITE);
+                    //         font.draw(info, moveP(), Color.WHITE);
                     //     }
                     // }
                     // if(this.choosedObj instanceof Eq){
@@ -98,9 +102,9 @@ export class MixScene extends Scene {
                     //     if(!result){return;}
                     //     const eq = result.object;
                     //     if(!(eq instanceof Eq)){return;}
-                    //     font.draw(`[${eq}]x${eq.num} <${eq.pos}>`, movedP(), Color.WHITE);
+                    //     font.draw(`[${eq}]x${eq.num} <${eq.pos}>`, moveP(), Color.WHITE);
                     //     for(let info of eq.info){
-                    //         font.draw(info, movedP(), Color.WHITE);
+                    //         font.draw(info, moveP(), Color.WHITE);
                     //     }
                     // }
                 } }))
@@ -160,9 +164,6 @@ export class MixScene extends Scene {
                 return l;
             })());
         })()));
-        const pboxBounds = new Rect(0, mainBounds.yh, 1, 1 - mainBounds.yh);
-        super.add(pboxBounds, DrawSTBoxes.players);
-        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
     }
     setList(name, values) {
         this.list.clear();

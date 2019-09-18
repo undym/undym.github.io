@@ -219,10 +219,10 @@ export namespace Eq{
                                 pos:EqPos.頭, lv:0});}
     }
     export const                         魔女のとんがり帽 = new class extends Eq{//リテの門EX
-        constructor(){super({uniqueName:"魔女のとんがり帽", info:["最大MP+100"], 
+        constructor(){super({uniqueName:"魔女のとんがり帽", info:["最大MP+10"], 
                                 pos:EqPos.頭, lv:30});}
         equip(unit:Unit){
-            unit.prm(Prm.MAX_MP).eq += 100;
+            unit.prm(Prm.MAX_MP).eq += 10;
         }
     }
     // export const                         山男のとんかつ帽 = new class extends Eq{
@@ -598,14 +598,14 @@ export namespace Eq{
         constructor(){super({uniqueName:"魔ヶ玉の指輪", info:["行動開始時MP+10%"],
                                 pos:EqPos.指, lv:20});}
         phaseStart(unit:Unit){
-            Battle.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1);
+            Battle.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1 + 1);
         }
     }
     export const                         瑠璃 = new class extends Eq{//はじまりの丘EX
         constructor(){super({uniqueName:"瑠璃", info:["戦闘開始時TP+10%"],
                                 pos:EqPos.指, lv:50});}
         battleStart(unit:Unit){
-            Battle.healTP(unit, unit.prm(Prm.MAX_TP).total * 0.1);
+            Battle.healTP(unit, unit.prm(Prm.MAX_TP).total * 0.1 + 1);
         }
     }
     //--------------------------------------------------------------------------
@@ -646,15 +646,15 @@ export namespace EqEar{
         }
     }
     export const                         魔ヶ玉のピアス:EqEar = new class extends EqEar{//店
-        constructor(){super({uniqueName:"魔ヶ玉のピアス", info:["最大MP+50"], lv:29});}
+        constructor(){super({uniqueName:"魔ヶ玉のピアス", info:["最大MP+10"], lv:29});}
         equip(unit:Unit){
-            unit.prm(Prm.MAX_MP).eq += 50;
+            unit.prm(Prm.MAX_MP).eq += 10;
         }
     }
     export const                         エメラルドのピアス:EqEar = new class extends EqEar{//店
-        constructor(){super({uniqueName:"エメラルドのピアス", info:["最大TP+50"], lv:29});}
+        constructor(){super({uniqueName:"エメラルドのピアス", info:["最大TP+10"], lv:29});}
         equip(unit:Unit){
-            unit.prm(Prm.MAX_TP).eq += 50;
+            unit.prm(Prm.MAX_TP).eq += 10;
         }
     }
 }

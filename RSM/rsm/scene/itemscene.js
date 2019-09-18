@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Scene } from "../undym/scene.js";
 import { Place } from "../util.js";
-import { DrawSTBoxes, DrawUnitDetail } from "./sceneutil.js";
-import { ILayout, VariableLayout, FlowLayout } from "../undym/layout.js";
+import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
+import { ILayout, RatioLayout, VariableLayout, FlowLayout, XLayout } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
 import { List } from "../widget/list.js";
@@ -33,66 +33,8 @@ export class ItemScene extends Scene {
     init() {
         this.selectedItem = undefined;
         super.clear();
-        const listBounds = new Rect(0, 0, 0.5, 0.8);
-        const infoBounds = new Rect(listBounds.xw, 0, 1 - listBounds.w, 0.3);
-        const btnBounds = new Rect(infoBounds.x, infoBounds.yh, infoBounds.w, listBounds.yh - infoBounds.yh);
-        const pboxBounds = new Rect(Place.P_BOX.x, listBounds.yh, Place.P_BOX.w, 1 - listBounds.yh);
-        super.add(listBounds, this.list);
-        super.add(infoBounds, ILayout.create({ draw: (bounds) => {
-                Graphics.fillRect(bounds, Color.D_GRAY);
-                if (this.selectedItem === undefined) {
-                    return;
-                }
-                let item = this.selectedItem;
-                let font = Font.def;
-                let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                const movedP = () => p = p.move(0, font.ratioH);
-                font.draw(`[${item}]`, p, Color.WHITE);
-                {
-                    const num = item.consumable
-                        ? `${item.remainingUseCount}/${item.num}`
-                        : `${item.num}`;
-                    const limit = item.num >= item.numLimit ? "（所持上限）" : "";
-                    font.draw(`${num}個${limit}`, movedP(), Color.WHITE);
-                }
-                font.draw(`<${item.itemType}>`, movedP(), Color.WHITE);
-                font.draw(`Rank:${item.rank}`, movedP(), Color.WHITE);
-                movedP();
-                for (let s of item.info) {
-                    font.draw(s, movedP(), Color.WHITE);
-                }
-            } }));
-        super.add(btnBounds, (() => {
-            const otherBtns = [
-                new Btn("<<", () => {
-                    this.returnScene();
-                }),
-                (() => {
-                    const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
-                        yield this.use(this.selectedItem, this.user);
-                    }));
-                    const cantUse = new Btn(() => "-", () => { });
-                    return new VariableLayout(() => {
-                        if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
-                            return cantUse;
-                        }
-                        return canUse;
-                    });
-                })(),
-            ];
-            const w = 2;
-            const h = ((otherBtns.length + ItemParentType.values.length + 1) / w) | 0;
-            const l = new FlowLayout(w, h);
-            for (let type of ItemParentType.values) {
-                l.add(new Btn(type.toString(), () => {
-                    this.setList(type);
-                }));
-            }
-            for (const o of otherBtns) {
-                l.addFromLast(o);
-            }
-            return l;
-        })());
+        super.add(Place.TOP, DrawPlayInfo.ins);
+        const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
         super.add(pboxBounds, DrawSTBoxes.players);
         super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
         super.add(Rect.FULL, ILayout.create({ draw: (bounds) => {
@@ -112,6 +54,69 @@ export class ItemScene extends Scene {
                     }
                 }
             } }));
+        const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
+        super.add(mainBounds, new XLayout()
+            .add(this.list)
+            .add((() => {
+            const infoBounds = new Rect(0, 0, 1, 0.4);
+            const btnBounds = new Rect(0, infoBounds.yh, 1, 1 - infoBounds.yh);
+            return new RatioLayout()
+                .add(infoBounds, ILayout.create({ draw: (bounds) => {
+                    Graphics.fillRect(bounds, Color.D_GRAY);
+                    if (this.selectedItem === undefined) {
+                        return;
+                    }
+                    let item = this.selectedItem;
+                    let font = Font.def;
+                    let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
+                    const moveP = () => p = p.move(0, font.ratioH);
+                    font.draw(`[${item}]`, p, Color.WHITE);
+                    {
+                        const num = item.consumable
+                            ? `${item.remainingUseCount}/${item.num}`
+                            : `${item.num}`;
+                        const limit = item.num >= item.numLimit ? "（所持上限）" : "";
+                        font.draw(`${num}個${limit}`, moveP(), Color.WHITE);
+                    }
+                    font.draw(`<${item.itemType}>`, moveP(), Color.WHITE);
+                    font.draw(`Rank:${item.rank}`, moveP(), Color.WHITE);
+                    moveP();
+                    for (let s of item.info) {
+                        font.draw(s, moveP(), Color.WHITE);
+                    }
+                } }))
+                .add(btnBounds, (() => {
+                const otherBtns = [
+                    new Btn("<<", () => {
+                        this.returnScene();
+                    }),
+                    (() => {
+                        const canUse = new Btn(() => "使用", () => __awaiter(this, void 0, void 0, function* () {
+                            yield this.use(this.selectedItem, this.user);
+                        }));
+                        const cantUse = new Btn(() => "-", () => { });
+                        return new VariableLayout(() => {
+                            if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
+                                return cantUse;
+                            }
+                            return canUse;
+                        });
+                    })(),
+                ];
+                const w = 2;
+                const h = ((otherBtns.length + ItemParentType.values.length + 1) / w) | 0;
+                const l = new FlowLayout(w, h);
+                for (let type of ItemParentType.values) {
+                    l.add(new Btn(type.toString(), () => {
+                        this.setList(type);
+                    }));
+                }
+                for (const o of otherBtns) {
+                    l.addFromLast(o);
+                }
+                return l;
+            })());
+        })()));
         this.setList(ItemParentType.回復);
     }
     setList(parentType) {
