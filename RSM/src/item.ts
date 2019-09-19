@@ -259,7 +259,7 @@ export namespace Item{
                                     if(target.dead){
                                         target.dead = false;
                                         target.hp = 0;
-                                        Battle.healHP(target, 1);
+                                        Unit.healHP(target, 1);
                                         if(SceneType.now === SceneType.BATTLE){
                                             Util.msg.set(`${target.name}は生き返った`); await wait();
                                         }
@@ -278,7 +278,7 @@ export namespace Item{
                                 consumable:true, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
                                     const value = (10 + target.prm(Prm.MAX_HP).total * 0.05)|0;
-                                    Battle.healHP(target, value);
+                                    Unit.healHP(target, value);
                                     if(SceneType.now === SceneType.BATTLE){
                                         Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright); await wait();
                                     }
@@ -291,7 +291,7 @@ export namespace Item{
                                 consumable:true, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
                                     const value = 30 + target.prm(Prm.MAX_HP).total * 0.05;
-                                    Battle.healHP(target, value);
+                                    Unit.healHP(target, value);
                                     if(SceneType.now === SceneType.BATTLE){
                                         Util.msg.set(`${target.name}のHPが${value|0}回復した`, Color.GREEN.bright); await wait();
                                     }
@@ -309,7 +309,7 @@ export namespace Item{
                                 consumable:true, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
                                     const value = target.prm(Prm.MAX_MP).total * 0.05 + 5;
-                                    Battle.healMP(target, value)
+                                    Unit.healMP(target, value)
                                     if(SceneType.now === SceneType.BATTLE){
                                         Util.msg.set(`${target.name}のMPが${value|0}回復した`, Color.GREEN.bright); await wait();
                                     }

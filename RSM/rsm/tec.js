@@ -6,7 +6,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Prm, PUnit } from "./unit.js";
+import { Unit, Prm, PUnit } from "./unit.js";
 import { Util } from "./util.js";
 import { wait } from "./undym/scene.js";
 import { Dmg, Targeting } from "./force.js";
@@ -14,7 +14,6 @@ import { Condition, ConditionType } from "./condition.js";
 import { Color } from "./undym/type.js";
 import { FX_格闘 } from "./fx/fx.js";
 import { randomInt } from "./undym/random.js";
-import { Battle } from "./battle.js";
 import { Item } from "./item.js";
 export class TecType {
     constructor(name) {
@@ -650,7 +649,7 @@ ActiveTec._valueOf = new Map();
                 _super.runInner.call(this, attacker, target, dmg);
                 if (dmg.result.isHit && Math.random() < 0.3) {
                     const value = attacker.prm(Prm.DRK).total / 2 + attacker.prm(Prm.CHN).total / 2 + 1;
-                    Battle.setCondition(target, Condition.毒, value);
+                    Unit.setCondition(target, Condition.毒, value);
                 }
             });
         }
@@ -705,7 +704,7 @@ ActiveTec._valueOf = new Map();
                     if (num === 0) {
                         return;
                     }
-                    Battle.healMP(attacker, action.mpCost * 0.1 * num);
+                    Unit.healMP(attacker, action.mpCost * 0.1 * num);
                 }
             });
         }
@@ -817,10 +816,10 @@ ActiveTec._valueOf = new Map();
                 _super.runInner.call(this, attacker, target, dmg);
                 const value = attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total / 2;
                 if (dmg.result.isHit) {
-                    Battle.healHP(attacker, value);
+                    Unit.healHP(attacker, value);
                 }
                 else {
-                    Battle.healHP(attacker, value / 3);
+                    Unit.healHP(attacker, value / 3);
                 }
             });
         }
@@ -843,7 +842,7 @@ ActiveTec._valueOf = new Map();
                 if (value > 4) {
                     return;
                 }
-                Battle.setCondition(target, Condition.練, value);
+                Unit.setCondition(target, Condition.練, value);
             });
         }
     };
@@ -860,7 +859,7 @@ ActiveTec._valueOf = new Map();
                 if (value > 4) {
                     return;
                 }
-                Battle.setCondition(target, Condition.盾, value);
+                Unit.setCondition(target, Condition.盾, value);
             });
         }
     };
@@ -874,7 +873,7 @@ ActiveTec._valueOf = new Map();
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
                 const value = attacker.prm(Prm.DRK).total;
-                Battle.setCondition(target, Condition.毒, value);
+                Unit.setCondition(target, Condition.毒, value);
             });
         }
     };
@@ -901,7 +900,7 @@ ActiveTec._valueOf = new Map();
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                Battle.setCondition(target, Condition.癒, 5);
+                Unit.setCondition(target, Condition.癒, 5);
             });
         }
     };
@@ -927,7 +926,7 @@ ActiveTec._valueOf = new Map();
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                Battle.setCondition(target, Condition.風, 5);
+                Unit.setCondition(target, Condition.風, 5);
             });
         }
     };
@@ -940,7 +939,7 @@ ActiveTec._valueOf = new Map();
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                Battle.setCondition(target, Condition.攻撃低下, 5);
+                Unit.setCondition(target, Condition.攻撃低下, 5);
             });
         }
     };
@@ -953,7 +952,7 @@ ActiveTec._valueOf = new Map();
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                Battle.setCondition(target, Condition.防御低下, 5);
+                Unit.setCondition(target, Condition.防御低下, 5);
             });
         }
     };
@@ -966,7 +965,7 @@ ActiveTec._valueOf = new Map();
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                Battle.setCondition(target, Condition.狙, 4);
+                Unit.setCondition(target, Condition.狙, 4);
             });
         }
     };
@@ -983,7 +982,7 @@ ActiveTec._valueOf = new Map();
         }
         battleStart(unit) {
             if (!unit.existsCondition(Condition.練.type)) {
-                Battle.setCondition(unit, Condition.練, 1);
+                Unit.setCondition(unit, Condition.練, 1);
             }
         }
     };
@@ -1002,7 +1001,7 @@ ActiveTec._valueOf = new Map();
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
                 const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-                Battle.healHP(target, value);
+                Unit.healHP(target, value);
                 Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
             });
         }
@@ -1017,7 +1016,7 @@ ActiveTec._valueOf = new Map();
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
                 const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-                Battle.healHP(target, value);
+                Unit.healHP(target, value);
                 Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
             });
         }
@@ -1031,7 +1030,7 @@ ActiveTec._valueOf = new Map();
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                target.prm(Prm.MAX_MP).battle *= 2;
+                target.prm(Prm.MAX_MP).battle += target.prm(Prm.MAX_MP).total;
                 target.mp = target.prm(Prm.MAX_MP).total;
                 Util.msg.set(`${target.name}に魔力が満ちた！`);
                 yield wait();
@@ -1047,10 +1046,12 @@ ActiveTec._valueOf = new Map();
         }
         run(attacker, target) {
             return __awaiter(this, void 0, void 0, function* () {
-                target.dead = false;
-                target.hp = target.prm(Prm.MAX_HP).total;
-                Util.msg.set(`${target.name}は回復した`);
-                yield wait();
+                if (target.dead) {
+                    target.dead = false;
+                    target.hp = 1;
+                }
+                const dmg = TecType.回復.createDmg(attacker, target);
+                Unit.healHP(target, dmg.calc().value);
             });
         }
     };
@@ -1083,7 +1084,7 @@ ActiveTec._valueOf = new Map();
             });
         }
         phaseStart(unit) {
-            Battle.healHP(unit, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
+            Unit.healHP(unit, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
         }
     };
     Tec.衛生 = new class extends PassiveTec {
@@ -1098,7 +1099,7 @@ ActiveTec._valueOf = new Map();
             for (const u of members) {
                 const value = u.prm(Prm.MAX_HP).total * 0.05 + 1;
                 const v = value < lim ? value : lim;
-                Battle.healHP(u, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
+                Unit.healHP(u, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
             }
         }
     };
@@ -1111,7 +1112,7 @@ ActiveTec._valueOf = new Map();
         battleStart(unit) {
             const value = unit.prm(Prm.MAX_HP).total * 0.1;
             unit.prm(Prm.MAX_HP).battle += value;
-            Battle.healHP(unit, value);
+            Unit.healHP(unit, value);
         }
     };
     Tec.MP自動回復 = new class extends PassiveTec {
@@ -1125,7 +1126,7 @@ ActiveTec._valueOf = new Map();
             if (value < 1) {
                 value = 1;
             }
-            Battle.healMP(unit, value);
+            Unit.healMP(unit, value);
         }
     };
     Tec.頭痛 = new class extends PassiveTec {
@@ -1137,7 +1138,7 @@ ActiveTec._valueOf = new Map();
         phaseStart(unit) {
             return __awaiter(this, void 0, void 0, function* () {
                 let value = unit.prm(Prm.MAX_MP).total * 0.1;
-                Battle.healMP(unit, value);
+                Unit.healMP(unit, value);
                 unit.doDmg(new Dmg({ absPow: value }));
                 yield wait();
             });
@@ -1154,7 +1155,7 @@ ActiveTec._valueOf = new Map();
             if (value < 1) {
                 value = 1;
             }
-            Battle.healTP(unit, value);
+            Unit.healTP(unit, value);
         }
     };
     //--------------------------------------------------------------------------

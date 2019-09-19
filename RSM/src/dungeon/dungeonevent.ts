@@ -181,8 +181,8 @@ export namespace DungeonEvent{
                                 .set(ReturnBtn.index, new Btn("休む", async()=>{
                                     for(const p of Unit.players){
                                         if(p.exists && !p.dead){
-                                            Battle.healHP(p, p.prm(Prm.MAX_HP).total * 0.2);
-                                            Battle.healMP(p, p.prm(Prm.MAX_MP).total * 0.2);
+                                            Unit.healHP(p, p.prm(Prm.MAX_HP).total * 0.2 + 1);
+                                            Unit.healMP(p, p.prm(Prm.MAX_MP).total * 0.2 + 1);
                                         }
                                     }
                                     DungeonEvent.empty.happen();

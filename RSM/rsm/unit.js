@@ -9,11 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Player } from "./player.js";
 import { Util, PlayData } from "./util.js";
 import { wait } from "./undym/scene.js";
-import { Color, Rect } from "./undym/type.js";
+import { Color, Rect, Point } from "./undym/type.js";
 import { Tec, ActiveTec, PassiveTec } from "./tec.js";
 import { Targeting } from "./force.js";
 import { Job } from "./job.js";
-import { FX_RotateStr, FX_Shake } from "./fx/fx.js";
+import { FX_RotateStr, FX_Shake, FX_Str } from "./fx/fx.js";
 import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos, EqEar } from "./eq.js";
 import { choice } from "./undym/random.js";
@@ -528,3 +528,46 @@ EUnit.DEF_AI = (attacker, targetCandidates) => __awaiter(this, void 0, void 0, f
     }
     Tec.何もしない.use(attacker, [attacker]);
 });
+(function (Unit) {
+    class FXFont {
+        static get def() { return this.font ? this.font : (this.font = new Font(60)); }
+    }
+    Unit.setCondition = (target, condition, value) => {
+        value = value | 0;
+        if (value <= 0) {
+            return;
+        }
+        if (condition === Condition.empty) {
+            return;
+        }
+        target.setCondition(condition, value);
+        FX_Str(FXFont.def, `<${condition}>`, target.bounds.center, Color.WHITE);
+        Util.msg.set(`${target.name}は<${condition}${value}>になった`, Color.CYAN.bright);
+    };
+    Unit.healHP = (target, value) => {
+        if (!target.exists || target.dead) {
+            return;
+        }
+        value = value | 0;
+        const p = new Point(target.bounds.cx, (target.bounds.y + target.bounds.cy) / 2);
+        FX_RotateStr(FXFont.def, `${value}`, p, Color.GREEN);
+        target.hp += value;
+    };
+    Unit.healMP = (target, value) => {
+        if (!target.exists || target.dead) {
+            return;
+        }
+        value = value | 0;
+        target.mp += value;
+        FX_RotateStr(FXFont.def, `${value}`, target.bounds.center, Color.PINK);
+    };
+    Unit.healTP = (target, value) => {
+        if (!target.exists || target.dead) {
+            return;
+        }
+        value = value | 0;
+        target.tp += value;
+        const p = new Point(target.bounds.cx, (target.bounds.cy + target.bounds.yh) / 2);
+        FX_RotateStr(FXFont.def, `${value}`, p, Color.CYAN);
+    };
+})(Unit || (Unit = {}));

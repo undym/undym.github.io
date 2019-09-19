@@ -1,9 +1,8 @@
-import { Prm } from "./unit.js";
+import { Unit, Prm } from "./unit.js";
 import { Num } from "./mix.js";
 import { ActiveTec, TecType } from "./tec.js";
 import { Condition } from "./condition.js";
 import { Util, PlayData } from "./util.js";
-import { Battle } from "./battle.js";
 import { choice } from "./undym/random.js";
 export class EqPos {
     constructor(name) {
@@ -183,19 +182,21 @@ EqEar._valueOf = new Map();
     Eq.魔女のとんがり帽 = new class extends Eq {
         constructor() {
             super({ uniqueName: "魔女のとんがり帽", info: ["最大MP+10"],
-                pos: EqPos.頭, lv: 30 });
+                pos: EqPos.頭, lv: 3 });
         }
         equip(unit) {
             unit.prm(Prm.MAX_MP).eq += 10;
         }
     };
-    // export const                         山男のとんかつ帽 = new class extends Eq{
-    //     constructor(){super({uniqueName:"山男のとんかつ帽", info:["最大TP+50"], 
-    //                             pos:EqPos.頭, lv:3});}
-    //     equip(unit:Unit){
-    //         unit.prm(Prm.MAX_TP).eq += 50;
-    //     }
-    // }
+    Eq.山男のとんかつ帽 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "山男のとんかつ帽", info: ["最大TP+10"],
+                pos: EqPos.頭, lv: 3 });
+        }
+        equip(unit) {
+            unit.prm(Prm.MAX_TP).eq += 10;
+        }
+    };
     Eq.千里ゴーグル = new class extends Eq {
         constructor() {
             super({ uniqueName: "千里ゴーグル", info: ["銃・弓攻撃時稀にクリティカル"],
@@ -652,7 +653,7 @@ EqEar._valueOf = new Map();
                 pos: EqPos.指, lv: 20 });
         }
         phaseStart(unit) {
-            Battle.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1 + 1);
+            Unit.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1 + 1);
         }
     };
     Eq.瑠璃 = new class extends Eq {
@@ -661,7 +662,7 @@ EqEar._valueOf = new Map();
                 pos: EqPos.指, lv: 50 });
         }
         battleStart(unit) {
-            Battle.healTP(unit, unit.prm(Prm.MAX_TP).total * 0.1 + 1);
+            Unit.healTP(unit, unit.prm(Prm.MAX_TP).total * 0.1 + 1);
         }
     };
     //--------------------------------------------------------------------------
@@ -682,7 +683,7 @@ EqEar._valueOf = new Map();
         }
         afterBeAtk(action, attacker, target, dmg) {
             if (action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.6) {
-                Battle.setCondition(target, Condition.盾, 1);
+                Unit.setCondition(target, Condition.盾, 1);
             }
         }
     };
@@ -701,7 +702,7 @@ EqEar._valueOf = new Map();
     EqEar.水晶のピアス = new class extends EqEar {
         constructor() { super({ uniqueName: "水晶のピアス", info: ["行動開始時HP+1%"], lv: 29 }); }
         phaseStart(unit) {
-            Battle.healHP(unit, unit.prm(Prm.MAX_HP).total * 0.01 + 1);
+            Unit.healHP(unit, unit.prm(Prm.MAX_HP).total * 0.01 + 1);
         }
     };
     EqEar.魔ヶ玉のピアス = new class extends EqEar {

@@ -138,7 +138,7 @@ export class BattleScene extends Scene {
                 return;
             }
             Util.msg.set(`${attacker.name}の行動`, Color.ORANGE);
-            attacker.prm(Prm.TP).base += 10;
+            attacker.tp += 1;
             attacker.phaseStart();
             for (const u of Unit.all) {
                 u.judgeDead();

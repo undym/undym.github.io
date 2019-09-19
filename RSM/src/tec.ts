@@ -644,7 +644,7 @@ export namespace Tec{
             super.runInner(attacker, target, dmg);
             if(dmg.result.isHit && Math.random() < 0.3){
                 const value = attacker.prm(Prm.DRK).total / 2 + attacker.prm(Prm.CHN).total / 2 + 1;
-                Battle.setCondition(target, Condition.毒, value);
+                Unit.setCondition(target, Condition.毒, value);
             }
         }
     }
@@ -687,7 +687,7 @@ export namespace Tec{
                                         .filter(type=> attacker.existsCondition(type))
                                         .length;
                 if(num === 0){return;}
-                Battle.healMP( attacker, action.mpCost * 0.1 * num);
+                Unit.healMP( attacker, action.mpCost * 0.1 * num);
             }
         }
     };
@@ -775,9 +775,9 @@ export namespace Tec{
 
             const value = attacker.prm(Prm.LIG).total + attacker.prm(Prm.LV).total / 2;
             if(dmg.result.isHit){
-                Battle.healHP(attacker, value);
+                Unit.healHP(attacker, value);
             }else{
-                Battle.healHP(attacker, value / 3);
+                Unit.healHP(attacker, value / 3);
             }
         }
     }
@@ -795,7 +795,7 @@ export namespace Tec{
             const value = target.getConditionValue(Condition.練) + 1;
             if(value > 4){return;}
 
-            Battle.setCondition( target, Condition.練, value );
+            Unit.setCondition( target, Condition.練, value );
         }
     }
     export const                          グレートウォール:ActiveTec = new class extends ActiveTec{
@@ -807,7 +807,7 @@ export namespace Tec{
             const value = target.getConditionValue(Condition.盾) + 1;
             if(value > 4){return;}
 
-            Battle.setCondition( target, Condition.盾, value );
+            Unit.setCondition( target, Condition.盾, value );
         }
     }
     export const                          ポイズンバタフライ:ActiveTec = new class extends ActiveTec{
@@ -817,7 +817,7 @@ export namespace Tec{
         });}
         async run(attacker:Unit, target:Unit){
             const value = attacker.prm(Prm.DRK).total;
-            Battle.setCondition(target, Condition.毒, value);
+            Unit.setCondition(target, Condition.毒, value);
         }
     }
     export const                          凍てつく波動:ActiveTec = new class extends ActiveTec{
@@ -836,7 +836,7 @@ export namespace Tec{
                               mul:1, num:1, hit:10, mp:2,
         });}
         async run(attacker:Unit, target:Unit){
-            Battle.setCondition(target, Condition.癒, 5);
+            Unit.setCondition(target, Condition.癒, 5);
         }
     }
     export const                          いやらしの風:ActiveTec = new class extends ActiveTec{
@@ -854,7 +854,7 @@ export namespace Tec{
                               mul:1, num:1, hit:10, tp:1,
         });}
         async run(attacker:Unit, target:Unit){
-            Battle.setCondition( target, Condition.風, 5 );
+            Unit.setCondition( target, Condition.風, 5 );
         }
     }
     export const                          やる気ゼロ:ActiveTec = new class extends ActiveTec{
@@ -863,7 +863,7 @@ export namespace Tec{
                               mul:1, num:1, hit:10, mp:2,
         });}
         async run(attacker:Unit, target:Unit){
-            Battle.setCondition( target, Condition.攻撃低下, 5 );
+            Unit.setCondition( target, Condition.攻撃低下, 5 );
         }
     }
     export const                          弱体液:ActiveTec = new class extends ActiveTec{
@@ -872,7 +872,7 @@ export namespace Tec{
                               mul:1, num:1, hit:10, mp:2,
         });}
         async run(attacker:Unit, target:Unit){
-            Battle.setCondition( target, Condition.防御低下, 5 );
+            Unit.setCondition( target, Condition.防御低下, 5 );
         }
     }
     export const                          スコープ:ActiveTec = new class extends ActiveTec{
@@ -881,7 +881,7 @@ export namespace Tec{
                               mul:1, num:1, hit:10, mp:1, tp:1,
         });}
         async run(attacker:Unit, target:Unit){
-            Battle.setCondition( target, Condition.狙, 4 );
+            Unit.setCondition( target, Condition.狙, 4 );
         }
     }
     //--------------------------------------------------------------------------
@@ -895,7 +895,7 @@ export namespace Tec{
         });}
         battleStart(unit:Unit){
             if(!unit.existsCondition(Condition.練.type)){
-                Battle.setCondition(unit, Condition.練, 1);
+                Unit.setCondition(unit, Condition.練, 1);
             }
         }
     };
@@ -911,7 +911,7 @@ export namespace Tec{
         });}
         async run(attacker:Unit, target:Unit){
             const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-            Battle.healHP(target, value);
+            Unit.healHP(target, value);
             Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
         }
     }
@@ -922,7 +922,7 @@ export namespace Tec{
         });}
         async run(attacker:Unit, target:Unit){
             const value = attacker.prm(Prm.LV).total + attacker.prm(Prm.LIG).total;
-            Battle.healHP(target, value);
+            Unit.healHP(target, value);
             Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
         }
     }
@@ -932,7 +932,7 @@ export namespace Tec{
                               mul:1, num:1, hit:10, ep:1,
         });}
         async run(attacker:Unit, target:Unit){
-            target.prm(Prm.MAX_MP).battle *= 2;
+            target.prm(Prm.MAX_MP).battle += target.prm(Prm.MAX_MP).total;
             target.mp = target.prm(Prm.MAX_MP).total;
 
             Util.msg.set(`${target.name}に魔力が満ちた！`); await wait();
@@ -944,10 +944,12 @@ export namespace Tec{
                               mul:1, num:1, hit:10, ep:1,
         });}
         async run(attacker:Unit, target:Unit){
-            target.dead = false;
-            target.hp = target.prm(Prm.MAX_HP).total;
-
-            Util.msg.set(`${target.name}は回復した`); await wait();
+            if(target.dead){
+                target.dead = false;
+                target.hp = 1;
+            }
+            const dmg = TecType.回復.createDmg(attacker, target);
+            Unit.healHP(target, dmg.calc().value);
         }
     }
     export const                          吸心:ActiveTec = new class extends ActiveTec{
@@ -972,7 +974,7 @@ export namespace Tec{
                                 type:TecType.回復,
         });}
         phaseStart(unit:Unit){
-            Battle.healHP(unit, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
+            Unit.healHP(unit, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
         }
     };
     export const                         衛生:PassiveTec = new class extends PassiveTec{
@@ -985,7 +987,7 @@ export namespace Tec{
             for(const u of members){
                 const value = u.prm(Prm.MAX_HP).total * 0.05 + 1;
                 const v = value < lim ? value : lim;
-                Battle.healHP(u, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
+                Unit.healHP(u, 1 + unit.prm(Prm.MAX_HP).total * 0.01);
             }
         }
     };
@@ -996,7 +998,7 @@ export namespace Tec{
         battleStart(unit:Unit){
             const value = unit.prm(Prm.MAX_HP).total * 0.1;
             unit.prm(Prm.MAX_HP).battle += value;
-            Battle.healHP(unit, value);
+            Unit.healHP(unit, value);
         }
     };
     export const                         MP自動回復:PassiveTec = new class extends PassiveTec{
@@ -1006,7 +1008,7 @@ export namespace Tec{
         phaseStart(unit:Unit){
             let value = unit.prm(Prm.MAX_MP).total * 0.01;
             if(value < 1){value = 1;}
-            Battle.healMP(unit, value);
+            Unit.healMP(unit, value);
         }
     };
     export const                         頭痛:PassiveTec = new class extends PassiveTec{
@@ -1015,7 +1017,7 @@ export namespace Tec{
         });}
         async phaseStart(unit:Unit){
             let value = unit.prm(Prm.MAX_MP).total * 0.1;
-            Battle.healMP(unit, value);
+            Unit.healMP(unit, value);
             unit.doDmg(new Dmg({absPow:value})); await wait();
         }
     };
@@ -1026,7 +1028,7 @@ export namespace Tec{
         phaseStart(unit:Unit){
             let value = unit.prm(Prm.MAX_TP).total * 0.01;
             if(value < 1){value = 1;}
-            Battle.healTP(unit, value);
+            Unit.healTP(unit, value);
         }
     };
     //--------------------------------------------------------------------------

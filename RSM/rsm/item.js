@@ -9,13 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Util, SceneType } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Scene, wait } from "./undym/scene.js";
-import { Prm } from "./unit.js";
+import { Unit, Prm } from "./unit.js";
 import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
 import { Num } from "./mix.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import DungeonScene from "./scene/dungeonscene.js";
-import { Battle } from "./battle.js";
 export class ItemType {
     constructor(name) {
         this.toString = () => name;
@@ -204,7 +203,7 @@ Item.DEF_NUM_LIMIT = 999;
                     if (target.dead) {
                         target.dead = false;
                         target.hp = 0;
-                        Battle.healHP(target, 1);
+                        Unit.healHP(target, 1);
                         if (SceneType.now === SceneType.BATTLE) {
                             Util.msg.set(`${target.name}は生き返った`);
                             yield wait();
@@ -226,7 +225,7 @@ Item.DEF_NUM_LIMIT = 999;
                 consumable: true, drop: ItemDrop.NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                     const value = (10 + target.prm(Prm.MAX_HP).total * 0.05) | 0;
-                    Battle.healHP(target, value);
+                    Unit.healHP(target, value);
                     if (SceneType.now === SceneType.BATTLE) {
                         Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
                         yield wait();
@@ -242,7 +241,7 @@ Item.DEF_NUM_LIMIT = 999;
                 consumable: true, drop: ItemDrop.NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                     const value = 30 + target.prm(Prm.MAX_HP).total * 0.05;
-                    Battle.healHP(target, value);
+                    Unit.healHP(target, value);
                     if (SceneType.now === SceneType.BATTLE) {
                         Util.msg.set(`${target.name}のHPが${value | 0}回復した`, Color.GREEN.bright);
                         yield wait();
@@ -263,7 +262,7 @@ Item.DEF_NUM_LIMIT = 999;
                 consumable: true, drop: ItemDrop.NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
                     const value = target.prm(Prm.MAX_MP).total * 0.05 + 5;
-                    Battle.healMP(target, value);
+                    Unit.healMP(target, value);
                     if (SceneType.now === SceneType.BATTLE) {
                         Util.msg.set(`${target.name}のMPが${value | 0}回復した`, Color.GREEN.bright);
                         yield wait();
