@@ -343,6 +343,11 @@ ActiveTec._valueOf = new Map();
                 mul: 1, num: 1, hit: 1,
             });
         }
+        createDmg(attacker, target) {
+            const dmg = super.createDmg(attacker, target);
+            dmg.abs.base += 1;
+            return dmg;
+        }
     };
     Tec.二回殴る = new class extends ActiveTec {
         constructor() {

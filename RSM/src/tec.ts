@@ -406,6 +406,11 @@ export namespace Tec{
                               type:TecType.格闘, targetings:Targeting.SELECT,
                               mul:1, num:1, hit:1,
         });}
+        createDmg(attacker:Unit, target:Unit):Dmg{
+            const dmg = super.createDmg(attacker, target);
+            dmg.abs.base += 1;
+            return dmg;
+        }
     }
     export const                          二回殴る:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"二回殴る", info:["一体に二回格闘攻撃"],
