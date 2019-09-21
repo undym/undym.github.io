@@ -60,9 +60,7 @@ export class ShopScene extends Scene {
                         moveP();
                     }
                     moveP();
-                    for (let s of goods.info) {
-                        font.draw(s, moveP(), Color.WHITE);
-                    }
+                    font.draw(goods.info, moveP(), Color.WHITE);
                 } }))
                 .add(btnBounds, (() => {
                 const l = new FlowLayout(2, 1);
@@ -105,9 +103,8 @@ export class ShopScene extends Scene {
                     const num = goods.num();
                     return num ? `${num}` : "";
                 },
-                leftColor: () => Color.WHITE,
                 right: () => goods.isVisible() ? goods.toString() : `-`,
-                rightColor: () => Color.WHITE,
+                groundColor: () => goods === this.choosedGoods ? Color.D_CYAN : Color.BLACK,
                 push: (elm) => {
                     this.choosedGoods = goods;
                 },
@@ -117,8 +114,9 @@ export class ShopScene extends Scene {
 }
 ShopScene.completedInitGoods = false;
 class Goods {
-    constructor(name, info, price, isVisible, buy, num = () => undefined) {
+    constructor(name, type, info, price, isVisible, buy, num = () => undefined) {
         this.name = name;
+        this.type = type;
         this.info = info;
         this.price = price;
         this.isVisible = isVisible;
@@ -134,7 +132,7 @@ class Goods {
 Goods._values = [];
 const initGoods = () => {
     const createItemGoods = (item, price, isVisible) => {
-        new Goods(item.toString(), item.info, price, isVisible, () => item.add(1), () => item.num);
+        new Goods(item.toString(), "アイテム", item.info, price, isVisible, () => item.add(1), () => item.num);
     };
     // const createItemGoodsNum = (item:Item, num:number, price:()=>number, isVisible:()=>boolean)=>{
     //     new Goods(
@@ -147,12 +145,10 @@ const initGoods = () => {
     //     );
     // };
     const createEqGoods = (eq, price, isVisible) => {
-        let info = [`＜${eq.pos}＞`];
-        new Goods(eq.toString(), info.concat(eq.info), price, isVisible, () => eq.add(1), () => eq.num);
+        new Goods(eq.toString(), `＜${eq.pos}＞`, eq.info, price, isVisible, () => eq.add(1), () => eq.num);
     };
     const createEarGoods = (ear, price, isVisible) => {
-        let info = [`＜耳＞`];
-        new Goods(ear.toString(), info.concat(ear.info), price, isVisible, () => ear.add(1), () => ear.num);
+        new Goods(ear.toString(), "＜耳＞", ear.info, price, isVisible, () => ear.add(1), () => ear.num);
     };
     createItemGoods(Item.合成許可証, () => 300, () => Dungeon.リテの門.dungeonClearCount > 0 && Item.合成許可証.totalGetNum === 0);
     createItemGoods(Item.スティックパン, () => (Item.スティックパン.num + 1) * 30, () => Item.スティックパン.totalGetNum < 5);

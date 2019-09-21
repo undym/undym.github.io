@@ -1,7 +1,7 @@
 import { Scene, wait } from "../undym/scene.js";
 import { Place, Util } from "../util.js";
 import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
-import { YLayout, ILayout, RatioLayout, VariableLayout, FlowLayout, XLayout } from "../undym/layout.js";
+import { YLayout, ILayout, RatioLayout, VariableLayout, FlowLayout, XLayout, Labels } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
 import { List } from "../widget/list.js";
@@ -34,7 +34,8 @@ export class ItemScene extends Scene{
     private use:(item:Item, user:Unit)=>void;
     private returnScene:()=>void;
 
-    private selectedItem:Item|undefined;
+    private selected:boolean = false;
+    private selectedItem:Item;
 
     private list:List;
 
@@ -47,7 +48,8 @@ export class ItemScene extends Scene{
     
 
     init(){
-        this.selectedItem = undefined;
+        this.selected = false;
+        this.selectedItem = Item.石;
         
         super.clear();
         
@@ -74,6 +76,7 @@ export class ItemScene extends Scene{
 
         const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
 
+
         super.add(mainBounds, 
             new XLayout()
                 .add(this.list)
@@ -83,32 +86,24 @@ export class ItemScene extends Scene{
                     return new RatioLayout()
                         .add(infoBounds, ILayout.create({draw:(bounds)=>{
                             Graphics.fillRect(bounds, Color.D_GRAY);
-                            if(this.selectedItem === undefined){return;}
-                
-                            let item = this.selectedItem;
-                            let font = Font.def;
-                            let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                            const moveP = ()=> p = p.move(0, font.ratioH);
-                            
-                            font.draw(`[${item}]`, p, Color.WHITE);
-                
-                            {
-                                const num = item.consumable 
-                                            ? `${item.remainingUseCount}/${item.num}`
-                                            : `${item.num}`
-                                            ;
-                                const limit = item.num >= item.numLimit ? "（所持上限）" : "";
-                                font.draw(`${num}個${limit}`, moveP(), Color.WHITE);
-                            }
-                
-                            font.draw(`<${item.itemType}>`, moveP(), Color.WHITE);
-                            font.draw(`Rank:${item.rank}`, moveP(), Color.WHITE);
-                            
-                            moveP();
-                            for(let s of item.info){
-                                font.draw(s, moveP(), Color.WHITE);
-                            }
                         }}))
+                        .add(infoBounds, (()=>{
+                            const info = new Labels(Font.def)
+                                                .add(()=>`[${this.selectedItem}]`, ()=>Color.WHITE)
+                                                .add(()=>{
+                                                    const num = this.selectedItem.consumable 
+                                                                ? `${this.selectedItem.remainingUseCount}/${this.selectedItem.num}`
+                                                                : `${this.selectedItem.num}`
+                                                                ;
+                                                    const limit = this.selectedItem.num >= this.selectedItem.numLimit ? "（所持上限）" : "";
+                                                    return `${num}個${limit}`;
+                                                }, ()=>Color.WHITE)
+                                                .add(()=>`<${this.selectedItem.itemType}>`, ()=>Color.WHITE)
+                                                .add(()=>`Rank:${this.selectedItem.rank}`, ()=>Color.WHITE)
+                                                .addln(()=>this.selectedItem.info, ()=>Color.WHITE)
+                                                ;
+                            return new VariableLayout(()=> this.selected ? info : ILayout.empty);
+                        })())
                         .add(btnBounds, (()=>{
                             const otherBtns:ILayout[] = [
                                 new Btn("<<", ()=>{
@@ -116,12 +111,12 @@ export class ItemScene extends Scene{
                                 }),
                                 (()=>{
                                     const canUse = new Btn(()=>"使用",async()=>{
-                                        await this.use( this.selectedItem as Item, this.user );
+                                        await this.use( this.selectedItem, this.user );
                                     });
                                     const cantUse = new Btn(()=>"-",()=>{});
                 
                                     return new VariableLayout(()=>{
-                                        if(this.selectedItem === undefined || !this.selectedItem.canUse()){
+                                        if(!this.selected || !this.selectedItem.canUse()){
                                             return cantUse;
                                         }
                                         return canUse;
@@ -163,16 +158,15 @@ export class ItemScene extends Scene{
             });
 
             for(let item of type.values.filter(item=> item.num > 0)){
-                const color = ()=> this.selectedItem === item ? Color.CYAN : Color.WHITE;
                 this.list.add({
                     left:()=>{
                         if(item.consumable){return `${item.remainingUseCount}/${item.num}`;}
                         return `${item.num}`;
                     },
-                    leftColor:color,
                     right:()=>`${item}`,
-                    rightColor:color,
+                    groundColor:()=>item === this.selectedItem ? Color.D_CYAN : Color.BLACK,
                     push:(elm)=>{
+                        this.selected = true;
                         this.selectedItem = item;
                     },
 

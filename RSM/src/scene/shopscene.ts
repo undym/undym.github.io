@@ -77,9 +77,7 @@ export class ShopScene extends Scene{
 
                             moveP();
                 
-                            for(let s of goods.info){
-                                font.draw(s, moveP(), Color.WHITE);
-                            }
+                            font.draw(goods.info, moveP(), Color.WHITE);
                         }}))
                         .add(btnBounds, (()=>{
                             const l = new FlowLayout(2,1);
@@ -128,9 +126,8 @@ export class ShopScene extends Scene{
                         const num = goods.num();
                         return num ? `${num}` : "";
                     },
-                    leftColor:()=>Color.WHITE,
                     right:()=> goods.isVisible() ? goods.toString() : `-`,
-                    rightColor:()=>Color.WHITE,
+                    groundColor:()=>goods === this.choosedGoods ? Color.D_CYAN : Color.BLACK,
                     push:(elm)=>{
                         this.choosedGoods = goods;
                     },
@@ -149,7 +146,8 @@ class Goods{
 
     constructor(
         private readonly name:string,
-        public readonly info:string[],
+        public readonly type:string,
+        public readonly info:string,
         public readonly price:()=>number,
         public readonly isVisible:()=>boolean,
         public readonly buy:()=>void,
@@ -168,6 +166,7 @@ const initGoods = ()=>{
     const createItemGoods = (item:Item, price:()=>number, isVisible:()=>boolean)=>{
         new Goods(
             item.toString(),
+            "アイテム",
             item.info,
             price,
             isVisible,
@@ -186,10 +185,10 @@ const initGoods = ()=>{
     //     );
     // };
     const createEqGoods = (eq:Eq, price:()=>number, isVisible:()=>boolean)=>{
-        let info:string[] = [`＜${eq.pos}＞`];
         new Goods(
             eq.toString(),
-            info.concat( eq.info ),
+            `＜${eq.pos}＞`,
+            eq.info,
             price,
             isVisible,
             ()=> eq.add(1),
@@ -197,10 +196,10 @@ const initGoods = ()=>{
         );
     };
     const createEarGoods = (ear:EqEar, price:()=>number, isVisible:()=>boolean)=>{
-        let info:string[] = [`＜耳＞`];
         new Goods(
             ear.toString(),
-            info.concat( ear.info ),
+            "＜耳＞",
+            ear.info,
             price,
             isVisible,
             ()=> ear.add(1),

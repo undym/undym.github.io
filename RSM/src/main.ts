@@ -13,6 +13,7 @@ import { Item } from "./item.js";
 import { SaveData, Version } from "./savedata.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import { XLayout } from "./undym/layout.js";
+import { Job } from "./job.js";
 
 
 

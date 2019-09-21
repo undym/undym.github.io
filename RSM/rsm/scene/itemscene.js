@@ -9,15 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Scene } from "../undym/scene.js";
 import { Place } from "../util.js";
 import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
-import { ILayout, RatioLayout, VariableLayout, FlowLayout, XLayout } from "../undym/layout.js";
+import { ILayout, RatioLayout, VariableLayout, FlowLayout, XLayout, Labels } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
 import { List } from "../widget/list.js";
 import { Rect, Color } from "../undym/type.js";
-import { ItemParentType } from "../item.js";
+import { Item, ItemParentType } from "../item.js";
 import { Input } from "../undym/input.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 export class ItemScene extends Scene {
+    constructor() {
+        super();
+        this.selected = false;
+        this.list = new List();
+    }
     static ins(args) {
         this._ins ? this._ins : (this._ins = new ItemScene());
         this._ins.selectUser = args.selectUser;
@@ -26,12 +31,9 @@ export class ItemScene extends Scene {
         this._ins.returnScene = args.returnScene;
         return this._ins;
     }
-    constructor() {
-        super();
-        this.list = new List();
-    }
     init() {
-        this.selectedItem = undefined;
+        this.selected = false;
+        this.selectedItem = Item.石;
         super.clear();
         super.add(Place.TOP, DrawPlayInfo.ins);
         const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
@@ -63,28 +65,22 @@ export class ItemScene extends Scene {
             return new RatioLayout()
                 .add(infoBounds, ILayout.create({ draw: (bounds) => {
                     Graphics.fillRect(bounds, Color.D_GRAY);
-                    if (this.selectedItem === undefined) {
-                        return;
-                    }
-                    let item = this.selectedItem;
-                    let font = Font.def;
-                    let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                    const moveP = () => p = p.move(0, font.ratioH);
-                    font.draw(`[${item}]`, p, Color.WHITE);
-                    {
-                        const num = item.consumable
-                            ? `${item.remainingUseCount}/${item.num}`
-                            : `${item.num}`;
-                        const limit = item.num >= item.numLimit ? "（所持上限）" : "";
-                        font.draw(`${num}個${limit}`, moveP(), Color.WHITE);
-                    }
-                    font.draw(`<${item.itemType}>`, moveP(), Color.WHITE);
-                    font.draw(`Rank:${item.rank}`, moveP(), Color.WHITE);
-                    moveP();
-                    for (let s of item.info) {
-                        font.draw(s, moveP(), Color.WHITE);
-                    }
                 } }))
+                .add(infoBounds, (() => {
+                const info = new Labels(Font.def)
+                    .add(() => `[${this.selectedItem}]`, () => Color.WHITE)
+                    .add(() => {
+                    const num = this.selectedItem.consumable
+                        ? `${this.selectedItem.remainingUseCount}/${this.selectedItem.num}`
+                        : `${this.selectedItem.num}`;
+                    const limit = this.selectedItem.num >= this.selectedItem.numLimit ? "（所持上限）" : "";
+                    return `${num}個${limit}`;
+                }, () => Color.WHITE)
+                    .add(() => `<${this.selectedItem.itemType}>`, () => Color.WHITE)
+                    .add(() => `Rank:${this.selectedItem.rank}`, () => Color.WHITE)
+                    .addln(() => this.selectedItem.info, () => Color.WHITE);
+                return new VariableLayout(() => this.selected ? info : ILayout.empty);
+            })())
                 .add(btnBounds, (() => {
                 const otherBtns = [
                     new Btn("<<", () => {
@@ -96,7 +92,7 @@ export class ItemScene extends Scene {
                         }));
                         const cantUse = new Btn(() => "-", () => { });
                         return new VariableLayout(() => {
-                            if (this.selectedItem === undefined || !this.selectedItem.canUse()) {
+                            if (!this.selected || !this.selectedItem.canUse()) {
                                 return cantUse;
                             }
                             return canUse;
@@ -127,7 +123,6 @@ export class ItemScene extends Scene {
                 groundColor: () => Color.D_GRAY,
             });
             for (let item of type.values.filter(item => item.num > 0)) {
-                const color = () => this.selectedItem === item ? Color.CYAN : Color.WHITE;
                 this.list.add({
                     left: () => {
                         if (item.consumable) {
@@ -135,10 +130,10 @@ export class ItemScene extends Scene {
                         }
                         return `${item.num}`;
                     },
-                    leftColor: color,
                     right: () => `${item}`,
-                    rightColor: color,
+                    groundColor: () => item === this.selectedItem ? Color.D_CYAN : Color.BLACK,
                     push: (elm) => {
+                        this.selected = true;
                         this.selectedItem = item;
                     },
                 });

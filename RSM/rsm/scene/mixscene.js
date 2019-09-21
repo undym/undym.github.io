@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Scene } from "../undym/scene.js";
-import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout } from "../undym/layout.js";
+import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout, Labels } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Rect, Color } from "../undym/type.js";
 import { DrawSTBoxes, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
@@ -17,16 +17,18 @@ import { List } from "../widget/list.js";
 import { TownScene } from "./townscene.js";
 import { Item } from "../item.js";
 import { Mix } from "../mix.js";
-import { Eq } from "../eq.js";
+import { Eq, EqEar } from "../eq.js";
 import { SaveData } from "../savedata.js";
 export class MixScene extends Scene {
     constructor() {
         super();
+        this.choosed = false;
         /**セーブフラグ. */
         this.doneAnyMix = false;
         this.list = new List();
     }
     init() {
+        this.choosed = false;
         super.clear();
         super.add(Place.TOP, DrawPlayInfo.ins);
         const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
@@ -41,73 +43,53 @@ export class MixScene extends Scene {
             return new RatioLayout()
                 .add(infoBounds, ILayout.create({ draw: (bounds) => {
                     Graphics.fillRect(bounds, Color.D_GRAY);
-                    const mix = this.choosedMix;
-                    if (!mix) {
-                        return;
-                    }
-                    const font = Font.def;
-                    let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                    const moveP = () => p = p.move(0, font.ratioH);
-                    if (mix.countLimit === Mix.LIMIT_INF) {
-                        font.draw(`合成回数(${mix.count}/-)`, p, Color.WHITE);
+                } }))
+                .add(infoBounds, (() => {
+                const info = new Labels(Font.def)
+                    .add(() => {
+                    if (this.choosedMix.countLimit === Mix.LIMIT_INF) {
+                        return `合成回数(${this.choosedMix.count}/-)`;
                     }
                     else {
-                        font.draw(`合成回数(${mix.count}/${mix.countLimit})`, p, Color.WHITE);
+                        return `合成回数(${this.choosedMix.count}/${this.choosedMix.countLimit})`;
                     }
-                    for (let m of mix.materials) {
+                })
+                    .addArray(() => {
+                    let res = [];
+                    for (let m of this.choosedMix.materials) {
                         const color = m.num <= m.object.num ? Color.WHITE : Color.GRAY;
-                        font.draw(`[${m.object}] ${m.object.num}/${m.num}`, moveP(), color);
+                        res.push([`[${m.object}] ${m.object.num}/${m.num}`, color]);
                     }
-                    const result = mix.result;
+                    const result = this.choosedMix.result;
                     if (result) {
-                        moveP();
+                        res.push([""]);
                         if (result.object instanceof Eq) {
-                            const eq = result.object;
-                            font.draw(`<${eq.pos}>`, moveP(), Color.WHITE);
-                            if (!mix.info) {
-                                for (const info of eq.info) {
-                                    font.draw(info, moveP(), Color.WHITE);
-                                }
-                            }
+                            res.push([`<${result.object.pos}>`]);
+                        }
+                        if (result.object instanceof EqEar) {
+                            res.push([`<耳>`]);
                         }
                         if (result.object instanceof Item) {
-                            const item = result.object;
-                            font.draw(`<${item.itemType}>`, moveP(), Color.WHITE);
-                            if (!mix.info) {
-                                for (const info of item.info) {
-                                    font.draw(info, moveP(), Color.WHITE);
-                                }
-                            }
+                            res.push([`<${result.object.itemType}>`]);
                         }
                     }
-                    if (mix.info) {
-                        moveP();
-                        for (const info of mix.info) {
-                            font.draw(info, moveP(), Color.WHITE);
-                        }
+                    return res;
+                })
+                    .br()
+                    .addln(() => {
+                    if (this.choosedMix.info) {
+                        return this.choosedMix.info;
                     }
-                    // if(this.choosedObj instanceof Item){
-                    //     const result = this.choosedMix.result;
-                    //     if(!result){return;}
-                    //     const item = result.object;
-                    //     if(!(item instanceof Item)){return;}
-                    //     const limit = item.num >= item.numLimit ? "（所持上限）" : "";
-                    //     font.draw(`[${item}]x${result.num} <${item.itemType}> ${limit}`, moveP(), Color.WHITE);
-                    //     for(let info of item.info){
-                    //         font.draw(info, moveP(), Color.WHITE);
-                    //     }
-                    // }
-                    // if(this.choosedObj instanceof Eq){
-                    //     const result = this.choosedMix.result;
-                    //     if(!result){return;}
-                    //     const eq = result.object;
-                    //     if(!(eq instanceof Eq)){return;}
-                    //     font.draw(`[${eq}]x${eq.num} <${eq.pos}>`, moveP(), Color.WHITE);
-                    //     for(let info of eq.info){
-                    //         font.draw(info, moveP(), Color.WHITE);
-                    //     }
-                    // }
-                } }))
+                    const result = this.choosedMix.result;
+                    if (!result) {
+                        return "";
+                    }
+                    return result.object.info;
+                });
+                return new VariableLayout(() => {
+                    return this.choosed ? info : ILayout.empty;
+                });
+            })())
                 .add(btnBounds, (() => {
                 const l = new FlowLayout(2, 3);
                 l.add(new Btn("建築", () => {
@@ -169,13 +151,11 @@ export class MixScene extends Scene {
         this.list.clear();
         this.list.add({
             center: () => name,
+            groundColor: () => Color.D_GRAY,
         });
         values
             .forEach(mix => {
             const color = () => {
-                if (mix === this.choosedMix) {
-                    return Color.CYAN;
-                }
                 if (!mix.canRun()) {
                     return Color.GRAY;
                 }
@@ -191,8 +171,10 @@ export class MixScene extends Scene {
                 leftColor: color,
                 right: () => mix.toString(),
                 rightColor: color,
+                groundColor: () => mix === this.choosedMix ? Color.D_CYAN : Color.BLACK,
                 push: (elm) => {
                     this.choosedMix = mix;
+                    this.choosed = true;
                 },
             });
         });

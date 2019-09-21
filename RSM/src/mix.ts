@@ -3,6 +3,7 @@ import { Color } from "./undym/type.js";
 import { Item } from "./item.js";
 import { Player } from "./player.js";
 import { Eq } from "./eq.js";
+import { Prm } from "./unit.js";
 
 
 export class Num{
@@ -20,10 +21,10 @@ export class Num{
             obj.totalGetNum += v;
             Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, cnt=>Color.GREEN.wave(Color.YELLOW, cnt));
 
-            if(newItem){
-                for(let str of obj.info){
-                    Util.msg.set(`"${str}"`, Color.GREEN);
-                }
+            if(newItem && obj.info.length > 0){
+                Util.msg.set(`"`, Color.YELLOW);
+                Util.msg.add(obj.info, Color.YELLOW);
+                Util.msg.add(`"`, Color.YELLOW);
             }
         }
         if(v < 0){
@@ -31,7 +32,7 @@ export class Num{
         }
     }
 
-    info:string[];
+    info:string;
     /**セーブデータのため、通常はadd()/reduce()を通して増減させる。 */
     num:number;
     totalGetNum:number;
@@ -71,7 +72,7 @@ export class Mix{
 
     get countLimit(){return this.args.limit ? this.args.limit : Mix.LIMIT_INF;}
     get uniqueName(){return this.args.uniqueName;}
-    get info():string[]|undefined{return this.args.info;}
+    get info():string|undefined{return this.args.info;}
     /**合成回数. */
     count = 0;
     /**
@@ -86,7 +87,7 @@ export class Mix{
             materials:()=>[Num, number][],
             result?:()=>[Num, number],
             action?:()=>void,
-            info?:string[],
+            info?:string,
             isVisible?:()=>boolean,
         }
     ){
@@ -142,6 +143,20 @@ export namespace Mix{
     //建築
     //
     //--------------------------------------------------------
+    const           しいたけのサラダ:Mix = new Mix({
+        uniqueName:"しいたけのサラダ", limit:10, info:"スメラギの力+1",
+        materials:()=>[[Item.しいたけ, 5], [Item.葉っぱ, 5], [Item.枝, 5]],
+        action:()=>{
+            Player.スメラギ.ins.prm(Prm.STR).base += 1;
+        },
+    });
+    const           赤い水:Mix = new Mix({
+        uniqueName:"赤い水", limit:10, info:"よしこの魔+1",
+        materials:()=>[[Item.血, 5], [Item.水, 5], [Item.ほぐし水, 1]],
+        action:()=>{
+            Player.よしこ.ins.prm(Prm.MAG).base += 1;
+        },
+    });
     //--------------------------------------------------------
     //
     //装備

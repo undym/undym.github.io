@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Scene, wait } from "../undym/scene.js";
 import { Place, Util, PlayData, SceneType } from "../util.js";
 import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
-import { VariableLayout, ILayout, Layout, FlowLayout } from "../undym/layout.js";
+import { VariableLayout, ILayout, Layout, FlowLayout, Labels, XLayout, Label } from "../undym/layout.js";
 import { Rect, Color } from "../undym/type.js";
 import { Unit, PUnit, Prm } from "../unit.js";
 import { Battle, BattleResult, BattleType } from "../battle.js";
@@ -23,7 +23,7 @@ let btnSpace;
 export class BattleScene extends Scene {
     constructor() {
         super();
-        this.tecInfo = { tec: undefined, user: Unit.players[0] };
+        this.tecInfo = { tec: Tec.empty, user: Unit.players[0] };
         btnSpace = new Layout();
     }
     static get ins() { return this._ins ? this._ins : (this._ins = new BattleScene()); }
@@ -44,48 +44,109 @@ export class BattleScene extends Scene {
                     drawBG(bounds);
                 });
             } }));
-        super.add(Place.DUNGEON_DATA, new VariableLayout(() => {
-            if (!this.tecInfo.tec || this.tecInfo.tec === Tec.empty) {
-                return DrawDungeonData.ins;
-            }
-            return ILayout.empty;
-        }));
-        super.add(Place.DUNGEON_DATA, ILayout.create({ draw: (bounds) => {
-                if (!this.tecInfo.tec || this.tecInfo.tec === Tec.empty) {
-                    return;
+        // super.add(Place.DUNGEON_DATA, new VariableLayout(()=>{
+        //     if(this.tecInfo.tec === Tec.empty){return DrawDungeonData.ins;}
+        //     return ILayout.empty;
+        // }));
+        super.add(Place.DUNGEON_DATA, (() => {
+            const info = new Labels(Font.def)
+                .add(() => `[${this.tecInfo.tec}]`)
+                .addLayout(new XLayout()
+                .add(new Label(Font.def, () => {
+                if (this.tecInfo.tec instanceof ActiveTec) {
+                    return this.tecInfo.tec.mpCost > 0 ? `MP:${this.tecInfo.tec.mpCost}` : "";
                 }
-                const tec = this.tecInfo.tec;
-                const f = Font.def;
-                let p = bounds.upperLeft;
-                f.draw(`[${tec}]`, p, Color.GREEN);
-                p = p.move(0, f.ratioH);
-                if (tec instanceof ActiveTec) {
-                    let mpW = 0;
-                    let tpW = 0;
-                    const user = this.tecInfo.user;
-                    if (tec.mpCost > 0) {
-                        let col = tec.mpCost <= user.mp ? Color.WHITE : Color.GRAY;
-                        const s = `MP:${tec.mpCost} `;
-                        f.draw(s, p, col);
-                        mpW = f.measureRatioW(s);
+                return "";
+            }, () => {
+                if (this.tecInfo.tec instanceof ActiveTec) {
+                    return this.tecInfo.tec.mpCost <= this.tecInfo.user.mp ? Color.WHITE : Color.GRAY;
+                }
+                return Color.WHITE;
+            }))
+                .add(new Label(Font.def, () => {
+                if (this.tecInfo.tec instanceof ActiveTec) {
+                    return this.tecInfo.tec.tpCost > 0 ? `TP:${this.tecInfo.tec.tpCost}` : "";
+                }
+                return "";
+            }, () => {
+                if (this.tecInfo.tec instanceof ActiveTec) {
+                    return this.tecInfo.tec.tpCost <= this.tecInfo.user.tp ? Color.WHITE : Color.GRAY;
+                }
+                return Color.WHITE;
+            }))
+                .add(new Label(Font.def, () => {
+                if (this.tecInfo.tec instanceof ActiveTec) {
+                    return this.tecInfo.tec.epCost > 0 ? `EP:${this.tecInfo.tec.epCost}` : "";
+                }
+                return "";
+            }, () => {
+                if (this.tecInfo.tec instanceof ActiveTec) {
+                    return this.tecInfo.tec.epCost <= this.tecInfo.user.ep ? Color.WHITE : Color.GRAY;
+                }
+                return Color.WHITE;
+            }))
+                .add(new Label(Font.def, () => {
+                if (this.tecInfo.tec instanceof ActiveTec && this.tecInfo.tec.itemCost.length > 0) {
+                    let res = "";
+                    for (const set of this.tecInfo.tec.itemCost) {
+                        res += `${set.item}-${set.num}(${set.item.num}) `;
                     }
-                    if (tec.tpCost > 0) {
-                        let col = tec.tpCost <= user.tp ? Color.WHITE : Color.GRAY;
-                        const s = `TP:${tec.tpCost} `;
-                        f.draw(s, p.move(mpW, 0), col);
-                        tpW = f.measureRatioW(s);
+                    return res;
+                }
+                return "";
+            }, () => {
+                if (this.tecInfo.tec instanceof ActiveTec) {
+                    for (const set of this.tecInfo.tec.itemCost) {
+                        if (set.item.num < set.num) {
+                            return Color.GRAY;
+                        }
                     }
-                    if (tec.epCost > 0) {
-                        let col = tec.epCost <= user.ep ? Color.WHITE : Color.GRAY;
-                        f.draw(`EP:${tec.epCost}`, p.move(tpW, 0), col);
-                    }
+                    return Color.WHITE;
                 }
-                else {
-                }
-                for (let s of tec.info) {
-                    f.draw(s, p = p.move(0, f.ratioH), Color.WHITE);
-                }
-            } }));
+                return Color.WHITE;
+            }))
+                .add(ILayout.empty)
+                .add(ILayout.empty)
+                .add(ILayout.empty)
+                .add(ILayout.empty), () => Font.def.ratioH)
+                .addln(() => this.tecInfo.tec.info);
+            return new VariableLayout(() => {
+                return this.tecInfo.tec !== Tec.empty ? info : DrawDungeonData.ins;
+            });
+        })());
+        // super.add(Place.DUNGEON_DATA, ILayout.create({draw:(bounds)=>{
+        //     if(this.tecInfo.tec === Tec.empty){return;}
+        //     const tec = this.tecInfo.tec;
+        //     const f = Font.def;
+        //     let p = bounds.upperLeft;
+        //     f.draw( `[${tec}]`, p, Color.GREEN );
+        //     p = p.move(0,f.ratioH);
+        //     if(tec instanceof ActiveTec){
+        //         let mpW = 0;
+        //         let tpW = 0;
+        //         const user = this.tecInfo.user;
+        //         if(tec.mpCost > 0){
+        //             let col = tec.mpCost <= user.mp ? Color.WHITE : Color.GRAY;
+        //             const s = `MP:${tec.mpCost} `;
+        //             f.draw(s, p, col);
+        //             mpW = f.measureRatioW(s);
+        //         }
+        //         if(tec.tpCost > 0){
+        //             let col = tec.tpCost <= user.tp ? Color.WHITE : Color.GRAY;
+        //             const s = `TP:${tec.tpCost} `;
+        //             f.draw(s, p.move(mpW, 0), col);
+        //             tpW = f.measureRatioW(s);
+        //         }
+        //         if(tec.epCost > 0){
+        //             let col = tec.epCost <= user.ep ? Color.WHITE : Color.GRAY;
+        //             f.draw(`EP:${tec.epCost}`, p.move(tpW, 0), col);
+        //         }
+        //     }else{
+        //     }
+        //     for(let s of tec.info){
+        //         f.draw(s, p = p.move(0, f.ratioH), Color.WHITE);
+        //     }
+        // }}));
         super.add(Place.MSG, Util.msg);
         super.add(Place.BTN, btnSpace);
         super.add(Place.E_BOX, DrawSTBoxes.enemies);
@@ -165,7 +226,7 @@ export class BattleScene extends Scene {
                 let btn;
                 if (tec instanceof ActiveTec) {
                     btn = new Btn(tec.toString(), () => __awaiter(this, void 0, void 0, function* () {
-                        this.tecInfo.tec = undefined;
+                        this.tecInfo.tec = Tec.empty;
                         if (tec.targetings & Targeting.SELECT) {
                             Util.msg.set(`[${tec}]のターゲットを選択してください`);
                             yield this.setChooseTargetBtn(attacker, (targets) => __awaiter(this, void 0, void 0, function* () {

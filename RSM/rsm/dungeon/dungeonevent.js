@@ -306,6 +306,8 @@ DungeonEvent._values = [];
                         case BattleResult.WIN:
                             Dungeon.now.exKillCount++;
                             Dungeon.now.exItem.add(1);
+                            SaveData.save();
+                            Scene.load(DungeonScene.ins);
                             break;
                         case BattleResult.LOSE:
                             yield DungeonEvent.ESCAPE_DUNGEON.happen();

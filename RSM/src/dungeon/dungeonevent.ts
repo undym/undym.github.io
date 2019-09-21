@@ -292,6 +292,8 @@ export namespace DungeonEvent{
                     case BattleResult.WIN:
                         Dungeon.now.exKillCount++;
                         Dungeon.now.exItem.add(1);
+                        SaveData.save();
+                        Scene.load( DungeonScene.ins );
                         break;
                     case BattleResult.LOSE:
                         await DungeonEvent.ESCAPE_DUNGEON.happen();

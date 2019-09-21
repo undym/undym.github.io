@@ -221,8 +221,8 @@ export class DrawUnitDetail extends InnerLayout {
                     } })));
             }
             y.add(new Label(font, () => {
-                return infoIsEar ? getUnit().getEqEar(infoEarIndex).info.join()
-                    : getUnit().getEq(infoPos).info.join();
+                return infoIsEar ? getUnit().getEqEar(infoEarIndex).info
+                    : getUnit().getEq(infoPos).info;
             }, () => Color.L_GRAY));
             return y;
         })()))

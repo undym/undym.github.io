@@ -175,13 +175,13 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.髪 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "髪", info: ["はげてない", "まだはげてない"],
+            super({ uniqueName: "髪", info: "はげてない、まだはげてない",
                 pos: EqPos.頭, lv: 0 });
         }
     };
     Eq.魔女のとんがり帽 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "魔女のとんがり帽", info: ["最大MP+10"],
+            super({ uniqueName: "魔女のとんがり帽", info: "最大MP+10",
                 pos: EqPos.頭, lv: 3 });
         }
         equip(unit) {
@@ -190,7 +190,7 @@ EqEar._valueOf = new Map();
     };
     Eq.山男のとんかつ帽 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "山男のとんかつ帽", info: ["最大TP+10"],
+            super({ uniqueName: "山男のとんかつ帽", info: "最大TP+10",
                 pos: EqPos.頭, lv: 3 });
         }
         equip(unit) {
@@ -199,7 +199,7 @@ EqEar._valueOf = new Map();
     };
     Eq.千里ゴーグル = new class extends Eq {
         constructor() {
-            super({ uniqueName: "千里ゴーグル", info: ["銃・弓攻撃時稀にクリティカル"],
+            super({ uniqueName: "千里ゴーグル", info: "銃・弓攻撃時稀にクリティカル",
                 pos: EqPos.頭, lv: 120 });
         }
         beforeDoAtk(action, attacker, target, dmg) {
@@ -216,13 +216,13 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.恋人 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "恋人", info: ["恋人info"],
+            super({ uniqueName: "恋人", info: "",
                 pos: EqPos.武, lv: 0 });
         }
     };
     Eq.棒 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "棒", info: ["格闘攻撃x1.5"],
+            super({ uniqueName: "棒", info: "格闘攻撃x1.5",
                 pos: EqPos.武, lv: 20 });
         }
         beforeDoAtk(action, attacker, target, dmg) {
@@ -234,7 +234,7 @@ EqEar._valueOf = new Map();
     //再構成トンネル・財宝
     Eq.魔法の杖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "魔法の杖", info: ["魔法攻撃x1.5"],
+            super({ uniqueName: "魔法の杖", info: "魔法攻撃x1.5",
                 pos: EqPos.武, lv: 40 });
         }
         beforeDoAtk(action, attacker, target, dmg) {
@@ -246,7 +246,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.う棒 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "う棒", info: ["力+20光+20"],
+            super({ uniqueName: "う棒", info: "力+20光+20",
                 pos: EqPos.武, lv: 15 });
         }
         equip(unit) {
@@ -257,7 +257,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.銅剣 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "銅剣", info: ["力+40光+40"],
+            super({ uniqueName: "銅剣", info: "力+40光+40",
                 pos: EqPos.武, lv: 25 });
         }
         equip(unit) {
@@ -268,7 +268,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.鉄拳 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "鉄拳", info: ["力+70光+70"],
+            super({ uniqueName: "鉄拳", info: "力+70光+70",
                 pos: EqPos.武, lv: 35 });
         }
         equip(unit) {
@@ -279,7 +279,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.はがねの剣 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "はがねの剣", info: ["力+100光+100"],
+            super({ uniqueName: "はがねの剣", info: "力+100光+100",
                 pos: EqPos.武, lv: 75 });
         }
         equip(unit) {
@@ -290,7 +290,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.杖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "杖", info: ["魔+20闇+20"],
+            super({ uniqueName: "杖", info: "魔+20闇+20",
                 pos: EqPos.武, lv: 15 });
         }
         equip(unit) {
@@ -301,7 +301,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.スギの杖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "スギの杖", info: ["魔+40闇+40"],
+            super({ uniqueName: "スギの杖", info: "魔+40闇+40",
                 pos: EqPos.武, lv: 25 });
         }
         equip(unit) {
@@ -312,7 +312,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.ヒノキの杖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "ヒノキの杖", info: ["魔+70闇+70"],
+            super({ uniqueName: "ヒノキの杖", info: "魔+70闇+70",
                 pos: EqPos.武, lv: 35 });
         }
         equip(unit) {
@@ -323,7 +323,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.漆の杖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "漆の杖", info: ["魔+100闇+100"],
+            super({ uniqueName: "漆の杖", info: "魔+100闇+100",
                 pos: EqPos.武, lv: 75 });
         }
         equip(unit) {
@@ -334,7 +334,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.木の鎖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "木の鎖", info: ["鎖+20過+20"],
+            super({ uniqueName: "木の鎖", info: "鎖+20過+20",
                 pos: EqPos.武, lv: 15 });
         }
         equip(unit) {
@@ -345,7 +345,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.銅の鎖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "銅の鎖", info: ["鎖+40過+40"],
+            super({ uniqueName: "銅の鎖", info: "鎖+40過+40",
                 pos: EqPos.武, lv: 25 });
         }
         equip(unit) {
@@ -356,7 +356,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.鉄の鎖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "鉄の鎖", info: ["鎖+70過+70"],
+            super({ uniqueName: "鉄の鎖", info: "鎖+70過+70",
                 pos: EqPos.武, lv: 35 });
         }
         equip(unit) {
@@ -367,7 +367,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.銀の鎖 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "銀の鎖", info: ["鎖+100過+100"],
+            super({ uniqueName: "銀の鎖", info: "鎖+100過+100",
                 pos: EqPos.武, lv: 75 });
         }
         equip(unit) {
@@ -378,7 +378,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.パチンコ = new class extends Eq {
         constructor() {
-            super({ uniqueName: "パチンコ", info: ["銃+20弓+20"],
+            super({ uniqueName: "パチンコ", info: "銃+20弓+20",
                 pos: EqPos.武, lv: 15 });
         }
         equip(unit) {
@@ -389,7 +389,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.ボウガン = new class extends Eq {
         constructor() {
-            super({ uniqueName: "ボウガン", info: ["銃+40弓+40"],
+            super({ uniqueName: "ボウガン", info: "銃+40弓+40",
                 pos: EqPos.武, lv: 25 });
         }
         equip(unit) {
@@ -400,7 +400,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.投石器 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "投石器", info: ["銃+70弓+70"],
+            super({ uniqueName: "投石器", info: "銃+70弓+70",
                 pos: EqPos.武, lv: 35 });
         }
         equip(unit) {
@@ -411,7 +411,7 @@ EqEar._valueOf = new Map();
     //shop
     Eq.大砲 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "大砲", info: ["銃+100弓+100"],
+            super({ uniqueName: "大砲", info: "銃+100弓+100",
                 pos: EqPos.武, lv: 75 });
         }
         equip(unit) {
@@ -420,11 +420,11 @@ EqEar._valueOf = new Map();
         }
     };
     // export const                         忍者刀 = new class extends Eq{
-    //     constructor(){super({uniqueName:"忍者刀", info:["格闘攻撃時稀に追加攻撃"],
+    //     constructor(){super({uniqueName:"忍者刀", info:"格闘攻撃時稀に追加攻撃",
     //                             pos:EqPos.武, lv:99});}
     //     createMix(){return new Mix({
-    //         result:[this,1],
-    //         materials:[[Item.石, 1]],
+    //         result:[this,1,
+    //         materials:[[Item.石, 1],
     //     });}
     // }
     //--------------------------------------------------------------------------
@@ -434,13 +434,13 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.板 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "板", info: [],
+            super({ uniqueName: "板", info: "",
                 pos: EqPos.盾, lv: 0 });
         }
     };
     Eq.銅板 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "銅板", info: ["防御値+50"],
+            super({ uniqueName: "銅板", info: "防御値+50",
                 pos: EqPos.盾, lv: 12 });
         }
         beforeBeAtk(action, attacker, target, dmg) {
@@ -449,7 +449,7 @@ EqEar._valueOf = new Map();
     };
     Eq.鉄板 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "鉄板", info: ["防御値+100"],
+            super({ uniqueName: "鉄板", info: "防御値+100",
                 pos: EqPos.盾, lv: 22 });
         }
         beforeBeAtk(action, attacker, target, dmg) {
@@ -458,7 +458,7 @@ EqEar._valueOf = new Map();
     };
     Eq.鋼鉄板 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "鋼鉄板", info: ["防御値+200"],
+            super({ uniqueName: "鋼鉄板", info: "防御値+200",
                 pos: EqPos.盾, lv: 32 });
         }
         beforeBeAtk(action, attacker, target, dmg) {
@@ -467,7 +467,7 @@ EqEar._valueOf = new Map();
     };
     Eq.チタン板 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "チタン板", info: ["防御値+300"],
+            super({ uniqueName: "チタン板", info: "防御値+300",
                 pos: EqPos.盾, lv: 42 });
         }
         beforeBeAtk(action, attacker, target, dmg) {
@@ -481,69 +481,69 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.襤褸切れ = new class extends Eq {
         constructor() {
-            super({ uniqueName: "襤褸切れ", info: [],
+            super({ uniqueName: "襤褸切れ", info: "",
                 pos: EqPos.体, lv: 0 });
         }
     };
     Eq.草の服 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "草の服", info: ["最大HP+20"],
+            super({ uniqueName: "草の服", info: "最大HP+20",
                 pos: EqPos.体, lv: 15 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 20; }
     };
     Eq.布の服 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "布の服", info: ["最大HP+40"],
+            super({ uniqueName: "布の服", info: "最大HP+40",
                 pos: EqPos.体, lv: 35 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 40; }
     };
     Eq.皮の服 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "皮の服", info: ["最大HP+70"],
+            super({ uniqueName: "皮の服", info: "最大HP+70",
                 pos: EqPos.体, lv: 55 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 70; }
     };
     Eq.木の鎧 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "木の鎧", info: ["最大HP+100"],
+            super({ uniqueName: "木の鎧", info: "最大HP+100",
                 pos: EqPos.体, lv: 95 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 100; }
     };
     Eq.青銅の鎧 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "青銅の鎧", info: ["最大HP+200"],
+            super({ uniqueName: "青銅の鎧", info: "最大HP+200",
                 pos: EqPos.体, lv: 125 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 200; }
     };
     Eq.鉄の鎧 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "鉄の鎧", info: ["最大HP+300"],
+            super({ uniqueName: "鉄の鎧", info: "最大HP+300",
                 pos: EqPos.体, lv: 145 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 300; }
     };
     Eq.鋼鉄の鎧 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "鋼鉄の鎧", info: ["最大HP+400"],
+            super({ uniqueName: "鋼鉄の鎧", info: "最大HP+400",
                 pos: EqPos.体, lv: 160 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 400; }
     };
     Eq.銀の鎧 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "銀の鎧", info: ["最大HP+500"],
+            super({ uniqueName: "銀の鎧", info: "最大HP+500",
                 pos: EqPos.体, lv: 180 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 500; }
     };
     Eq.金の鎧 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "金の鎧", info: ["最大HP+600"],
+            super({ uniqueName: "金の鎧", info: "最大HP+600",
                 pos: EqPos.体, lv: 200 });
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 600; }
@@ -555,13 +555,13 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.ひも = new class extends Eq {
         constructor() {
-            super({ uniqueName: "ひも", info: [],
+            super({ uniqueName: "ひも", info: "",
                 pos: EqPos.腰, lv: 0 });
         }
     };
     Eq.ゲルマンベルト = new class extends Eq {
         constructor() {
-            super({ uniqueName: "ゲルマンベルト", info: ["攻撃+10%"],
+            super({ uniqueName: "ゲルマンベルト", info: "攻撃+10%",
                 pos: EqPos.腰, lv: 10 });
         }
         beforeDoAtk(action, attacker, target, dmg) {
@@ -570,7 +570,7 @@ EqEar._valueOf = new Map();
     };
     Eq.オホーツクのひも = new class extends Eq {
         constructor() {
-            super({ uniqueName: "オホーツクのひも", info: ["被攻撃-10%"],
+            super({ uniqueName: "オホーツクのひも", info: "被攻撃-10%",
                 pos: EqPos.腰, lv: 10 });
         }
         beforeBeAtk(action, attacker, target, dmg) {
@@ -584,13 +584,13 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.腕 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "腕", info: [],
+            super({ uniqueName: "腕", info: "",
                 pos: EqPos.腕, lv: 0 });
         }
     };
     Eq.ゴーレムの腕 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "ゴーレムの腕", info: ["格闘攻撃+20%"],
+            super({ uniqueName: "ゴーレムの腕", info: "格闘攻撃+20%",
                 pos: EqPos.腕, lv: 5 });
         }
         beforeDoAtk(action, attacker, target, dmg) {
@@ -606,13 +606,13 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.手 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "手", info: [],
+            super({ uniqueName: "手", info: "",
                 pos: EqPos.手, lv: 0 });
         }
     };
     Eq.手甲 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "手甲", info: ["全ステータス+10"],
+            super({ uniqueName: "手甲", info: "全ステータス+10",
                 pos: EqPos.手, lv: 10 });
         }
         equip(unit) {
@@ -634,13 +634,13 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.肩身の指輪 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "肩身の指輪", info: [],
+            super({ uniqueName: "肩身の指輪", info: "",
                 pos: EqPos.指, lv: 0 });
         }
     };
     Eq.ミュータント = new class extends Eq {
         constructor() {
-            super({ uniqueName: "ミュータント", info: ["戦闘開始時<盾>化"],
+            super({ uniqueName: "ミュータント", info: "戦闘開始時<盾>化",
                 pos: EqPos.指, lv: 10 });
         }
         battleStart(unit) {
@@ -649,7 +649,7 @@ EqEar._valueOf = new Map();
     };
     Eq.魔ヶ玉の指輪 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "魔ヶ玉の指輪", info: ["行動開始時MP+10%"],
+            super({ uniqueName: "魔ヶ玉の指輪", info: "行動開始時MP+10%",
                 pos: EqPos.指, lv: 20 });
         }
         phaseStart(unit) {
@@ -658,7 +658,7 @@ EqEar._valueOf = new Map();
     };
     Eq.瑠璃 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "瑠璃", info: ["戦闘開始時TP+10%"],
+            super({ uniqueName: "瑠璃", info: "戦闘開始時TP+10%",
                 pos: EqPos.指, lv: 50 });
         }
         battleStart(unit) {
@@ -672,13 +672,13 @@ EqEar._valueOf = new Map();
     //--------------------------------------------------------------------------
     Eq.きれいな靴 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "きれいな靴", info: [],
+            super({ uniqueName: "きれいな靴", info: "",
                 pos: EqPos.脚, lv: 0 });
         }
     };
     Eq.安全靴 = new class extends Eq {
         constructor() {
-            super({ uniqueName: "安全靴", info: ["被攻撃時稀に<盾>化"],
+            super({ uniqueName: "安全靴", info: "被攻撃時稀に<盾>化",
                 pos: EqPos.脚, lv: 40 });
         }
         afterBeAtk(action, attacker, target, dmg) {
@@ -691,28 +691,28 @@ EqEar._valueOf = new Map();
 //耳は全て店売りにする
 (function (EqEar) {
     EqEar.耳たぶ = new class extends EqEar {
-        constructor() { super({ uniqueName: "耳たぶ", info: [], lv: 0 }); }
+        constructor() { super({ uniqueName: "耳たぶ", info: "", lv: 0 }); }
     };
     EqEar.おにく = new class extends EqEar {
-        constructor() { super({ uniqueName: "おにく", info: ["最大HP+29"], lv: 29 }); }
+        constructor() { super({ uniqueName: "おにく", info: "最大HP+29", lv: 29 }); }
         equip(unit) {
             unit.prm(Prm.MAX_HP).eq += 29;
         }
     };
     EqEar.水晶のピアス = new class extends EqEar {
-        constructor() { super({ uniqueName: "水晶のピアス", info: ["行動開始時HP+1%"], lv: 29 }); }
+        constructor() { super({ uniqueName: "水晶のピアス", info: "行動開始時HP+1%", lv: 29 }); }
         phaseStart(unit) {
             Unit.healHP(unit, unit.prm(Prm.MAX_HP).total * 0.01 + 1);
         }
     };
     EqEar.魔ヶ玉のピアス = new class extends EqEar {
-        constructor() { super({ uniqueName: "魔ヶ玉のピアス", info: ["最大MP+10"], lv: 29 }); }
+        constructor() { super({ uniqueName: "魔ヶ玉のピアス", info: "最大MP+10", lv: 29 }); }
         equip(unit) {
             unit.prm(Prm.MAX_MP).eq += 10;
         }
     };
     EqEar.エメラルドのピアス = new class extends EqEar {
-        constructor() { super({ uniqueName: "エメラルドのピアス", info: ["最大TP+10"], lv: 29 }); }
+        constructor() { super({ uniqueName: "エメラルドのピアス", info: "最大TP+10", lv: 29 }); }
         equip(unit) {
             unit.prm(Prm.MAX_TP).eq += 10;
         }

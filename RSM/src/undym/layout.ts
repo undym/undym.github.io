@@ -211,11 +211,11 @@ export class Label extends ILayout{
 
     setColor(color:()=>Color):this;
     setColor(color:Color):this;
-    setColor(a:any): this{
-        if(typeof a === "function"){
-            this.createColor = a;
+    setColor(color:any): this{
+        if(typeof color === "function"){
+            this.createColor = color;
         }else{
-            this.createColor = ()=>a;
+            this.createColor = ()=>color;
         }
         return this;
     }
@@ -225,7 +225,6 @@ export class Label extends ILayout{
     }
 
     drawInner(bounds:Rect){
-        // this.update();
         switch(this.base){
             case Font.UPPER_LEFT : this.font.draw( this.createStr(), bounds.upperLeft,  this.createColor() ); break;
             case Font.TOP        : this.font.draw( this.createStr(), bounds.top,        this.createColor(), this.base ); break;
@@ -257,6 +256,125 @@ export class Label extends ILayout{
 
 }
 
+
+
+
+export class Labels extends ILayout{
+    private elms:{
+        ctrl:(bounds:Rect)=>void,
+        draw:(bounds:Rect)=>void,
+        h:()=>number,
+    }[] = [];
+
+
+    constructor(private font:Font){
+        super();
+    }
+
+
+    add(str:()=>string, color:()=>Color = ()=>Color.WHITE, base:string = Font.UPPER_LEFT):this{
+        this.elms.push({
+            ctrl:bounds=>{
+
+            },
+            draw:bounds=>{
+                this.font.draw(str(), bounds, color(), base);
+            },
+            h:()=>this.font.ratioH,
+        });
+        return this;
+    }
+
+    addArray(sets:()=>[string,Color?][]):this{
+        let height = 0;
+        this.elms.push({
+            ctrl:bounds=>{
+
+            },
+            draw:bounds=>{
+                height = 0;
+                let p = {x:bounds.x, y:bounds.y};
+                for(const set of sets()){
+                    if(set[1] !== undefined){this.font.draw(set[0], p, set[1]);}
+                    else                    {this.font.draw(set[0], p, Color.WHITE);}
+                    p.y += this.font.ratioH;
+                    height += this.font.ratioH;
+                }
+            },
+            h:()=>height,
+        });
+        return this;
+    }
+    
+    addln(str:()=>string, color:()=>Color = ()=>Color.WHITE):this{
+        let strings:string[] = [];
+        let boundsBak:{x:number, y:number, w:number, h:number};
+        let strBak:string;
+        this.elms.push({
+            ctrl:bounds=>{
+
+            },
+            draw:bounds=>{
+                let s = str();
+                if(boundsBak !== bounds || strBak !== s){
+                    boundsBak = bounds;
+                    strBak = s;
+                    strings = this.font.split(s, bounds.w);
+                }
+
+                let p = {x:bounds.x, y:bounds.y};
+                let col = color();
+                let fontH = this.font.ratioH;
+                for(const _str of strings){
+                    this.font.draw(_str, p, col);
+                    p.y += fontH;
+                }
+            },
+            h:()=>this.font.ratioH * strings.length,
+
+        });
+        return this;
+    }
+
+    addLayout(l:ILayout, ratioH:()=>number):this{
+        this.elms.push({
+            ctrl:bounds=>{
+                l.ctrl(bounds);
+            },
+            draw:bounds=>{
+                l.draw(bounds);
+            },
+            h:()=>ratioH(),
+
+        });
+        return this;
+    }
+
+    br():this{
+        this.elms.push({
+            ctrl:bounds=>{},
+            draw:bounds=>{},
+            h:()=>this.font.ratioH,
+        })
+        return this;
+    }
+    
+    async ctrlInner(bounds:Rect){
+        for(const e of this.elms){
+            e.ctrl(bounds);
+        }
+    }
+
+    drawInner(bounds:Rect){
+        let y = bounds.y;
+        let h = 0;
+        for(const e of this.elms){
+            h = e.h();
+            e.draw(new Rect(bounds.x, y, bounds.w, h));
+            y += h;
+        }
+    }
+}
 
 
 export class VariableLayout extends ILayout{

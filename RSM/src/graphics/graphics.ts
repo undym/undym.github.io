@@ -457,5 +457,28 @@ export class Font{
         return this.measurePixelW(s) / Graphics.pixelW;
     }
 
+    split(str:string, ratioW:number, lineLim:number = 10):string[]{
+        const origin = str;
+        let res:string[] = [];
+
+        for(let line = 0; line < lineLim; line++){
+            if(this.measureRatioW(str) <= ratioW){
+                res.push(str);
+                return res;
+            }
+
+            for(let i = str.length; i > 0; i--){
+                const sub = str.substring(0,i);
+                if(this.measureRatioW( sub ) <= ratioW){
+                    res.push( sub );
+                    str = str.substring(i, str.length);
+                }
+            }
+        }
+
+
+        res.push(str);
+        return res;
+    }
 }
 

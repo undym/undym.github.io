@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Scene } from "../undym/scene.js";
-import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout } from "../undym/layout.js";
+import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout, Labels } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
 import { Input } from "../undym/input.js";
@@ -19,13 +19,23 @@ import { List } from "../widget/list.js";
 import { TownScene } from "./townscene.js";
 import { FX_Str } from "../fx/fx.js";
 import { Eq, EqPos, EqEar } from "../eq.js";
+var ChoosedType;
+(function (ChoosedType) {
+    ChoosedType[ChoosedType["NO"] = 0] = "NO";
+    ChoosedType[ChoosedType["EQ"] = 1] = "EQ";
+    ChoosedType[ChoosedType["EAR"] = 2] = "EAR";
+})(ChoosedType || (ChoosedType = {}));
 export class EqScene extends Scene {
     constructor() {
         super();
+        this.choosedType = ChoosedType.NO;
         this.list = new List();
         this.target = Unit.getFirstPlayer();
+        this.choosedEq = Eq.values[0];
+        this.choosedEar = EqEar.values[0];
     }
     init() {
+        this.choosedType = ChoosedType.NO;
         super.clear();
         super.add(Place.TOP, DrawPlayInfo.ins);
         const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
@@ -38,80 +48,84 @@ export class EqScene extends Scene {
             return new RatioLayout()
                 .add(infoBounds, ILayout.create({ draw: (bounds) => {
                     Graphics.fillRect(bounds, Color.D_GRAY);
-                    if (!this.choosedEq) {
-                        return;
-                    }
-                    if (this.choosedEq instanceof Eq) {
-                        const eq = this.choosedEq;
-                        let font = Font.def;
-                        let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                        const moveP = () => p = p.move(0, font.ratioH);
-                        font.draw(`[${eq}]`, p, Color.WHITE);
-                        font.draw(`<${eq.pos}>`, moveP(), Color.WHITE);
-                        font.draw(`${eq.num}個`, moveP(), Color.WHITE);
-                        for (let s of eq.info) {
-                            font.draw(s, moveP(), Color.WHITE);
-                        }
-                    }
-                    if (this.choosedEq instanceof EqEar) {
-                        const ear = this.choosedEq;
-                        let font = Font.def;
-                        let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                        const moveP = () => p = p.move(0, font.ratioH);
-                        font.draw(`[${ear}]`, p, Color.WHITE);
-                        font.draw(`<耳>`, moveP(), Color.WHITE);
-                        font.draw(`${ear.num}個`, moveP(), Color.WHITE);
-                        for (let s of ear.info) {
-                            font.draw(s, moveP(), Color.WHITE);
-                        }
-                    }
+                    // if(!this.choosedEq){return;}
+                    // if(this.choosedEq instanceof Eq){       
+                    //     const eq = this.choosedEq;
+                    //     let font = Font.def;
+                    //     let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
+                    //     const moveP = ()=> p = p.move(0, font.ratioH);
+                    //     font.draw(`[${eq}]`, p, Color.WHITE);
+                    //     font.draw(`<${eq.pos}>`, moveP(), Color.WHITE);
+                    //     font.draw(`${eq.num}個`, moveP(), Color.WHITE);
+                    //     font.draw(eq.info, moveP(), Color.WHITE);
+                    // }
+                    // if(this.choosedEq instanceof EqEar){
+                    //     const ear = this.choosedEq;
+                    //     let font = Font.def;
+                    //     let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
+                    //     const moveP = ()=> p = p.move(0, font.ratioH);
+                    //     font.draw(`[${ear}]`, p, Color.WHITE);
+                    //     font.draw(`<耳>`, moveP(), Color.WHITE);
+                    //     font.draw(`${ear.num}個`, moveP(), Color.WHITE);
+                    //     font.draw(ear.info, moveP(), Color.WHITE);
+                    // }
                 } }))
+                .add(infoBounds, (() => {
+                const eqInfo = new Labels(Font.def)
+                    .add(() => `[${this.choosedEq}]`, () => Color.WHITE)
+                    .add(() => `<${this.choosedEq.pos}>`, () => Color.WHITE)
+                    .add(() => `${this.choosedEq.num}個`, () => Color.WHITE)
+                    .addln(() => this.choosedEq.info, () => Color.WHITE);
+                const earInfo = new Labels(Font.def)
+                    .add(() => `[${this.choosedEar}]`, () => Color.WHITE)
+                    .add(() => `<耳>`, () => Color.WHITE)
+                    .add(() => `${this.choosedEar.num}個`, () => Color.WHITE)
+                    .addln(() => this.choosedEar.info, () => Color.WHITE);
+                return new VariableLayout(() => {
+                    if (this.choosedType === ChoosedType.EQ) {
+                        return eqInfo;
+                    }
+                    if (this.choosedType === ChoosedType.EAR) {
+                        return earInfo;
+                    }
+                    return ILayout.empty;
+                });
+            })())
                 .add(btnBounds, (() => {
                 const set = new Btn("装備", () => __awaiter(this, void 0, void 0, function* () {
                     if (!this.choosedEq) {
                         return;
                     }
-                    if (this.choosedEq instanceof Eq) {
-                        equip(this.target, this.choosedEq);
-                    }
+                    equip(this.target, this.choosedEq);
                     FX_Str(Font.def, `${this.choosedEq}をセットしました`, Point.CENTER, Color.WHITE);
                 }));
                 const unset = new Btn("外す", () => __awaiter(this, void 0, void 0, function* () {
                     if (!this.choosedEq) {
                         return;
                     }
-                    if (this.choosedEq instanceof Eq) {
-                        equip(this.target, Eq.getDef(this.pos));
-                    }
+                    equip(this.target, Eq.getDef(this.pos));
                     FX_Str(Font.def, `${this.choosedEq}を外しました`, Point.CENTER, Color.WHITE);
                 }));
                 const setEar = new Btn("装備", () => __awaiter(this, void 0, void 0, function* () {
                     if (!this.choosedEq) {
                         return;
                     }
-                    if (this.choosedEq instanceof EqEar) {
-                        let index = 0;
-                        for (let i = 0; i < Unit.EAR_NUM; i++) {
-                            if (this.target.getEqEar(i) === EqEar.getDef()) {
-                                index = i;
-                                break;
-                            }
+                    let index = 0;
+                    for (let i = 0; i < Unit.EAR_NUM; i++) {
+                        if (this.target.getEqEar(i) === EqEar.getDef()) {
+                            index = i;
+                            break;
                         }
-                        equipEar(this.target, index, this.choosedEq);
-                        FX_Str(Font.def, `耳${index + 1}に${this.choosedEq}をセットしました`, Point.CENTER, Color.WHITE);
                     }
+                    equipEar(this.target, index, this.choosedEar);
+                    FX_Str(Font.def, `耳${index + 1}に${this.choosedEar}をセットしました`, Point.CENTER, Color.WHITE);
                 }));
                 const unsetEar = new Btn("外す", () => __awaiter(this, void 0, void 0, function* () {
-                    if (!this.choosedEq) {
-                        return;
-                    }
-                    if (this.choosedEq instanceof EqEar) {
-                        for (let i = 0; i < Unit.EAR_NUM; i++) {
-                            if (this.target.getEqEar(i) === this.choosedEq) {
-                                equipEar(this.target, i, EqEar.getDef());
-                                FX_Str(Font.def, `耳${i + 1}の${this.choosedEq}を外しました`, Point.CENTER, Color.WHITE);
-                                break;
-                            }
+                    for (let i = 0; i < Unit.EAR_NUM; i++) {
+                        if (this.target.getEqEar(i) === this.choosedEar) {
+                            equipEar(this.target, i, EqEar.getDef());
+                            FX_Str(Font.def, `耳${i + 1}の${this.choosedEar}を外しました`, Point.CENTER, Color.WHITE);
+                            break;
                         }
                     }
                 }));
@@ -123,15 +137,15 @@ export class EqScene extends Scene {
                         if (!this.choosedEq) {
                             return ILayout.empty;
                         }
-                        if (this.choosedEq instanceof Eq) {
+                        if (this.choosedType === ChoosedType.EQ) {
                             if (this.target.getEq(this.pos) === this.choosedEq) {
                                 return unset;
                             }
                             return set;
                         }
-                        if (this.choosedEq instanceof EqEar) {
+                        if (this.choosedType === ChoosedType.EAR) {
                             for (let i = 0; i < Unit.EAR_NUM; i++) {
-                                if (this.target.getEqEar(i) === this.choosedEq) {
+                                if (this.target.getEqEar(i) === this.choosedEar) {
                                     return unsetEar;
                                 }
                             }
@@ -198,6 +212,7 @@ export class EqScene extends Scene {
         })();
     }
     setEarList() {
+        this.choosedType = ChoosedType.NO;
         this.list.add({
             center: () => `耳`,
             groundColor: () => Color.D_GRAY,
@@ -216,7 +231,7 @@ export class EqScene extends Scene {
         })
             .forEach(ear => {
             let color = () => {
-                if (ear === this.choosedEq) {
+                if (ear === this.choosedEar) {
                     return Color.ORANGE;
                 }
                 for (let i = 0; i < Unit.EAR_NUM; i++) {
@@ -240,14 +255,15 @@ export class EqScene extends Scene {
                 right: () => `${ear}`,
                 rightColor: color,
                 push: (elm) => {
-                    this.choosedEq = ear;
+                    this.choosedEar = ear;
+                    this.choosedType = ChoosedType.EAR;
                 },
             });
         });
     }
     setList(pos) {
+        this.choosedType = ChoosedType.NO;
         this.pos = pos;
-        this.choosedEq = undefined;
         this.list.add({
             center: () => `${pos}`,
             groundColor: () => Color.D_GRAY,
@@ -256,11 +272,8 @@ export class EqScene extends Scene {
             .filter(eq => eq.num > 0 || eq === this.target.getEq(pos))
             .forEach((eq) => {
             let color = () => {
-                if (eq === this.choosedEq) {
-                    return Color.ORANGE;
-                }
                 if (this.target.getEq(pos) === eq) {
-                    return Color.CYAN;
+                    return Color.ORANGE;
                 }
                 return Color.WHITE;
             };
@@ -269,8 +282,10 @@ export class EqScene extends Scene {
                 leftColor: color,
                 right: () => `${eq}`,
                 rightColor: color,
+                groundColor: () => eq === this.choosedEq ? Color.D_CYAN : Color.BLACK,
                 push: (elm) => {
                     this.choosedEq = eq;
+                    this.choosedType = ChoosedType.EQ;
                 },
             });
         });

@@ -1,7 +1,7 @@
 import { Scene, wait, cwait } from "../undym/scene.js";
 import { Place, Util, PlayData, SceneType } from "../util.js";
 import { DrawSTBoxes, DrawDungeonData, DrawUnitDetail, DrawPlayInfo } from "./sceneutil.js";
-import { VariableLayout, ILayout, Layout, YLayout, RatioLayout, FlowLayout } from "../undym/layout.js";
+import { VariableLayout, ILayout, Layout, YLayout, RatioLayout, FlowLayout, Labels, XLayout, Label } from "../undym/layout.js";
 import { Rect, Color, Point } from "../undym/type.js";
 import { Unit, PUnit, Prm, EUnit } from "../unit.js";
 import { Battle, BattleResult, BattleType } from "../battle.js";
@@ -27,8 +27,7 @@ export class BattleScene extends Scene{
     static get ins():BattleScene{return this._ins ? this._ins : (this._ins = new BattleScene());}
 
 
-    private tecInfo:{tec:Tec|undefined, user:Unit} = {tec:undefined, user:Unit.players[0]};
-    private battleResult:BattleResult;
+    private tecInfo:{tec:Tec, user:Unit} = {tec:Tec.empty, user:Unit.players[0]};
 
     private constructor(){
         super();
@@ -58,49 +57,107 @@ export class BattleScene extends Scene{
             });
         }}));
 
-        super.add(Place.DUNGEON_DATA, new VariableLayout(()=>{
-            if(!this.tecInfo.tec || this.tecInfo.tec === Tec.empty){return DrawDungeonData.ins;}
-            return ILayout.empty;
-        }));
-        super.add(Place.DUNGEON_DATA, ILayout.create({draw:(bounds)=>{
-            if(!this.tecInfo.tec || this.tecInfo.tec === Tec.empty){return;}
+        // super.add(Place.DUNGEON_DATA, new VariableLayout(()=>{
+        //     if(this.tecInfo.tec === Tec.empty){return DrawDungeonData.ins;}
+        //     return ILayout.empty;
+        // }));
 
-            const tec = this.tecInfo.tec;
-            const f = Font.def;
-            let p = bounds.upperLeft;
+        
+        super.add(Place.DUNGEON_DATA,(()=>{
+            const info = new Labels(Font.def)
+                            .add(()=>`[${this.tecInfo.tec}]`)
+                            .addLayout(
+                                new XLayout()
+                                    .add(new Label(Font.def, ()=>{
+                                        if(this.tecInfo.tec instanceof ActiveTec){return this.tecInfo.tec.mpCost > 0 ? `MP:${this.tecInfo.tec.mpCost}` : "";}
+                                        return "";
+                                    },()=>{
+                                        if(this.tecInfo.tec instanceof ActiveTec){return this.tecInfo.tec.mpCost <= this.tecInfo.user.mp ? Color.WHITE : Color.GRAY;}
+                                        return Color.WHITE;
+                                    }))
+                                    .add(new Label(Font.def, ()=>{
+                                        if(this.tecInfo.tec instanceof ActiveTec){return this.tecInfo.tec.tpCost > 0 ? `TP:${this.tecInfo.tec.tpCost}` : "";}
+                                        return "";
+                                    },()=>{
+                                        if(this.tecInfo.tec instanceof ActiveTec){return this.tecInfo.tec.tpCost <= this.tecInfo.user.tp ? Color.WHITE : Color.GRAY;}
+                                        return Color.WHITE;
+                                    }))
+                                    .add(new Label(Font.def, ()=>{
+                                        if(this.tecInfo.tec instanceof ActiveTec){return this.tecInfo.tec.epCost > 0 ? `EP:${this.tecInfo.tec.epCost}` : "";}
+                                        return "";
+                                    },()=>{
+                                        if(this.tecInfo.tec instanceof ActiveTec){return this.tecInfo.tec.epCost <= this.tecInfo.user.ep ? Color.WHITE : Color.GRAY;}
+                                        return Color.WHITE;
+                                    }))
+                                    .add(new Label(Font.def, ()=>{
+                                        if(this.tecInfo.tec instanceof ActiveTec && this.tecInfo.tec.itemCost.length > 0){
+                                            let res = "";
+                                            for(const set of this.tecInfo.tec.itemCost){
+                                                res += `${set.item}-${set.num}(${set.item.num}) `;
+                                            }
+                                            return res;
+                                        }
+                                        return "";
+                                    },()=>{
+                                        if(this.tecInfo.tec instanceof ActiveTec){
+                                            for(const set of this.tecInfo.tec.itemCost){
+                                                if(set.item.num < set.num){return Color.GRAY;}
+                                            }
+                                            return Color.WHITE;
+                                        }
+                                        return Color.WHITE;
+                                    }))
+                                    .add(ILayout.empty)
+                                    .add(ILayout.empty)
+                                    .add(ILayout.empty)
+                                    .add(ILayout.empty)
+                                ,()=>Font.def.ratioH
+                            )
+                            .addln(()=>this.tecInfo.tec.info)
+                            ;
+            return new VariableLayout(()=>{
+                return this.tecInfo.tec !== Tec.empty ? info : DrawDungeonData.ins;
+            });
+        })());
+        // super.add(Place.DUNGEON_DATA, ILayout.create({draw:(bounds)=>{
+        //     if(this.tecInfo.tec === Tec.empty){return;}
 
-            f.draw( `[${tec}]`, p, Color.GREEN );
+        //     const tec = this.tecInfo.tec;
+        //     const f = Font.def;
+        //     let p = bounds.upperLeft;
+
+        //     f.draw( `[${tec}]`, p, Color.GREEN );
             
-            p = p.move(0,f.ratioH);
-            if(tec instanceof ActiveTec){
-                let mpW = 0;
-                let tpW = 0;
-                const user = this.tecInfo.user;
-                if(tec.mpCost > 0){
-                    let col = tec.mpCost <= user.mp ? Color.WHITE : Color.GRAY;
-                    const s = `MP:${tec.mpCost} `;
-                    f.draw(s, p, col);
-                    mpW = f.measureRatioW(s);
-                }
+        //     p = p.move(0,f.ratioH);
+        //     if(tec instanceof ActiveTec){
+        //         let mpW = 0;
+        //         let tpW = 0;
+        //         const user = this.tecInfo.user;
+        //         if(tec.mpCost > 0){
+        //             let col = tec.mpCost <= user.mp ? Color.WHITE : Color.GRAY;
+        //             const s = `MP:${tec.mpCost} `;
+        //             f.draw(s, p, col);
+        //             mpW = f.measureRatioW(s);
+        //         }
 
-                if(tec.tpCost > 0){
-                    let col = tec.tpCost <= user.tp ? Color.WHITE : Color.GRAY;
-                    const s = `TP:${tec.tpCost} `;
-                    f.draw(s, p.move(mpW, 0), col);
-                    tpW = f.measureRatioW(s);
-                }
+        //         if(tec.tpCost > 0){
+        //             let col = tec.tpCost <= user.tp ? Color.WHITE : Color.GRAY;
+        //             const s = `TP:${tec.tpCost} `;
+        //             f.draw(s, p.move(mpW, 0), col);
+        //             tpW = f.measureRatioW(s);
+        //         }
 
-                if(tec.epCost > 0){
-                    let col = tec.epCost <= user.ep ? Color.WHITE : Color.GRAY;
-                    f.draw(`EP:${tec.epCost}`, p.move(tpW, 0), col);
-                }
-            }else{
-            }
+        //         if(tec.epCost > 0){
+        //             let col = tec.epCost <= user.ep ? Color.WHITE : Color.GRAY;
+        //             f.draw(`EP:${tec.epCost}`, p.move(tpW, 0), col);
+        //         }
+        //     }else{
+        //     }
 
-            for(let s of tec.info){
-                f.draw(s, p = p.move(0, f.ratioH), Color.WHITE);
-            }
-        }}));
+        //     for(let s of tec.info){
+        //         f.draw(s, p = p.move(0, f.ratioH), Color.WHITE);
+        //     }
+        // }}));
 
         super.add(Place.MSG, Util.msg);
 
@@ -196,7 +253,7 @@ export class BattleScene extends Scene{
             let btn:Btn;
             if(tec instanceof ActiveTec){
                 btn = new Btn(tec.toString(), async()=>{
-                    this.tecInfo.tec = undefined;
+                    this.tecInfo.tec = Tec.empty;
                     
                     if(tec.targetings & Targeting.SELECT){
         

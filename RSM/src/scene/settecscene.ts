@@ -1,5 +1,5 @@
 import { Scene } from "../undym/scene.js";
-import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout } from "../undym/layout.js";
+import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout, Labels, Label } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Unit, PUnit } from "../unit.js";
 import { Input } from "../undym/input.js";
@@ -21,17 +21,21 @@ export class SetTecScene extends Scene{
 
     private list:List;
     private target:PUnit;
-    private choosedTec:Tec|undefined;
+    private choosed:boolean = false;
+    private choosedTec:Tec;
     private getListTecs:(unit:PUnit)=>Tec[];
 
     constructor(){
         super();
 
         this.list = new List();
-        this.target = Unit.getFirstPlayer();
     }
 
     init(){
+        this.target = Unit.getFirstPlayer();
+        this.choosed = false;
+        this.choosedTec = Tec.empty;
+
         super.clear();
 
         super.add(Place.TOP, DrawPlayInfo.ins);
@@ -65,35 +69,42 @@ export class SetTecScene extends Scene{
                     return new RatioLayout()
                         .add(infoBounds, ILayout.create({draw:(bounds)=>{
                             Graphics.fillRect(bounds, Color.D_GRAY);
-                            if(!this.choosedTec){return;}
-
-                            const tec = this.choosedTec;
-                            let font = Font.def;
-                            let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
-                            const moveP = ()=> p = p.move(0, font.ratioH);
-                            
-                            font.draw(`[${tec}]`, p, Color.WHITE);
-                            font.draw(`<${tec.type}>`, moveP(), Color.WHITE);
-                            
-                            if(tec instanceof ActiveTec){
-                                let _p = moveP();
-                                if(tec.mpCost > 0){
-                                    font.draw(`MP:${tec.mpCost}`, _p, Color.WHITE);
-                                }
-                                if(tec.tpCost > 0){
-                                    font.draw(`TP:${tec.tpCost}`, _p.move(bounds.w * 1 / 4, 0), Color.WHITE);
-                                }
-                                if(tec.epCost > 0){
-                                    font.draw(`EP:${tec.epCost}`, _p.move(bounds.w * 2 / 4, 0), Color.WHITE);
-                                }
-                            }else{
-                                moveP();
-                            }
-                
-                            for(let s of tec.info){
-                                font.draw(s, moveP(), Color.WHITE);
-                            }
                         }}))
+                        .add(infoBounds, (()=>{
+                            return new VariableLayout(()=>{
+                                const info = new Labels(Font.def)
+                                                .add(()=>`[${this.choosedTec}]`)
+                                                .add(()=>`<${this.choosedTec.type}>`)
+                                                .addLayout(new XLayout()
+                                                    .add(new Label(Font.def, ()=>{
+                                                        if(this.choosedTec instanceof ActiveTec){return this.choosedTec.mpCost > 0 ? `MP:${this.choosedTec.mpCost}` : "";}
+                                                        return "";
+                                                    }))
+                                                    .add(new Label(Font.def, ()=>{
+                                                        if(this.choosedTec instanceof ActiveTec){return this.choosedTec.tpCost > 0 ? `TP:${this.choosedTec.tpCost}` : "";}
+                                                        return "";
+                                                    }))
+                                                    .add(new Label(Font.def, ()=>{
+                                                        if(this.choosedTec instanceof ActiveTec){return this.choosedTec.epCost > 0 ? `EP:${this.choosedTec.epCost}` : "";}
+                                                        return "";
+                                                    }))
+                                                    .add(new Label(Font.def, ()=>{
+                                                        if(this.choosedTec instanceof ActiveTec && this.choosedTec.itemCost.length > 0){
+                                                            let res = "";
+                                                            for(const set of this.choosedTec.itemCost){
+                                                                res += `${set.item}-${set.num}(${set.item.num}) `
+                                                            }
+                                                            return res;
+                                                        }
+                                                        return "";
+                                                    }))
+                                                    ,()=>Font.def.ratioH
+                                                )
+                                                .addln(()=>this.choosedTec.info)
+                                                ;
+                                return this.choosed ? info : ILayout.empty;
+                            })
+                        })())
                         .add(btnBounds, (()=>{
                             const otherBtns1:ILayout[] = [
                                 new Btn("全て", ()=>{
@@ -180,7 +191,7 @@ export class SetTecScene extends Scene{
     private setList(unit:PUnit, getListTecs:(unit:PUnit)=>Tec[], keepPage = false){
         this.target = unit;
         this.getListTecs = getListTecs;
-        this.choosedTec = undefined;
+        this.choosed = false;
 
         // this.list.add({
         //     center:()=>`${unit.name}`,
@@ -196,8 +207,7 @@ export class SetTecScene extends Scene{
                     });
                 }else{
                     let color:()=>Color = ()=>{
-                        if(tec === this.choosedTec){return Color.ORANGE;}
-                        if(unit.tecs.some(t=> t === tec)){return Color.CYAN;}
+                        if(unit.tecs.some(t=> t === tec)){return Color.ORANGE;}
                         return Color.WHITE;
                     };
     
@@ -206,8 +216,10 @@ export class SetTecScene extends Scene{
                         leftColor:color,
                         right:()=>`${tec}`,
                         rightColor:color,
+                        groundColor:()=>tec === this.choosedTec ? Color.D_CYAN : Color.BLACK,
                         push:(elm)=>{
                             this.choosedTec = tec;
+                            this.choosed = true;
                         },
     
                     });

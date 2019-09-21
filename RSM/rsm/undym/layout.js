@@ -160,12 +160,12 @@ export class Label extends ILayout {
         this.base = base;
         return this;
     }
-    setColor(a) {
-        if (typeof a === "function") {
-            this.createColor = a;
+    setColor(color) {
+        if (typeof color === "function") {
+            this.createColor = color;
         }
         else {
-            this.createColor = () => a;
+            this.createColor = () => color;
         }
         return this;
     }
@@ -174,7 +174,6 @@ export class Label extends ILayout {
         });
     }
     drawInner(bounds) {
-        // this.update();
         switch (this.base) {
             case Font.UPPER_LEFT:
                 this.font.draw(this.createStr(), bounds.upperLeft, this.createColor());
@@ -203,6 +202,109 @@ export class Label extends ILayout {
             case Font.LOWER_RIGHT:
                 this.font.draw(this.createStr(), bounds.lowerRight, this.createColor(), this.base);
                 break;
+        }
+    }
+}
+export class Labels extends ILayout {
+    constructor(font) {
+        super();
+        this.font = font;
+        this.elms = [];
+    }
+    add(str, color = () => Color.WHITE, base = Font.UPPER_LEFT) {
+        this.elms.push({
+            ctrl: bounds => {
+            },
+            draw: bounds => {
+                this.font.draw(str(), bounds, color(), base);
+            },
+            h: () => this.font.ratioH,
+        });
+        return this;
+    }
+    addArray(sets) {
+        let height = 0;
+        this.elms.push({
+            ctrl: bounds => {
+            },
+            draw: bounds => {
+                height = 0;
+                let p = { x: bounds.x, y: bounds.y };
+                for (const set of sets()) {
+                    if (set[1] !== undefined) {
+                        this.font.draw(set[0], p, set[1]);
+                    }
+                    else {
+                        this.font.draw(set[0], p, Color.WHITE);
+                    }
+                    p.y += this.font.ratioH;
+                    height += this.font.ratioH;
+                }
+            },
+            h: () => height,
+        });
+        return this;
+    }
+    addln(str, color = () => Color.WHITE) {
+        let strings = [];
+        let boundsBak;
+        let strBak;
+        this.elms.push({
+            ctrl: bounds => {
+            },
+            draw: bounds => {
+                let s = str();
+                if (boundsBak !== bounds || strBak !== s) {
+                    boundsBak = bounds;
+                    strBak = s;
+                    strings = this.font.split(s, bounds.w);
+                }
+                let p = { x: bounds.x, y: bounds.y };
+                let col = color();
+                let fontH = this.font.ratioH;
+                for (const _str of strings) {
+                    this.font.draw(_str, p, col);
+                    p.y += fontH;
+                }
+            },
+            h: () => this.font.ratioH * strings.length,
+        });
+        return this;
+    }
+    addLayout(l, ratioH) {
+        this.elms.push({
+            ctrl: bounds => {
+                l.ctrl(bounds);
+            },
+            draw: bounds => {
+                l.draw(bounds);
+            },
+            h: () => ratioH(),
+        });
+        return this;
+    }
+    br() {
+        this.elms.push({
+            ctrl: bounds => { },
+            draw: bounds => { },
+            h: () => this.font.ratioH,
+        });
+        return this;
+    }
+    ctrlInner(bounds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const e of this.elms) {
+                e.ctrl(bounds);
+            }
+        });
+    }
+    drawInner(bounds) {
+        let y = bounds.y;
+        let h = 0;
+        for (const e of this.elms) {
+            h = e.h();
+            e.draw(new Rect(bounds.x, y, bounds.w, h));
+            y += h;
         }
     }
 }
