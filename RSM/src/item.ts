@@ -1,8 +1,8 @@
 import { Dungeon } from "./dungeon/dungeon.js";
 import { Util, SceneType } from "./util.js";
-import { Color } from "./undym/type.js";
+import { Color, Point } from "./undym/type.js";
 import { Scene, wait } from "./undym/scene.js";
-import { Unit, Prm } from "./unit.js";
+import { Unit, Prm, PUnit } from "./unit.js";
 import { FX_Str, FX_RotateStr } from "./fx/fx.js";
 import { Targeting, Action } from "./force.js";
 import { randomInt, choice } from "./undym/random.js";
@@ -12,6 +12,7 @@ import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import { SaveData } from "./savedata.js";
 import DungeonScene from "./scene/dungeonscene.js";
 import { Battle } from "./battle.js";
+import { Tec } from "./tec.js";
 
 
 
@@ -36,8 +37,9 @@ export class ItemType{
     static readonly MP回復 = new ItemType("MP回復");
     
     static readonly ダンジョン = new ItemType("ダンジョン");
-
     static readonly 弾 = new ItemType("弾");
+    
+    static readonly 書 = new ItemType("書");
 
     static readonly メモ = new ItemType("メモ");
     static readonly 鍵 = new ItemType("鍵");
@@ -62,8 +64,8 @@ export class ItemParentType{
     }
 
     static readonly 回復       = new ItemParentType("回復", [ItemType.蘇生, ItemType.HP回復, ItemType.MP回復]);
-    static readonly ダンジョン  = new ItemParentType("ダンジョン", [ItemType.ダンジョン]);
-    static readonly 戦闘       = new ItemParentType("戦闘", [ItemType.弾]);
+    static readonly ダンジョン  = new ItemParentType("ダンジョン", [ItemType.ダンジョン, ItemType.弾]);
+    static readonly 強化       = new ItemParentType("強化", [ItemType.書]);
     static readonly その他     = new ItemParentType("その他", [ItemType.メモ, ItemType.鍵, ItemType.玉, ItemType.素材]);
 }
 
@@ -92,15 +94,10 @@ class ItemValues{
 }
 
 
+
 export class Item implements Action, Num{
     private static _values:Item[] = [];
     static get values():ReadonlyArray<Item>{return this._values;}
-
-    // private static _rankValues = new Map<number,Item[]>();
-    // // private static _rankValues:{[key:number]:Item[];} = {};
-    // static rankValues(rank:number):ReadonlyArray<Item>|undefined{
-    //     return this._rankValues.get(rank);
-    // }
 
 
     private static _consumableValues:Item[] = [];
@@ -116,7 +113,7 @@ export class Item implements Action, Num{
      */
     static rndItem(dropType:number, rank:number):Item{
         if(!this._dropTypeValues.has(dropType)){
-            const typeValues = this.values.filter(item=> item.dropType & dropType);
+            const typeValues = this.values.filter(item=> item.dropTypes & dropType);
             this._dropTypeValues.set(dropType, new ItemValues(typeValues));
         }
 
@@ -125,7 +122,7 @@ export class Item implements Action, Num{
             const rankValues = itemValues.get(rank);
             if(rankValues){
                 for(let i = 0; i < 10; i++){
-                    let tmp = choice(rankValues);
+                    let tmp = choice( rankValues );
                     if(tmp.num < tmp.numLimit){return tmp;}
                 }
             }
@@ -161,54 +158,40 @@ export class Item implements Action, Num{
     /**残り使用回数。*/
     remainingUseCount:number = 0;
 
-    readonly uniqueName:string;
-    readonly info:string;
-    readonly itemType:ItemType;
-    readonly rank:number;
-    /**宝箱から出るか。 */
-    readonly box:boolean;
-    readonly targetings:number;
-    readonly consumable:boolean;
+    get uniqueName():string {return this.args.uniqueName;}
+    get info():string       {return this.args.info;}
+    get itemType():ItemType {return this.args.type;}
+    get rank():number       {return this.args.rank;}
+    get targetings():number {return this.args.targetings ? this.args.targetings : Targeting.SELECT;}
+    get consumable():boolean{return this.args.consumable ? this.args.consumable : false;}
     /**所持上限. */
-    readonly numLimit:number;
-    readonly dropType:number;
+    get numLimit():number   {return this.args.numLimit ? this.args.numLimit : Item.DEF_NUM_LIMIT;}
+    get dropTypes():number  {return this.args.drop;}
 
-    protected useInner:(user:Unit, target:Unit)=>void;
     
-    protected constructor(args:{
-        uniqueName:string,
-        info:string,
-        type:ItemType,
-        rank:number,
-        drop:number,
-        targetings?:number,
-        numLimit?:number,
-        consumable?:boolean,
-        use?:(user:Unit,target:Unit)=>void,
-    }){
-        this.uniqueName = args.uniqueName;
-        this.toString = ()=>this.uniqueName;
-        this.info = args.info;
-        this.itemType = args.type;
-        this.rank = args.rank;
-        this.dropType = args.drop;
-        
-        this.targetings = args.targetings ? args.targetings : Targeting.SELECT;
-        this.numLimit = args.numLimit ? args.numLimit : Item.DEF_NUM_LIMIT;
-        if(args.consumable){
-            this.consumable = args.consumable;
-            Item._consumableValues.push(this);
-        }else{
-            this.consumable = false;
+    protected constructor(
+        private args:{
+            uniqueName:string,
+            info:string,
+            type:ItemType,
+            rank:number,
+            drop:number,
+            targetings?:number,
+            numLimit?:number,
+            consumable?:boolean,
+            use?:(user:Unit,target:Unit)=>void,
         }
-
-        if(args.use){
-            this.useInner = args.use;
+    ){
+        
+        if(args.consumable){
+            Item._consumableValues.push(this);
         }
 
         Item._values.push(this);
 
     }
+
+    toString():string{return this.uniqueName;}
 
     add(v:number){
         if(v > 0){       
@@ -225,7 +208,7 @@ export class Item implements Action, Num{
     }
 
     async use(user:Unit, targets:Unit[]){
-        if(!this.canUse()){return;}
+        if(!this.canUse(user, targets)){return;}
 
         for(let t of targets){
             await this.useInner(user, t);
@@ -235,7 +218,11 @@ export class Item implements Action, Num{
         else                {this.num--;}
     }
 
-    canUse(){
+    protected async useInner(user:Unit, target:Unit){
+        if(this.args.use){await this.args.use(user, target);}
+    }
+
+    canUse(user:Unit, targets:Unit[]){
         if(this.useInner === undefined){return false;}
         if(this.consumable && this.remainingUseCount <= 0){return false;}
         if(!this.consumable && this.num <= 0){return false;}
@@ -330,8 +317,8 @@ export namespace Item{
                                     await DungeonEvent.ESCAPE_DUNGEON.happen();
                                 },
         })}
-        canUse(){
-            return super.canUse() && SceneType.now === SceneType.DUNGEON;
+        canUse(user:Unit, targets:Unit[]){
+            return super.canUse( user, targets ) && SceneType.now === SceneType.DUNGEON;
         }
     };
     //-----------------------------------------------------------------
@@ -349,6 +336,26 @@ export namespace Item{
     };
     //-----------------------------------------------------------------
     //
+    //強化
+    //
+    //-----------------------------------------------------------------
+    export const                         兵法指南の書:Item = new class extends Item{
+        constructor(){super({uniqueName:"兵法指南の書", info:"技のセット可能数を6に増やす",
+                                type:ItemType.書, rank:0, drop:ItemDrop.NO,
+                                use:async(user,target)=>{
+                                    target.tecs.push( Tec.empty );
+                                    FX_Str(Font.def, `${target.name}の技セット可能数が6になった`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){
+            for(const u of targets){
+                if(!(u instanceof PUnit && u.tecs.length === 5) ){return false;}
+            }
+            return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;
+        }
+    };
+    //-----------------------------------------------------------------
+    //
     //メモ
     //
     //-----------------------------------------------------------------
@@ -357,8 +364,12 @@ export namespace Item{
                                 type:ItemType.メモ, rank:0, drop:ItemDrop.NO, numLimit:1})}
     };
     export const                         消耗品のメモ:Item = new class extends Item{
-        constructor(){super({uniqueName:"消耗品のメモ", info:"スティックパンなどの消耗品はダンジョンに入る度に補充される", 
+        constructor(){super({uniqueName:"消耗品のメモ", info:"スティックパンなどの一部消耗品はダンジョンに入る度に補充される", 
                                 type:ItemType.メモ, rank:0, drop:ItemDrop.BOX, numLimit:1})}
+    };
+    export const                         夏のメモ:Item = new class extends Item{
+        constructor(){super({uniqueName:"夏のメモ", info:"夏はいつ終わるの？", 
+                                type:ItemType.メモ, rank:1, drop:ItemDrop.BOX, numLimit:1})}
     };
     //-----------------------------------------------------------------
     //
@@ -421,12 +432,24 @@ export namespace Item{
         constructor(){super({uniqueName:"水", info:"",
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
     };
+    export const                         紙:Item = new class extends Item{
+        constructor(){super({uniqueName:"紙", info:"",
+                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
+    };
     export const                         しいたけ:Item = new class extends Item{
         constructor(){super({uniqueName:"しいたけ", info:"",
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
     };
     export const                         血:Item = new class extends Item{
         constructor(){super({uniqueName:"血", info:"",
+                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
+    };
+    export const                         葛:Item = new class extends Item{
+        constructor(){super({uniqueName:"葛", info:"",
+                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
+    };
+    export const                         短針:Item = new class extends Item{
+        constructor(){super({uniqueName:"短針", info:"",
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
     };
     //-----------------------------------------------------------------

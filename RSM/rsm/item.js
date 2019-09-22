@@ -7,14 +7,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Util, SceneType } from "./util.js";
-import { Color } from "./undym/type.js";
+import { Color, Point } from "./undym/type.js";
 import { Scene, wait } from "./undym/scene.js";
-import { Unit, Prm } from "./unit.js";
+import { Unit, Prm, PUnit } from "./unit.js";
+import { FX_Str } from "./fx/fx.js";
 import { Targeting } from "./force.js";
 import { choice } from "./undym/random.js";
+import { Font } from "./graphics/graphics.js";
 import { Num } from "./mix.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import DungeonScene from "./scene/dungeonscene.js";
+import { Tec } from "./tec.js";
 export class ItemType {
     constructor(name) {
         this.toString = () => name;
@@ -33,6 +36,7 @@ ItemType.HP回復 = new ItemType("HP回復");
 ItemType.MP回復 = new ItemType("MP回復");
 ItemType.ダンジョン = new ItemType("ダンジョン");
 ItemType.弾 = new ItemType("弾");
+ItemType.書 = new ItemType("書");
 ItemType.メモ = new ItemType("メモ");
 ItemType.鍵 = new ItemType("鍵");
 ItemType.玉 = new ItemType("玉");
@@ -47,8 +51,8 @@ export class ItemParentType {
 }
 ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.蘇生, ItemType.HP回復, ItemType.MP回復]);
-ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン]);
-ItemParentType.戦闘 = new ItemParentType("戦闘", [ItemType.弾]);
+ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン, ItemType.弾]);
+ItemParentType.強化 = new ItemParentType("強化", [ItemType.書]);
 ItemParentType.その他 = new ItemParentType("その他", [ItemType.メモ, ItemType.鍵, ItemType.玉, ItemType.素材]);
 export const ItemDrop = {
     get NO() { return 0; },
@@ -71,27 +75,13 @@ class ItemValues {
 }
 export class Item {
     constructor(args) {
+        this.args = args;
         this.num = 0;
         this.totalGetNum = 0;
         /**残り使用回数。*/
         this.remainingUseCount = 0;
-        this.uniqueName = args.uniqueName;
-        this.toString = () => this.uniqueName;
-        this.info = args.info;
-        this.itemType = args.type;
-        this.rank = args.rank;
-        this.dropType = args.drop;
-        this.targetings = args.targetings ? args.targetings : Targeting.SELECT;
-        this.numLimit = args.numLimit ? args.numLimit : Item.DEF_NUM_LIMIT;
         if (args.consumable) {
-            this.consumable = args.consumable;
             Item._consumableValues.push(this);
-        }
-        else {
-            this.consumable = false;
-        }
-        if (args.use) {
-            this.useInner = args.use;
         }
         Item._values.push(this);
     }
@@ -106,7 +96,7 @@ export class Item {
      */
     static rndItem(dropType, rank) {
         if (!this._dropTypeValues.has(dropType)) {
-            const typeValues = this.values.filter(item => item.dropType & dropType);
+            const typeValues = this.values.filter(item => item.dropTypes & dropType);
             this._dropTypeValues.set(dropType, new ItemValues(typeValues));
         }
         const itemValues = this._dropTypeValues.get(dropType);
@@ -138,6 +128,16 @@ export class Item {
         const res = (baseRank + add) | 0;
         return res > 0 ? res : 0;
     }
+    get uniqueName() { return this.args.uniqueName; }
+    get info() { return this.args.info; }
+    get itemType() { return this.args.type; }
+    get rank() { return this.args.rank; }
+    get targetings() { return this.args.targetings ? this.args.targetings : Targeting.SELECT; }
+    get consumable() { return this.args.consumable ? this.args.consumable : false; }
+    /**所持上限. */
+    get numLimit() { return this.args.numLimit ? this.args.numLimit : Item.DEF_NUM_LIMIT; }
+    get dropTypes() { return this.args.drop; }
+    toString() { return this.uniqueName; }
     add(v) {
         if (v > 0) {
             if (this.num + v > this.numLimit) {
@@ -152,7 +152,7 @@ export class Item {
     }
     use(user, targets) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.canUse()) {
+            if (!this.canUse(user, targets)) {
                 return;
             }
             for (let t of targets) {
@@ -166,7 +166,14 @@ export class Item {
             }
         });
     }
-    canUse() {
+    useInner(user, target) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.args.use) {
+                yield this.args.use(user, target);
+            }
+        });
+    }
+    canUse(user, targets) {
         if (this.useInner === undefined) {
             return false;
         }
@@ -180,11 +187,6 @@ export class Item {
     }
 }
 Item._values = [];
-// private static _rankValues = new Map<number,Item[]>();
-// // private static _rankValues:{[key:number]:Item[];} = {};
-// static rankValues(rank:number):ReadonlyArray<Item>|undefined{
-//     return this._rankValues.get(rank);
-// }
 Item._consumableValues = [];
 Item._dropTypeValues = new Map();
 Item.DEF_NUM_LIMIT = 999;
@@ -287,8 +289,8 @@ Item.DEF_NUM_LIMIT = 999;
                 }),
             });
         }
-        canUse() {
-            return super.canUse() && SceneType.now === SceneType.DUNGEON;
+        canUse(user, targets) {
+            return super.canUse(user, targets) && SceneType.now === SceneType.DUNGEON;
         }
     };
     //-----------------------------------------------------------------
@@ -310,6 +312,30 @@ Item.DEF_NUM_LIMIT = 999;
     };
     //-----------------------------------------------------------------
     //
+    //強化
+    //
+    //-----------------------------------------------------------------
+    Item.兵法指南の書 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "兵法指南の書", info: "技のセット可能数を6に増やす",
+                type: ItemType.書, rank: 0, drop: ItemDrop.NO,
+                use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                    target.tecs.push(Tec.empty);
+                    FX_Str(Font.def, `${target.name}の技セット可能数が6になった`, Point.CENTER, Color.WHITE);
+                }),
+            });
+        }
+        canUse(user, targets) {
+            for (const u of targets) {
+                if (!(u instanceof PUnit && u.tecs.length === 5)) {
+                    return false;
+                }
+            }
+            return super.canUse(user, targets) && SceneType.now !== SceneType.BATTLE;
+        }
+    };
+    //-----------------------------------------------------------------
+    //
     //メモ
     //
     //-----------------------------------------------------------------
@@ -321,8 +347,14 @@ Item.DEF_NUM_LIMIT = 999;
     };
     Item.消耗品のメモ = new class extends Item {
         constructor() {
-            super({ uniqueName: "消耗品のメモ", info: "スティックパンなどの消耗品はダンジョンに入る度に補充される",
+            super({ uniqueName: "消耗品のメモ", info: "スティックパンなどの一部消耗品はダンジョンに入る度に補充される",
                 type: ItemType.メモ, rank: 0, drop: ItemDrop.BOX, numLimit: 1 });
+        }
+    };
+    Item.夏のメモ = new class extends Item {
+        constructor() {
+            super({ uniqueName: "夏のメモ", info: "夏はいつ終わるの？",
+                type: ItemType.メモ, rank: 1, drop: ItemDrop.BOX, numLimit: 1 });
         }
     };
     //-----------------------------------------------------------------
@@ -394,6 +426,12 @@ Item.DEF_NUM_LIMIT = 999;
                 type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
         }
     };
+    Item.紙 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "紙", info: "",
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
+        }
+    };
     Item.しいたけ = new class extends Item {
         constructor() {
             super({ uniqueName: "しいたけ", info: "",
@@ -403,6 +441,18 @@ Item.DEF_NUM_LIMIT = 999;
     Item.血 = new class extends Item {
         constructor() {
             super({ uniqueName: "血", info: "",
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
+        }
+    };
+    Item.葛 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "葛", info: "",
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
+        }
+    };
+    Item.短針 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "短針", info: "",
                 type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
         }
     };

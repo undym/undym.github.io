@@ -39,9 +39,6 @@ export class MixScene extends Scene{
         super.add(Place.TOP, DrawPlayInfo.ins);
         
         const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
-        super.add(pboxBounds, DrawSTBoxes.players);
-        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
-
         const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
         
         super.add(mainBounds, 
@@ -156,6 +153,8 @@ export class MixScene extends Scene{
                 })())
         );
         
+        super.add(pboxBounds, DrawSTBoxes.players);
+        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
             
     }
 

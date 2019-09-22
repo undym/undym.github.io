@@ -41,22 +41,6 @@ export class SetTecScene extends Scene{
         super.add(Place.TOP, DrawPlayInfo.ins);
         
         const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
-        super.add(pboxBounds, DrawSTBoxes.players);
-        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
-            
-        super.add(Rect.FULL, ILayout.create({draw:(bounds)=>{
-            Graphics.fillRect(this.target.bounds, new Color(0,1,1,0.2));
-        }}));
-        super.add(Rect.FULL, ILayout.create({ctrl:(bounds)=>{
-            if(!Input.click){return;}
-
-            for(let p of Unit.players.filter(p=> p.exists)){
-                if(p.bounds.contains( Input.point )){
-                    this.setList(p, this.getListTecs);
-                    break;
-                }
-            }
-        }}));
 
         const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
 
@@ -184,6 +168,23 @@ export class SetTecScene extends Scene{
                         })());
                 })())
         );
+        
+        super.add(pboxBounds, DrawSTBoxes.players);
+        super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
+            
+        super.add(Rect.FULL, ILayout.create({draw:(bounds)=>{
+            Graphics.fillRect(this.target.bounds, new Color(0,1,1,0.2));
+        }}));
+        super.add(Rect.FULL, ILayout.create({ctrl:(bounds)=>{
+            if(!Input.click){return;}
+
+            for(let p of Unit.players.filter(p=> p.exists)){
+                if(p.bounds.contains( Input.point )){
+                    this.setList(p, this.getListTecs);
+                    break;
+                }
+            }
+        }}));
 
         this.setList( this.target, u=> u.tecs);
     }
