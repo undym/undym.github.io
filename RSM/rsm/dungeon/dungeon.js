@@ -279,8 +279,13 @@ Dungeon.auNow = 0;
                 e.prm(Prm.MAX_HP).base = 40;
                 e.prm(Prm.STR).base = 15;
             };
-            this.dungeonClearEvent = () => __awaiter(this, void 0, void 0, function* () {
-                super.dungeonClearEvent();
+        }
+        dungeonClearEvent() {
+            const _super = Object.create(null, {
+                dungeonClearEvent: { get: () => super.dungeonClearEvent }
+            });
+            return __awaiter(this, void 0, void 0, function* () {
+                _super.dungeonClearEvent.call(this);
                 if (!Player.よしこ.member) {
                     Player.よしこ.join();
                     Util.msg.set(`よしこが仲間になった`);
@@ -288,6 +293,7 @@ Dungeon.auNow = 0;
                 }
             });
         }
+        ;
     };
     Dungeon.リテの門 = new class extends Dungeon {
         constructor() {

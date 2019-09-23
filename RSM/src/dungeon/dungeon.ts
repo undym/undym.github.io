@@ -323,7 +323,7 @@ export namespace Dungeon{
             e.prm(Prm.MAX_HP).base = 40;
             e.prm(Prm.STR).base = 15;
         };
-        dungeonClearEvent = async()=>{
+        async dungeonClearEvent(){
             super.dungeonClearEvent();
 
             if(!Player.よしこ.member){
