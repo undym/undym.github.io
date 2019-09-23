@@ -18,7 +18,7 @@ export class List extends ILayout{
     private scroll = 0;
     private vec = 0;
 
-    constructor(aPageElmNum:number = 13){
+    constructor(aPageElmNum:number = 14){
         super();
 
         this.aPageElmNum = aPageElmNum|0;

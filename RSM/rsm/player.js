@@ -1,6 +1,7 @@
 import { PUnit, Prm, Unit } from "./unit.js";
 import { Tec } from "./tec.js";
 import { Job } from "./job.js";
+import { Eq } from "./eq.js";
 export class Player {
     constructor(uniqueName) {
         this.uniqueName = uniqueName;
@@ -60,6 +61,7 @@ Player._valueOf = new Map();
             p.prm(Prm.MAX_MP).base = 3;
             p.prm(Prm.MAX_TP).base = 5;
             p.prm(Prm.STR).base = 2;
+            p.setEq(Eq.勾玉.pos, Eq.勾玉);
             p.tecs = [
                 Tec.殴る,
                 Tec.empty,
@@ -78,6 +80,7 @@ Player._valueOf = new Map();
             p.prm(Prm.MAX_TP).base = 2;
             p.prm(Prm.STR).base = 2;
             p.prm(Prm.MAG).base = 4;
+            p.setEq(Eq.メガネ.pos, Eq.メガネ);
             p.tecs = [
                 Tec.殴る,
                 Tec.マジカルパンチ,

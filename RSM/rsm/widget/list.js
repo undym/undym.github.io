@@ -11,7 +11,7 @@ import { ILayout, YLayout, RatioLayout } from "../undym/layout.js";
 import { Input } from "../undym/input.js";
 import { Graphics, Font } from "../graphics/graphics.js";
 export class List extends ILayout {
-    constructor(aPageElmNum = 13) {
+    constructor(aPageElmNum = 14) {
         super();
         this.elms = [];
         this.update = true;

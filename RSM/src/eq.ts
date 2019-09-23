@@ -242,6 +242,14 @@ export namespace Eq{
             }
         }   
     }
+    export const                         勾玉 = new class extends Eq{
+        constructor(){super({uniqueName:"勾玉", info:"", 
+                                pos:EqPos.頭, lv:Eq.NO_APPEAR_LV});}
+    }
+    export const                         メガネ = new class extends Eq{
+        constructor(){super({uniqueName:"メガネ", info:"", 
+                                pos:EqPos.頭, lv:Eq.NO_APPEAR_LV});}
+    }
     //--------------------------------------------------------------------------
     //
     //武

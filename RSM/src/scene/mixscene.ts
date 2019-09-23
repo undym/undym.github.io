@@ -155,7 +155,12 @@ export class MixScene extends Scene{
         
         super.add(pboxBounds, DrawSTBoxes.players);
         super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
-            
+        
+        
+        
+        const values = Mix.values
+                            .filter(m=> !m.result && m.isVisible());
+        this.setList("建築", values);
     }
 
 

@@ -23,7 +23,7 @@ export class SetTecScene extends Scene{
     private target:PUnit;
     private choosed:boolean = false;
     private choosedTec:Tec;
-    private getListTecs:(unit:PUnit)=>Tec[];
+    private resetList:(keepScroll:boolean)=>void;
 
     constructor(){
         super();
@@ -92,16 +92,28 @@ export class SetTecScene extends Scene{
                         .add(btnBounds, (()=>{
                             const otherBtns1:ILayout[] = [
                                 new Btn("全て", ()=>{
-                                    this.setList( this.target,u=>{
-                                        let res:Tec[] = [];
+                                    (this.resetList = keepScroll=>{
+                                        this.choosed = false;
+                                        this.list.clear(keepScroll);
                                         for(let type of TecType.values()){
-                                            res = res.concat( type.tecs.filter(t=> u.isMasteredTec(t)) );
+                                            const tecs = type.tecs.filter(t=> this.target.isMasteredTec(t));
+                                            this.setList( this.target, `${type}`, tecs );
                                         }
-                                        return res;
-                                    });
+                                    })(false);
+                                    // this.setList( this.target,u=>{
+                                    //     let res:Tec[] = [];
+                                    //     for(let type of TecType.values()){
+                                    //         res = res.concat( type.tecs.filter(t=> u.isMasteredTec(t)) );
+                                    //     }
+                                    //     return res;
+                                    // });
                                 }),
                                 new Btn("セット中", ()=>{
-                                    this.setList( this.target, u=> u.tecs );
+                                    (this.resetList = keepScroll=>{
+                                        this.choosed = false;
+                                        this.list.clear(keepScroll);
+                                        this.setList( this.target, "セット中", this.target.tecs );
+                                    })(false);
                                 }),
                             ];
                             const otherBtns2:ILayout[] = [
@@ -134,6 +146,7 @@ export class SetTecScene extends Scene{
                                                 FX_Str(Font.def, `${this.choosedTec}を外しました`, {x:0.5, y:0.5}, Color.WHITE);
         
                                                 // this.setList(this.target, this.getListTecs, /*keepPage*/true);
+                                                this.resetList(true);
                                                 return;
                                             }
                                         }
@@ -153,7 +166,11 @@ export class SetTecScene extends Scene{
                             
                             for(let type of TecType.values()){
                                 l.add(new Btn(`${type}`, ()=>{
-                                    this.setList( this.target, u=> type.tecs.filter(t=> u.isMasteredTec(t)) );
+                                    (this.resetList = keepScroll=>{
+                                        this.choosed = false;
+                                        this.list.clear(keepScroll);
+                                        this.setList( this.target, `${type}`, type.tecs.filter(t=> this.target.isMasteredTec(t)));
+                                    })(false);
                                 }));
                             }
 
@@ -180,27 +197,30 @@ export class SetTecScene extends Scene{
 
             for(let p of Unit.players.filter(p=> p.exists)){
                 if(p.bounds.contains( Input.point )){
-                    this.setList(p, this.getListTecs);
+                    this.target = p;
+                    this.resetList(false);
                     break;
                 }
             }
         }}));
 
-        this.setList( this.target, u=> u.tecs);
+
+        (this.resetList = keepScroll=>{
+            this.choosed = false;
+            this.list.clear(keepScroll);
+            this.setList( this.target, "セット中", this.target.tecs );
+        })(false);
     }
 
-    private setList(unit:PUnit, getListTecs:(unit:PUnit)=>Tec[], keepPage = false){
-        this.target = unit;
-        this.getListTecs = getListTecs;
+    private setList(unit:PUnit, listTypeName:string, tecs:Tec[]){
         this.choosed = false;
 
-        // this.list.add({
-        //     center:()=>`${unit.name}`,
-        //     groundColor:()=>Color.D_GRAY,
-        // });
-        this.list.clear(keepPage);
+        this.list.add({
+            center:()=>`${listTypeName}`,
+            groundColor:()=>Color.D_GRAY,
+        });
 
-        getListTecs(unit)
+        tecs
             .forEach((tec)=>{
                 if(tec === Tec.empty){
                     this.list.add({

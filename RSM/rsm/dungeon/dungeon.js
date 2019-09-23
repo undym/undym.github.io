@@ -12,7 +12,7 @@ import { Unit, Prm } from "../unit.js";
 import { Item } from "../item.js";
 import { Eq } from "../eq.js";
 import { Util } from "../util.js";
-import { cwait } from "../undym/scene.js";
+import { cwait, wait } from "../undym/scene.js";
 import { Player } from "../player.js";
 import { choice } from "../undym/random.js";
 class Event {
@@ -182,6 +182,32 @@ export class Dungeon {
     }
     dungeonClearEvent() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.dungeonClearCount <= 100 && this.dungeonClearCount % 10 === 0) {
+                Util.msg.set(`[${this}]を${this.dungeonClearCount}回踏破！`);
+                yield cwait();
+                Item.いざなみの命.add(1);
+                yield wait();
+                Item.おおげつ姫.add(1);
+                yield wait();
+                Item.アラハバキ神.add(1);
+                yield wait();
+                Item.この花咲くや姫.add(1);
+                yield wait();
+                Item.つくよみの命.add(1);
+                yield wait();
+                Item.よもつおお神.add(1);
+                yield wait();
+                Item.わたつみの神.add(1);
+                yield wait();
+                Item.へつなぎさびこの神.add(1);
+                yield wait();
+                Item.ほのかぐつちの神.add(1);
+                yield wait();
+                Item.たけみかづちの命.add(1);
+                yield wait();
+                Item.すさのおの命.add(1);
+                yield wait();
+            }
         });
     }
 }
@@ -254,6 +280,7 @@ Dungeon.auNow = 0;
                 e.prm(Prm.STR).base = 15;
             };
             this.dungeonClearEvent = () => __awaiter(this, void 0, void 0, function* () {
+                super.dungeonClearEvent();
                 if (!Player.よしこ.member) {
                     Player.よしこ.join();
                     Util.msg.set(`よしこが仲間になった`);

@@ -1,6 +1,7 @@
 import { PUnit, Prm, Unit } from "./unit.js";
 import { Tec, PassiveTec } from "./tec.js";
 import { Job } from "./job.js";
+import { Eq } from "./eq.js";
 
 
 
@@ -81,6 +82,8 @@ export namespace Player{
             p.prm(Prm.MAX_TP).base = 5;
             p.prm(Prm.STR).base = 2;
 
+            p.setEq(Eq.勾玉.pos, Eq.勾玉);
+
             p.tecs = [
                 Tec.殴る,
                 Tec.empty,
@@ -99,6 +102,8 @@ export namespace Player{
             p.prm(Prm.MAX_TP).base = 2;
             p.prm(Prm.STR).base = 2;
             p.prm(Prm.MAG).base = 4;
+            
+            p.setEq(Eq.メガネ.pos, Eq.メガネ);
             
             p.tecs = [
                 Tec.殴る,

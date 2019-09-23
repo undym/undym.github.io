@@ -39,6 +39,7 @@ export class ItemType{
     static readonly ダンジョン = new ItemType("ダンジョン");
     static readonly 弾 = new ItemType("弾");
     
+    static readonly ドーピング = new ItemType("ドーピング");
     static readonly 書 = new ItemType("書");
 
     static readonly メモ = new ItemType("メモ");
@@ -65,7 +66,7 @@ export class ItemParentType{
 
     static readonly 回復       = new ItemParentType("回復", [ItemType.蘇生, ItemType.HP回復, ItemType.MP回復]);
     static readonly ダンジョン  = new ItemParentType("ダンジョン", [ItemType.ダンジョン, ItemType.弾]);
-    static readonly 強化       = new ItemParentType("強化", [ItemType.書]);
+    static readonly 強化       = new ItemParentType("強化", [ItemType.ドーピング, ItemType.書]);
     static readonly その他     = new ItemParentType("その他", [ItemType.メモ, ItemType.鍵, ItemType.玉, ItemType.素材]);
 }
 
@@ -240,7 +241,7 @@ export namespace Item{
     //-----------------------------------------------------------------
     export const                         サンタクララ薬:Item = new class extends Item{
         constructor(){super({uniqueName:"サンタクララ薬", info:"一体をHP1で蘇生",
-                                type:ItemType.HP回復, rank:0,
+                                type:ItemType.蘇生, rank:0,
                                 consumable:true, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
                                     if(target.dead){
@@ -336,12 +337,127 @@ export namespace Item{
     };
     //-----------------------------------------------------------------
     //
-    //強化
+    //ドーピング
+    //
+    //-----------------------------------------------------------------
+    export const                         いざなみの命:Item = new class extends Item{
+        constructor(){super({uniqueName:"いざなみの命", info:"最大HP+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.MAX_HP).base += 1;
+                                    FX_Str(Font.def, `${target.name}の最大HP+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         おおげつ姫:Item = new class extends Item{
+        constructor(){super({uniqueName:"おおげつ姫", info:"最大MP+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.MAX_MP).base += 1;
+                                    FX_Str(Font.def, `${target.name}の最大MP+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         アラハバキ神:Item = new class extends Item{
+        constructor(){super({uniqueName:"アラハバキ神", info:"最大TP+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.MAX_TP).base += 1;
+                                    FX_Str(Font.def, `${target.name}の最大TP+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         この花咲くや姫:Item = new class extends Item{
+        constructor(){super({uniqueName:"この花咲くや姫", info:"力+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.STR).base += 1;
+                                    FX_Str(Font.def, `${target.name}の力+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         つくよみの命:Item = new class extends Item{
+        constructor(){super({uniqueName:"つくよみの命", info:"魔+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.MAG).base += 1;
+                                    FX_Str(Font.def, `${target.name}の魔+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         よもつおお神:Item = new class extends Item{
+        constructor(){super({uniqueName:"よもつおお神", info:"光+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.LIG).base += 1;
+                                    FX_Str(Font.def, `${target.name}の光+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         わたつみの神:Item = new class extends Item{
+        constructor(){super({uniqueName:"わたつみの神", info:"闇+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.DRK).base += 1;
+                                    FX_Str(Font.def, `${target.name}の闇+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         へつなぎさびこの神:Item = new class extends Item{
+        constructor(){super({uniqueName:"へつなぎさびこの神", info:"鎖+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.CHN).base += 1;
+                                    FX_Str(Font.def, `${target.name}の鎖+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         ほのかぐつちの神:Item = new class extends Item{
+        constructor(){super({uniqueName:"ほのかぐつちの神", info:"過+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.PST).base += 1;
+                                    FX_Str(Font.def, `${target.name}の過+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         たけみかづちの命:Item = new class extends Item{
+        constructor(){super({uniqueName:"たけみかづちの命", info:"銃+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.GUN).base += 1;
+                                    FX_Str(Font.def, `${target.name}の銃+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    export const                         すさのおの命:Item = new class extends Item{
+        constructor(){super({uniqueName:"すさのおの命", info:"弓+1",
+                                type:ItemType.ドーピング, rank:10, drop:ItemDrop.BOX,
+                                use:async(user,target)=>{
+                                    target.prm(Prm.ARR).base += 1;
+                                    FX_Str(Font.def, `${target.name}の弓+1`, Point.CENTER, Color.WHITE);
+                                },
+        })}
+        canUse(user:Unit, targets:Unit[]){return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;}
+    };
+    //-----------------------------------------------------------------
+    //
+    //書
     //
     //-----------------------------------------------------------------
     export const                         兵法指南の書:Item = new class extends Item{
         constructor(){super({uniqueName:"兵法指南の書", info:"技のセット可能数を6に増やす",
-                                type:ItemType.書, rank:0, drop:ItemDrop.NO,
+                                type:ItemType.書, rank:10, drop:ItemDrop.NO,
                                 use:async(user,target)=>{
                                     target.tecs.push( Tec.empty );
                                     FX_Str(Font.def, `${target.name}の技セット可能数が6になった`, Point.CENTER, Color.WHITE);

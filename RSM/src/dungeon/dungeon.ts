@@ -9,7 +9,7 @@ import { Item } from "../item.js";
 import { Num } from "../mix.js";
 import { Eq } from "../eq.js";
 import { Util } from "../util.js";
-import { cwait } from "../undym/scene.js";
+import { cwait, wait } from "../undym/scene.js";
 import { Player } from "../player.js";
 import { choice } from "../undym/random.js";
 
@@ -241,7 +241,15 @@ export abstract class Dungeon{
     }
 
     async dungeonClearEvent(){
-
+        if(this.dungeonClearCount <= 100 && this.dungeonClearCount % 10 === 0){
+            Util.msg.set(`[${this}]を${this.dungeonClearCount}回踏破！`); await cwait();
+            Item.いざなみの命.add(1);       await wait();
+            Item.おおげつ姫.add(1);         await wait(); Item.アラハバキ神.add(1);    await wait();
+            Item.この花咲くや姫.add(1);     await wait(); Item.つくよみの命.add(1);    await wait();
+            Item.よもつおお神.add(1);       await wait(); Item.わたつみの神.add(1);     await wait();
+            Item.へつなぎさびこの神.add(1);  await wait(); Item.ほのかぐつちの神.add(1); await wait();
+            Item.たけみかづちの命.add(1);   await wait();  Item.すさのおの命.add(1);    await wait();
+        }
     }
     
 
@@ -316,6 +324,8 @@ export namespace Dungeon{
             e.prm(Prm.STR).base = 15;
         };
         dungeonClearEvent = async()=>{
+            super.dungeonClearEvent();
+
             if(!Player.よしこ.member){
                 Player.よしこ.join();
                 Util.msg.set(`よしこが仲間になった`); await cwait();
