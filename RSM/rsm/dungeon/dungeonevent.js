@@ -246,6 +246,43 @@ DungeonEvent._values = [];
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
     };
+    DungeonEvent.DIG = new class extends DungeonEvent {
+        constructor() {
+            super();
+            // createImg = ()=> new Img("img/tree.png");
+            this.happenInner = () => { Util.msg.set("掘れそうな場所がある"); };
+            this.createBtnLayout = () => createDefLayout()
+                .set(ReturnBtn.index, new Btn("掘る", () => __awaiter(this, void 0, void 0, function* () {
+                yield DungeonEvent.TREE_BROKEN.happen();
+            })));
+        }
+    };
+    DungeonEvent.DIGED = new class extends DungeonEvent {
+        constructor() {
+            super();
+            // createImg = ()=> new Img("img/tree_broken.png");
+            // isZoomImg = ()=> false;
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
+                let openNum = 1;
+                let openBoost = 0.3;
+                while (Math.random() <= openBoost) {
+                    openNum++;
+                    openBoost /= 2;
+                }
+                let baseRank = Dungeon.now.rank / 2;
+                for (let i = 0; i < openNum; i++) {
+                    const itemRank = Item.fluctuateRank(baseRank);
+                    let item = Item.rndItem(ItemDrop.DIG, itemRank);
+                    let addNum = 1;
+                    item.add(addNum);
+                    if (i < openNum - 1) {
+                        yield wait();
+                    }
+                }
+            });
+            this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
     DungeonEvent.BATTLE = new class extends DungeonEvent {
         constructor() {
             super();

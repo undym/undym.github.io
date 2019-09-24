@@ -10,6 +10,7 @@ export class Force {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    phaseEnd(unit) { }
 }
 export class Dmg {
     constructor(args) {

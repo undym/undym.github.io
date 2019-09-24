@@ -203,6 +203,7 @@ export abstract class Tec implements Force{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+    phaseEnd(unit:Unit){}
 }
 
 
@@ -493,6 +494,16 @@ export namespace Tec{
             }
         }
     };
+    export const                         石肌:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"石肌", info:"被格闘・神格・練術・銃術攻撃-33%",
+                                type:TecType.格闘,
+        });}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any(TecType.格闘, TecType.神格, TecType.練術, TecType.銃術)){
+                dmg.pow.mul *= 0.67;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //魔法Active
@@ -531,6 +542,16 @@ export namespace Tec{
             }
         }
     };
+    export const                         保湿クリーム:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"保湿クリーム", info:"被魔法・暗黒・過去・弓術攻撃-33%",
+                                type:TecType.魔法,
+        });}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any(TecType.魔法, TecType.暗黒, TecType.過去, TecType.弓術)){
+                dmg.pow.mul *= 0.67;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //神格Active
@@ -542,17 +563,17 @@ export namespace Tec{
                               mul:1, num:1, hit:1.5,
         });}
     }
-    export const                          炎の鞭:ActiveTec = new class extends ActiveTec{
-        constructor(){super({ uniqueName:"炎の鞭", info:"一体に鎖値を加算した神格攻撃",
-                              type:TecType.神格, targetings:Targeting.SELECT,
-                              mul:1, num:1, hit:1.5, mp:1, tp:1,
-        });}
-        createDmg(attacker:Unit, target:Unit){
-            const dmg = super.createDmg(attacker, target);
-            dmg.pow.add += attacker.prm(Prm.CHN).total;
-            return dmg;
-        }
-    }
+    // export const                          炎の鞭:ActiveTec = new class extends ActiveTec{
+    //     constructor(){super({ uniqueName:"炎の鞭", info:"一体に鎖値を加算した神格攻撃",
+    //                           type:TecType.神格, targetings:Targeting.SELECT,
+    //                           mul:1, num:1, hit:1.5, mp:1, tp:1,
+    //     });}
+    //     createDmg(attacker:Unit, target:Unit){
+    //         const dmg = super.createDmg(attacker, target);
+    //         dmg.pow.add += attacker.prm(Prm.CHN).total;
+    //         return dmg;
+    //     }
+    // }
     //--------------------------------------------------------------------------
     //
     //暗黒Active
@@ -882,7 +903,7 @@ export namespace Tec{
     export const                          風:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"風", info:"自分を<風3>(回避UP)状態にする",
                               type:TecType.状態, targetings:Targeting.ALL | Targeting.ONLY_FRIEND,
-                              mul:1, num:1, hit:10, tp:1,
+                              mul:1, num:1, hit:10, mp:1, tp:1,
         });}
         async run(attacker:Unit, target:Unit){
             Unit.setCondition( target, Condition.風, 5 );
@@ -927,6 +948,18 @@ export namespace Tec{
         battleStart(unit:Unit){
             if(!unit.existsCondition(Condition.練.type)){
                 Unit.setCondition(unit, Condition.練, 1);
+            }
+        }
+    };
+    export const                         毒吸収:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"毒吸収", info:"＜毒＞を吸収する",
+                                type:TecType.状態,
+        });}
+        phaseEnd(unit:Unit){
+            if(unit.existsCondition(Condition.毒)){
+                const value = unit.getConditionValue(Condition.毒);
+                Unit.healHP(unit, value);
+                unit.clearCondition(Condition.毒);
             }
         }
     };
@@ -1104,10 +1137,11 @@ export namespace Tec{
     //
     //--------------------------------------------------------------------------
     export const                         我慢:PassiveTec = new class extends PassiveTec{
-        constructor(){super({uniqueName:"我慢", info:"防御値+99",
+        constructor(){super({uniqueName:"我慢", info:"防御値x1.2+99",
                                 type:TecType.その他,
         });}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.def.mul *= 1.2;
             dmg.def.add += 99;
         }
     };

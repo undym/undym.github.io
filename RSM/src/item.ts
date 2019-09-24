@@ -74,6 +74,7 @@ export const ItemDrop = {
     get NO()  {return 0;},
     get BOX() {return 1 << 0;},
     get TREE(){return 1 << 1;},
+    get DIG() {return 1 << 2;},
 }
 
 class ItemValues{
@@ -151,7 +152,7 @@ export class Item implements Action, Num{
     }
 
 
-    static readonly DEF_NUM_LIMIT = 999;
+    static readonly DEF_NUM_LIMIT = 9999;
 
 
     num:number = 0;
@@ -542,7 +543,7 @@ export namespace Item{
     };
     export const                         土:Item = new class extends Item{
         constructor(){super({uniqueName:"土", info:"",
-                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
+                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX | ItemDrop.DIG})}
     };
     export const                         水:Item = new class extends Item{
         constructor(){super({uniqueName:"水", info:"",
@@ -572,6 +573,14 @@ export namespace Item{
         constructor(){super({uniqueName:"草", info:"",
                                 type:ItemType.素材, rank:0, drop:ItemDrop.BOX})}
     };
+    export const                         枝:Item = new class extends Item{
+        constructor(){super({uniqueName:"枝", info:"",
+                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX | ItemDrop.TREE})}
+    };
+    export const                         葉っぱ:Item = new class extends Item{
+        constructor(){super({uniqueName:"葉っぱ", info:"",
+                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX | ItemDrop.TREE})}
+    };
     //-----------------------------------------------------------------
     //
     //素材BoxRank1
@@ -579,7 +588,7 @@ export namespace Item{
     //-----------------------------------------------------------------
     export const                         銅:Item = new class extends Item{
         constructor(){super({uniqueName:"銅", info:"",
-                                type:ItemType.素材, rank:1, drop:ItemDrop.BOX})}
+                                type:ItemType.素材, rank:1, drop:ItemDrop.BOX | ItemDrop.DIG})}
     };
     export const                         朽ち果てた鍵:Item = new class extends Item{
         constructor(){super({uniqueName:"朽ち果てた鍵", info:"",
@@ -610,13 +619,17 @@ export namespace Item{
         constructor(){super({uniqueName:"He", info:"",
                                 type:ItemType.素材, rank:2, drop:ItemDrop.BOX})}
     };
+    export const                         Li:Item = new class extends Item{
+        constructor(){super({uniqueName:"Li", info:"",
+                                type:ItemType.素材, rank:2, drop:ItemDrop.BOX})}
+    };
     export const                         黒い石:Item = new class extends Item{
         constructor(){super({uniqueName:"黒い石", info:"",
-                                type:ItemType.素材, rank:2, drop:ItemDrop.BOX})}
+                                type:ItemType.素材, rank:2, drop:ItemDrop.BOX | ItemDrop.DIG})}
     };
     export const                         黒い砂:Item = new class extends Item{
         constructor(){super({uniqueName:"黒い砂", info:"",
-                                type:ItemType.素材, rank:2, drop:ItemDrop.BOX})}
+                                type:ItemType.素材, rank:2, drop:ItemDrop.BOX | ItemDrop.DIG})}
     };
     export const                         黒い枝:Item = new class extends Item{
         constructor(){super({uniqueName:"黒い枝", info:"とても黒い！！！！！",
@@ -628,7 +641,7 @@ export namespace Item{
     };
     export const                         鉄:Item = new class extends Item{
         constructor(){super({uniqueName:"鉄", info:"かたい",
-                                type:ItemType.素材, rank:2, drop:ItemDrop.BOX})}
+                                type:ItemType.素材, rank:2, drop:ItemDrop.BOX | ItemDrop.DIG})}
     };
     //-----------------------------------------------------------------
     //
@@ -641,6 +654,10 @@ export namespace Item{
     };
     export const                         岩:Item = new class extends Item{
         constructor(){super({uniqueName:"岩", info:"",
+                                type:ItemType.素材, rank:3, drop:ItemDrop.BOX | ItemDrop.DIG})}
+    };
+    export const                         おにく:Item = new class extends Item{
+        constructor(){super({uniqueName:"おにく", info:"",
                                 type:ItemType.素材, rank:3, drop:ItemDrop.BOX})}
     };
     //-----------------------------------------------------------------
@@ -656,17 +673,9 @@ export namespace Item{
 
     //-----------------------------------------------------------------
     //
-    //素材TREE
+    //素材TREE only
     //
     //-----------------------------------------------------------------
-    export const                         枝:Item = new class extends Item{
-        constructor(){super({uniqueName:"枝", info:"",
-                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX | ItemDrop.TREE})}
-    };
-    export const                         葉っぱ:Item = new class extends Item{
-        constructor(){super({uniqueName:"葉っぱ", info:"",
-                                type:ItemType.素材, rank:0, drop:ItemDrop.BOX | ItemDrop.TREE})}
-    };
     export const                         竹:Item = new class extends Item{
         constructor(){super({uniqueName:"竹", info:"",
                                 type:ItemType.素材, rank:0, drop:ItemDrop.TREE})}
@@ -691,6 +700,11 @@ export namespace Item{
         constructor(){super({uniqueName:"無法松", info:"通りすがりのたい焼き屋サン",
                                 type:ItemType.素材, rank:8, drop:ItemDrop.TREE})}
     };
+    //-----------------------------------------------------------------
+    //
+    //素材DIG only
+    //
+    //-----------------------------------------------------------------
     //-----------------------------------------------------------------
     //
     //合成素材

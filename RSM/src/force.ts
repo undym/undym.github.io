@@ -13,6 +13,7 @@ export class Force{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg):void{}
+    phaseEnd(unit:Unit):void{}
 }
 
 

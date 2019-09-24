@@ -264,31 +264,32 @@ export abstract class Unit{
     //force
     //
     //---------------------------------------------------------
-    equip(){
+    async equip(){
         for(const prm of Prm.values()){
             this.prm(prm).eq = 0;
         }
-        this.force(f=> f.equip(this));
+        await this.force(f=> f.equip(this));
     }
-    battleStart()                                     {this.force(f=> f.battleStart(this));}
-    phaseStart()                                      {this.force(f=> f.phaseStart(this));}
-    beforeDoAtk(action:Action, target:Unit, dmg:Dmg)  {this.force(f=> f.beforeDoAtk(action, this, target, dmg));}
-    beforeBeAtk(action:Action, attacker:Unit, dmg:Dmg){this.force(f=> f.beforeBeAtk(action, attacker, this, dmg));}
-    afterDoAtk(action:Action, target:Unit, dmg:Dmg)   {this.force(f=> f.afterDoAtk(action, this, target, dmg));}
-    afterBeAtk(action:Action, attacker:Unit, dmg:Dmg) {this.force(f=> f.afterBeAtk(action, attacker, this, dmg));}
+    async battleStart()                                     {await this.force(async f=> await f.battleStart(this));}
+    async phaseStart()                                      {await this.force(async f=> await f.phaseStart(this));}
+    async beforeDoAtk(action:Action, target:Unit, dmg:Dmg)  {await this.force(async f=> await f.beforeDoAtk(action, this, target, dmg));}
+    async beforeBeAtk(action:Action, attacker:Unit, dmg:Dmg){await this.force(async f=> await f.beforeBeAtk(action, attacker, this, dmg));}
+    async afterDoAtk(action:Action, target:Unit, dmg:Dmg)   {await this.force(async f=> await f.afterDoAtk(action, this, target, dmg));}
+    async afterBeAtk(action:Action, attacker:Unit, dmg:Dmg) {await this.force(async f=> await f.afterBeAtk(action, attacker, this, dmg));}
+    async phaseEnd()                                        {await this.force(async f=> await f.phaseEnd(this));}
 
-    protected force(forceDlgt:(f:Force)=>void){
+    protected async force(forceDlgt:(f:Force)=>void){
         for(const tec of this.tecs){
-            forceDlgt( tec );
+            await forceDlgt( tec );
         }
         for(const eq of this.equips.values()){
-            forceDlgt( eq );
+            await forceDlgt( eq );
         }
         for(const ear of this.eqEars.values()){
-            forceDlgt( ear );
+            await forceDlgt( ear );
         }
         for(const cond of this.conditions.values()){
-            forceDlgt( cond.condition );
+            await forceDlgt( cond.condition );
         }
     }
     //---------------------------------------------------------
@@ -334,7 +335,7 @@ export abstract class Unit{
     getCondition(type:ConditionType):Condition{
         return this.conditions[type.ordinal].condition;
     }
-    
+    /**その状態でなければ0を返す。 */
     getConditionValue(condition:Condition|ConditionType):number{
         if(condition instanceof Condition){
             const set = this.conditions[condition.type.ordinal];

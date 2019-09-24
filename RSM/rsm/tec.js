@@ -187,6 +187,7 @@ export class Tec {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    phaseEnd(unit) { }
 }
 export class PassiveTec extends Tec {
     constructor(args) {
@@ -451,6 +452,18 @@ ActiveTec._valueOf = new Map();
             }
         }
     };
+    Tec.石肌 = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "石肌", info: "被格闘・神格・練術・銃術攻撃-33%",
+                type: TecType.格闘,
+            });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.格闘, TecType.神格, TecType.練術, TecType.銃術)) {
+                dmg.pow.mul *= 0.67;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //魔法Active
@@ -497,6 +510,18 @@ ActiveTec._valueOf = new Map();
             }
         }
     };
+    Tec.保湿クリーム = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "保湿クリーム", info: "被魔法・暗黒・過去・弓術攻撃-33%",
+                type: TecType.魔法,
+            });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.魔法, TecType.暗黒, TecType.過去, TecType.弓術)) {
+                dmg.pow.mul *= 0.67;
+            }
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //神格Active
@@ -510,19 +535,17 @@ ActiveTec._valueOf = new Map();
             });
         }
     };
-    Tec.炎の鞭 = new class extends ActiveTec {
-        constructor() {
-            super({ uniqueName: "炎の鞭", info: "一体に鎖値を加算した神格攻撃",
-                type: TecType.神格, targetings: Targeting.SELECT,
-                mul: 1, num: 1, hit: 1.5, mp: 1, tp: 1,
-            });
-        }
-        createDmg(attacker, target) {
-            const dmg = super.createDmg(attacker, target);
-            dmg.pow.add += attacker.prm(Prm.CHN).total;
-            return dmg;
-        }
-    };
+    // export const                          炎の鞭:ActiveTec = new class extends ActiveTec{
+    //     constructor(){super({ uniqueName:"炎の鞭", info:"一体に鎖値を加算した神格攻撃",
+    //                           type:TecType.神格, targetings:Targeting.SELECT,
+    //                           mul:1, num:1, hit:1.5, mp:1, tp:1,
+    //     });}
+    //     createDmg(attacker:Unit, target:Unit){
+    //         const dmg = super.createDmg(attacker, target);
+    //         dmg.pow.add += attacker.prm(Prm.CHN).total;
+    //         return dmg;
+    //     }
+    // }
     //--------------------------------------------------------------------------
     //
     //暗黒Active
@@ -958,7 +981,7 @@ ActiveTec._valueOf = new Map();
         constructor() {
             super({ uniqueName: "風", info: "自分を<風3>(回避UP)状態にする",
                 type: TecType.状態, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
-                mul: 1, num: 1, hit: 10, tp: 1,
+                mul: 1, num: 1, hit: 10, mp: 1, tp: 1,
             });
         }
         run(attacker, target) {
@@ -1020,6 +1043,20 @@ ActiveTec._valueOf = new Map();
         battleStart(unit) {
             if (!unit.existsCondition(Condition.練.type)) {
                 Unit.setCondition(unit, Condition.練, 1);
+            }
+        }
+    };
+    Tec.毒吸収 = new class extends PassiveTec {
+        constructor() {
+            super({ uniqueName: "毒吸収", info: "＜毒＞を吸収する",
+                type: TecType.状態,
+            });
+        }
+        phaseEnd(unit) {
+            if (unit.existsCondition(Condition.毒)) {
+                const value = unit.getConditionValue(Condition.毒);
+                Unit.healHP(unit, value);
+                unit.clearCondition(Condition.毒);
             }
         }
     };
@@ -1254,11 +1291,12 @@ ActiveTec._valueOf = new Map();
     //--------------------------------------------------------------------------
     Tec.我慢 = new class extends PassiveTec {
         constructor() {
-            super({ uniqueName: "我慢", info: "防御値+99",
+            super({ uniqueName: "我慢", info: "防御値x1.2+99",
                 type: TecType.その他,
             });
         }
         beforeBeAtk(action, attacker, target, dmg) {
+            dmg.def.mul *= 1.2;
             dmg.def.add += 99;
         }
     };

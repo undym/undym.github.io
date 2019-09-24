@@ -117,6 +117,7 @@ export class Eq {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    phaseEnd(unit) { }
     add(v) {
         Num.add(this, v);
         PlayData.gotAnyEq = true;
@@ -160,6 +161,7 @@ export class EqEar {
     beforeBeAtk(action, attacker, target, dmg) { }
     afterDoAtk(action, attacker, target, dmg) { }
     afterBeAtk(action, attacker, target, dmg) { }
+    phaseEnd(unit) { }
     add(v) {
         Num.add(this, v);
         PlayData.gotAnyEq = true;
@@ -258,84 +260,84 @@ EqEar._valueOf = new Map();
     Eq.う棒 = new class extends Eq {
         constructor() {
             super({ uniqueName: "う棒", info: "力+20光+20",
-                pos: EqPos.武, lv: 15 });
+                pos: EqPos.武, lv: 25 });
         }
         equip(unit) { unit.prm(Prm.STR).eq += 20; unit.prm(Prm.LIG).eq += 20; }
     };
     Eq.銅剣 = new class extends Eq {
         constructor() {
             super({ uniqueName: "銅剣", info: "力+40光+40",
-                pos: EqPos.武, lv: 25 });
+                pos: EqPos.武, lv: 45 });
         }
         equip(unit) { unit.prm(Prm.STR).eq += 40; unit.prm(Prm.LIG).eq += 40; }
     };
     Eq.はがねの剣 = new class extends Eq {
         constructor() {
             super({ uniqueName: "はがねの剣", info: "力+70光+70",
-                pos: EqPos.武, lv: 35 });
+                pos: EqPos.武, lv: 65 });
         }
         equip(unit) { unit.prm(Prm.STR).eq += 70; unit.prm(Prm.LIG).eq += 70; }
     };
     Eq.杖 = new class extends Eq {
         constructor() {
             super({ uniqueName: "杖", info: "魔+20闇+20",
-                pos: EqPos.武, lv: 15 });
+                pos: EqPos.武, lv: 25 });
         }
         equip(unit) { unit.prm(Prm.MAG).eq += 20; unit.prm(Prm.DRK).eq += 20; }
     };
     Eq.スギの杖 = new class extends Eq {
         constructor() {
             super({ uniqueName: "スギの杖", info: "魔+40闇+40",
-                pos: EqPos.武, lv: 25 });
+                pos: EqPos.武, lv: 45 });
         }
         equip(unit) { unit.prm(Prm.MAG).eq += 40; unit.prm(Prm.DRK).eq += 40; }
     };
     Eq.ヒノキの杖 = new class extends Eq {
         constructor() {
             super({ uniqueName: "ヒノキの杖", info: "魔+70闇+70",
-                pos: EqPos.武, lv: 35 });
+                pos: EqPos.武, lv: 65 });
         }
         equip(unit) { unit.prm(Prm.MAG).eq += 70; unit.prm(Prm.DRK).eq += 70; }
     };
     Eq.木の鎖 = new class extends Eq {
         constructor() {
             super({ uniqueName: "木の鎖", info: "鎖+20過+20",
-                pos: EqPos.武, lv: 15 });
+                pos: EqPos.武, lv: 25 });
         }
         equip(unit) { unit.prm(Prm.CHN).eq += 20; unit.prm(Prm.PST).eq += 20; }
     };
     Eq.銅の鎖 = new class extends Eq {
         constructor() {
             super({ uniqueName: "銅の鎖", info: "鎖+40過+40",
-                pos: EqPos.武, lv: 25 });
+                pos: EqPos.武, lv: 45 });
         }
         equip(unit) { unit.prm(Prm.CHN).eq += 40; unit.prm(Prm.PST).eq += 40; }
     };
     Eq.鉄の鎖 = new class extends Eq {
         constructor() {
             super({ uniqueName: "鉄の鎖", info: "鎖+70過+70",
-                pos: EqPos.武, lv: 35 });
+                pos: EqPos.武, lv: 65 });
         }
         equip(unit) { unit.prm(Prm.CHN).eq += 70; unit.prm(Prm.PST).eq += 70; }
     };
     Eq.パチンコ = new class extends Eq {
         constructor() {
             super({ uniqueName: "パチンコ", info: "銃+20弓+20",
-                pos: EqPos.武, lv: 15 });
+                pos: EqPos.武, lv: 25 });
         }
         equip(unit) { unit.prm(Prm.GUN).eq += 20; unit.prm(Prm.ARR).eq += 20; }
     };
     Eq.ボウガン = new class extends Eq {
         constructor() {
             super({ uniqueName: "ボウガン", info: "銃+40弓+40",
-                pos: EqPos.武, lv: 25 });
+                pos: EqPos.武, lv: 45 });
         }
         equip(unit) { unit.prm(Prm.GUN).eq += 40; unit.prm(Prm.ARR).eq += 40; }
     };
     Eq.投石器 = new class extends Eq {
         constructor() {
             super({ uniqueName: "投石器", info: "銃+70弓+70",
-                pos: EqPos.武, lv: 35 });
+                pos: EqPos.武, lv: 65 });
         }
         equip(unit) { unit.prm(Prm.GUN).eq += 70; unit.prm(Prm.ARR).eq += 70; }
     };
@@ -549,22 +551,22 @@ EqEar._valueOf = new Map();
     };
     Eq.パウアハッハ = new class extends Eq {
         constructor() {
-            super({ uniqueName: "パウアハッハ", info: "魔法攻撃時稀に相手を＜防↓1＞化",
+            super({ uniqueName: "パウアハッハ", info: "魔法・暗黒・過去・弓術攻撃+20%",
                 pos: EqPos.手, lv: 12 });
         }
         beforeDoAtk(action, attacker, target, dmg) {
-            if (action instanceof ActiveTec && action.type === TecType.魔法 && Math.random() < 0.3) {
-                Unit.setCondition(target, Condition.防御低下, 1);
+            if (action instanceof ActiveTec && action.type.any(TecType.魔法, TecType.暗黒, TecType.過去, TecType.弓術)) {
+                dmg.pow.mul *= 1.2;
             }
         }
     };
     Eq.カンベレグ = new class extends Eq {
         constructor() {
-            super({ uniqueName: "カンベレグ", info: "格闘攻撃+20%",
+            super({ uniqueName: "カンベレグ", info: "格闘・神格・練術・銃術攻撃+20%",
                 pos: EqPos.手, lv: 12 });
         }
         beforeDoAtk(action, attacker, target, dmg) {
-            if (action instanceof ActiveTec && action.type === TecType.格闘) {
+            if (action instanceof ActiveTec && action.type.any(TecType.魔法, TecType.神格, TecType.練術, TecType.銃術)) {
                 dmg.pow.mul *= 1.2;
             }
         }

@@ -137,6 +137,7 @@ export abstract class Eq implements Force, Num{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+    phaseEnd(unit:Unit){}
 
     add(v:number){
         Num.add(this, v);
@@ -198,6 +199,7 @@ export class EqEar implements Force, Num{
     beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
     afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){}
+    phaseEnd(unit:Unit){}
 
     add(v:number){
         Num.add(this, v);
@@ -280,62 +282,62 @@ export namespace Eq{
     }
     export const                         う棒 = new class extends Eq{//mix
         constructor(){super({uniqueName:"う棒", info:"力+20光+20",
-                                pos:EqPos.武, lv:15});}
+                                pos:EqPos.武, lv:25});}
         equip(unit:Unit){ unit.prm(Prm.STR).eq += 20; unit.prm(Prm.LIG).eq += 20; }
     }
     export const                         銅剣 = new class extends Eq{//mix
         constructor(){super({uniqueName:"銅剣", info:"力+40光+40",
-                                pos:EqPos.武, lv:25});}
+                                pos:EqPos.武, lv:45});}
         equip(unit:Unit){ unit.prm(Prm.STR).eq += 40; unit.prm(Prm.LIG).eq += 40; }
     }
     export const                         はがねの剣 = new class extends Eq{//mix
         constructor(){super({uniqueName:"はがねの剣", info:"力+70光+70",
-                                pos:EqPos.武, lv:35});}
+                                pos:EqPos.武, lv:65});}
         equip(unit:Unit){ unit.prm(Prm.STR).eq += 70; unit.prm(Prm.LIG).eq += 70; }
     }
     export const                         杖 = new class extends Eq{//mix
         constructor(){super({uniqueName:"杖", info:"魔+20闇+20",
-                                pos:EqPos.武, lv:15});}
+                                pos:EqPos.武, lv:25});}
         equip(unit:Unit){ unit.prm(Prm.MAG).eq += 20; unit.prm(Prm.DRK).eq += 20; }
     }
     export const                         スギの杖 = new class extends Eq{//mix
         constructor(){super({uniqueName:"スギの杖", info:"魔+40闇+40",
-                                pos:EqPos.武, lv:25});}
+                                pos:EqPos.武, lv:45});}
         equip(unit:Unit){ unit.prm(Prm.MAG).eq += 40; unit.prm(Prm.DRK).eq += 40; }
     }
     export const                         ヒノキの杖 = new class extends Eq{//mix
         constructor(){super({uniqueName:"ヒノキの杖", info:"魔+70闇+70",
-                                pos:EqPos.武, lv:35});}
+                                pos:EqPos.武, lv:65});}
         equip(unit:Unit){ unit.prm(Prm.MAG).eq += 70; unit.prm(Prm.DRK).eq += 70; }
     }
     export const                         木の鎖 = new class extends Eq{//mix
         constructor(){super({uniqueName:"木の鎖", info:"鎖+20過+20",
-                                pos:EqPos.武, lv:15});}
+                                pos:EqPos.武, lv:25});}
         equip(unit:Unit){ unit.prm(Prm.CHN).eq += 20; unit.prm(Prm.PST).eq += 20; }
     }
     export const                         銅の鎖 = new class extends Eq{//mix
         constructor(){super({uniqueName:"銅の鎖", info:"鎖+40過+40",
-                                pos:EqPos.武, lv:25});}
+                                pos:EqPos.武, lv:45});}
         equip(unit:Unit){ unit.prm(Prm.CHN).eq += 40; unit.prm(Prm.PST).eq += 40; }
     }
     export const                         鉄の鎖 = new class extends Eq{//mix
         constructor(){super({uniqueName:"鉄の鎖", info:"鎖+70過+70",
-                                pos:EqPos.武, lv:35});}
+                                pos:EqPos.武, lv:65});}
         equip(unit:Unit){ unit.prm(Prm.CHN).eq += 70; unit.prm(Prm.PST).eq += 70; }
     }
     export const                         パチンコ = new class extends Eq{//mix
         constructor(){super({uniqueName:"パチンコ", info:"銃+20弓+20",
-                                pos:EqPos.武, lv:15});}
+                                pos:EqPos.武, lv:25});}
         equip(unit:Unit){ unit.prm(Prm.GUN).eq += 20; unit.prm(Prm.ARR).eq += 20; }
     }
     export const                         ボウガン = new class extends Eq{//mix
         constructor(){super({uniqueName:"ボウガン", info:"銃+40弓+40",
-                                pos:EqPos.武, lv:25});}
+                                pos:EqPos.武, lv:45});}
         equip(unit:Unit){ unit.prm(Prm.GUN).eq += 40; unit.prm(Prm.ARR).eq += 40; }
     }
     export const                         投石器 = new class extends Eq{//mix
         constructor(){super({uniqueName:"投石器", info:"銃+70弓+70",
-                                pos:EqPos.武, lv:35});}
+                                pos:EqPos.武, lv:65});}
         equip(unit:Unit){ unit.prm(Prm.GUN).eq += 70; unit.prm(Prm.ARR).eq += 70; }
     }
     // export const                         忍者刀 = new class extends Eq{
@@ -503,19 +505,19 @@ export namespace Eq{
         }
     }
     export const                         パウアハッハ = new class extends Eq{//mix
-        constructor(){super({uniqueName:"パウアハッハ", info:"魔法攻撃時稀に相手を＜防↓1＞化",
+        constructor(){super({uniqueName:"パウアハッハ", info:"魔法・暗黒・過去・弓術攻撃+20%",
                                 pos:EqPos.手, lv:12});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-            if(action instanceof ActiveTec && action.type === TecType.魔法 && Math.random() < 0.3){
-                Unit.setCondition(target, Condition.防御低下, 1);
+            if(action instanceof ActiveTec && action.type.any(TecType.魔法, TecType.暗黒, TecType.過去, TecType.弓術)){
+                dmg.pow.mul *= 1.2;
             }
         }
     }
     export const                         カンベレグ = new class extends Eq{//mix
-        constructor(){super({uniqueName:"カンベレグ", info:"格闘攻撃+20%",
+        constructor(){super({uniqueName:"カンベレグ", info:"格闘・神格・練術・銃術攻撃+20%",
                                 pos:EqPos.手, lv:12});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-            if(action instanceof ActiveTec && action.type === TecType.格闘){
+            if(action instanceof ActiveTec && action.type.any(TecType.魔法, TecType.神格, TecType.練術, TecType.銃術)){
                 dmg.pow.mul *= 1.2;
             }
         }

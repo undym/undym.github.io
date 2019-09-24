@@ -15,56 +15,54 @@ import { Util } from "../util.js";
 import { cwait, wait } from "../undym/scene.js";
 import { Player } from "../player.js";
 import { choice } from "../undym/random.js";
-class Event {
-    constructor(events) {
-        this.events = [];
-        for (const set of events) {
-            this.events.push({ ev: set[0], prob: set[1], isHappen: set[2] });
-        }
-    }
-    static createDef(rank) {
-        const events = [];
-        events.push([DungeonEvent.TREASURE, 0.001, () => true]);
-        events.push([DungeonEvent.GET_TREASURE_KEY, 0.001, () => true]);
-        events.push([DungeonEvent.EX_BATTLE, 0.001, () => Dungeon.now.dungeonClearCount > 0]);
-        events.push([DungeonEvent.BOX, 0.15, () => true]);
-        events.push([DungeonEvent.BATTLE, 0.15, () => true]);
-        events.push([DungeonEvent.TRAP, 0.04, () => true]);
-        if (rank >= 1) {
-            events.push([DungeonEvent.TREE, 0.03, () => true]);
-        }
-        events.push([DungeonEvent.REST, 0.03, () => true]);
-        return new Event(events);
-    }
-    remove(ev) {
-        this.events = this.events.filter(set => set.ev !== ev);
-        return this;
-    }
-    add(ev, prob, isHappen) {
-        this.events.push({ ev: ev, prob: prob, isHappen: isHappen });
-        return this;
-    }
-    addFirst(ev, prob, isHappen) {
-        this.events.unshift({ ev: ev, prob: prob, isHappen: isHappen });
-        return this;
-    }
-    rnd() {
-        for (const set of this.events) {
-            if (set.isHappen() && Math.random() < set.prob) {
-                return set.ev;
-            }
-        }
-        return DungeonEvent.empty;
-    }
-    has(ev) {
-        for (const set of this.events) {
-            if (set.ev === ev) {
-                return true;
-            }
-        }
-        return false;
-    }
-}
+// class Event{
+//     static createDef(rank:number){
+//         const events:[()=>DungeonEvent,()=>number,()=>boolean][] = [];
+//         events.push([()=>DungeonEvent.GET_TREASURE_KEY, ()=>0.0015, ()=>true]);
+//         events.push([()=>DungeonEvent.TREASURE,         ()=>0.001 , ()=>true]);
+//         events.push([()=>DungeonEvent.EX_BATTLE,        ()=>0.001 , ()=>Dungeon.now.dungeonClearCount > 0]);
+//         events.push([()=>DungeonEvent.BOX,              ()=>0.15  , ()=>true]);
+//         events.push([()=>DungeonEvent.BATTLE,           ()=>0.15  , ()=>true]);
+//         events.push([()=>DungeonEvent.TRAP,             ()=>0.04  , ()=>true]);
+//         if(rank >= 1){
+//             events.push([()=>DungeonEvent.TREE,         ()=>0.03  , ()=>true]);
+//         }
+//         events.push([()=>DungeonEvent.REST,             ()=>0.03  , ()=>true]);
+//         return new Event(events);
+//     }
+//     private events:{ev:()=>DungeonEvent, prob:()=>number, isHappen:()=>boolean}[] = [];
+//     constructor(events:[()=>DungeonEvent,()=>number,()=>boolean][]){
+//         for(const set of events){
+//             this.events.push( {ev:set[0], prob:set[1], isHappen:set[2]} );
+//         }
+//     }
+//     // remove(ev:DungeonEvent):this{
+//     //     this.events = this.events.filter(set=> set.ev !== ev);
+//     //     return this;
+//     // }
+//     add(ev:()=>DungeonEvent, prob:()=>number, isHappen:()=>boolean):this{
+//         this.events.push( {ev:ev, prob:prob, isHappen:isHappen} );
+//         return this;
+//     }
+//     addFirst(ev:()=>DungeonEvent, prob:()=>number, isHappen:()=>boolean):this{
+//         this.events.unshift( {ev:ev, prob:prob, isHappen:isHappen} );
+//         return this;
+//     }
+//     rnd():DungeonEvent{
+//         for(const set of this.events){
+//             if(set.isHappen() && Math.random() < set.prob()){
+//                 return set.ev();
+//             }
+//         }
+//         return DungeonEvent.empty;
+//     }
+//     // has(ev:DungeonEvent):boolean{
+//     //     for(const set of this.events){
+//     //         if(set.ev === ev){return true;}
+//     //     }
+//     //     return false;
+//     // }
+// }
 export class Dungeon {
     //-----------------------------------------------------------------
     //
@@ -127,10 +125,43 @@ export class Dungeon {
     //
     //-----------------------------------------------------------------
     rndEvent() {
-        if (!this.event) {
-            this.event = this.args.event ? this.args.event() : Event.createDef(this.rank);
+        if (Math.random() < 0.002) {
+            if (this.treasureKey.num === 0) {
+                if (Math.random() < 0.8) {
+                    return DungeonEvent.GET_TREASURE_KEY;
+                }
+                else {
+                    return DungeonEvent.TREASURE;
+                }
+            }
+            else {
+                return Math.random() < 0.5 ? DungeonEvent.GET_TREASURE_KEY : DungeonEvent.TREASURE;
+            }
         }
-        return this.event.rnd();
+        if (Dungeon.now.dungeonClearCount > 0 && Math.random() < 0.001) {
+            return DungeonEvent.EX_BATTLE;
+        }
+        if (Math.random() < 0.15) {
+            return DungeonEvent.BOX;
+        }
+        if (Math.random() < 0.15) {
+            return DungeonEvent.BATTLE;
+        }
+        if (Math.random() < 0.04) {
+            return DungeonEvent.TRAP;
+        }
+        if (this.rank >= 1 && Math.random() < 0.01) {
+            return DungeonEvent.TREE;
+        }
+        if (this.rank >= 2 && Math.random() < 0.01) {
+            return DungeonEvent.DIG;
+        }
+        //(10 + rank * 1) / (10 + rank * 6)
+        //[rank = 0,  1 / 1] [rank = 1,  11 / 16] [rank = 5,  15 / 40] [rank = 10, 20 / 70 = 2 / 7]
+        if (Math.random() < 0.02 * (10 + this.rank) / (10 + this.rank * 6)) {
+            return DungeonEvent.REST;
+        }
+        return DungeonEvent.empty;
     }
     rndEnemyNum() {
         const prob = 1.0 - (this.rank + 4) / (this.rank * this.rank + 5);
@@ -285,7 +316,7 @@ Dungeon.auNow = 0;
                 dungeonClearEvent: { get: () => super.dungeonClearEvent }
             });
             return __awaiter(this, void 0, void 0, function* () {
-                _super.dungeonClearEvent.call(this);
+                yield _super.dungeonClearEvent.call(this);
                 if (!Player.よしこ.member) {
                     Player.よしこ.join();
                     Util.msg.set(`よしこが仲間になった`);
@@ -361,7 +392,7 @@ Dungeon.auNow = 0;
     Dungeon.黒遺跡 = new class extends Dungeon {
         constructor() {
             super({ uniqueName: "黒遺跡",
-                rank: 1, enemyLv: 18, au: 120,
+                rank: 0, enemyLv: 18, au: 120,
                 clearItem: () => Item.黒遺跡の玉,
                 treasures: () => [Eq.魔ヶ玉の指輪],
                 treasureKey: () => Item.黒遺跡の鍵,

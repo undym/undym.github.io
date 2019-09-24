@@ -230,9 +230,40 @@ export namespace DungeonEvent{
                 let addNum = 1;
                 item.add( addNum );
 
-                if(i < openNum - 1){
-                    await wait();
-                }
+                if(i < openNum - 1){await wait();}
+            }
+        };
+        createBtnLayout = DungeonEvent.empty.createBtnLayout;
+    };
+    export const DIG:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
+        // createImg = ()=> new Img("img/tree.png");
+        happenInner = ()=>{Util.msg.set("掘れそうな場所がある");};
+        createBtnLayout = ()=> createDefLayout()
+                                .set(ReturnBtn.index, new Btn("掘る", async()=>{
+                                    await DungeonEvent.TREE_BROKEN.happen();
+                                }))
+                                ;
+    };
+    export const DIGED:DungeonEvent = new class extends DungeonEvent{
+        constructor(){super();}
+        // createImg = ()=> new Img("img/tree_broken.png");
+        // isZoomImg = ()=> false;
+        happenInner = async()=>{
+            let openNum = 1;
+            let openBoost = 0.3;
+            while(Math.random() <= openBoost){
+                openNum++;
+                openBoost /= 2;
+            }
+            let baseRank = Dungeon.now.rank / 2;
+            for(let i = 0; i < openNum; i++){
+                const itemRank = Item.fluctuateRank( baseRank );
+                let item = Item.rndItem( ItemDrop.DIG, itemRank );
+                let addNum = 1;
+                item.add( addNum );
+
+                if(i < openNum - 1){await wait();}
             }
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;

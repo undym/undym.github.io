@@ -176,6 +176,11 @@ export class BattleScene extends Scene {
     }
     phaseEnd() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (Battle.turn > 0) {
+                for (const u of Unit.all.filter(u => u.exists && !u.dead)) {
+                    yield u.phaseEnd();
+                }
+            }
             for (let u of Unit.all) {
                 yield u.judgeDead();
             }
@@ -279,7 +284,7 @@ export class BattleScene extends Scene {
                 }
                 l.add(createTecBtn(attacker.tecs[i]));
             }
-            l.addFromLast(new Btn("ITEM", () => __awaiter(this, void 0, void 0, function* () {
+            l.addFromLast(new Btn("アイテム", () => __awaiter(this, void 0, void 0, function* () {
                 Scene.load(ItemScene.ins({
                     user: attacker,
                     selectUser: false,

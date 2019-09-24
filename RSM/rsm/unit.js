@@ -226,30 +226,49 @@ export class Unit {
     //
     //---------------------------------------------------------
     equip() {
-        for (const prm of Prm.values()) {
-            this.prm(prm).eq = 0;
-        }
-        this.force(f => f.equip(this));
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const prm of Prm.values()) {
+                this.prm(prm).eq = 0;
+            }
+            yield this.force(f => f.equip(this));
+        });
     }
-    battleStart() { this.force(f => f.battleStart(this)); }
-    phaseStart() { this.force(f => f.phaseStart(this)); }
-    beforeDoAtk(action, target, dmg) { this.force(f => f.beforeDoAtk(action, this, target, dmg)); }
-    beforeBeAtk(action, attacker, dmg) { this.force(f => f.beforeBeAtk(action, attacker, this, dmg)); }
-    afterDoAtk(action, target, dmg) { this.force(f => f.afterDoAtk(action, this, target, dmg)); }
-    afterBeAtk(action, attacker, dmg) { this.force(f => f.afterBeAtk(action, attacker, this, dmg)); }
+    battleStart() {
+        return __awaiter(this, void 0, void 0, function* () { yield this.force((f) => __awaiter(this, void 0, void 0, function* () { return yield f.battleStart(this); })); });
+    }
+    phaseStart() {
+        return __awaiter(this, void 0, void 0, function* () { yield this.force((f) => __awaiter(this, void 0, void 0, function* () { return yield f.phaseStart(this); })); });
+    }
+    beforeDoAtk(action, target, dmg) {
+        return __awaiter(this, void 0, void 0, function* () { yield this.force((f) => __awaiter(this, void 0, void 0, function* () { return yield f.beforeDoAtk(action, this, target, dmg); })); });
+    }
+    beforeBeAtk(action, attacker, dmg) {
+        return __awaiter(this, void 0, void 0, function* () { yield this.force((f) => __awaiter(this, void 0, void 0, function* () { return yield f.beforeBeAtk(action, attacker, this, dmg); })); });
+    }
+    afterDoAtk(action, target, dmg) {
+        return __awaiter(this, void 0, void 0, function* () { yield this.force((f) => __awaiter(this, void 0, void 0, function* () { return yield f.afterDoAtk(action, this, target, dmg); })); });
+    }
+    afterBeAtk(action, attacker, dmg) {
+        return __awaiter(this, void 0, void 0, function* () { yield this.force((f) => __awaiter(this, void 0, void 0, function* () { return yield f.afterBeAtk(action, attacker, this, dmg); })); });
+    }
+    phaseEnd() {
+        return __awaiter(this, void 0, void 0, function* () { yield this.force((f) => __awaiter(this, void 0, void 0, function* () { return yield f.phaseEnd(this); })); });
+    }
     force(forceDlgt) {
-        for (const tec of this.tecs) {
-            forceDlgt(tec);
-        }
-        for (const eq of this.equips.values()) {
-            forceDlgt(eq);
-        }
-        for (const ear of this.eqEars.values()) {
-            forceDlgt(ear);
-        }
-        for (const cond of this.conditions.values()) {
-            forceDlgt(cond.condition);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const tec of this.tecs) {
+                yield forceDlgt(tec);
+            }
+            for (const eq of this.equips.values()) {
+                yield forceDlgt(eq);
+            }
+            for (const ear of this.eqEars.values()) {
+                yield forceDlgt(ear);
+            }
+            for (const cond of this.conditions.values()) {
+                yield forceDlgt(cond.condition);
+            }
+        });
     }
     //---------------------------------------------------------
     //
@@ -292,6 +311,7 @@ export class Unit {
     getCondition(type) {
         return this.conditions[type.ordinal].condition;
     }
+    /**その状態でなければ0を返す。 */
     getConditionValue(condition) {
         if (condition instanceof Condition) {
             const set = this.conditions[condition.type.ordinal];

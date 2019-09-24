@@ -366,18 +366,18 @@ export namespace Job{
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.ダウザー),
         });}
         setEnemyInner   = (e:EUnit)=>{
-            e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.殴る, Tec.殴る];
+            e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.頭痛, Tec.殴る, Tec.殴る, Tec.やる気ゼロ];
         }
     };
     export const                         ハイパー:Job = new class extends Job{
         constructor(){super({uniqueName:"ハイパー", info:"",
                                 appearLv:80, lvupExp:Job.DEF_LVUP_EXP * 4,
                                 grow:()=> [[Prm.PST, 1]],
-                                learn:()=> [],
+                                learn:()=> [Tec.ネガティヴフィードバック],
                                 canJobChange:(p:PUnit)=>p.isMasteredJob(Job.エスパー),
         });}
         setEnemyInner   = (e:EUnit)=>{
-            e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.殴る, Tec.殴る];
+            e.tecs = [Tec.念力, Tec.念, Tec.念, Tec.念, Tec.念, Tec.殴る, Tec.弱体液, Tec.やる気ゼロ];
         }
     };
 
@@ -444,26 +444,26 @@ export namespace Job{
             e.tecs = [Tec.撃つ, Tec.撃つ, Tec.撃つ, Tec.二丁拳銃, Tec.射る, Tec.射る, Tec.インドラ, Tec.殴る];
         }
     };
-    // export const                         探検家 = new class extends Job{
-    //     constructor(){super({uniqueName:"探検家", info:"",
-    //                             appearLv:14, lvupExp:Job.DEF_LVUP_EXP * 2,
-    //                             grow:()=> [[Prm.MAX_HP, 2]],
-    //                             learn:()=> [Tec.便風, Tec.炎の鞭],
-    //                             canJobChange:(p:PUnit)=>p.isMasteredJob(Job.格闘家) || p.isMasteredJob(Job.天使)  || p.isMasteredJob(Job.スネイカー)  || p.isMasteredJob(Job.ガンマン),
-    //     });}
-    //     setEnemyInner   = (e:EUnit)=>{
-    //         e.tecs = [Tec.撃つ, Tec.撃つ, Tec.射る, Tec.射る, Tec.殴る, Tec.天籟, Tec.便風, Tec.炎の鞭];
-    //     }
-    // };
-    // export const                         探求家 = new class extends Job{
-    //     constructor(){super({uniqueName:"探求家", info:"",
-    //                             appearLv:14, lvupExp:Job.DEF_LVUP_EXP * 2,
-    //                             grow:()=> [[Prm.MAX_HP, 2]],
-    //                             learn:()=> [],
-    //                             canJobChange:(p:PUnit)=>p.isMasteredJob(Job.魔法使い) || p.isMasteredJob(Job.暗黒戦士)  || p.isMasteredJob(Job.ダウザー)  || p.isMasteredJob(Job.アーチャー),
-    //     });}
-    //     setEnemyInner   = (e:EUnit)=>{
-    //         e.tecs = [Tec.撃つ, Tec.撃つ, Tec.射る, Tec.射る, Tec.ヴァハ, Tec.暗黒剣];
-    //     }
-    // };
+    export const                         探検家 = new class extends Job{
+        constructor(){super({uniqueName:"探検家", info:"",
+                                appearLv:14, lvupExp:Job.DEF_LVUP_EXP * 3,
+                                grow:()=> [[Prm.MAX_HP, 2]],
+                                learn:()=> [Tec.便風, Tec.石肌],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.格闘家) || p.isMasteredJob(Job.天使)  || p.isMasteredJob(Job.スネイカー)  || p.isMasteredJob(Job.ガンマン),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.撃つ, Tec.撃つ, Tec.射る, Tec.射る, Tec.殴る, Tec.天籟, Tec.便風, Tec.石肌];
+        }
+    };
+    export const                         探求家 = new class extends Job{
+        constructor(){super({uniqueName:"探求家", info:"",
+                                appearLv:14, lvupExp:Job.DEF_LVUP_EXP * 3,
+                                grow:()=> [[Prm.MAX_HP, 2]],
+                                learn:()=> [Tec.保湿クリーム],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.魔法使い) || p.isMasteredJob(Job.暗黒戦士)  || p.isMasteredJob(Job.ダウザー)  || p.isMasteredJob(Job.アーチャー),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.撃つ, Tec.撃つ, Tec.射る, Tec.射る, Tec.ヴァハ, Tec.暗黒剣, Tec.保湿クリーム];
+        }
+    };
 }

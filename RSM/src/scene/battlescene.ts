@@ -194,6 +194,11 @@ export class BattleScene extends Scene{
     }
 
     private async phaseEnd(){
+        if(Battle.turn > 0){
+            for(const u of Unit.all.filter(u=> u.exists && !u.dead)){
+                await u.phaseEnd();
+            }
+        }
         for(let u of Unit.all){
             await u.judgeDead();
         }
@@ -315,7 +320,7 @@ export class BattleScene extends Scene{
             l.add( createTecBtn(attacker.tecs[i]) );
         }
 
-        l.addFromLast(new Btn("ITEM", async()=>{
+        l.addFromLast(new Btn("アイテム", async()=>{
             Scene.load( ItemScene.ins({
                 user:attacker,
                 selectUser:false,

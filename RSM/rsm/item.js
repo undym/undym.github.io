@@ -59,6 +59,7 @@ export const ItemDrop = {
     get NO() { return 0; },
     get BOX() { return 1 << 0; },
     get TREE() { return 1 << 1; },
+    get DIG() { return 1 << 2; },
 };
 class ItemValues {
     constructor(items) {
@@ -190,7 +191,7 @@ export class Item {
 Item._values = [];
 Item._consumableValues = [];
 Item._dropTypeValues = new Map();
-Item.DEF_NUM_LIMIT = 999;
+Item.DEF_NUM_LIMIT = 9999;
 (function (Item) {
     //-----------------------------------------------------------------
     //
@@ -555,7 +556,7 @@ Item.DEF_NUM_LIMIT = 999;
     Item.土 = new class extends Item {
         constructor() {
             super({ uniqueName: "土", info: "",
-                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.DIG });
         }
     };
     Item.水 = new class extends Item {
@@ -600,6 +601,18 @@ Item.DEF_NUM_LIMIT = 999;
                 type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
         }
     };
+    Item.枝 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "枝", info: "",
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.TREE });
+        }
+    };
+    Item.葉っぱ = new class extends Item {
+        constructor() {
+            super({ uniqueName: "葉っぱ", info: "",
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.TREE });
+        }
+    };
     //-----------------------------------------------------------------
     //
     //素材BoxRank1
@@ -608,7 +621,7 @@ Item.DEF_NUM_LIMIT = 999;
     Item.銅 = new class extends Item {
         constructor() {
             super({ uniqueName: "銅", info: "",
-                type: ItemType.素材, rank: 1, drop: ItemDrop.BOX });
+                type: ItemType.素材, rank: 1, drop: ItemDrop.BOX | ItemDrop.DIG });
         }
     };
     Item.朽ち果てた鍵 = new class extends Item {
@@ -652,16 +665,22 @@ Item.DEF_NUM_LIMIT = 999;
                 type: ItemType.素材, rank: 2, drop: ItemDrop.BOX });
         }
     };
+    Item.Li = new class extends Item {
+        constructor() {
+            super({ uniqueName: "Li", info: "",
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX });
+        }
+    };
     Item.黒い石 = new class extends Item {
         constructor() {
             super({ uniqueName: "黒い石", info: "",
-                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX });
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.DIG });
         }
     };
     Item.黒い砂 = new class extends Item {
         constructor() {
             super({ uniqueName: "黒い砂", info: "",
-                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX });
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.DIG });
         }
     };
     Item.黒い枝 = new class extends Item {
@@ -679,7 +698,7 @@ Item.DEF_NUM_LIMIT = 999;
     Item.鉄 = new class extends Item {
         constructor() {
             super({ uniqueName: "鉄", info: "かたい",
-                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX });
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.DIG });
         }
     };
     //-----------------------------------------------------------------
@@ -696,6 +715,12 @@ Item.DEF_NUM_LIMIT = 999;
     Item.岩 = new class extends Item {
         constructor() {
             super({ uniqueName: "岩", info: "",
+                type: ItemType.素材, rank: 3, drop: ItemDrop.BOX | ItemDrop.DIG });
+        }
+    };
+    Item.おにく = new class extends Item {
+        constructor() {
+            super({ uniqueName: "おにく", info: "",
                 type: ItemType.素材, rank: 3, drop: ItemDrop.BOX });
         }
     };
@@ -712,21 +737,9 @@ Item.DEF_NUM_LIMIT = 999;
     };
     //-----------------------------------------------------------------
     //
-    //素材TREE
+    //素材TREE only
     //
     //-----------------------------------------------------------------
-    Item.枝 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "枝", info: "",
-                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.TREE });
-        }
-    };
-    Item.葉っぱ = new class extends Item {
-        constructor() {
-            super({ uniqueName: "葉っぱ", info: "",
-                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.TREE });
-        }
-    };
     Item.竹 = new class extends Item {
         constructor() {
             super({ uniqueName: "竹", info: "",
@@ -763,6 +776,11 @@ Item.DEF_NUM_LIMIT = 999;
                 type: ItemType.素材, rank: 8, drop: ItemDrop.TREE });
         }
     };
+    //-----------------------------------------------------------------
+    //
+    //素材DIG only
+    //
+    //-----------------------------------------------------------------
     //-----------------------------------------------------------------
     //
     //合成素材
