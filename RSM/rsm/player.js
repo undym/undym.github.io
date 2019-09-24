@@ -83,7 +83,7 @@ Player._valueOf = new Map();
             p.setEq(Eq.メガネ.pos, Eq.メガネ);
             p.tecs = [
                 Tec.殴る,
-                Tec.マジカルパンチ,
+                Tec.empty,
                 Tec.empty,
                 Tec.empty,
                 Tec.empty,

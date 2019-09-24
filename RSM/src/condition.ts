@@ -95,7 +95,7 @@ export namespace Condition{
     //
     //
     //--------------------------------------------------------------------------
-    export const             empty = new class extends Condition{
+    export const             empty:Condition = new class extends Condition{
         constructor(){super("empty", ConditionType.GOOD_LV1);}
         toString():string{return "";}
     };
@@ -104,7 +104,7 @@ export namespace Condition{
     //GOOD_LV1
     //
     //--------------------------------------------------------------------------
-    export const             練 = new class extends Condition{
+    export const             練:Condition = new class extends Condition{
         constructor(){super("練", ConditionType.GOOD_LV1);}
         async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type === TecType.格闘){
@@ -116,7 +116,7 @@ export namespace Condition{
             }
         }
     };
-    export const             狙 = new class extends Condition{
+    export const             狙:Condition = new class extends Condition{
         constructor(){super("狙", ConditionType.GOOD_LV1);}
         async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec){
@@ -131,7 +131,7 @@ export namespace Condition{
     //GOOD_LV2
     //
     //--------------------------------------------------------------------------
-    export const             盾 = new class extends Condition{
+    export const             盾:Condition = new class extends Condition{
         constructor(){super("盾", ConditionType.GOOD_LV2);}
         async beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type === TecType.格闘){
@@ -143,7 +143,7 @@ export namespace Condition{
             }
         }
     };
-    export const             風 = new class extends Condition{
+    export const             風:Condition = new class extends Condition{
         constructor(){super("風", ConditionType.GOOD_LV2);}
         async beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec){
@@ -158,7 +158,7 @@ export namespace Condition{
     //GOOD_LV3
     //
     //--------------------------------------------------------------------------
-    export const             癒 = new class extends Condition{
+    export const             癒:Condition = new class extends Condition{
         constructor(){super("癒", ConditionType.GOOD_LV3);}
         
         async phaseStart(unit:Unit){
@@ -177,7 +177,7 @@ export namespace Condition{
     //BAD_LV1
     //
     //--------------------------------------------------------------------------
-    export const             攻撃低下 = new class extends Condition{
+    export const             攻撃低下:Condition = new class extends Condition{
         constructor(){super("攻↓", ConditionType.BAD_LV1);}
         async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec){
@@ -188,7 +188,7 @@ export namespace Condition{
             }
         }
     };
-    export const             防御低下 = new class extends Condition{
+    export const             防御低下:Condition = new class extends Condition{
         constructor(){super("防↓", ConditionType.BAD_LV1);}
         async beforeBeoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec){
@@ -204,7 +204,7 @@ export namespace Condition{
     //BAD_LV2
     //
     //--------------------------------------------------------------------------
-    export const             毒 = new class extends Condition{
+    export const             毒:Condition = new class extends Condition{
         constructor(){super("毒", ConditionType.BAD_LV2);}
         async phaseEnd(unit:Unit){
             const value = unit.getConditionValue(this);

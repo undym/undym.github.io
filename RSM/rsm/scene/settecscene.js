@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Scene } from "../undym/scene.js";
-import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout, Labels, Label } from "../undym/layout.js";
+import { FlowLayout, ILayout, VariableLayout, XLayout, RatioLayout, Labels } from "../undym/layout.js";
 import { Btn } from "../widget/btn.js";
 import { Unit } from "../unit.js";
 import { Input } from "../undym/input.js";
@@ -23,6 +23,7 @@ export class SetTecScene extends Scene {
     constructor() {
         super();
         this.choosed = false;
+        this.settingTecList = new List();
         this.list = new List();
     }
     init() {
@@ -32,8 +33,8 @@ export class SetTecScene extends Scene {
         super.clear();
         super.add(Place.TOP, DrawPlayInfo.ins);
         const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
-        const mainBounds = new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h);
-        super.add(mainBounds, new XLayout()
+        super.add(new Rect(0, Place.TOP.yh, 1, 1 - Place.TOP.h - pboxBounds.h), new XLayout()
+            .add(this.settingTecList)
             .add(this.list)
             .add((() => {
             const infoBounds = new Rect(0, 0, 1, 0.4);
@@ -47,35 +48,24 @@ export class SetTecScene extends Scene {
                     const info = new Labels(Font.def)
                         .add(() => `[${this.choosedTec}]`)
                         .add(() => `<${this.choosedTec.type}>`)
-                        .addLayout(new XLayout()
-                        .add(new Label(Font.def, () => {
+                        .addln(() => {
+                        let res = "";
                         if (this.choosedTec instanceof ActiveTec) {
-                            return this.choosedTec.mpCost > 0 ? `MP:${this.choosedTec.mpCost}` : "";
-                        }
-                        return "";
-                    }))
-                        .add(new Label(Font.def, () => {
-                        if (this.choosedTec instanceof ActiveTec) {
-                            return this.choosedTec.tpCost > 0 ? `TP:${this.choosedTec.tpCost}` : "";
-                        }
-                        return "";
-                    }))
-                        .add(new Label(Font.def, () => {
-                        if (this.choosedTec instanceof ActiveTec) {
-                            return this.choosedTec.epCost > 0 ? `EP:${this.choosedTec.epCost}` : "";
-                        }
-                        return "";
-                    }))
-                        .add(new Label(Font.def, () => {
-                        if (this.choosedTec instanceof ActiveTec && this.choosedTec.itemCost.length > 0) {
-                            let res = "";
+                            if (this.choosedTec.mpCost > 0) {
+                                res += `MP:${this.choosedTec.mpCost} `;
+                            }
+                            if (this.choosedTec.tpCost > 0) {
+                                res += `TP:${this.choosedTec.tpCost} `;
+                            }
+                            if (this.choosedTec.epCost > 0) {
+                                res += `EP:${this.choosedTec.epCost} `;
+                            }
                             for (const set of this.choosedTec.itemCost) {
                                 res += `${set.item}-${set.num}(${set.item.num}) `;
                             }
-                            return res;
                         }
-                        return "";
-                    })), () => Font.def.ratioH)
+                        return res;
+                    })
                         .addln(() => this.choosedTec.info);
                     return this.choosed ? info : ILayout.empty;
                 });
@@ -90,20 +80,6 @@ export class SetTecScene extends Scene {
                                 const tecs = type.tecs.filter(t => this.target.isMasteredTec(t));
                                 this.setList(this.target, `${type}`, tecs);
                             }
-                        })(false);
-                        // this.setList( this.target,u=>{
-                        //     let res:Tec[] = [];
-                        //     for(let type of TecType.values()){
-                        //         res = res.concat( type.tecs.filter(t=> u.isMasteredTec(t)) );
-                        //     }
-                        //     return res;
-                        // });
-                    }),
-                    new Btn("セット中", () => {
-                        (this.resetList = keepScroll => {
-                            this.choosed = false;
-                            this.list.clear(keepScroll);
-                            this.setList(this.target, "セット中", this.target.tecs);
                         })(false);
                     }),
                 ];
@@ -121,7 +97,7 @@ export class SetTecScene extends Scene {
                                 if (this.target.tecs[i] === Tec.empty) {
                                     this.target.tecs[i] = this.choosedTec;
                                     FX_Str(Font.def, `${this.choosedTec}をセットしました`, { x: 0.5, y: 0.5 }, Color.WHITE);
-                                    // this.setList(this.target, this.getListTecs ,/*keepPage*/true);
+                                    this.setSettingTecList(this.target, true);
                                     return;
                                 }
                             }
@@ -135,7 +111,7 @@ export class SetTecScene extends Scene {
                                 if (this.target.tecs[i] === this.choosedTec) {
                                     this.target.tecs[i] = Tec.empty;
                                     FX_Str(Font.def, `${this.choosedTec}を外しました`, { x: 0.5, y: 0.5 }, Color.WHITE);
-                                    // this.setList(this.target, this.getListTecs, /*keepPage*/true);
+                                    this.setSettingTecList(this.target, true);
                                     this.resetList(true);
                                     return;
                                 }
@@ -182,16 +158,44 @@ export class SetTecScene extends Scene {
                 for (let p of Unit.players.filter(p => p.exists)) {
                     if (p.bounds.contains(Input.point)) {
                         this.target = p;
+                        this.setSettingTecList(p, false);
                         this.resetList(false);
                         break;
                     }
                 }
             } }));
+        this.setSettingTecList(this.target, true);
         (this.resetList = keepScroll => {
+            const type = TecType.格闘;
             this.choosed = false;
             this.list.clear(keepScroll);
-            this.setList(this.target, "セット中", this.target.tecs);
+            this.setList(this.target, `${type}`, type.tecs.filter(t => this.target.isMasteredTec(t)));
         })(false);
+    }
+    setSettingTecList(unit, keepScroll) {
+        this.settingTecList.clear(keepScroll);
+        this.settingTecList.add({
+            center: () => `セット中`,
+            groundColor: () => Color.D_GRAY,
+        });
+        unit.tecs
+            .forEach((tec) => {
+            if (tec === Tec.empty) {
+                this.settingTecList.add({
+                    right: () => "-",
+                });
+            }
+            else {
+                this.settingTecList.add({
+                    right: () => `${tec}`,
+                    groundColor: () => tec === this.choosedTec ? Color.D_CYAN : Color.BLACK,
+                    push: (elm) => {
+                        this.choosedTec = tec;
+                        this.choosed = true;
+                    },
+                });
+            }
+        });
     }
     setList(unit, listTypeName, tecs) {
         this.choosed = false;

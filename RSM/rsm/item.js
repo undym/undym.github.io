@@ -223,14 +223,14 @@ Item.DEF_NUM_LIMIT = 999;
     //-----------------------------------------------------------------
     Item.スティックパン = new class extends Item {
         constructor() {
-            super({ uniqueName: "スティックパン", info: "HP+5%+10",
+            super({ uniqueName: "スティックパン", info: "HP+5%+20",
                 type: ItemType.HP回復, rank: 0,
                 consumable: true, drop: ItemDrop.NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
-                    const value = (10 + target.prm(Prm.MAX_HP).total * 0.05) | 0;
+                    const value = target.prm(Prm.MAX_HP).total * 0.05 + 20;
                     Unit.healHP(target, value);
                     if (SceneType.now === SceneType.BATTLE) {
-                        Util.msg.set(`${target.name}のHPが${value}回復した`, Color.GREEN.bright);
+                        Util.msg.set(`${target.name}のHPが${value | 0}回復した`, Color.GREEN.bright);
                         yield wait();
                     }
                 }),
@@ -239,11 +239,11 @@ Item.DEF_NUM_LIMIT = 999;
     };
     Item.硬化スティックパン = new class extends Item {
         constructor() {
-            super({ uniqueName: "硬化スティックパン", info: "HP+5%+30",
+            super({ uniqueName: "硬化スティックパン", info: "HP+5%+50",
                 type: ItemType.HP回復, rank: 0,
                 consumable: true, drop: ItemDrop.NO,
                 use: (user, target) => __awaiter(this, void 0, void 0, function* () {
-                    const value = 30 + target.prm(Prm.MAX_HP).total * 0.05;
+                    const value = target.prm(Prm.MAX_HP).total * 0.05 + 50;
                     Unit.healHP(target, value);
                     if (SceneType.now === SceneType.BATTLE) {
                         Util.msg.set(`${target.name}のHPが${value | 0}回復した`, Color.GREEN.bright);
@@ -594,6 +594,12 @@ Item.DEF_NUM_LIMIT = 999;
                 type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
         }
     };
+    Item.草 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "草", info: "",
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
+        }
+    };
     //-----------------------------------------------------------------
     //
     //素材BoxRank1
@@ -620,6 +626,18 @@ Item.DEF_NUM_LIMIT = 999;
     Item.ほぐし水 = new class extends Item {
         constructor() {
             super({ uniqueName: "ほぐし水", info: "",
+                type: ItemType.素材, rank: 1, drop: ItemDrop.BOX });
+        }
+    };
+    Item.ひも = new class extends Item {
+        constructor() {
+            super({ uniqueName: "ひも", info: "",
+                type: ItemType.素材, rank: 1, drop: ItemDrop.BOX });
+        }
+    };
+    Item.消えない炎 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "消えない炎", info: "たまに消える",
                 type: ItemType.素材, rank: 1, drop: ItemDrop.BOX });
         }
     };
@@ -675,6 +693,12 @@ Item.DEF_NUM_LIMIT = 999;
                 type: ItemType.素材, rank: 3, drop: ItemDrop.BOX });
         }
     };
+    Item.岩 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "岩", info: "",
+                type: ItemType.素材, rank: 3, drop: ItemDrop.BOX });
+        }
+    };
     //-----------------------------------------------------------------
     //
     //素材BoxRank4
@@ -721,16 +745,16 @@ Item.DEF_NUM_LIMIT = 999;
                 type: ItemType.素材, rank: 1, drop: ItemDrop.TREE });
         }
     };
-    Item.ヒノキ = new class extends Item {
-        constructor() {
-            super({ uniqueName: "ヒノキ", info: "",
-                type: ItemType.素材, rank: 1, drop: ItemDrop.TREE });
-        }
-    };
     Item.赤松 = new class extends Item {
         constructor() {
             super({ uniqueName: "赤松", info: "",
                 type: ItemType.素材, rank: 1, drop: ItemDrop.TREE });
+        }
+    };
+    Item.ヒノキ = new class extends Item {
+        constructor() {
+            super({ uniqueName: "ヒノキ", info: "",
+                type: ItemType.素材, rank: 2, drop: ItemDrop.TREE });
         }
     };
     Item.無法松 = new class extends Item {

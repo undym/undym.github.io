@@ -107,7 +107,7 @@ export namespace Player{
             
             p.tecs = [
                 Tec.殴る,
-                Tec.マジカルパンチ,
+                Tec.empty,
                 Tec.empty,
                 Tec.empty,
                 Tec.empty,

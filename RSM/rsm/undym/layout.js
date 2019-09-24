@@ -300,11 +300,9 @@ export class Labels extends ILayout {
     }
     drawInner(bounds) {
         let y = bounds.y;
-        let h = 0;
         for (const e of this.elms) {
-            h = e.h();
-            e.draw(new Rect(bounds.x, y, bounds.w, h));
-            y += h;
+            e.draw(new Rect(bounds.x, y, bounds.w, e.h()));
+            y += e.h();
         }
     }
 }

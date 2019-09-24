@@ -475,7 +475,7 @@ export namespace Tec{
         });}
         async afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof Tec && action.type === TecType.格闘 && !dmg.counter){
-                Util.msg.set(">カウンター");
+                Util.msg.set(">カウンター"); await wait();
                 let cdmg = TecType.格闘.createDmg(target, attacker);
                 cdmg.counter = true;
                 attacker.doDmg(cdmg); await wait();
@@ -539,8 +539,19 @@ export namespace Tec{
     export const                          天籟:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"天籟", info:"一体に神格攻撃",
                               type:TecType.神格, targetings:Targeting.SELECT,
-                              mul:1, num:1.5, hit:1.5,
+                              mul:1, num:1, hit:1.5,
         });}
+    }
+    export const                          炎の鞭:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"炎の鞭", info:"一体に鎖値を加算した神格攻撃",
+                              type:TecType.神格, targetings:Targeting.SELECT,
+                              mul:1, num:1, hit:1.5, mp:1, tp:1,
+        });}
+        createDmg(attacker:Unit, target:Unit){
+            const dmg = super.createDmg(attacker, target);
+            dmg.pow.add += attacker.prm(Prm.CHN).total;
+            return dmg;
+        }
     }
     //--------------------------------------------------------------------------
     //
@@ -738,6 +749,21 @@ export namespace Tec{
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             if(action instanceof ActiveTec && action.type.any(TecType.銃術, TecType.弓術)){
                 dmg.pow.mul *= 0.7;
+            }
+        }
+    };
+    export const                         カイゼルの目:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"カイゼルの目", info:"銃・弓攻撃時稀にクリティカル",
+                                type:TecType.銃術,
+        });}
+        async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(
+                action instanceof ActiveTec 
+                && (action.type.any(TecType.銃術, TecType.弓術))
+                && Math.random() < 0.25
+            ){
+                Util.msg.set("＞カイゼルの目");
+                dmg.pow.mul *= 1.5;
             }
         }
     };
@@ -1093,19 +1119,12 @@ export namespace Tec{
             dmg.hit.add += 0.07;
         }
     };
-    export const                         カイゼルの目:PassiveTec = new class extends PassiveTec{
-        constructor(){super({uniqueName:"カイゼルの目", info:"銃・弓攻撃時稀にクリティカル",
+    export const                         便風:PassiveTec = new class extends PassiveTec{
+        constructor(){super({uniqueName:"便風", info:"攻撃回避率上昇",
                                 type:TecType.その他,
         });}
-        async beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-            if(
-                action instanceof ActiveTec 
-                && (action.type.any(TecType.銃術, TecType.弓術))
-                && Math.random() < 0.25
-            ){
-                Util.msg.set("＞カイゼルの目");
-                dmg.pow.mul *= 1.5;
-            }
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.hit.mul *= 0.9;
         }
     };
     //--------------------------------------------------------------------------

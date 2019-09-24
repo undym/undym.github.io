@@ -136,6 +136,76 @@ Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
     //装備
     //
     //--------------------------------------------------------
+    //武器
+    const う棒 = new Mix({
+        uniqueName: "う棒", limit: 1,
+        result: () => [Eq.う棒, 1],
+        materials: () => [[Item.竹, 2], [Item.短針, 5], [Item.葛, 5]],
+    });
+    const 銅剣 = new Mix({
+        uniqueName: "銅剣", limit: 1,
+        result: () => [Eq.銅剣, 1],
+        materials: () => [[Item.銅, 5], [Item.短針, 5], [Item.葛, 5]],
+        isVisible: () => う棒.count > 0,
+    });
+    const はがねの剣 = new Mix({
+        uniqueName: "はがねの剣", limit: 1,
+        result: () => [Eq.はがねの剣, 1],
+        materials: () => [[Item.鋼鉄, 5], [Item.短針, 5], [Item.葛, 5]],
+        isVisible: () => 銅剣.count > 0,
+    });
+    const 杖 = new Mix({
+        uniqueName: "杖", limit: 1,
+        result: () => [Eq.杖, 1],
+        materials: () => [[Item.枝, 5], [Item.朽ち果てた鍵, 5], [Item.草, 5]],
+    });
+    const スギの杖 = new Mix({
+        uniqueName: "スギの杖", limit: 1,
+        result: () => [Eq.スギの杖, 1],
+        materials: () => [[Item.スギ, 5], [Item.朽ち果てた鍵, 5], [Item.草, 5]],
+        isVisible: () => 杖.count > 0,
+    });
+    const ヒノキの杖 = new Mix({
+        uniqueName: "ヒノキの杖", limit: 1,
+        result: () => [Eq.ヒノキの杖, 1],
+        materials: () => [[Item.ヒノキ, 5], [Item.朽ち果てた鍵, 5], [Item.草, 5]],
+        isVisible: () => スギの杖.count > 0,
+    });
+    const 木の鎖 = new Mix({
+        uniqueName: "木の鎖", limit: 1,
+        result: () => [Eq.木の鎖, 1],
+        materials: () => [[Item.松, 5], [Item.血, 5], [Item.土, 5]],
+    });
+    const 銅の鎖 = new Mix({
+        uniqueName: "銅の鎖", limit: 1,
+        result: () => [Eq.銅の鎖, 1],
+        materials: () => [[Item.銅, 5], [Item.血, 5], [Item.土, 5]],
+        isVisible: () => 木の鎖.count > 0,
+    });
+    const 鉄の鎖 = new Mix({
+        uniqueName: "鉄の鎖", limit: 1,
+        result: () => [Eq.鉄の鎖, 1],
+        materials: () => [[Item.鉄, 5], [Item.血, 5], [Item.土, 5]],
+        isVisible: () => 銅の鎖.count > 0,
+    });
+    const パチンコ = new Mix({
+        uniqueName: "パチンコ", limit: 1,
+        result: () => [Eq.パチンコ, 1],
+        materials: () => [[Item.ひも, 5], [Item.竹, 5], [Item.石, 5]],
+    });
+    const ボウガン = new Mix({
+        uniqueName: "ボウガン", limit: 1,
+        result: () => [Eq.ボウガン, 1],
+        materials: () => [[Item.短針, 5], [Item.竹, 5], [Item.石, 5]],
+        isVisible: () => パチンコ.count > 0,
+    });
+    const 投石器 = new Mix({
+        uniqueName: "投石器", limit: 1,
+        result: () => [Eq.投石器, 1],
+        materials: () => [[Item.岩, 5], [Item.竹, 5], [Item.石, 5]],
+        isVisible: () => ボウガン.count > 0,
+    });
+    //盾
     const 銅板 = new Mix({
         uniqueName: "銅板", limit: 1,
         result: () => [Eq.銅板, 1],
@@ -159,15 +229,27 @@ Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
         materials: () => [[Item.チタン, 5], [Item.枝, 5], [Item.土, 5]],
         isVisible: () => 鋼鉄板.count > 0,
     });
+    //体
     const 草の服 = new Mix({
         uniqueName: "草の服", limit: 1,
         result: () => [Eq.草の服, 1],
-        materials: () => [[Item.葉っぱ, 10], [Item.黒い枝, 3], [Item.しいたけ, 3]],
+        materials: () => [[Item.草, 10], [Item.黒い枝, 3], [Item.しいたけ, 3]],
     });
     const 布の服 = new Mix({
         uniqueName: "布の服", limit: 1,
         result: () => [Eq.布の服, 1],
         materials: () => [[Item.布, 5], [Item.黒い石, 3], [Item.しいたけ, 5]],
+    });
+    //手
+    const カンベレグ = new Mix({
+        uniqueName: "カンベレグ", limit: 1,
+        result: () => [Eq.カンベレグ, 1],
+        materials: () => [[Item.黒い青空, 5], [Item.エネルギー, 5]],
+    });
+    const パウアハッハ = new Mix({
+        uniqueName: "パウアハッハ", limit: 1,
+        result: () => [Eq.パウアハッハ, 1],
+        materials: () => [[Item.消えない炎, 5], [Item.黒い枝, 5], [Item.黒い砂, 5]],
     });
     //--------------------------------------------------------
     //
@@ -182,7 +264,7 @@ Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
     const 布 = new Mix({
         uniqueName: "布", limit: Mix.LIMIT_INF,
         result: () => [Item.布, 1],
-        materials: () => [[Item.葉っぱ, 5], [Item.枝, 1]],
+        materials: () => [[Item.草, 5], [Item.枝, 1]],
         isVisible: () => 草の服.count > 0,
     });
     const 兵法指南の書 = new Mix({

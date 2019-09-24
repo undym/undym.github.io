@@ -238,22 +238,6 @@ export class Label extends ILayout{
         }
     }
 
-    // private update(){
-    //     const str = this.createStr();
-    //     if(this.strBak === str){return;}
-    //     this.strBak = str;
-        
-    //     this.strSize = this.font.measureRatioSize([str]);
-    // }
-    // /**ratio. */
-    // get ratioW():number{
-    //     return this.strSize.w;
-    // }
-    // /**ratio. */
-    // get ratioH():number{
-    //     return this.strSize.h;
-    // }
-
 }
 
 
@@ -367,11 +351,9 @@ export class Labels extends ILayout{
 
     drawInner(bounds:Rect){
         let y = bounds.y;
-        let h = 0;
         for(const e of this.elms){
-            h = e.h();
-            e.draw(new Rect(bounds.x, y, bounds.w, h));
-            y += h;
+            e.draw(new Rect(bounds.x, y, bounds.w, e.h()));
+            y += e.h();
         }
     }
 }

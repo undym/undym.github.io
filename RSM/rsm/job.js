@@ -72,7 +72,13 @@ export class Job {
     get info() { return this.args.info; }
     get appearLv() { return this.args.appearLv; }
     get lvupExp() { return this.args.lvupExp; }
-    get growthPrms() { return this.args.grow(); }
+    get growthPrms() {
+        let res = [];
+        for (const set of this.args.grow()) {
+            res.push({ prm: set[0], value: set[1] });
+        }
+        return res;
+    }
     get learningTecs() { return this.args.learn(); }
     canJobChange(p) { return this.args.canJobChange(p); }
     toString() { return this.args.uniqueName; }
@@ -124,7 +130,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "しんまい", info: "ぺーぺー",
                 appearLv: 0, lvupExp: Job.DEF_LVUP_EXP,
-                grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
+                grow: () => [[Prm.MAX_HP, 2]],
                 learn: () => [Tec.二回殴る, Tec.HP自動回復, Tec.大いなる動き],
                 canJobChange: (p) => true,
             });
@@ -137,7 +143,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "先輩", info: "進化したしんまい",
                 appearLv: 15, lvupExp: Job.DEF_LVUP_EXP * 3,
-                grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
+                grow: () => [[Prm.MAX_HP, 2]],
                 learn: () => [Tec.癒しの風, Tec.我慢],
                 canJobChange: (p) => p.isMasteredJob(Job.しんまい) && p.prm(Prm.LV).base >= 15,
             });
@@ -150,7 +156,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "常務", info: "",
                 appearLv: 40, lvupExp: Job.DEF_LVUP_EXP * 4,
-                grow: () => [{ prm: Prm.MAX_HP, value: 2 }],
+                grow: () => [[Prm.MAX_HP, 2]],
                 learn: () => [Tec.いやらしの風, Tec.風],
                 canJobChange: (p) => p.isMasteredJob(Job.先輩),
             });
@@ -164,7 +170,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "格闘家", info: "格闘攻撃を扱う職業",
                 appearLv: 1, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.STR, value: 1 }],
+                grow: () => [[Prm.STR, 1]],
                 learn: () => [Tec.格闘攻撃UP, Tec.カウンター, Tec.閻魔の笏],
                 canJobChange: (p) => p.isMasteredJob(Job.しんまい),
             });
@@ -177,7 +183,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "剣士", info: "",
                 appearLv: 5, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.STR, value: 1 }],
+                grow: () => [[Prm.STR, 1]],
                 learn: () => [Tec.人狼剣, Tec.急所],
                 canJobChange: (p) => p.isMasteredJob(Job.格闘家),
             });
@@ -190,7 +196,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "魔法使い", info: "魔法攻撃を扱う職業",
                 appearLv: 1, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.MAG, value: 1 }],
+                grow: () => [[Prm.MAG, 1]],
                 learn: () => [Tec.ヴァハ, Tec.MP自動回復, Tec.ジョンD],
                 canJobChange: (p) => {
                     if (p.player === Player.スメラギ) {
@@ -210,7 +216,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "ウィザード", info: "魔法攻撃を扱う職業",
                 appearLv: 50, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.MAG, value: 1 }],
+                grow: () => [[Prm.MAG, 1]],
                 learn: () => [Tec.魔法攻撃UP, Tec.エヴィン, Tec.ルー],
                 canJobChange: (p) => p.isMasteredJob(Job.魔法使い),
             });
@@ -223,7 +229,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "天使", info: "回復に優れる",
                 appearLv: 8, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.LIG, value: 1 }],
+                grow: () => [[Prm.LIG, 1]],
                 learn: () => [Tec.天籟, Tec.ばんそうこう, Tec.ユグドラシル],
                 canJobChange: (p) => {
                     if (p.player === Player.スメラギ) {
@@ -243,7 +249,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "女神", info: "",
                 appearLv: 40, lvupExp: Job.DEF_LVUP_EXP * 3,
-                grow: () => [{ prm: Prm.LIG, value: 1 }],
+                grow: () => [[Prm.LIG, 1]],
                 learn: () => [Tec.ひんやりゼリー, Tec.衛生],
                 canJobChange: (p) => p.isMasteredJob(Job.天使),
             });
@@ -257,7 +263,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "暗黒戦士", info: "自分の身を削り強力な攻撃を放つ",
                 appearLv: 8, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.DRK, value: 1 }],
+                grow: () => [[Prm.DRK, 1]],
                 learn: () => [Tec.暗黒剣, Tec.ポイズンバタフライ, Tec.自爆],
                 canJobChange: (p) => {
                     if (p.player === Player.スメラギ) {
@@ -277,7 +283,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "ヴァンパイア", info: "",
                 appearLv: 40, lvupExp: Job.DEF_LVUP_EXP * 3,
-                grow: () => [{ prm: Prm.DRK, value: 1 }],
+                grow: () => [[Prm.DRK, 1]],
                 learn: () => [Tec.吸血, Tec.吸心, Tec.VBS],
                 canJobChange: (p) => p.isMasteredJob(Job.暗黒戦士),
             });
@@ -291,7 +297,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "阿修羅", info: "",
                 appearLv: 80, lvupExp: Job.DEF_LVUP_EXP * 4,
-                grow: () => [{ prm: Prm.DRK, value: 1 }],
+                grow: () => [[Prm.DRK, 1]],
                 learn: () => [Tec.宵闇, Tec.影の鎧],
                 canJobChange: (p) => p.isMasteredJob(Job.ヴァンパイア),
             });
@@ -304,7 +310,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "スネイカー", info: "蛇を虐待してる",
                 appearLv: 20, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.CHN, value: 1 }],
+                grow: () => [[Prm.CHN, 1]],
                 learn: () => [Tec.スネイク, Tec.TP自動回復, Tec.凍てつく波動],
                 canJobChange: (p) => {
                     if (p.player === Player.スメラギ) {
@@ -324,7 +330,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "蛇使い", info: "",
                 appearLv: 40, lvupExp: Job.DEF_LVUP_EXP * 3,
-                grow: () => [{ prm: Prm.CHN, value: 1 }],
+                grow: () => [[Prm.CHN, 1]],
                 learn: () => [Tec.コブラ, Tec.ハブ],
                 canJobChange: (p) => p.isMasteredJob(Job.スネイカー),
             });
@@ -337,7 +343,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "ダウザー", info: "全体攻撃に長ける",
                 appearLv: 30, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.PST, value: 1 }],
+                grow: () => [[Prm.PST, 1]],
                 learn: () => [Tec.念力, Tec.念, Tec.メテオ],
                 canJobChange: (p) => {
                     if (p.player === Player.スメラギ) {
@@ -357,7 +363,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "エスパー", info: "",
                 appearLv: 50, lvupExp: Job.DEF_LVUP_EXP * 3,
-                grow: () => [{ prm: Prm.PST, value: 1 }],
+                grow: () => [[Prm.PST, 1]],
                 learn: () => [Tec.頭痛, Tec.やる気ゼロ, Tec.弱体液],
                 canJobChange: (p) => p.isMasteredJob(Job.ダウザー),
             });
@@ -370,7 +376,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "ハイパー", info: "",
                 appearLv: 80, lvupExp: Job.DEF_LVUP_EXP * 4,
-                grow: () => [{ prm: Prm.PST, value: 1 }],
+                grow: () => [[Prm.PST, 1]],
                 learn: () => [],
                 canJobChange: (p) => p.isMasteredJob(Job.エスパー),
             });
@@ -383,7 +389,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "ガンマン", info: "銃攻撃は命中率が低いもののそれを補う手数の多さを持つ",
                 appearLv: 7, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.GUN, value: 1 }],
+                grow: () => [[Prm.GUN, 1]],
                 learn: () => [Tec.撃つ, Tec.二丁拳銃, Tec.あがらない雨],
                 canJobChange: (p) => {
                     if (p.player === Player.スメラギ) {
@@ -403,7 +409,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "砲撃手", info: "",
                 appearLv: 37, lvupExp: Job.DEF_LVUP_EXP * 3,
-                grow: () => [{ prm: Prm.GUN, value: 1 }],
+                grow: () => [[Prm.GUN, 1]],
                 learn: () => [Tec.テーブルシールド, Tec.スコープ, Tec.ショットガン],
                 canJobChange: (p) => p.isMasteredJob(Job.ガンマン),
             });
@@ -416,7 +422,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "アーチャー", info: "致命の一撃を放つ",
                 appearLv: 10, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.ARR, value: 1 }],
+                grow: () => [[Prm.ARR, 1]],
                 learn: () => [Tec.射る, Tec.インドラ, Tec.キャンドラ],
                 canJobChange: (p) => {
                     if (p.player === Player.スメラギ) {
@@ -428,7 +434,7 @@ Job.DEF_LVUP_EXP = 5;
                 },
             });
             this.setEnemyInner = (e) => {
-                e.tecs = [Tec.射る, Tec.射る, Tec.射る, Tec.射る, Tec.殴る, Tec.殴る, Tec.殴る];
+                e.tecs = [Tec.射る, Tec.射る, Tec.射る, Tec.射る, Tec.殴る, Tec.殴る, Tec.インドラ];
             };
         }
     };
@@ -436,7 +442,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "クピド", info: "",
                 appearLv: 60, lvupExp: Job.DEF_LVUP_EXP * 3,
-                grow: () => [{ prm: Prm.ARR, value: 1 }],
+                grow: () => [[Prm.ARR, 1]],
                 learn: () => [Tec.ヤクシャ, Tec.フェニックスアロー],
                 canJobChange: (p) => p.isMasteredJob(Job.アーチャー),
             });
@@ -449,7 +455,7 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "測量士", info: "",
                 appearLv: 20, lvupExp: Job.DEF_LVUP_EXP * 2,
-                grow: () => [{ prm: Prm.GUN, value: 1 }, { prm: Prm.ARR, value: 1 }],
+                grow: () => [[Prm.GUN, 1], [Prm.ARR, 1]],
                 learn: () => [Tec.トランシット, Tec.カイゼルの目],
                 canJobChange: (p) => p.isMasteredJob(Job.ガンマン) && p.isMasteredJob(Job.アーチャー),
             });
@@ -458,4 +464,26 @@ Job.DEF_LVUP_EXP = 5;
             };
         }
     };
+    // export const                         探検家 = new class extends Job{
+    //     constructor(){super({uniqueName:"探検家", info:"",
+    //                             appearLv:14, lvupExp:Job.DEF_LVUP_EXP * 2,
+    //                             grow:()=> [[Prm.MAX_HP, 2]],
+    //                             learn:()=> [Tec.便風, Tec.炎の鞭],
+    //                             canJobChange:(p:PUnit)=>p.isMasteredJob(Job.格闘家) || p.isMasteredJob(Job.天使)  || p.isMasteredJob(Job.スネイカー)  || p.isMasteredJob(Job.ガンマン),
+    //     });}
+    //     setEnemyInner   = (e:EUnit)=>{
+    //         e.tecs = [Tec.撃つ, Tec.撃つ, Tec.射る, Tec.射る, Tec.殴る, Tec.天籟, Tec.便風, Tec.炎の鞭];
+    //     }
+    // };
+    // export const                         探求家 = new class extends Job{
+    //     constructor(){super({uniqueName:"探求家", info:"",
+    //                             appearLv:14, lvupExp:Job.DEF_LVUP_EXP * 2,
+    //                             grow:()=> [[Prm.MAX_HP, 2]],
+    //                             learn:()=> [],
+    //                             canJobChange:(p:PUnit)=>p.isMasteredJob(Job.魔法使い) || p.isMasteredJob(Job.暗黒戦士)  || p.isMasteredJob(Job.ダウザー)  || p.isMasteredJob(Job.アーチャー),
+    //     });}
+    //     setEnemyInner   = (e:EUnit)=>{
+    //         e.tecs = [Tec.撃つ, Tec.撃つ, Tec.射る, Tec.射る, Tec.ヴァハ, Tec.暗黒剣];
+    //     }
+    // };
 })(Job || (Job = {}));
