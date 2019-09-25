@@ -364,13 +364,13 @@ export abstract class ActiveTec extends Tec implements Action{
 
     async run(attacker:Unit, target:Unit){
         let dmg = this.createDmg(attacker, target);
-        attacker.beforeDoAtk(this, target, dmg);
-        target.beforeBeAtk(this, attacker, dmg);
+        await attacker.beforeDoAtk(this, target, dmg);
+        await target.beforeBeAtk(this, attacker, dmg);
 
         await this.runInner(attacker, target, dmg);
 
-        attacker.afterDoAtk(this, target, dmg);
-        target.afterBeAtk(this, attacker, dmg);
+        await attacker.afterDoAtk(this, target, dmg);
+        await target.afterBeAtk(this, attacker, dmg);
     }
 
     async runInner(attacker:Unit, target:Unit, dmg:Dmg){

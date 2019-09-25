@@ -64,7 +64,7 @@ export class DrawDungeonData extends InnerLayout{
 }
 
 
-class DrawSTBox extends InnerLayout{
+export class DrawSTBox extends InnerLayout{
 
     constructor(getUnit:()=>Unit){
         super();
@@ -143,6 +143,7 @@ export class DrawSTBoxes extends InnerLayout{
     private static _enemies:DrawSTBoxes;
     static get enemies(){return this._enemies ? this._enemies 
         : (this._enemies = new DrawSTBoxes(Unit.enemies.length, i=>Unit.enemies[i]));}
+
 
 
     private constructor(len:number, getUnit:(i:number)=>Unit){

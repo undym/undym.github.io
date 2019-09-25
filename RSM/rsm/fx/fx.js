@@ -47,11 +47,11 @@ FXTest.effects = [];
 export const FX_Advance = (bounds) => {
     FX.add((count) => {
         const over = 3;
-        let w = bounds.w - bounds.w * count / over;
+        let w = bounds.w * count / over;
         let ph = 8 / Graphics.pixelH;
-        let h = ph - ph * count / over;
+        let h = ph * count / over;
         let bh = (bounds.h - h) * 0.75;
-        let y = bounds.y + bh - bh * count / (over - 1);
+        let y = bounds.y + bh * (count - 1) / (over - 1);
         Graphics.fillRect(new Rect(bounds.cx - w / 2, y, w, h), Color.GRAY);
         return count < over;
     });
@@ -60,11 +60,11 @@ FXTest.add(FX_Advance.name, () => FX_Advance(Rect.FULL));
 export const FX_Return = (bounds) => {
     FX.add((count) => {
         const over = 3;
-        let w = bounds.w * count / over;
+        let w = bounds.w - bounds.w * count / over;
         let ph = 8 / Graphics.pixelH;
-        let h = ph * count / over;
+        let h = ph - ph * count / over;
         let bh = (bounds.h - h) * 0.75;
-        let y = bounds.y + bh * (count - 1) / (over - 1);
+        let y = bounds.y + bh - bh * count / (over - 1);
         Graphics.fillRect(new Rect(bounds.cx - w / 2, y, w, h), Color.GRAY);
         return count < over;
     });
@@ -157,17 +157,38 @@ export const FX_RotateStr = (font, str, center, color) => {
     });
 };
 FXTest.add(FX_RotateStr.name, () => FX_RotateStr(new Font(30, Font.BOLD), "12345", FXTest.target, Color.GREEN));
-export const FX_Shake = (dstRatio, srcRatio = { x: -1, y: 0, w: 0, h: 0 }) => {
-    if (srcRatio.x === -1) {
-        srcRatio = dstRatio;
-    }
-    const over = 15;
-    const shakeRange = 0.015;
-    let tex;
-    FX.add((count) => {
-        if (count === 0) {
-            tex = Graphics.createTexture(srcRatio);
-        }
+// export const FX_Shake = (dstRatio:{x:number, y:number, w:number, h:number}, srcRatio = {x:-1, y:0, w:0, h:0})=>{
+//     if(srcRatio.x === -1){
+//         srcRatio = dstRatio;
+//     }
+//     const over = 15;
+//     const shakeRange = 0.015;
+//     let tex:Texture;
+//     FX.add((count)=>{
+//         if(count === 0){
+//             tex = Graphics.createTexture(srcRatio);
+//         }
+//         const shake = ()=>{
+//             let v = shakeRange * (over - count) / over;
+//             if(Math.random() < 0.5) {return v;}
+//             else                    {return -v;}
+//         };
+//         let r = {
+//             x:dstRatio.x,
+//             y:dstRatio.y,
+//             w:dstRatio.w,
+//             h:dstRatio.h,
+//         };
+//         r.x += shake();
+//         r.y += shake();
+//         tex.draw(r);
+//         return count < over;
+//     });
+// };
+export const FX_Shake = (dstRatio, draw) => {
+    FX.add(count => {
+        const over = 15;
+        const shakeRange = 0.015;
         const shake = () => {
             let v = shakeRange * (over - count) / over;
             if (Math.random() < 0.5) {
@@ -177,19 +198,16 @@ export const FX_Shake = (dstRatio, srcRatio = { x: -1, y: 0, w: 0, h: 0 }) => {
                 return -v;
             }
         };
-        let r = {
-            x: dstRatio.x,
-            y: dstRatio.y,
-            w: dstRatio.w,
-            h: dstRatio.h,
-        };
-        r.x += shake();
-        r.y += shake();
-        tex.draw(r);
+        const r = new Rect(dstRatio.x + shake(), dstRatio.y + shake(), dstRatio.w, dstRatio.h);
+        draw(r);
         return count < over;
     });
 };
-FXTest.add(FX_Shake.name, () => FX_Shake({ x: 0, y: 0, w: 0.5, h: 0.5 }));
+FXTest.add(FX_Shake.name, () => {
+    const r = new Rect(0, 0, 0.5, 0.5);
+    const tex = Graphics.createTexture(r);
+    FX_Shake(r, bounds => tex.draw(bounds));
+});
 export const FX_格闘 = (center) => {
     let particles = [];
     for (let i = 0; i < 40; i++) {

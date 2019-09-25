@@ -43,7 +43,7 @@ export class DrawDungeonData extends InnerLayout {
             .add(ILayout.empty));
     }
 }
-class DrawSTBox extends InnerLayout {
+export class DrawSTBox extends InnerLayout {
     constructor(getUnit) {
         super();
         const font = new Font(30);

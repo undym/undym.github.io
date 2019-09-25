@@ -38,7 +38,7 @@ export class Version {
     }
     toString() { return `${this.major}.${this.minior}.${this.mentener}`; }
 }
-Version.NOW = new Version(0, 12, 4);
+Version.NOW = new Version(0, 12, 5);
 let saveDataVersion;
 export class SaveData {
     static exists() {

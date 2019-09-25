@@ -308,11 +308,11 @@ export class ActiveTec extends Tec {
     run(attacker, target) {
         return __awaiter(this, void 0, void 0, function* () {
             let dmg = this.createDmg(attacker, target);
-            attacker.beforeDoAtk(this, target, dmg);
-            target.beforeBeAtk(this, attacker, dmg);
+            yield attacker.beforeDoAtk(this, target, dmg);
+            yield target.beforeBeAtk(this, attacker, dmg);
             yield this.runInner(attacker, target, dmg);
-            attacker.afterDoAtk(this, target, dmg);
-            target.afterBeAtk(this, attacker, dmg);
+            yield attacker.afterDoAtk(this, target, dmg);
+            yield target.afterBeAtk(this, attacker, dmg);
         });
     }
     runInner(attacker, target, dmg) {

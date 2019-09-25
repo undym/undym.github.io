@@ -10,6 +10,7 @@ import { ConditionType, Condition } from "./condition.js";
 import { Eq, EqPos, EqEar } from "./eq.js";
 import { choice } from "./undym/random.js";
 import { Graphics, Font } from "./graphics/graphics.js";
+import { DrawSTBox } from "./scene/sceneutil.js";
 
 
 
@@ -243,7 +244,12 @@ export abstract class Unit{
         if(result.isHit){
             this.hp -= result.value;
             
-            FX_Shake(this.bounds);
+            // FX_Shake(this.bounds);
+            const stbox = new DrawSTBox(()=>this);
+            FX_Shake(this.bounds, bounds=>{
+                Graphics.fillRect(bounds, Color.BLACK);
+                stbox.draw(bounds)
+            });
             FX_RotateStr(font, `${result.value}`, p, Color.RED);
             Util.msg.set(`${this.name}に${result.value}のダメージ`, Color.RED.bright);
         }else{
