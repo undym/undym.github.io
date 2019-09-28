@@ -22,13 +22,13 @@ import { SaveData } from "../savedata.js";
 export class MixScene extends Scene {
     constructor() {
         super();
+        this.list = new List();
         this.choosed = false;
         /**セーブフラグ. */
         this.doneAnyMix = false;
-        this.list = new List();
+        this.setList("建築", Mix.values.filter(m => !m.result && m.isVisible()));
     }
     init() {
-        this.choosed = false;
         super.clear();
         super.add(Place.TOP, DrawPlayInfo.ins);
         const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
@@ -146,9 +146,6 @@ export class MixScene extends Scene {
         })()));
         super.add(pboxBounds, DrawSTBoxes.players);
         super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
-        const values = Mix.values
-            .filter(m => !m.result && m.isVisible());
-        this.setList("建築", values);
     }
     setList(name, values) {
         this.list.clear();

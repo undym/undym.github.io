@@ -70,12 +70,18 @@ export class ItemParentType{
     static readonly その他     = new ItemParentType("その他", [ItemType.メモ, ItemType.鍵, ItemType.玉, ItemType.素材]);
 }
 
-export const ItemDrop = {
-    get NO()  {return 0;},
-    get BOX() {return 1 << 0;},
-    get TREE(){return 1 << 1;},
-    get DIG() {return 1 << 2;},
+export enum ItemDrop{
+    NO   = 0,
+    BOX  = 1 << 0,
+    TREE = 1 << 1,
+    DIG  = 1 << 2,
 }
+// export const ItemDrop = {
+//     get NO()  {return 0;},
+//     get BOX() {return 1 << 0;},
+//     get TREE(){return 1 << 1;},
+//     get DIG() {return 1 << 2;},
+// }
 
 class ItemValues{
     private values = new Map<number,Item[]>();
@@ -476,10 +482,6 @@ export namespace Item{
     //メモ
     //
     //-----------------------------------------------------------------
-    export const                         合成許可証:Item = new class extends Item{
-        constructor(){super({uniqueName:"合成許可証", info:"合成が解放される", 
-                                type:ItemType.メモ, rank:0, drop:ItemDrop.NO, numLimit:1})}
-    };
     export const                         消耗品のメモ:Item = new class extends Item{
         constructor(){super({uniqueName:"消耗品のメモ", info:"スティックパンなどの一部消耗品はダンジョンに入る度に補充される", 
                                 type:ItemType.メモ, rank:0, drop:ItemDrop.BOX, numLimit:1})}
@@ -488,25 +490,36 @@ export namespace Item{
         constructor(){super({uniqueName:"夏のメモ", info:"夏はいつ終わるの？", 
                                 type:ItemType.メモ, rank:1, drop:ItemDrop.BOX, numLimit:1})}
     };
+    export const                         合成許可証:Item = new class extends Item{
+        constructor(){super({uniqueName:"合成許可証", info:"合成が解放される", 
+                                type:ItemType.メモ, rank:10, drop:ItemDrop.NO, numLimit:1})}
+    };
+    export const                         パーティースキル取り扱い許可証:Item = new class extends Item{
+        constructor(){super({uniqueName:"パーティースキル取り扱い許可証", info:"パーティースキルが解放される", 
+                                type:ItemType.メモ, rank:10, drop:ItemDrop.NO, numLimit:1})}
+    };
     //-----------------------------------------------------------------
     //
     //鍵
     //
     //-----------------------------------------------------------------
     export const                         はじまりの丘の鍵:Item = new class extends Item{
-        constructor(){super({uniqueName:"はじまりの丘の鍵", info:"", type:ItemType.鍵, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"はじまりの丘の鍵", info:"", type:ItemType.鍵, rank:10, drop:ItemDrop.NO,})}
     };
     export const                         再構成トンネルの鍵:Item = new class extends Item{
-        constructor(){super({uniqueName:"再構成トンネルの鍵", info:"", type:ItemType.鍵, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"再構成トンネルの鍵", info:"", type:ItemType.鍵, rank:10, drop:ItemDrop.NO,})}
     };
     export const                         リテの門の鍵:Item = new class extends Item{
-        constructor(){super({uniqueName:"リ・テの門の鍵", info:"", type:ItemType.鍵, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"リ・テの門の鍵", info:"", type:ItemType.鍵, rank:10, drop:ItemDrop.NO,})}
     };
     export const                         黒平原の鍵:Item = new class extends Item{
-        constructor(){super({uniqueName:"黒平原の鍵", info:"", type:ItemType.鍵, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"黒平原の鍵", info:"", type:ItemType.鍵, rank:10, drop:ItemDrop.NO,})}
     };
     export const                         黒遺跡の鍵:Item = new class extends Item{
-        constructor(){super({uniqueName:"黒遺跡の鍵", info:"", type:ItemType.鍵, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"黒遺跡の鍵", info:"", type:ItemType.鍵, rank:10, drop:ItemDrop.NO,})}
+    };
+    export const                         PAINの鍵:Item = new class extends Item{
+        constructor(){super({uniqueName:"PAINの鍵", info:"", type:ItemType.鍵, rank:10, drop:ItemDrop.NO,})}
     };
     //-----------------------------------------------------------------
     //
@@ -514,19 +527,22 @@ export namespace Item{
     //
     //-----------------------------------------------------------------
     export const                         はじまりの丘の玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"はじまりの丘の玉", info:"", type:ItemType.玉, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"はじまりの丘の玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
     };
     export const                         再構成トンネルの玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"再構成トンネルの玉", info:"", type:ItemType.玉, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"再構成トンネルの玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
     };
     export const                         リテの門の玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"リ・テの門の玉", info:"", type:ItemType.玉, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"リ・テの門の玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
     };
     export const                         黒平原の玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"黒平原の玉", info:"", type:ItemType.玉, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"黒平原の玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
     };
     export const                         黒遺跡の玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"黒遺跡の玉", info:"", type:ItemType.玉, rank:0, drop:ItemDrop.NO,})}
+        constructor(){super({uniqueName:"黒遺跡の玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
+    };
+    export const                         PAINの玉:Item = new class extends Item{
+        constructor(){super({uniqueName:"PAINの玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
     };
     //-----------------------------------------------------------------
     //

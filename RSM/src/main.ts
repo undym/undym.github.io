@@ -14,6 +14,7 @@ import { SaveData, Version } from "./savedata.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
 import { XLayout } from "./undym/layout.js";
 import { Job } from "./job.js";
+import { PartySkill } from "./partyskill.js";
 
 
 {
@@ -135,6 +136,9 @@ const init = ()=>{
     for(const ev of DungeonEvent.values()){
         ev.getImg();
     }
+
+    PartySkill.skills.length = PartySkill.DEF_PARTY_SKILL_NUM;
+    PartySkill.skills.fill( PartySkill.empty );
 };
 
 const newGame = ()=>{

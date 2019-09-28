@@ -16,27 +16,33 @@ import { Eq, EqEar } from "../eq.js";
 import { Item } from "../item.js";
 import { Dungeon } from "../dungeon/dungeon.js";
 import { Job } from "../job.js";
+import { PartySkill } from "../partyskill.js";
 
 
-
+let 砲撃手master = false;
+let クピドmaster = false;
 
 
 
 export class ShopScene extends Scene{
 
     private static completedInitGoods = false;
-    private list:List;
+    private list:List = new List();
     private choosedGoods:Goods|undefined;
 
     constructor(){
         super();
 
-        this.list = new List();
+        クピドmaster = Player.values.some(p=> p.ins.getJobLv(Job.クピド) > 0);
+        砲撃手master = Player.values.some(p=> p.ins.getJobLv(Job.砲撃手) > 0);
 
         if(!ShopScene.completedInitGoods){
             ShopScene.completedInitGoods = true;
             initGoods();
         }
+
+        
+        this.setList();
     }
 
     init(){
@@ -113,7 +119,6 @@ export class ShopScene extends Scene{
         super.add(pboxBounds, DrawSTBoxes.players);
         super.add(new Rect(pboxBounds.x, pboxBounds.y - Place.MAIN.h, pboxBounds.w, Place.MAIN.h), DrawUnitDetail.ins);
         
-        this.setList();
     }
 
     private setList(){
@@ -207,6 +212,16 @@ const initGoods = ()=>{
             ()=> ear.num,
         );
     };
+    const createPartySkill = (skill:PartySkill, price:()=>number, isVisible:()=>boolean)=>{
+        new Goods(
+            skill.toString(),
+            "＜パーティースキル＞",
+            "",
+            price,
+            ()=> isVisible() && !skill.has,
+            ()=> skill.has = true,
+        );
+    };
     
     createItemGoods(Item.合成許可証, ()=>300, ()=>Dungeon.リテの門.dungeonClearCount > 0 && Item.合成許可証.totalGetNum === 0);
     
@@ -221,11 +236,14 @@ const initGoods = ()=>{
     createEarGoods(EqEar.エメラルドのピアス,       ()=>100 ,()=>Dungeon.リテの門.dungeonClearCount > 0 && EqEar.エメラルドのピアス.totalGetNum < 2);
     // createEqGoods(Eq.う棒,      　()=>500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10 && Eq.う棒.totalGetNum === 0);
 
-    if(Player.values.some(p=> p.ins.getJobLv(Job.クピド) > 0)){
-        createItemGoods(Item.夜叉の矢, ()=>(Item.夜叉の矢.num+1) * 500, ()=>true);
-    }
-    if(Player.values.some(p=> p.ins.isMasteredJob(Job.砲撃手))){
-        createItemGoods(Item.散弾, ()=>(Item.散弾.num+1) * 500, ()=>true);
-    }
+    createItemGoods(Item.夜叉の矢, ()=>(Item.夜叉の矢.num+1) * 500, ()=>クピドmaster);
+    createItemGoods(Item.散弾, ()=>(Item.散弾.num+1) * 500, ()=>砲撃手master);
+
+    createItemGoods(Item.パーティースキル取り扱い許可証, ()=>1000, ()=>Dungeon.黒遺跡.dungeonClearCount > 0);
+    createPartySkill(PartySkill.入手経験値増加,          ()=>1000, ()=>Item.パーティースキル取り扱い許可証.num > 0);
+    createPartySkill(PartySkill.入手金増加,              ()=>2000, ()=>Item.パーティースキル取り扱い許可証.num > 0);
+    createPartySkill(PartySkill.宝箱チェーン増加, ()=>3000, ()=>Item.パーティースキル取り扱い許可証.num > 0);
+    createPartySkill(PartySkill.宝箱ランク増加,   ()=>4000, ()=>Item.パーティースキル取り扱い許可証.num > 0);
+    createPartySkill(PartySkill.伐採チェーン増加, ()=>5000, ()=>PartySkill.宝箱チェーン増加.has);
 };
 

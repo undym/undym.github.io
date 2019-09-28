@@ -18,6 +18,7 @@ import { randomInt } from "../undym/random.js";
 import { Item } from "../item.js";
 import { ItemScene } from "./itemscene.js";
 import { Font, Graphics } from "../graphics/graphics.js";
+import { PartySkillWin, PartySkill } from "../partyskill.js";
 
 let btnSpace:Layout;
 
@@ -414,38 +415,33 @@ const win = async()=>{
     Battle.result = BattleResult.WIN;
     Util.msg.set("勝った"); await wait();
 
+    const partySkill = new PartySkillWin();
+    Unit.enemies
+        .filter(e=> e.exists)
+        .forEach(e=>{
+            partySkill.exp.base += e.prm(Prm.EXP).base;
+            partySkill.jobExp.base += 1;
+            partySkill.yen.base += e.yen;
+        });
 
-    {
-        let exp = 0;
-        Unit.enemies
-            .filter(e=> e.exists)
-            .forEach(e=> exp += e.prm(Prm.EXP).base);
+    for(const skill of PartySkill.skills){
+        skill.win( partySkill );
+    }
 
-        exp = exp|0;
-        Util.msg.set(`${exp}の経験値を入手`, Color.CYAN.bright); await wait();
+    const exp = (partySkill.exp.base * partySkill.exp.mul)|0;
+    Util.msg.set(`${exp}の経験値を入手`, Color.CYAN.bright); await wait();
+    for(let p of Unit.players.filter(p=> p.exists)){
+        await p.addExp( exp );
+    }
 
-        for(let p of Unit.players.filter(p=> p.exists)){
-            await p.addExp( exp );
-        }
+    const jobExp = (partySkill.jobExp.base * partySkill.jobExp.mul)|0;
+    for(let p of Unit.players.filter(p=> p.exists)){
+        await p.addJobExp( jobExp );
     }
-    {
-        let exp = 0;
-        Unit.enemies
-            .filter(e=> e.exists)
-            .forEach(e=> exp += 1);
-        for(let p of Unit.players.filter(p=> p.exists)){
-            await p.addJobExp( exp );
-        }
-    }
-    {
-        let yen = 0;
-        Unit.enemies
-            .filter(e=> e.exists)
-            .forEach(e=> yen += e.yen);
-        yen = yen|0;
-        PlayData.yen += yen;
-        Util.msg.set(`${yen}円入手`, Color.YELLOW.bright); await wait();
-    }
+
+    const yen = (partySkill.yen.base * partySkill.yen.mul)|0;
+    PlayData.yen += yen;
+    Util.msg.set(`${yen}円入手`, Color.YELLOW.bright); await wait();
 
     await finish();
     await Battle.battleEndAction(BattleResult.WIN);

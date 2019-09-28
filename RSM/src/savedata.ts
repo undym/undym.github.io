@@ -9,11 +9,12 @@ import { ConditionType, Condition } from "./condition.js";
 import { PlayData, SceneType, Util } from "./util.js";
 import { Color } from "./undym/type.js";
 import { Mix } from "./mix.js";
+import { PartySkill } from "./partyskill.js";
 
 
 
 export class Version{
-    static readonly NOW = new Version(0,12,5);
+    static readonly NOW = new Version(0,13,0);
 
     private values:number[];
 
@@ -86,8 +87,9 @@ export class SaveData{
         EqEar.values.forEach(ear=> strageEqEar(save, ear));
         Dungeon.values.forEach(d=> strageDungeon(save, d));
         Player.values.forEach(p=> stragePlayer(save, p));
-        Mix.values.forEach(m=> strageMix(save, m));
+        strageMix(save);
         stragePlayData(save);
+        stragePartySkill(save);
     }
 }
 
@@ -282,9 +284,11 @@ const stragePlayer = (save:boolean, p:Player)=>{
 
 
 
-const strageMix = (save:boolean, mix:Mix)=>{
-    const name = `${strageMix.name}_${mix.uniqueName}`;
-    ioInt(save, `${name}_count`, mix.count, load=> mix.count = load);
+const strageMix = (save:boolean)=>{
+    for(const mix of Mix.values){
+        const name = `${strageMix.name}_${mix.uniqueName}`;
+        ioInt(save, `${name}_count`, mix.count, load=> mix.count = load);   
+    }
 };
 
 
@@ -315,6 +319,31 @@ const stragePlayData = (save:boolean)=>{
             const p = Player.valueOf(load);
             if(p){
                 Unit.setPlayer( i, p );
+            }
+        });
+    }
+};
+
+const stragePartySkill = (save:boolean)=>{
+    for(const skill of PartySkill.values){
+        const name = `${stragePartySkill.name}_${skill.uniqueName}`;
+        ioBool(save, `${name}_has`, skill.has, load=> skill.has = load);
+    }
+    
+    ioInt(save, `${stragePartySkill.name}_s_skills`, PartySkill.skills.length, load=>{
+        PartySkill.skills.length = load;
+        for(let i = 0; i < PartySkill.skills.length; i++){
+            if(!PartySkill.skills[i]){
+                PartySkill.skills[i] = PartySkill.empty;
+            }
+        }
+    });
+
+    for(let i = 0; i < PartySkill.skills.length; i++){
+        ioStr(save, `${stragePartySkill.name}_s_skills_${i}`, PartySkill.skills[i].uniqueName, load=>{
+            const skill = PartySkill.valueOf(load);
+            if(skill){
+                PartySkill.skills[i] = skill;
             }
         });
     }

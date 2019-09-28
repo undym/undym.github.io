@@ -19,6 +19,7 @@ import { Btn } from "../widget/btn.js";
 import { Targeting } from "../force.js";
 import { ItemScene } from "./itemscene.js";
 import { Font, Graphics } from "../graphics/graphics.js";
+import { PartySkillWin, PartySkill } from "../partyskill.js";
 let btnSpace;
 export class BattleScene extends Scene {
     constructor() {
@@ -366,37 +367,31 @@ const win = () => __awaiter(this, void 0, void 0, function* () {
     Battle.result = BattleResult.WIN;
     Util.msg.set("勝った");
     yield wait();
-    {
-        let exp = 0;
-        Unit.enemies
-            .filter(e => e.exists)
-            .forEach(e => exp += e.prm(Prm.EXP).base);
-        exp = exp | 0;
-        Util.msg.set(`${exp}の経験値を入手`, Color.CYAN.bright);
-        yield wait();
-        for (let p of Unit.players.filter(p => p.exists)) {
-            yield p.addExp(exp);
-        }
+    const partySkill = new PartySkillWin();
+    Unit.enemies
+        .filter(e => e.exists)
+        .forEach(e => {
+        partySkill.exp.base += e.prm(Prm.EXP).base;
+        partySkill.jobExp.base += 1;
+        partySkill.yen.base += e.yen;
+    });
+    for (const skill of PartySkill.skills) {
+        skill.win(partySkill);
     }
-    {
-        let exp = 0;
-        Unit.enemies
-            .filter(e => e.exists)
-            .forEach(e => exp += 1);
-        for (let p of Unit.players.filter(p => p.exists)) {
-            yield p.addJobExp(exp);
-        }
+    const exp = (partySkill.exp.base * partySkill.exp.mul) | 0;
+    Util.msg.set(`${exp}の経験値を入手`, Color.CYAN.bright);
+    yield wait();
+    for (let p of Unit.players.filter(p => p.exists)) {
+        yield p.addExp(exp);
     }
-    {
-        let yen = 0;
-        Unit.enemies
-            .filter(e => e.exists)
-            .forEach(e => yen += e.yen);
-        yen = yen | 0;
-        PlayData.yen += yen;
-        Util.msg.set(`${yen}円入手`, Color.YELLOW.bright);
-        yield wait();
+    const jobExp = (partySkill.jobExp.base * partySkill.jobExp.mul) | 0;
+    for (let p of Unit.players.filter(p => p.exists)) {
+        yield p.addJobExp(jobExp);
     }
+    const yen = (partySkill.yen.base * partySkill.yen.mul) | 0;
+    PlayData.yen += yen;
+    Util.msg.set(`${yen}円入手`, Color.YELLOW.bright);
+    yield wait();
     yield finish();
     yield Battle.battleEndAction(BattleResult.WIN);
 });

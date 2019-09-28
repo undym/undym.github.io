@@ -19,7 +19,7 @@ import { SaveData } from "../savedata.js";
 
 export class MixScene extends Scene{
 
-    private list:List;
+    private list:List = new List();
     private choosed:boolean = false;
     private choosedMix:Mix;
     /**セーブフラグ. */
@@ -28,12 +28,10 @@ export class MixScene extends Scene{
     constructor(){
         super();
 
-        this.list = new List();
+        this.setList("建築", Mix.values.filter(m=> !m.result && m.isVisible()));
     }
 
     init(){
-        this.choosed = false;
-
         super.clear();
 
         super.add(Place.TOP, DrawPlayInfo.ins);
@@ -158,9 +156,6 @@ export class MixScene extends Scene{
         
         
         
-        const values = Mix.values
-                            .filter(m=> !m.result && m.isVisible());
-        this.setList("建築", values);
     }
 
 

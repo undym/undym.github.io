@@ -15,6 +15,7 @@ import { Player } from "../player.js";
 import { SaveData } from "../savedata.js";
 import { DungeonEvent } from "../dungeon/dungeonevent.js";
 import { EqEar, Eq } from "../eq.js";
+import { PartySkill } from "../partyskill.js";
 
 
 export const createOptionBtn = ()=>{
@@ -82,17 +83,17 @@ const setSaveDataDeleteBtn2 = (l:FlowLayout)=>{
 const setDebugBtn = (l:FlowLayout)=>{
     l.clear();
 
-    l.add(new Btn("GetAllItmes", ()=>{
+    l.add(new Btn("アイテム入手", ()=>{
         for(let item of Item.values){
             item.num = item.numLimit;
         }
-        Util.msg.set("GetAllItems");
+        Util.msg.set("アイテム入手");
     }));
-    l.add(new Btn("GetMaterials", ()=>{
+    l.add(new Btn("素材入手", ()=>{
         for(let item of ItemType.素材.values){
             item.num = item.numLimit;
         }
-        Util.msg.set("GetMaterials");
+        Util.msg.set("素材入手");
     }));
     l.add(new Btn("技習得", ()=>{
         for(let p of Player.values){
@@ -115,6 +116,13 @@ const setDebugBtn = (l:FlowLayout)=>{
         }
         
         Util.msg.set("装備入手");
+    }));
+    l.add(new Btn("パーティースキル入手", ()=>{
+        for(const skill of PartySkill.values){
+            skill.has = true;
+        }
+        
+        Util.msg.set("パーティースキル入手");
     }));
     l.add(new Btn("金", ()=>{
         const value = 99999;

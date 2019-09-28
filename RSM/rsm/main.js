@@ -18,6 +18,7 @@ import { Rect, Color } from "./undym/type.js";
 import { Graphics, Texture } from "./graphics/graphics.js";
 import { SaveData } from "./savedata.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
+import { PartySkill } from "./partyskill.js";
 {
     let runBtnVisible = false;
     const run = (() => {
@@ -119,6 +120,8 @@ const init = () => {
     for (const ev of DungeonEvent.values()) {
         ev.getImg();
     }
+    PartySkill.skills.length = PartySkill.DEF_PARTY_SKILL_NUM;
+    PartySkill.skills.fill(PartySkill.empty);
 };
 const newGame = () => {
     Util.msg.set("NEW GAME");

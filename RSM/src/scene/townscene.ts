@@ -23,6 +23,7 @@ import { ConditionType, Condition } from "../condition.js";
 import { ShopScene } from "./shopscene.js";
 import { FX } from "../fx/fx.js";
 import { Battle, BattleType } from "../battle.js";
+import { PartySkillScene } from "./partyskillscene.js";
 
 
 let choosedDungeon:Dungeon;
@@ -123,6 +124,11 @@ class TownBtn{
             if(Item.合成許可証.num > 0 || Debug.debugMode){
                 l.add(new Btn("合成", ()=>{
                     Scene.load(new MixScene());
+                }));
+            }
+            if(Item.パーティースキル取り扱い許可証.num > 0 || Debug.debugMode){
+                l.add(new Btn("パーティースキル",()=>{
+                    Scene.load(new PartySkillScene());
                 }));
             }
 

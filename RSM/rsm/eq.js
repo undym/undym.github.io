@@ -25,7 +25,6 @@ EqPos.武 = new EqPos("武");
 EqPos.盾 = new EqPos("盾");
 EqPos.体 = new EqPos("体");
 EqPos.腰 = new EqPos("腰");
-EqPos.腕 = new EqPos("腕");
 EqPos.手 = new EqPos("手");
 EqPos.指 = new EqPos("指");
 EqPos.脚 = new EqPos("脚");
@@ -74,9 +73,6 @@ export class Eq {
         }
         if (pos === EqPos.腰) {
             return this.ひも;
-        }
-        if (pos === EqPos.腕) {
-            return this.腕;
         }
         if (pos === EqPos.手) {
             return this.手;
@@ -245,7 +241,6 @@ EqEar._valueOf = new Map();
             }
         }
     };
-    //再構成トンネル・財宝
     Eq.魔法の杖 = new class extends Eq {
         constructor() {
             super({ uniqueName: "魔法の杖", info: "魔法攻撃x1.5",
@@ -501,28 +496,6 @@ EqEar._valueOf = new Map();
     };
     //--------------------------------------------------------------------------
     //
-    //腕
-    //
-    //--------------------------------------------------------------------------
-    Eq.腕 = new class extends Eq {
-        constructor() {
-            super({ uniqueName: "腕", info: "",
-                pos: EqPos.腕, lv: 0 });
-        }
-    };
-    Eq.ゴーレムの腕 = new class extends Eq {
-        constructor() {
-            super({ uniqueName: "ゴーレムの腕", info: "格闘攻撃+20%",
-                pos: EqPos.腕, lv: 5 });
-        }
-        beforeDoAtk(action, attacker, target, dmg) {
-            if (action instanceof ActiveTec && action.type.any(TecType.格闘)) {
-                dmg.pow.mul *= 1.2;
-            }
-        }
-    };
-    //--------------------------------------------------------------------------
-    //
     //手
     //
     //--------------------------------------------------------------------------
@@ -569,6 +542,29 @@ EqEar._valueOf = new Map();
             if (action instanceof ActiveTec && action.type.any(TecType.魔法, TecType.神格, TecType.練術, TecType.銃術)) {
                 dmg.pow.mul *= 1.2;
             }
+        }
+    };
+    Eq.ゴーレムの腕 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "ゴーレムの腕", info: "格闘攻撃+20%",
+                pos: EqPos.手, lv: 5 });
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.格闘)) {
+                dmg.pow.mul *= 1.2;
+            }
+        }
+    };
+    Eq.ニケ = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "ニケ", info: "最大MP+10 最大TP+5 光・闇+50",
+                pos: EqPos.手, lv: 45 });
+        }
+        equip(unit) {
+            unit.prm(Prm.MAX_MP).eq += 10;
+            unit.prm(Prm.MAX_TP).eq += 5;
+            unit.prm(Prm.LIG).eq += 50;
+            unit.prm(Prm.DRK).eq += 50;
         }
     };
     //--------------------------------------------------------------------------
@@ -628,6 +624,22 @@ EqEar._valueOf = new Map();
         afterBeAtk(action, attacker, target, dmg) {
             if (action instanceof ActiveTec && action.type !== TecType.状態 && Math.random() < 0.6) {
                 Unit.setCondition(target, Condition.盾, 1);
+            }
+        }
+    };
+    Eq.鉄下駄 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "鉄下駄", info: "攻撃命中率x0.9 防御値x2",
+                pos: EqPos.脚, lv: 21 });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec) {
+                dmg.def.mul *= 2;
+            }
+        }
+        beforeDoAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec) {
+                dmg.hit.mul *= 0.9;
             }
         }
     };

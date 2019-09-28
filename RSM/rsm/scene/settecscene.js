@@ -22,14 +22,20 @@ import { FX_Str } from "../fx/fx.js";
 export class SetTecScene extends Scene {
     constructor() {
         super();
-        this.choosed = false;
         this.settingTecList = new List();
         this.list = new List();
-    }
-    init() {
         this.target = Unit.getFirstPlayer();
         this.choosed = false;
         this.choosedTec = Tec.empty;
+        this.setSettingTecList(this.target, true);
+        (this.resetList = keepScroll => {
+            const type = TecType.格闘;
+            this.choosed = false;
+            this.list.clear(keepScroll);
+            this.setList(this.target, `${type}`, type.tecs.filter(t => this.target.isMasteredTec(t)));
+        })(false);
+    }
+    init() {
         super.clear();
         super.add(Place.TOP, DrawPlayInfo.ins);
         const pboxBounds = new Rect(0, 1 - Place.ST_H, 1, Place.ST_H);
@@ -164,13 +170,6 @@ export class SetTecScene extends Scene {
                     }
                 }
             } }));
-        this.setSettingTecList(this.target, true);
-        (this.resetList = keepScroll => {
-            const type = TecType.格闘;
-            this.choosed = false;
-            this.list.clear(keepScroll);
-            this.setList(this.target, `${type}`, type.tecs.filter(t => this.target.isMasteredTec(t)));
-        })(false);
     }
     setSettingTecList(unit, keepScroll) {
         this.settingTecList.clear(keepScroll);

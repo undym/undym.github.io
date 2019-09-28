@@ -273,13 +273,19 @@ export namespace Mix{
     const           布の服:Mix = new Mix({
         uniqueName:"布の服", limit:2,
         result:()=>[Eq.布の服, 1],
-        materials:()=>[[Item.布, 5], [Item.黒い石, 3], [Item.しいたけ, 5]],
+        materials:()=>[[Item.布, 2], [Item.黒い石, 3], [Item.しいたけ, 5]],
     });
     const           皮の服:Mix = new Mix({
         uniqueName:"皮の服", limit:2,
         result:()=>[Eq.皮の服, 1],
-        materials:()=>[[Item.布, 5], [Item.少女の心を持ったおっさん, 5], [Item.しいたけ, 5]],
+        materials:()=>[[Item.布, 2], [Item.少女の心を持ったおっさん, 5], [Item.しいたけ, 5]],
         isVisible:()=>布の服.count > 0,
+    });
+    const           木の鎧:Mix = new Mix({
+        uniqueName:"木の鎧", limit:2,
+        result:()=>[Eq.木の鎧, 1],
+        materials:()=>[[Item.布, 2], [Item.スギ, 5], [Item.ヒノキ, 5]],
+        isVisible:()=>皮の服.count > 0,
     });
     
     //手

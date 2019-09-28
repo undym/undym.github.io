@@ -23,6 +23,7 @@ import { ItemScene } from "../scene/itemscene.js";
 import { Targeting, Dmg } from "../force.js";
 import { Img } from "../graphics/graphics.js";
 import { SaveData } from "../savedata.js";
+import { PartySkillOpenBox, PartySkill } from "../partyskill.js";
 export class DungeonEvent {
     constructor() {
         DungeonEvent._values.push(this);
@@ -66,22 +67,7 @@ DungeonEvent._values = [];
             this.createImg = () => new Img("img/box_open.png");
             this.isZoomImg = () => false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                let openNum = 1;
-                let openBoost = 0.3;
-                while (Math.random() <= openBoost) {
-                    openNum++;
-                    openBoost /= 2;
-                }
-                let baseRank = Dungeon.now.rank / 2;
-                for (let i = 0; i < openNum; i++) {
-                    const itemRank = Item.fluctuateRank(baseRank);
-                    let item = Item.rndItem(ItemDrop.BOX, itemRank);
-                    let addNum = 1;
-                    item.add(addNum);
-                    if (i < openNum - 1) {
-                        yield wait();
-                    }
-                }
+                openBox(ItemDrop.BOX, Dungeon.now.rank);
                 if (Math.random() < 0.15) {
                     const trends = Dungeon.now.trendItems;
                     if (trends.length > 0) {
@@ -226,22 +212,7 @@ DungeonEvent._values = [];
             this.createImg = () => new Img("img/tree_broken.png");
             this.isZoomImg = () => false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                let openNum = 1;
-                let openBoost = 0.3;
-                while (Math.random() <= openBoost) {
-                    openNum++;
-                    openBoost /= 2;
-                }
-                let baseRank = Dungeon.now.rank / 2;
-                for (let i = 0; i < openNum; i++) {
-                    const itemRank = Item.fluctuateRank(baseRank);
-                    let item = Item.rndItem(ItemDrop.TREE, itemRank);
-                    let addNum = 1;
-                    item.add(addNum);
-                    if (i < openNum - 1) {
-                        yield wait();
-                    }
-                }
+                openBox(ItemDrop.TREE, Dungeon.now.rank);
             });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
@@ -263,22 +234,7 @@ DungeonEvent._values = [];
             // createImg = ()=> new Img("img/tree_broken.png");
             // isZoomImg = ()=> false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                let openNum = 1;
-                let openBoost = 0.3;
-                while (Math.random() <= openBoost) {
-                    openNum++;
-                    openBoost /= 2;
-                }
-                let baseRank = Dungeon.now.rank / 2;
-                for (let i = 0; i < openNum; i++) {
-                    const itemRank = Item.fluctuateRank(baseRank);
-                    let item = Item.rndItem(ItemDrop.DIG, itemRank);
-                    let addNum = 1;
-                    item.add(addNum);
-                    if (i < openNum - 1) {
-                        yield wait();
-                    }
-                }
+                openBox(ItemDrop.DIG, Dungeon.now.rank);
             });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
@@ -465,3 +421,23 @@ class ItemBtn {
         return this._ins;
     }
 }
+const openBox = (dropType, rank) => __awaiter(this, void 0, void 0, function* () {
+    const partySkill = new PartySkillOpenBox();
+    PartySkill.skills.forEach(skill => skill.openBox(partySkill, dropType));
+    let openNum = 1;
+    let openBoost = 0.3 + partySkill.chain;
+    while (Math.random() < openBoost) {
+        openNum++;
+        openBoost /= 2;
+    }
+    let baseRank = rank / 2 + partySkill.addRank;
+    for (let i = 0; i < openNum; i++) {
+        const itemRank = Item.fluctuateRank(baseRank);
+        let item = Item.rndItem(dropType, itemRank);
+        let addNum = 1;
+        item.add(addNum);
+        if (i < openNum - 1) {
+            yield wait();
+        }
+    }
+});

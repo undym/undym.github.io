@@ -55,12 +55,19 @@ ItemParentType.回復 = new ItemParentType("回復", [ItemType.蘇生, ItemType.
 ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン, ItemType.弾]);
 ItemParentType.強化 = new ItemParentType("強化", [ItemType.ドーピング, ItemType.書]);
 ItemParentType.その他 = new ItemParentType("その他", [ItemType.メモ, ItemType.鍵, ItemType.玉, ItemType.素材]);
-export const ItemDrop = {
-    get NO() { return 0; },
-    get BOX() { return 1 << 0; },
-    get TREE() { return 1 << 1; },
-    get DIG() { return 1 << 2; },
-};
+export var ItemDrop;
+(function (ItemDrop) {
+    ItemDrop[ItemDrop["NO"] = 0] = "NO";
+    ItemDrop[ItemDrop["BOX"] = 1] = "BOX";
+    ItemDrop[ItemDrop["TREE"] = 2] = "TREE";
+    ItemDrop[ItemDrop["DIG"] = 4] = "DIG";
+})(ItemDrop || (ItemDrop = {}));
+// export const ItemDrop = {
+//     get NO()  {return 0;},
+//     get BOX() {return 1 << 0;},
+//     get TREE(){return 1 << 1;},
+//     get DIG() {return 1 << 2;},
+// }
 class ItemValues {
     constructor(items) {
         this.values = new Map();
@@ -478,12 +485,6 @@ Item.DEF_NUM_LIMIT = 9999;
     //メモ
     //
     //-----------------------------------------------------------------
-    Item.合成許可証 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "合成許可証", info: "合成が解放される",
-                type: ItemType.メモ, rank: 0, drop: ItemDrop.NO, numLimit: 1 });
-        }
-    };
     Item.消耗品のメモ = new class extends Item {
         constructor() {
             super({ uniqueName: "消耗品のメモ", info: "スティックパンなどの一部消耗品はダンジョンに入る度に補充される",
@@ -496,25 +497,40 @@ Item.DEF_NUM_LIMIT = 9999;
                 type: ItemType.メモ, rank: 1, drop: ItemDrop.BOX, numLimit: 1 });
         }
     };
+    Item.合成許可証 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "合成許可証", info: "合成が解放される",
+                type: ItemType.メモ, rank: 10, drop: ItemDrop.NO, numLimit: 1 });
+        }
+    };
+    Item.パーティースキル取り扱い許可証 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "パーティースキル取り扱い許可証", info: "パーティースキルが解放される",
+                type: ItemType.メモ, rank: 10, drop: ItemDrop.NO, numLimit: 1 });
+        }
+    };
     //-----------------------------------------------------------------
     //
     //鍵
     //
     //-----------------------------------------------------------------
     Item.はじまりの丘の鍵 = new class extends Item {
-        constructor() { super({ uniqueName: "はじまりの丘の鍵", info: "", type: ItemType.鍵, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "はじまりの丘の鍵", info: "", type: ItemType.鍵, rank: 10, drop: ItemDrop.NO, }); }
     };
     Item.再構成トンネルの鍵 = new class extends Item {
-        constructor() { super({ uniqueName: "再構成トンネルの鍵", info: "", type: ItemType.鍵, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "再構成トンネルの鍵", info: "", type: ItemType.鍵, rank: 10, drop: ItemDrop.NO, }); }
     };
     Item.リテの門の鍵 = new class extends Item {
-        constructor() { super({ uniqueName: "リ・テの門の鍵", info: "", type: ItemType.鍵, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "リ・テの門の鍵", info: "", type: ItemType.鍵, rank: 10, drop: ItemDrop.NO, }); }
     };
     Item.黒平原の鍵 = new class extends Item {
-        constructor() { super({ uniqueName: "黒平原の鍵", info: "", type: ItemType.鍵, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "黒平原の鍵", info: "", type: ItemType.鍵, rank: 10, drop: ItemDrop.NO, }); }
     };
     Item.黒遺跡の鍵 = new class extends Item {
-        constructor() { super({ uniqueName: "黒遺跡の鍵", info: "", type: ItemType.鍵, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "黒遺跡の鍵", info: "", type: ItemType.鍵, rank: 10, drop: ItemDrop.NO, }); }
+    };
+    Item.PAINの鍵 = new class extends Item {
+        constructor() { super({ uniqueName: "PAINの鍵", info: "", type: ItemType.鍵, rank: 10, drop: ItemDrop.NO, }); }
     };
     //-----------------------------------------------------------------
     //
@@ -522,19 +538,22 @@ Item.DEF_NUM_LIMIT = 9999;
     //
     //-----------------------------------------------------------------
     Item.はじまりの丘の玉 = new class extends Item {
-        constructor() { super({ uniqueName: "はじまりの丘の玉", info: "", type: ItemType.玉, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "はじまりの丘の玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
     };
     Item.再構成トンネルの玉 = new class extends Item {
-        constructor() { super({ uniqueName: "再構成トンネルの玉", info: "", type: ItemType.玉, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "再構成トンネルの玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
     };
     Item.リテの門の玉 = new class extends Item {
-        constructor() { super({ uniqueName: "リ・テの門の玉", info: "", type: ItemType.玉, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "リ・テの門の玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
     };
     Item.黒平原の玉 = new class extends Item {
-        constructor() { super({ uniqueName: "黒平原の玉", info: "", type: ItemType.玉, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "黒平原の玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
     };
     Item.黒遺跡の玉 = new class extends Item {
-        constructor() { super({ uniqueName: "黒遺跡の玉", info: "", type: ItemType.玉, rank: 0, drop: ItemDrop.NO, }); }
+        constructor() { super({ uniqueName: "黒遺跡の玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
+    };
+    Item.PAINの玉 = new class extends Item {
+        constructor() { super({ uniqueName: "PAINの玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
     };
     //-----------------------------------------------------------------
     //

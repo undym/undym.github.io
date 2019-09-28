@@ -17,6 +17,7 @@ import { Img } from "../graphics/graphics.js";
 import { SaveData } from "../savedata.js";
 import { Input } from "../undym/input.js";
 import { Num } from "../mix.js";
+import { PartySkillOpenBox, PartySkill } from "../partyskill.js";
 
 
 export abstract class DungeonEvent{
@@ -72,23 +73,7 @@ export namespace DungeonEvent{
         createImg = ()=> new Img("img/box_open.png");
         isZoomImg = ()=> false;
         happenInner = async()=>{
-            let openNum = 1;
-            let openBoost = 0.3;
-            while(Math.random() <= openBoost){
-                openNum++;
-                openBoost /= 2;
-            }
-            let baseRank = Dungeon.now.rank / 2;
-            for(let i = 0; i < openNum; i++){
-                const itemRank = Item.fluctuateRank( baseRank );
-                let item = Item.rndItem( ItemDrop.BOX, itemRank );
-                let addNum = 1;
-                item.add( addNum );
-
-                if(i < openNum - 1){
-                    await wait();
-                }
-            }
+            openBox( ItemDrop.BOX, Dungeon.now.rank );
 
             if(Math.random() < 0.15){
                 const trends = Dungeon.now.trendItems;
@@ -217,21 +202,7 @@ export namespace DungeonEvent{
         createImg = ()=> new Img("img/tree_broken.png");
         isZoomImg = ()=> false;
         happenInner = async()=>{
-            let openNum = 1;
-            let openBoost = 0.3;
-            while(Math.random() <= openBoost){
-                openNum++;
-                openBoost /= 2;
-            }
-            let baseRank = Dungeon.now.rank / 2;
-            for(let i = 0; i < openNum; i++){
-                const itemRank = Item.fluctuateRank( baseRank );
-                let item = Item.rndItem( ItemDrop.TREE, itemRank );
-                let addNum = 1;
-                item.add( addNum );
-
-                if(i < openNum - 1){await wait();}
-            }
+            openBox( ItemDrop.TREE, Dungeon.now.rank );
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
@@ -250,21 +221,7 @@ export namespace DungeonEvent{
         // createImg = ()=> new Img("img/tree_broken.png");
         // isZoomImg = ()=> false;
         happenInner = async()=>{
-            let openNum = 1;
-            let openBoost = 0.3;
-            while(Math.random() <= openBoost){
-                openNum++;
-                openBoost /= 2;
-            }
-            let baseRank = Dungeon.now.rank / 2;
-            for(let i = 0; i < openNum; i++){
-                const itemRank = Item.fluctuateRank( baseRank );
-                let item = Item.rndItem( ItemDrop.DIG, itemRank );
-                let addNum = 1;
-                item.add( addNum );
-
-                if(i < openNum - 1){await wait();}
-            }
+            openBox( ItemDrop.DIG, Dungeon.now.rank );
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
@@ -373,8 +330,6 @@ export namespace DungeonEvent{
 }
 
 
-
-
 const createDefLayout = ()=>{
     //0,1,2,
     //3,4,5,
@@ -463,3 +418,27 @@ class ItemBtn{
         return this._ins;
     }
 }
+
+
+const openBox = async(dropType:ItemDrop, rank:number)=>{
+    const partySkill = new PartySkillOpenBox();
+    PartySkill.skills.forEach(skill=> skill.openBox( partySkill, dropType ) );
+
+    let openNum = 1;
+    let openBoost = 0.3 + partySkill.chain;
+    while(Math.random() < openBoost){
+        openNum++;
+        openBoost /= 2;
+    }
+    let baseRank = rank / 2 + partySkill.addRank;
+    for(let i = 0; i < openNum; i++){
+        const itemRank = Item.fluctuateRank( baseRank );
+        let item = Item.rndItem( dropType, itemRank );
+        let addNum = 1;
+        item.add( addNum );
+
+        if(i < openNum - 1){
+            await wait();
+        }
+    }
+};
