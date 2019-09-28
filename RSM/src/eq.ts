@@ -502,11 +502,11 @@ export namespace Eq{
         }
     }
     export const                         ゴーレムの腕 = new class extends Eq{//黒遺跡EX
-        constructor(){super({uniqueName:"ゴーレムの腕", info:"格闘攻撃+20%",
+        constructor(){super({uniqueName:"ゴーレムの腕", info:"神格・過去攻撃+33%",
                                 pos:EqPos.手, lv:5});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
-            if(action instanceof ActiveTec && action.type.any( TecType.格闘 )){
-                dmg.pow.mul *= 1.2;
+            if(action instanceof ActiveTec && action.type.any( TecType.神格, TecType.過去 )){
+                dmg.pow.mul *= 1.33;
             }
         }
     }

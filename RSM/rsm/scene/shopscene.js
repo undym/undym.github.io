@@ -56,6 +56,7 @@ export class ShopScene extends Scene {
                     let p = bounds.upperLeft.move(1 / Graphics.pixelW, 2 / Graphics.pixelH);
                     const moveP = () => p = p.move(0, font.ratioH);
                     font.draw(`[${goods}]`, moveP(), Color.WHITE);
+                    font.draw(`[${goods.type}]`, moveP(), Color.WHITE);
                     font.draw(`${goods.price()}円`, moveP(), Color.WHITE);
                     if (goods.num()) {
                         font.draw(`所持:${goods.num()}`, moveP(), Color.WHITE);
@@ -163,14 +164,14 @@ const initGoods = () => {
     createItemGoods(Item.脱出ポッド, () => 10, () => Item.脱出ポッド.totalGetNum < 1);
     createItemGoods(Item.赤い水, () => (Item.赤い水.num + 1) * 100, () => Item.赤い水.totalGetNum < 10 && Dungeon.再構成トンネル.dungeonClearCount > 0);
     createItemGoods(Item.サンタクララ薬, () => (Item.サンタクララ薬.num + 1) * 50, () => Item.サンタクララ薬.totalGetNum < 4 && Dungeon.再構成トンネル.dungeonClearCount > 0);
+    createItemGoods(Item.夜叉の矢, () => (Item.夜叉の矢.num + 1) * 500, () => クピドmaster);
+    createItemGoods(Item.散弾, () => (Item.散弾.num + 1) * 500, () => 砲撃手master);
+    createItemGoods(Item.ボロい釣竿, () => 300, () => Dungeon.PAIN.dungeonClearCount > 0);
     createEarGoods(EqEar.おにく, () => 100, () => Dungeon.はじまりの丘.dungeonClearCount > 0 && EqEar.おにく.totalGetNum < 2);
     createEarGoods(EqEar.水晶のピアス, () => 200, () => Dungeon.はじまりの丘.dungeonClearCount > 0 && EqEar.水晶のピアス.totalGetNum < 2);
     createEarGoods(EqEar.魔ヶ玉のピアス, () => 100, () => Dungeon.リテの門.dungeonClearCount > 0 && EqEar.魔ヶ玉のピアス.totalGetNum < 2);
     createEarGoods(EqEar.エメラルドのピアス, () => 100, () => Dungeon.リテの門.dungeonClearCount > 0 && EqEar.エメラルドのピアス.totalGetNum < 2);
-    // createEqGoods(Eq.う棒,      　()=>500,    ()=>Unit.getFirstPlayer().prm(Prm.LV).base > 10 && Eq.う棒.totalGetNum === 0);
-    createItemGoods(Item.夜叉の矢, () => (Item.夜叉の矢.num + 1) * 500, () => クピドmaster);
-    createItemGoods(Item.散弾, () => (Item.散弾.num + 1) * 500, () => 砲撃手master);
-    createItemGoods(Item.パーティースキル取り扱い許可証, () => 1000, () => Dungeon.黒遺跡.dungeonClearCount > 0);
+    createItemGoods(Item.パーティースキル取り扱い許可証, () => 1000, () => Dungeon.黒遺跡.dungeonClearCount > 0 && Item.パーティースキル取り扱い許可証.num === 0);
     createPartySkill(PartySkill.入手経験値増加, () => 1000, () => Item.パーティースキル取り扱い許可証.num > 0);
     createPartySkill(PartySkill.入手金増加, () => 2000, () => Item.パーティースキル取り扱い許可証.num > 0);
     createPartySkill(PartySkill.宝箱チェーン増加, () => 3000, () => Item.パーティースキル取り扱い許可証.num > 0);

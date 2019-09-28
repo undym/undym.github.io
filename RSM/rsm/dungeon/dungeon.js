@@ -154,7 +154,10 @@ export class Dungeon {
             return DungeonEvent.TREE;
         }
         if (this.rank >= 2 && Math.random() < 0.01) {
-            return DungeonEvent.DIG;
+            return DungeonEvent.STRATUM;
+        }
+        if (this.rank >= 3 && Math.random() < 0.01) {
+            return DungeonEvent.LAKE;
         }
         //(10 + rank * 1) / (10 + rank * 6)
         //[rank = 0,  1 / 1] [rank = 1,  11 / 16] [rank = 5,  15 / 40] [rank = 10, 20 / 70 = 2 / 7]

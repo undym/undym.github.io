@@ -182,7 +182,7 @@ class TownBtn {
                 item.remainingUseCount = item.num;
             }
             Util.msg.set(`${choosedDungeon}に侵入しました`);
-            FX_DungeonName(choosedDungeon.toString(), Place.MAIN);
+            FX_DungeonName(choosedDungeon.toString(), Place.E_BOX);
             Scene.load(DungeonScene.ins);
         });
         l.addFromLast(new VariableLayout(() => {

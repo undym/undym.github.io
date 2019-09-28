@@ -11,8 +11,8 @@ import { Btn } from "../widget/btn.js";
 import { Dungeon } from "./dungeon.js";
 import { Scene, cwait, wait } from "../undym/scene.js";
 import { TownScene } from "../scene/townscene.js";
-import { Item, ItemDrop } from "../item.js";
-import { ILayout, FlowLayout } from "../undym/layout.js";
+import { Item, ItemDrop, ItemType } from "../item.js";
+import { ILayout, VariableLayout, FlowLayout } from "../undym/layout.js";
 import { Color } from "../undym/type.js";
 import { Unit, Prm } from "../unit.js";
 import { FX_Advance, FX_Return } from "../fx/fx.js";
@@ -67,7 +67,7 @@ DungeonEvent._values = [];
             this.createImg = () => new Img("img/box_open.png");
             this.isZoomImg = () => false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                openBox(ItemDrop.BOX, Dungeon.now.rank);
+                yield openBox(ItemDrop.BOX, Dungeon.now.rank);
                 if (Math.random() < 0.15) {
                     const trends = Dungeon.now.trendItems;
                     if (trends.length > 0) {
@@ -189,7 +189,7 @@ DungeonEvent._values = [];
             };
             this.createBtnLayout = () => createDefLayout()
                 .set(ReturnBtn.index, new Btn("切る", () => __awaiter(this, void 0, void 0, function* () {
-                yield DungeonEvent.TREE_BROKEN.happen();
+                yield DungeonEvent.TREE_GET.happen();
             })))
                 .set(AdvanceBtn.index, new Btn("進む", () => __awaiter(this, void 0, void 0, function* () {
                 Util.msg.set("いてっ！", Color.RED);
@@ -206,37 +206,88 @@ DungeonEvent._values = [];
             })).dontMove());
         }
     };
-    DungeonEvent.TREE_BROKEN = new class extends DungeonEvent {
+    DungeonEvent.TREE_GET = new class extends DungeonEvent {
         constructor() {
             super();
             this.createImg = () => new Img("img/tree_broken.png");
             this.isZoomImg = () => false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                openBox(ItemDrop.TREE, Dungeon.now.rank);
+                yield openBox(ItemDrop.TREE, Dungeon.now.rank);
             });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
     };
-    DungeonEvent.DIG = new class extends DungeonEvent {
+    DungeonEvent.STRATUM = new class extends DungeonEvent {
         constructor() {
             super();
             // createImg = ()=> new Img("img/tree.png");
             this.happenInner = () => { Util.msg.set("掘れそうな場所がある"); };
             this.createBtnLayout = () => createDefLayout()
                 .set(ReturnBtn.index, new Btn("掘る", () => __awaiter(this, void 0, void 0, function* () {
-                yield DungeonEvent.TREE_BROKEN.happen();
+                yield DungeonEvent.STRATUM_GET.happen();
             })));
         }
     };
-    DungeonEvent.DIGED = new class extends DungeonEvent {
+    DungeonEvent.STRATUM_GET = new class extends DungeonEvent {
         constructor() {
             super();
             // createImg = ()=> new Img("img/tree_broken.png");
             // isZoomImg = ()=> false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                openBox(ItemDrop.DIG, Dungeon.now.rank);
+                yield openBox(ItemDrop.STRATUM, Dungeon.now.rank);
             });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
+        }
+    };
+    DungeonEvent.LAKE = new class extends DungeonEvent {
+        constructor() {
+            super();
+            this.汲む = false;
+            this.釣る = false;
+            // createImg = ()=> new Img("img/tree.png");
+            this.happenInner = () => {
+                Util.msg.set("湖だ");
+                this.汲む = true;
+                if (ItemType.竿.values.some(item => item.num > 0)) {
+                    this.釣る = true;
+                }
+            };
+            this.createBtnLayout = () => createDefLayout()
+                .set(ReturnBtn.index, (() => {
+                const btn = new Btn("汲む", () => __awaiter(this, void 0, void 0, function* () {
+                    this.汲む = false;
+                    yield openBox(ItemDrop.LAKE, Dungeon.now.rank);
+                }));
+                return new VariableLayout(() => this.汲む ? btn : ReturnBtn.ins);
+            })())
+                .set(5, (() => {
+                const btn = new Btn("釣る", () => __awaiter(this, void 0, void 0, function* () {
+                    this.釣る = false;
+                    let doneAnyFishing = false;
+                    const fishing = (baseRank) => __awaiter(this, void 0, void 0, function* () {
+                        const itemRank = Item.fluctuateRank(baseRank);
+                        let item = Item.rndItem(ItemDrop.FISHING, itemRank);
+                        item.add(1);
+                        yield wait();
+                        doneAnyFishing = true;
+                    });
+                    const checkAndBreakRod = (prob, rod) => __awaiter(this, void 0, void 0, function* () {
+                        if (Math.random() < prob) {
+                            rod.add(-1);
+                            Util.msg.set(`[${rod}]が壊れてしまった！(残り${rod.num})`, Color.RED.bright);
+                            yield wait();
+                        }
+                    });
+                    if (Item.ボロい釣竿.num > 0) {
+                        fishing(Dungeon.now.rank / 2);
+                        checkAndBreakRod(0.05, Item.ボロい釣竿);
+                    }
+                    if (!doneAnyFishing) {
+                        Util.msg.set("釣り竿をもっていなかった...");
+                    }
+                }));
+                return new VariableLayout(() => this.釣る ? btn : ILayout.empty);
+            })());
         }
     };
     DungeonEvent.BATTLE = new class extends DungeonEvent {

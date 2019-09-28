@@ -23,7 +23,7 @@ export class ItemType {
         this.toString = () => name;
     }
     get values() {
-        if (this._values === undefined) {
+        if (!this._values) {
             this._values = Item.values
                 .filter(item => item.itemType === this);
         }
@@ -35,6 +35,7 @@ ItemType.蘇生 = new ItemType("蘇生");
 ItemType.HP回復 = new ItemType("HP回復");
 ItemType.MP回復 = new ItemType("MP回復");
 ItemType.ダンジョン = new ItemType("ダンジョン");
+ItemType.竿 = new ItemType("竿");
 ItemType.弾 = new ItemType("弾");
 ItemType.ドーピング = new ItemType("ドーピング");
 ItemType.書 = new ItemType("書");
@@ -52,7 +53,7 @@ export class ItemParentType {
 }
 ItemParentType._values = [];
 ItemParentType.回復 = new ItemParentType("回復", [ItemType.蘇生, ItemType.HP回復, ItemType.MP回復]);
-ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン, ItemType.弾]);
+ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン, ItemType.竿, ItemType.弾]);
 ItemParentType.強化 = new ItemParentType("強化", [ItemType.ドーピング, ItemType.書]);
 ItemParentType.その他 = new ItemParentType("その他", [ItemType.メモ, ItemType.鍵, ItemType.玉, ItemType.素材]);
 export var ItemDrop;
@@ -60,7 +61,9 @@ export var ItemDrop;
     ItemDrop[ItemDrop["NO"] = 0] = "NO";
     ItemDrop[ItemDrop["BOX"] = 1] = "BOX";
     ItemDrop[ItemDrop["TREE"] = 2] = "TREE";
-    ItemDrop[ItemDrop["DIG"] = 4] = "DIG";
+    ItemDrop[ItemDrop["STRATUM"] = 4] = "STRATUM";
+    ItemDrop[ItemDrop["LAKE"] = 8] = "LAKE";
+    ItemDrop[ItemDrop["FISHING"] = 16] = "FISHING";
 })(ItemDrop || (ItemDrop = {}));
 // export const ItemDrop = {
 //     get NO()  {return 0;},
@@ -183,7 +186,7 @@ export class Item {
         });
     }
     canUse(user, targets) {
-        if (this.useInner === undefined) {
+        if (!this.args.use) {
             return false;
         }
         if (this.consumable && this.remainingUseCount <= 0) {
@@ -304,19 +307,30 @@ Item.DEF_NUM_LIMIT = 9999;
     };
     //-----------------------------------------------------------------
     //
+    //竿
+    //
+    //-----------------------------------------------------------------
+    Item.ボロい釣竿 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "ボロい釣竿", info: "釣りに使用　稀に壊れる",
+                type: ItemType.竿, rank: 10, drop: ItemDrop.NO, });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
     //弾
     //
     //-----------------------------------------------------------------
     Item.散弾 = new class extends Item {
         constructor() {
             super({ uniqueName: "散弾", info: "ショットガンに使用",
-                type: ItemType.鍵, rank: 0, consumable: true, drop: ItemDrop.NO, });
+                type: ItemType.鍵, rank: 10, consumable: true, drop: ItemDrop.NO, });
         }
     };
     Item.夜叉の矢 = new class extends Item {
         constructor() {
             super({ uniqueName: "夜叉の矢", info: "ヤクシャに使用",
-                type: ItemType.鍵, rank: 0, consumable: true, drop: ItemDrop.NO, });
+                type: ItemType.鍵, rank: 10, consumable: true, drop: ItemDrop.NO, });
         }
     };
     //-----------------------------------------------------------------
@@ -575,13 +589,13 @@ Item.DEF_NUM_LIMIT = 9999;
     Item.土 = new class extends Item {
         constructor() {
             super({ uniqueName: "土", info: "",
-                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.DIG });
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.STRATUM });
         }
     };
     Item.水 = new class extends Item {
         constructor() {
             super({ uniqueName: "水", info: "",
-                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.LAKE });
         }
     };
     Item.紙 = new class extends Item {
@@ -599,7 +613,7 @@ Item.DEF_NUM_LIMIT = 9999;
     Item.血 = new class extends Item {
         constructor() {
             super({ uniqueName: "血", info: "",
-                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX });
+                type: ItemType.素材, rank: 0, drop: ItemDrop.BOX | ItemDrop.LAKE });
         }
     };
     Item.葛 = new class extends Item {
@@ -640,7 +654,7 @@ Item.DEF_NUM_LIMIT = 9999;
     Item.銅 = new class extends Item {
         constructor() {
             super({ uniqueName: "銅", info: "",
-                type: ItemType.素材, rank: 1, drop: ItemDrop.BOX | ItemDrop.DIG });
+                type: ItemType.素材, rank: 1, drop: ItemDrop.BOX | ItemDrop.STRATUM });
         }
     };
     Item.朽ち果てた鍵 = new class extends Item {
@@ -658,7 +672,7 @@ Item.DEF_NUM_LIMIT = 9999;
     Item.ほぐし水 = new class extends Item {
         constructor() {
             super({ uniqueName: "ほぐし水", info: "",
-                type: ItemType.素材, rank: 1, drop: ItemDrop.BOX });
+                type: ItemType.素材, rank: 1, drop: ItemDrop.BOX | ItemDrop.LAKE });
         }
     };
     Item.ひも = new class extends Item {
@@ -693,13 +707,13 @@ Item.DEF_NUM_LIMIT = 9999;
     Item.黒い石 = new class extends Item {
         constructor() {
             super({ uniqueName: "黒い石", info: "",
-                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.DIG });
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.STRATUM });
         }
     };
     Item.黒い砂 = new class extends Item {
         constructor() {
             super({ uniqueName: "黒い砂", info: "",
-                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.DIG });
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.STRATUM });
         }
     };
     Item.黒い枝 = new class extends Item {
@@ -717,7 +731,7 @@ Item.DEF_NUM_LIMIT = 9999;
     Item.鉄 = new class extends Item {
         constructor() {
             super({ uniqueName: "鉄", info: "かたい",
-                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.DIG });
+                type: ItemType.素材, rank: 2, drop: ItemDrop.BOX | ItemDrop.STRATUM });
         }
     };
     //-----------------------------------------------------------------
@@ -734,7 +748,7 @@ Item.DEF_NUM_LIMIT = 9999;
     Item.岩 = new class extends Item {
         constructor() {
             super({ uniqueName: "岩", info: "",
-                type: ItemType.素材, rank: 3, drop: ItemDrop.BOX | ItemDrop.DIG });
+                type: ItemType.素材, rank: 3, drop: ItemDrop.BOX | ItemDrop.STRATUM });
         }
     };
     Item.おにく = new class extends Item {

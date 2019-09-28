@@ -1,7 +1,7 @@
 
 import { TownScene } from "./scene/townscene.js";
 import { Scene, wait } from "./undym/scene.js";
-import {Util, SceneType, Debug} from "./util.js";
+import {Util, SceneType, Debug, PlayData} from "./util.js";
 import { Input } from "./undym/input.js";
 import { Unit } from "./unit.js";
 import { FX, FXTest } from "./fx/fx.js";
