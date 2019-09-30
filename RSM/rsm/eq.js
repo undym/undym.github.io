@@ -37,7 +37,7 @@ export class Eq {
     constructor(args) {
         this.args = args;
         this.num = 0;
-        this.totalGetNum = 0;
+        this.totalGetCount = 0;
         Eq._values.push(this);
         Eq._valueOf.set(args.uniqueName, this);
     }
@@ -131,7 +131,7 @@ export class EqEar {
     constructor(args) {
         this.args = args;
         this.num = 0;
-        this.totalGetNum = 0;
+        this.totalGetCount = 0;
         EqEar._values.push(this);
         EqEar._valueOf.set(args.uniqueName, this);
     }

@@ -18,13 +18,19 @@
             width:100vw;
             height:100vh;
             image-rendering: pixelated;
-            /* transform-origin: top left;
-            transform:translateX(100vw) rotate(90deg); */
+        }
+        .loading{
+            width:100vw;
+            height:100vh;
+            text-align: center;
+            display: table-cell; /* IE8から使用可能 */
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
-<canvas id="canvas" class="canvas">読み込み中</canvas>
+<canvas id="canvas" class="canvas"></canvas>
+<div id="loading" class="loading">読み込み中</div>
 <script type="module" src="main.js"></script>
 
 <br>

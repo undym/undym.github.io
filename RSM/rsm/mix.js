@@ -8,7 +8,7 @@ export class Num {
     static add(obj, v) {
         v = v | 0;
         if (v > 0) {
-            const newItem = obj.totalGetNum === 0;
+            const newItem = obj.totalGetCount === 0;
             if (newItem) {
                 Util.msg.set("new", Color.rainbow);
             }
@@ -16,7 +16,7 @@ export class Num {
                 Util.msg.set("");
             }
             obj.num += v;
-            obj.totalGetNum += v;
+            obj.totalGetCount += v;
             Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, cnt => Color.GREEN.wave(Color.YELLOW, cnt));
             if (newItem && obj.info.length > 0) {
                 Util.msg.set(`"`, Color.YELLOW);

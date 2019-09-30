@@ -102,7 +102,7 @@ export abstract class Eq implements Force, Num{
     get appearLv():number  {return this.args.lv;}
 
     num = 0;
-    totalGetNum = 0;
+    totalGetCount = 0;
     //--------------------------------------------------------------------------
     //
     //
@@ -167,7 +167,7 @@ export class EqEar implements Force, Num{
     get appearLv():number  {return this.args.lv;}
 
     num = 0;
-    totalGetNum = 0;
+    totalGetCount = 0;
     //--------------------------------------------------------------------------
     //
     //

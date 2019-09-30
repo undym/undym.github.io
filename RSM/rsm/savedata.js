@@ -39,7 +39,7 @@ export class Version {
     }
     toString() { return `${this.major}.${this.minior}.${this.mentener}`; }
 }
-Version.NOW = new Version(0, 13, 1);
+Version.NOW = new Version(0, 14, 0);
 let saveDataVersion;
 export class SaveData {
     static exists() {
@@ -65,7 +65,7 @@ export class SaveData {
         Item.values.forEach(item => strageItem(save, item));
         Eq.values.forEach(eq => strageEq(save, eq));
         EqEar.values.forEach(ear => strageEqEar(save, ear));
-        Dungeon.values.forEach(d => strageDungeon(save, d));
+        strageDungeon(save);
         Player.values.forEach(p => stragePlayer(save, p));
         strageMix(save);
         stragePlayData(save);
@@ -131,23 +131,26 @@ const strageSaveData = (save) => {
 const strageItem = (save, item) => {
     const name = `${strageItem.name}_${item.uniqueName}`;
     ioInt(save, `${name}_num`, item.num, load => item.num = load);
-    ioInt(save, `${name}_totalGetNum`, item.totalGetNum, load => item.totalGetNum = load);
-    ioInt(save, `${name}_remainingUseCount`, item.remainingUseCount, load => item.remainingUseCount = load);
+    ioInt(save, `${name}_totalGetCount`, item.totalGetCount, load => item.totalGetCount = load);
+    ioInt(save, `${name}_remainingUseNum`, item.remainingUseNum, load => item.remainingUseNum = load);
 };
 const strageEq = (save, eq) => {
     const name = `${strageEq.name}_${eq.uniqueName}`;
     ioInt(save, `${name}_num`, eq.num, load => eq.num = load);
-    ioInt(save, `${name}_totalGetNum`, eq.totalGetNum, load => eq.totalGetNum = load);
+    ioInt(save, `${name}_totalGetCount`, eq.totalGetCount, load => eq.totalGetCount = load);
 };
 const strageEqEar = (save, ear) => {
     const name = `${strageEqEar.name}_${ear.uniqueName}`;
     ioInt(save, `${name}_num`, ear.num, load => ear.num = load);
-    ioInt(save, `${name}_totalGetNum`, ear.totalGetNum, load => ear.totalGetNum = load);
+    ioInt(save, `${name}_totalGetCount`, ear.totalGetCount, load => ear.totalGetCount = load);
 };
-const strageDungeon = (save, d) => {
-    const name = `${strageDungeon.name}_${d.uniqueName}`;
-    ioInt(save, `${name}_dungeonClearCount`, d.dungeonClearCount, load => d.dungeonClearCount = load);
-    ioInt(save, `${name}_exKillCount`, d.exKillCount, load => d.exKillCount = load);
+const strageDungeon = (save) => {
+    for (const d of Dungeon.values) {
+        const name = `${strageDungeon.name}_${d.uniqueName}`;
+        ioInt(save, `${name}_treasureKey`, d.treasureKey, load => d.treasureKey = load);
+        ioInt(save, `${name}_dungeonClearCount`, d.dungeonClearCount, load => d.dungeonClearCount = load);
+        ioInt(save, `${name}_exKillCount`, d.exKillCount, load => d.exKillCount = load);
+    }
 };
 const stragePlayer = (save, p) => {
     const name = `${stragePlayer.name}_${p.uniqueName}`;

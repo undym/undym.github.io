@@ -52,7 +52,7 @@ export class ItemScene extends Scene {
                     .add(() => `[${this.selectedItem}]`, () => Color.WHITE)
                     .add(() => {
                     const num = this.selectedItem.consumable
-                        ? `${this.selectedItem.remainingUseCount}/${this.selectedItem.num}`
+                        ? `${this.selectedItem.remainingUseNum}/${this.selectedItem.num}`
                         : `${this.selectedItem.num}`;
                     const limit = this.selectedItem.num >= this.selectedItem.numLimit ? "（所持上限）" : "";
                     return `${num}個${limit}`;
@@ -126,7 +126,7 @@ export class ItemScene extends Scene {
                 this.list.add({
                     left: () => {
                         if (item.consumable) {
-                            return `${item.remainingUseCount}/${item.num}`;
+                            return `${item.remainingUseNum}/${item.num}`;
                         }
                         return `${item.num}`;
                     },

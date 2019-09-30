@@ -54,7 +54,7 @@ export class JobChangeScene extends Scene{
                     .add(infoBounds, (()=>{
                         const info = new Labels(Font.def)
                                         .add(()=>`[${this.choosedJob}]`)
-                                        .add(()=> this.target.getJobLv(this.choosedJob) >= this.choosedJob.getMaxLv() ? "Lv:★" : `Lv:${this.target.getJobLv(this.choosedJob)}`)
+                                        .add(()=> this.target.getJobLv(this.choosedJob) >= this.choosedJob.maxLv ? "Lv:★" : `Lv:${this.target.getJobLv(this.choosedJob)}`)
                                         .add(()=>"成長ステータス:")
                                         .addArray(()=>{
                                             let res:[string,Color?][] = [];

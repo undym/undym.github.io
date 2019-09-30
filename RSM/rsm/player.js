@@ -11,9 +11,7 @@ export class Player {
         Player._valueOf.set(this.uniqueName, this);
     }
     static get values() { return this._values; }
-    static valueOf(uniqueName) {
-        return this._valueOf.get(uniqueName);
-    }
+    static valueOf(uniqueName) { return this._valueOf.get(uniqueName); }
     get ins() {
         if (!this._ins) {
             this._ins = this.create();

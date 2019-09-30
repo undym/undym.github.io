@@ -197,7 +197,9 @@ export class PassiveTec extends Tec {
         if (PassiveTec._valueOf.has(this.uniqueName)) {
             console.log(`PassiveTec already has uniqueName "${this.uniqueName}".`);
         }
-        PassiveTec._valueOf.set(this.uniqueName, this);
+        else {
+            PassiveTec._valueOf.set(this.uniqueName, this);
+        }
     }
     static get values() { return this._values; }
     static valueOf(uniqueName) {
@@ -223,7 +225,9 @@ export class ActiveTec extends Tec {
         if (ActiveTec._valueOf.has(this.uniqueName)) {
             console.log(`!!ActiveTec already has uniqueName "${this.uniqueName}".`);
         }
-        ActiveTec._valueOf.set(this.uniqueName, this);
+        else {
+            ActiveTec._valueOf.set(this.uniqueName, this);
+        }
     }
     static get values() { return this._values; }
     static valueOf(uniqueName) {
@@ -265,7 +269,7 @@ export class ActiveTec extends Tec {
     checkCost(u) {
         if (u instanceof PUnit) {
             for (const set of this.itemCost) {
-                if (set.item.remainingUseCount < set.num) {
+                if (set.item.remainingUseNum < set.num) {
                     return false;
                 }
             }
@@ -280,7 +284,7 @@ export class ActiveTec extends Tec {
         u.ep -= this.epCost;
         if (u instanceof PUnit) {
             for (const set of this.itemCost) {
-                set.item.remainingUseCount -= set.num;
+                set.item.remainingUseNum -= set.num;
             }
         }
     }

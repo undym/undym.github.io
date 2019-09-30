@@ -77,6 +77,7 @@ export class Dungeon {
         //
         //
         //-----------------------------------------------------------------
+        this.treasureKey = 0;
         this.dungeonClearCount = 0;
         this.exKillCount = 0;
         Dungeon._values.push(this);
@@ -115,7 +116,6 @@ export class Dungeon {
         }
         return choice(this.treasures);
     }
-    get treasureKey() { return this.args.treasureKey(); }
     get exItem() { return this.args.exItem(); }
     get trendItems() { return this.args.trendItems(); }
     toString() { return this.args.uniqueName; }
@@ -126,7 +126,7 @@ export class Dungeon {
     //-----------------------------------------------------------------
     rndEvent() {
         if (Math.random() < 0.002) {
-            if (this.treasureKey.num === 0) {
+            if (this.treasureKey === 0) {
                 if (Math.random() < 0.8) {
                     return DungeonEvent.GET_TREASURE_KEY;
                 }
@@ -259,7 +259,6 @@ Dungeon.auNow = 0;
                 rank: 0, enemyLv: 1, au: 50,
                 clearItem: () => Item.はじまりの丘の玉,
                 treasures: () => [Eq.棒],
-                treasureKey: () => Item.はじまりの丘の鍵,
                 exItem: () => Eq.瑠璃,
                 trendItems: () => [Item.石, Item.土, Item.枝,],
             });
@@ -290,7 +289,6 @@ Dungeon.auNow = 0;
                 rank: 1, enemyLv: 3, au: 70,
                 clearItem: () => Item.再構成トンネルの玉,
                 treasures: () => [Eq.安全靴],
-                treasureKey: () => Item.再構成トンネルの鍵,
                 exItem: () => Eq.手甲,
                 trendItems: () => [Item.水],
             });
@@ -335,7 +333,6 @@ Dungeon.auNow = 0;
                 rank: 1, enemyLv: 7, au: 70,
                 clearItem: () => Item.リテの門の玉,
                 treasures: () => [Eq.魔法の杖],
-                treasureKey: () => Item.リテの門の鍵,
                 exItem: () => Eq.魔女のとんがり帽,
                 trendItems: () => [Item.朽ち果てた鍵],
             });
@@ -368,7 +365,6 @@ Dungeon.auNow = 0;
                 rank: 2, enemyLv: 14, au: 100,
                 clearItem: () => Item.黒平原の玉,
                 treasures: () => [Eq.ゲルマンベルト],
-                treasureKey: () => Item.黒平原の鍵,
                 exItem: () => Eq.オホーツクのひも,
                 trendItems: () => [Item.黒い石, Item.黒い砂],
             });
@@ -398,7 +394,6 @@ Dungeon.auNow = 0;
                 rank: 0, enemyLv: 18, au: 120,
                 clearItem: () => Item.黒遺跡の玉,
                 treasures: () => [Eq.魔ヶ玉の指輪],
-                treasureKey: () => Item.黒遺跡の鍵,
                 exItem: () => Eq.ゴーレムの腕,
                 trendItems: () => [Item.黒い枝, Item.黒い青空],
             });
@@ -424,7 +419,6 @@ Dungeon.auNow = 0;
                 rank: 1, enemyLv: 24, au: 100,
                 clearItem: () => Item.PAINの玉,
                 treasures: () => [Eq.ニケ],
-                treasureKey: () => Item.PAINの鍵,
                 exItem: () => Eq.鉄下駄,
                 trendItems: () => [],
             });
@@ -443,4 +437,26 @@ Dungeon.auNow = 0;
             };
         }
     };
+    // export const                         CSTEF:Dungeon = new class extends Dungeon{
+    //     constructor(){super({uniqueName:"C･STEF",
+    //                             rank:3, enemyLv:24, au:200,
+    //                             clearItem:  ()=>Item.CSTEFの玉,
+    //                             treasures:  ()=>[],
+    //                             exItem:     ()=>Eq.鉄下駄,
+    //                             trendItems: ()=>[],
+    //     });}
+    //     isVisible = ()=>Dungeon.PAIN.dungeonClearCount > 0;
+    //     setBossInner = ()=>{
+    //         let e = Unit.enemies[0];
+    //         Job.天使.setEnemy(e, e.prm(Prm.LV).base);
+    //         e.name = "エンジェル";
+    //         e.prm(Prm.MAX_HP).base = 200;
+    //     };
+    //     setExInner = ()=>{
+    //         let e = Unit.enemies[0];
+    //         Job.天使.setEnemy(e, e.prm(Prm.LV).base);
+    //         e.name = "Exエンジェル";
+    //         e.prm(Prm.MAX_HP).base = 400;
+    //     };
+    // };
 })(Dungeon || (Dungeon = {}));

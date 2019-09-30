@@ -10,7 +10,7 @@ export class Num{
     static add(obj:Num, v:number){
         v = v|0;
         if(v > 0){    
-            const newItem = obj.totalGetNum === 0;
+            const newItem = obj.totalGetCount === 0;
             if(newItem){
                 Util.msg.set("new", Color.rainbow);
             }else{
@@ -18,7 +18,7 @@ export class Num{
             }
 
             obj.num += v;
-            obj.totalGetNum += v;
+            obj.totalGetCount += v;
             Util.msg.add(`[${obj}]を${v}個手に入れた(${obj.num})`, cnt=>Color.GREEN.wave(Color.YELLOW, cnt));
 
             if(newItem && obj.info.length > 0){
@@ -33,9 +33,9 @@ export class Num{
     }
 
     info:string;
-    /**セーブデータのため、通常はadd()/reduce()を通して増減させる。 */
+    /**totalGetCountとの整合性を取るため、通常はadd()を通して増減させる。 */
     num:number;
-    totalGetNum:number;
+    totalGetCount:number;
     add:(v:number)=>void;
 }
 

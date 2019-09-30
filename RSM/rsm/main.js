@@ -18,6 +18,7 @@ import { Rect, Color } from "./undym/type.js";
 import { Graphics, Texture } from "./graphics/graphics.js";
 import { SaveData } from "./savedata.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
+import { ILayout } from "./undym/layout.js";
 import { PartySkill } from "./partyskill.js";
 {
     let runBtnVisible = false;
@@ -57,22 +58,9 @@ import { PartySkill } from "./partyskill.js";
 }
 window.onload = () => {
     {
-        const canvas = document.getElementById("canvas");
-        const ctx = canvas.getContext("2d");
-        ctx.font = "50px monospace";
-        ctx.fillStyle = "rgb(0,0,0)";
-        const s = "読み込み中";
-        const sw = ctx.measureText(s).width;
-        ctx.fillText(s, canvas.width / 2 - sw, canvas.height - 2);
+        const loading = document.getElementById("loading");
+        loading.innerText = "";
     }
-    // {
-    //     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    //     ctx.font = "normal 50px monospace";
-    //     ctx.fillStyle = "rgba(255,255,255,1)";
-    //     const s = "読み込み中";
-    //     const sw = ctx.measureText(s).width;
-    //     ctx.fillText(s, canvas.width / 2 - sw, canvas.height - 2);
-    // }
     console.log("start");
     const canvas = document.getElementById("canvas");
     const rotate = false;
@@ -99,6 +87,8 @@ window.onload = () => {
         Scene.load(TownScene.ins);
         ctrl();
     }
+    // Scene.load(new TestScene());
+    // ctrl();
     setInterval(draw, 1000 / 30);
 };
 const ctrl = () => __awaiter(this, void 0, void 0, function* () {
@@ -126,12 +116,6 @@ const init = () => {
 const newGame = () => {
     Util.msg.set("NEW GAME");
     Player.スメラギ.join();
-    // const setItemNum = (item:Item, num:number)=>{
-    //     item.num = num;
-    //     item.totalGetNum = num;
-    // }
-    // setItemNum(Item.スティックパン, 5);
-    // setItemNum(Item.脱出ポッド, 1);
 };
 const continueGame = () => {
     Util.msg.set("CONTINUE");
@@ -146,3 +130,13 @@ const setInput = () => {
         }
     });
 };
+class TestScene extends Scene {
+    constructor() {
+        super();
+    }
+    init() {
+        super.clear();
+        super.add(Rect.FULL, ILayout.create({ draw: () => {
+            } }));
+    }
+}

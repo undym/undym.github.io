@@ -9,9 +9,7 @@ export abstract class Player{
     private static _values:Player[] = [];
     static get values():ReadonlyArray<Player>{return this._values;}
     private static _valueOf = new Map<string,Player>();
-    static valueOf(uniqueName:string):Player|undefined{
-        return this._valueOf.get( uniqueName );
-    }
+    static valueOf(uniqueName:string):Player|undefined{return this._valueOf.get( uniqueName );}
 
     private _ins:PUnit;
     get ins(){

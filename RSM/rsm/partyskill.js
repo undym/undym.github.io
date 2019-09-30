@@ -22,7 +22,9 @@ export class PartySkill {
         if (PartySkill._valueOf.has(args.uniqueName)) {
             console.log(`!!PartySkill already has uniqueName "${args.uniqueName}".`);
         }
-        PartySkill._valueOf.set(args.uniqueName, this);
+        else {
+            PartySkill._valueOf.set(args.uniqueName, this);
+        }
     }
     static get values() { return this._values; }
     static valueOf(uniqueName) {
@@ -48,6 +50,12 @@ PartySkill.skills = [];
         constructor() { super({ uniqueName: "入手経験値増加", toString: "入手経験値x2" }); }
         win(arg) {
             arg.exp.mul += 1;
+        }
+    };
+    PartySkill.入手ジョブ経験値増加 = new class extends PartySkill {
+        constructor() { super({ uniqueName: "入手ジョブ経験値増加", toString: "入手ジョブ経験値+1" }); }
+        win(arg) {
+            arg.jobExp.base += 1;
         }
     };
     PartySkill.入手金増加 = new class extends PartySkill {

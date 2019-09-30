@@ -185,8 +185,9 @@ class TownBtn{
                 Util.msg.set(`Rank:${d.rank}`);
                 Util.msg.set(`Lv:${d.enemyLv}`);
                 Util.msg.set(`攻略回数:${d.dungeonClearCount}`, d.dungeonClearCount > 0 ? Color.WHITE : Color.GRAY);
+                Util.msg.set(`鍵:${d.treasureKey}`);
                 for(const treasure of d.treasures){
-                    if(treasure.totalGetNum > 0){
+                    if(treasure.totalGetCount > 0){
                         Util.msg.set(`財宝:${treasure}(${treasure.num}個)`);
                     }else{
                         Util.msg.set(`財宝:${"？".repeat(treasure.toString().length)}`, Color.GRAY);
@@ -209,14 +210,14 @@ class TownBtn{
         }));
         
         const enter = new Btn("侵入", ()=>{
-            if(choosedDungeon === undefined){return;}
+            if(!choosedDungeon){return;}
 
 
             Dungeon.now = choosedDungeon;
             Dungeon.auNow = 0;
             DungeonEvent.now = DungeonEvent.empty;
             for(let item of Item.consumableValues()){
-                item.remainingUseCount = item.num;
+                item.remainingUseNum = item.num;
             }
 
             Util.msg.set(`${choosedDungeon}に侵入しました`);
@@ -283,7 +284,7 @@ const FX_DungeonName = (name:string, bounds:{x:number, y:number, w:number, h:num
     let alpha = 1.0;
 
     FX.add((count)=>{
-        const countLim = 15;
+        const countLim = 35;
         let w = count / countLim * tex.pixelW;
         if(w > tex.pixelW){
             w = tex.pixelW;

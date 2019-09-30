@@ -232,8 +232,9 @@ export abstract class PassiveTec extends Tec{
         PassiveTec._values.push(this);
         if(PassiveTec._valueOf.has(this.uniqueName)){
             console.log(`PassiveTec already has uniqueName "${this.uniqueName}".`);
+        }else{
+            PassiveTec._valueOf.set( this.uniqueName, this );
         }
-        PassiveTec._valueOf.set( this.uniqueName, this );
     }
 
     toString():string{return `-${this.uniqueName}-`;}
@@ -303,8 +304,9 @@ export abstract class ActiveTec extends Tec implements Action{
         ActiveTec._values.push(this);
         if(ActiveTec._valueOf.has(this.uniqueName)){
             console.log(`!!ActiveTec already has uniqueName "${this.uniqueName}".`);
+        }else{
+            ActiveTec._valueOf.set( this.uniqueName, this );
         }
-        ActiveTec._valueOf.set( this.uniqueName, this );
     }
 
     //--------------------------------------------------------------------------
@@ -315,7 +317,7 @@ export abstract class ActiveTec extends Tec implements Action{
     checkCost(u:Unit):boolean{
         if(u instanceof PUnit){       
             for(const set of this.itemCost){
-                if(set.item.remainingUseCount < set.num){
+                if(set.item.remainingUseNum < set.num){
                     return false;
                 }
             }
@@ -335,7 +337,7 @@ export abstract class ActiveTec extends Tec implements Action{
 
         if(u instanceof PUnit){       
             for(const set of this.itemCost){
-                set.item.remainingUseCount -= set.num;
+                set.item.remainingUseNum -= set.num;
             }
         }
     }

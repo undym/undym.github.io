@@ -65,6 +65,7 @@ Prm.GUN = new Prm("銃");
 Prm.ARR = new Prm("弓");
 Prm.LV = new Prm("Lv");
 Prm.EXP = new Prm("Exp");
+Prm.BP = new Prm("BP");
 Prm.EP = new Prm("EP");
 Prm.MAX_EP = new Prm("最大EP");
 export class Unit {
@@ -165,13 +166,15 @@ export class Unit {
         this.prm(Prm.TP).base = value | 0;
         this.fixPrm(Prm.TP, Prm.MAX_TP);
     }
-    get exp() { return this.prm(Prm.EXP).base; }
-    set exp(value) { this.prm(Prm.EXP).base = value; }
     get ep() { return this.prm(Prm.EP).base; }
     set ep(value) {
-        this.prm(Prm.EP).base = value;
+        this.prm(Prm.EP).base = value | 0;
         this.fixPrm(Prm.EP, Prm.MAX_EP);
     }
+    get exp() { return this.prm(Prm.EXP).base; }
+    set exp(value) { this.prm(Prm.EXP).base = value | 0; }
+    get bp() { return this.prm(Prm.BP).base; }
+    set bp(value) { this.prm(Prm.BP).base = value | 0; }
     fixPrm(checkPrm, maxPrm) {
         if (this.prm(checkPrm).base < 0) {
             this.prm(checkPrm).base = 0;
@@ -434,13 +437,11 @@ export class PUnit extends Unit {
                 yield wait();
                 const growHP = this.prm(Prm.LV).base / 100 + 1;
                 this.growPrm(Prm.MAX_HP, growHP | 0);
-                // for(let grow of this.job.growthPrms){
-                //     this.growPrm( grow.prm, grow.value );
-                // }
                 if (this.prm(Prm.LV).base % 10 === 0) {
                     this.growPrm(Prm.MAX_MP, 1);
                     this.growPrm(Prm.MAX_TP, 1);
                 }
+                this.bp += 1 + this.prm(Prm.LV).base / 100;
             }
         });
     }
@@ -473,7 +474,7 @@ export class PUnit extends Unit {
                     this.growPrm(grow.prm, grow.value);
                 }
                 const learnings = this.job.learningTecs;
-                const ratio = set.lv / this.job.getMaxLv();
+                const ratio = set.lv / this.job.maxLv;
                 for (let i = 0; i < learnings.length; i++) {
                     if (i + 1 > ((learnings.length * ratio) | 0)) {
                         break;
@@ -492,7 +493,7 @@ export class PUnit extends Unit {
                         }
                     }
                 }
-                if (set.lv >= this.job.getMaxLv()) {
+                if (set.lv >= this.job.maxLv) {
                     Util.msg.set(`${this.job}を極めた！`, Color.ORANGE.bright);
                     yield wait();
                     PlayData.masteredAnyJob = true;
@@ -502,7 +503,7 @@ export class PUnit extends Unit {
     }
     setJobLv(job, lv) { this.getJobLvSet(job).lv = lv; }
     getJobLv(job) { return this.getJobLvSet(job).lv; }
-    isMasteredJob(job) { return this.getJobLvSet(job).lv >= job.getMaxLv(); }
+    isMasteredJob(job) { return this.getJobLvSet(job).lv >= job.maxLv; }
     //---------------------------------------------------------
     //
     //

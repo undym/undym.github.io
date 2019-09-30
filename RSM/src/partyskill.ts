@@ -42,8 +42,9 @@ export class PartySkill{
         PartySkill._values.push(this);
         if(PartySkill._valueOf.has(args.uniqueName)){
             console.log(`!!PartySkill already has uniqueName "${args.uniqueName}".`);
+        }else{
+            PartySkill._valueOf.set(args.uniqueName, this);
         }
-        PartySkill._valueOf.set(args.uniqueName, this);
     }
 
     toString(){return this.args.toString;}
@@ -64,6 +65,12 @@ export namespace PartySkill{
         constructor(){super({uniqueName:"入手経験値増加", toString:"入手経験値x2"});}
         win(arg:PartySkillWin){
             arg.exp.mul += 1;
+        }
+    }
+    export const                         入手ジョブ経験値増加:PartySkill = new class extends PartySkill{
+        constructor(){super({uniqueName:"入手ジョブ経験値増加", toString:"入手ジョブ経験値+1"});}
+        win(arg:PartySkillWin){
+            arg.jobExp.base += 1;
         }
     }
     export const                         入手金増加:PartySkill = new class extends PartySkill{

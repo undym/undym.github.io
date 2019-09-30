@@ -89,8 +89,8 @@ DungeonEvent._values = [];
             });
             this.createBtnLayout = () => createDefLayout()
                 .set(ReturnBtn.index, new Btn("開ける", () => __awaiter(this, void 0, void 0, function* () {
-                if (Dungeon.now.treasureKey.num > 0) {
-                    Dungeon.now.treasureKey.num--;
+                if (Dungeon.now.treasureKey > 0) {
+                    Dungeon.now.treasureKey--;
                     yield DungeonEvent.OPEN_TREASURE.happen();
                 }
                 else {
@@ -119,7 +119,8 @@ DungeonEvent._values = [];
         constructor() {
             super();
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                yield Dungeon.now.treasureKey.add(1);
+                Dungeon.now.treasureKey++;
+                Util.msg.set(`${Dungeon.now}の財宝の鍵を手に入れた(${Dungeon.now.treasureKey})`, Color.GREEN.bright);
             });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
@@ -281,6 +282,10 @@ DungeonEvent._values = [];
                     if (Item.ボロい釣竿.num > 0) {
                         fishing(Dungeon.now.rank / 2);
                         checkAndBreakRod(0.05, Item.ボロい釣竿);
+                    }
+                    if (Item.マーザン竿.num > 0) {
+                        fishing(Dungeon.now.rank / 2 + 0.5);
+                        checkAndBreakRod(0.05, Item.マーザン竿);
                     }
                     if (!doneAnyFishing) {
                         Util.msg.set("釣り竿をもっていなかった...");

@@ -94,8 +94,8 @@ export namespace DungeonEvent{
         };
         createBtnLayout = ()=> createDefLayout()
                                 .set(ReturnBtn.index, new Btn("開ける", async()=>{
-                                    if(Dungeon.now.treasureKey.num > 0){
-                                        Dungeon.now.treasureKey.num--;
+                                    if(Dungeon.now.treasureKey > 0){
+                                        Dungeon.now.treasureKey--;
                                         await DungeonEvent.OPEN_TREASURE.happen();
                                     }else{
                                         Util.msg.set("鍵を持っていない");
@@ -119,7 +119,8 @@ export namespace DungeonEvent{
     export const GET_TREASURE_KEY:DungeonEvent = new class extends DungeonEvent{
         constructor(){super();}
         happenInner = async()=>{
-            await Dungeon.now.treasureKey.add(1);
+            Dungeon.now.treasureKey++;
+            Util.msg.set(`${Dungeon.now}の財宝の鍵を手に入れた(${Dungeon.now.treasureKey})`, Color.GREEN.bright);
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
@@ -268,6 +269,10 @@ export namespace DungeonEvent{
                                         if(Item.ボロい釣竿.num > 0){
                                             fishing( Dungeon.now.rank / 2 );
                                             checkAndBreakRod(0.05, Item.ボロい釣竿);
+                                        }
+                                        if(Item.マーザン竿.num > 0){
+                                            fishing( Dungeon.now.rank / 2 + 0.5 );
+                                            checkAndBreakRod(0.05, Item.マーザン竿);
                                         }
 
                                         if(!doneAnyFishing){

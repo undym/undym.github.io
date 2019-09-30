@@ -50,17 +50,8 @@ lv max_hp
 export abstract class Job{
     private static _values:Job[] = [];
     static get values():ReadonlyArray<Job>{return this._values;}
-    private static _valueOf:Map<string,Job>;
-    static valueOf(uniqueName:string):Job|undefined{
-        if(!this._valueOf){
-            this._valueOf = new Map<string,Job>();
-
-            for(const job of this.values){
-                this._valueOf.set( job.uniqueName, job );
-            }
-        }
-        return this._valueOf.get(uniqueName);
-    }
+    private static _valueOf = new Map<string,Job>();
+    static valueOf(uniqueName:string):Job|undefined{return this._valueOf.get(uniqueName);}
 
     static readonly DEF_LVUP_EXP = 5;
 
@@ -105,6 +96,11 @@ export abstract class Job{
     ){
 
         Job._values.push(this);
+        if(Job._valueOf.has(args.uniqueName)){
+            console.log(`!!Job already has uniqueName "${args.uniqueName}".`);
+        }else{
+            Job._valueOf.set(args.uniqueName, this);
+        }
     }
 
     toString(){return this.args.uniqueName;}
@@ -113,8 +109,7 @@ export abstract class Job{
     //
     //
     //------------------------------------------------------------------
-    
-    getMaxLv(){return 10;}
+    get maxLv(){return 10;}
     //------------------------------------------------------------------
     //
     //
@@ -130,6 +125,7 @@ export abstract class Job{
         }
 
         e.name = this.toString();
+        e.job = this;
         e.exists = true;
         e.dead = false;
         e.ai = EUnit.DEF_AI;
@@ -226,6 +222,17 @@ export namespace Job{
             e.tecs = [Tec.殴る, Tec.殴る, Tec.殴る, Tec.二回殴る, Tec.人狼剣, Tec.急所];
         }
     };
+    export const                         騎士:Job = new class extends Job{
+        constructor(){super({uniqueName:"騎士", info:"",
+                                appearLv:35, lvupExp:Job.DEF_LVUP_EXP * 3,
+                                grow:()=> [[Prm.STR, 2], [Prm.LIG, 2]],
+                                learn:()=> [],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.剣士) && p.isMasteredJob(Job.天使),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.殴る, Tec.衛生, Tec.ばんそうこう, Tec.二回殴る, Tec.人狼剣, Tec.急所];
+        }
+    };
 
     export const                         魔法使い:Job = new class extends Job{
         constructor(){super({uniqueName:"魔法使い", info:"魔法攻撃を扱う職業",
@@ -317,6 +324,17 @@ export namespace Job{
             e.tecs = [Tec.暗黒剣, Tec.暗黒剣, Tec.吸血, Tec.殴る, Tec.宵闇];
         }
     };
+    export const                         ダークナイト:Job = new class extends Job{
+        constructor(){super({uniqueName:"ダークナイト", info:"",
+                                appearLv:50, lvupExp:Job.DEF_LVUP_EXP * 4,
+                                grow:()=> [[Prm.STR, 2], [Prm.DRK, 2]],
+                                learn:()=> [],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.ヴァンパイア) && p.isMasteredJob(Job.剣士),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.インドラ, Tec.撃つ, Tec.暗黒剣, Tec.暗黒剣, Tec.吸血, Tec.殴る, Tec.宵闇];
+        }
+    };
 
     export const                         スネイカー:Job = new class extends Job{
         constructor(){super({uniqueName:"スネイカー", info:"蛇を虐待してる",
@@ -341,6 +359,17 @@ export namespace Job{
         });}
         setEnemyInner   = (e:EUnit)=>{
             e.tecs = [Tec.スネイク, Tec.スネイク, Tec.TP自動回復, Tec.殴る, Tec.コブラ, Tec.コブラ, Tec.コブラ, Tec.ハブ];
+        }
+    };
+    export const                         触手:Job = new class extends Job{
+        constructor(){super({uniqueName:"触手", info:"",
+                                appearLv:40, lvupExp:Job.DEF_LVUP_EXP * 3,
+                                grow:()=> [[Prm.CHN, 2], [Prm.PST, 2]],
+                                learn:()=> [],
+                                canJobChange:(p:PUnit)=>p.isMasteredJob(Job.スネイカー) && p.isMasteredJob(Job.ダウザー),
+        });}
+        setEnemyInner   = (e:EUnit)=>{
+            e.tecs = [Tec.スネイク, Tec.スネイク, Tec.TP自動回復, Tec.殴る, Tec.念力, Tec.念力, Tec.頭痛, Tec.凍てつく波動];
         }
     };
     
