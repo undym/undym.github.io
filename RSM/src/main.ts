@@ -57,11 +57,12 @@ import { PartySkill } from "./partyskill.js";
 window.onload = ()=>{
     {
         const loading = document.getElementById("loading") as HTMLElement;
-        loading.innerText = "";
+        document.body.removeChild(loading);
     }
 
     console.log("start");
 
+    
     const canvas = document.getElementById("canvas") as HTMLCanvasElement;
     const rotate = false;
     // const rotate:boolean = window.navigator.userAgent.indexOf("Mobile") !== -1;
@@ -93,6 +94,7 @@ window.onload = ()=>{
         Scene.load( TownScene.ins );
         ctrl();
     }
+
     // Scene.load(new TestScene());
     // ctrl();
 
@@ -162,7 +164,20 @@ class TestScene extends Scene{
         super.clear();
 
         super.add(Rect.FULL, ILayout.create({draw:()=>{
-
+            Graphics.fillRect(Rect.FULL, Color.GRAY);
         }}));
+
+        const MAIN = new Rect(0, 0, 1, 0.8);
+        const WIPE = new Rect(0, MAIN.yh, 0.2, 0.2);
+        const MSG = new Rect(WIPE.xw, WIPE.y, 1 - WIPE.w, WIPE.h);
+
+        super.add(Rect.FULL, ILayout.create({draw:()=>{
+            if(Math.random() < 0.6){return;}
+            for(let i = 0; i < 10; i++){
+                const y = Math.random();
+                Graphics.line({x:0, y:y}, {x:1, y:y}, Color.BLACK);
+            }
+        }}));
+
     }
 }

@@ -2,6 +2,7 @@ import { EUnit, Prm } from "./unit.js";
 import { Tec } from "./tec.js";
 import { Player } from "./player.js";
 import { EqPos, Eq } from "./eq.js";
+import { choice } from "./undym/random.js";
 /*
 敵のLV毎のHP目安.
 e.prm(Prm.MAX_HP).base = 3 + (lv * lv * 0.35);
@@ -56,7 +57,8 @@ export class Job {
     static get values() { return this._values; }
     static valueOf(uniqueName) { return this._valueOf.get(uniqueName); }
     static rndJob(lv) {
-        for (let job of Job.values) {
+        for (let i = 0; i < 7; i++) {
+            const job = choice(Job.values);
             if (job.appearLv <= lv) {
                 return job;
             }

@@ -2,6 +2,7 @@ import { EUnit, Prm, PUnit, Unit } from "./unit.js";
 import { Tec } from "./tec.js";
 import { Player } from "./player.js";
 import { EqPos, Eq } from "./eq.js";
+import { choice } from "./undym/random.js";
 
 /*
 敵のLV毎のHP目安.
@@ -56,7 +57,8 @@ export abstract class Job{
     static readonly DEF_LVUP_EXP = 5;
 
     static rndJob(lv:number):Job{
-        for(let job of Job.values){
+        for(let i = 0; i < 7; i++){
+            const job = choice( Job.values );
             if(job.appearLv <= lv){
                 return job;
             }

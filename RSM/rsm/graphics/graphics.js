@@ -82,6 +82,23 @@ export class Img {
         const h = Graphics.getRenderTarget().canvas.height;
         ctx.drawImage(this.image, /*sx*/ srcRatio.x * this.image.width, /*sy*/ srcRatio.y * this.image.height, /*sw*/ srcRatio.w * this.image.width, /*sh*/ srcRatio.h * this.image.height, /*dx*/ dstRatio.x * w, /*dy*/ dstRatio.y * h, /*dw*/ dstRatio.w * w, /*dh*/ dstRatio.h * h);
     }
+    // drawKeepRatio(dstRatio:{x:number, y:number, w:number, h:number}, srcRatio = {x:0, y:0, w:1, h:1}){
+    //     if(!this.loadComplete){return;}
+    //     const ctx = Graphics.getRenderTarget().ctx;
+    //     const w = Graphics.getRenderTarget().canvas.width;
+    //     const h = Graphics.getRenderTarget().canvas.height;
+    //     ctx.drawImage(
+    //          this.image
+    //         ,/*sx*/srcRatio.x * this.image.width
+    //         ,/*sy*/srcRatio.y * this.image.height
+    //         ,/*sw*/srcRatio.w * this.image.width
+    //         ,/*sh*/srcRatio.h * this.image.height
+    //         ,/*dx*/dstRatio.x * w
+    //         ,/*dy*/dstRatio.y * h
+    //         ,/*dw*/dstRatio.w * w
+    //         ,/*dh*/dstRatio.h * h
+    //     );
+    // }
     loaded() { return this.loadComplete; }
     /**読み込みが完了するまでは0を返す。 */
     get pixelW() { return this.image.width; }
