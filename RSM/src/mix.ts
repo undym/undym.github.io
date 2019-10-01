@@ -102,7 +102,7 @@ export class Mix{
     isVisible():boolean{
         if(!this.materials){return false;}
         if(this.args.isVisible && !this.args.isVisible()){return false;}
-        return this.materials[0].object.num > 0 && this.count < this.countLimit;
+        return this.materials[0].object.totalGetCount > 0 && this.count < this.countLimit;
     }
 
     canRun(){
