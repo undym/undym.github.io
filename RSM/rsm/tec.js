@@ -567,7 +567,7 @@ ActiveTec._valueOf = new Map();
                 run: { get: () => super.run }
             });
             return __awaiter(this, void 0, void 0, function* () {
-                _super.run.call(this, attacker, target);
+                yield _super.run.call(this, attacker, target);
                 Util.msg.set(">反動");
                 const cdmg = new Dmg({
                     absPow: target.prm(Prm.LIG).total + target.prm(Prm.LV).total / 2,

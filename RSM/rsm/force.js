@@ -53,7 +53,7 @@ export class Dmg {
     }
     static calcDmgElm(elm) {
         let res = (elm.base + elm.add) * elm.mul;
-        res = res | 0;
+        res = res;
         return res > 0 ? res : 0;
     }
     clear() {
@@ -105,8 +105,19 @@ export class Dmg {
 }
 export class Action {
 }
-export class Targeting {
-    static filter(targetings, attacker, targets, num) {
+export var Targeting;
+(function (Targeting) {
+    Targeting[Targeting["SELECT"] = 1] = "SELECT";
+    Targeting[Targeting["SELF"] = 2] = "SELF";
+    Targeting[Targeting["ALL"] = 4] = "ALL";
+    Targeting[Targeting["WITH_DEAD"] = 8] = "WITH_DEAD";
+    Targeting[Targeting["ONLY_DEAD"] = 16] = "ONLY_DEAD";
+    Targeting[Targeting["WITH_FRIEND"] = 32] = "WITH_FRIEND";
+    Targeting[Targeting["ONLY_FRIEND"] = 64] = "ONLY_FRIEND";
+    Targeting[Targeting["RANDOM"] = 128] = "RANDOM";
+})(Targeting || (Targeting = {}));
+(function (Targeting) {
+    Targeting.filter = (targetings, attacker, targets, num) => {
         if (targetings & Targeting.SELF) {
             return new Array(num).fill(attacker);
         }
@@ -144,13 +155,44 @@ export class Targeting {
             res = res.concat(filtered);
         }
         return res;
-    }
-}
-Targeting.SELECT = 1 << 0;
-Targeting.SELF = 1 << 1;
-Targeting.ALL = 1 << 2;
-Targeting.WITH_DEAD = 1 << 3;
-Targeting.ONLY_DEAD = 1 << 4;
-Targeting.WITH_FRIEND = 1 << 5;
-Targeting.ONLY_FRIEND = 1 << 6;
-Targeting.RANDOM = 1 << 7;
+    };
+})(Targeting || (Targeting = {}));
+// export class Targeting{
+//     static readonly SELECT      = 1 << 0;
+//     static readonly SELF        = 1 << 1;
+//     static readonly ALL         = 1 << 2;
+//     static readonly WITH_DEAD   = 1 << 3;
+//     static readonly ONLY_DEAD   = 1 << 4;
+//     static readonly WITH_FRIEND = 1 << 5;
+//     static readonly ONLY_FRIEND = 1 << 6;
+//     static readonly RANDOM      = 1 << 7;
+//     static filter(targetings:number, attacker:Unit, targets:Unit[]|ReadonlyArray<Unit>, num:number):Unit[]{
+//         if(targetings & Targeting.SELF){
+//             return new Array<Unit>(num).fill(attacker);
+//         }
+//         let filtered = targets.filter(t=> t.exists);
+//              if(targetings & Targeting.WITH_DEAD){}
+//         else if(targetings & Targeting.ONLY_DEAD){filtered = filtered.filter(t=> t.dead);}
+//         else                                     {filtered = filtered.filter(t=> !t.dead);}
+//              if(targetings & Targeting.WITH_FRIEND){}
+//         else if(targetings & Targeting.ONLY_FRIEND){filtered = filtered.filter(t=> t.isFriend(attacker));}
+//         else                                       {filtered = filtered.filter(t=> !t.isFriend(attacker));}
+//         if(filtered.length === 0){return [];}
+//         if(targetings & Targeting.RANDOM){
+//             let res:Unit[] = [];
+//             for(let i = 0; i < num; i++){
+//                 res.push( choice(filtered) );
+//             }
+//             return res;
+//         }
+//         if(targetings & Targeting.SELECT){
+//             return new Array<Unit>(num).fill( choice(filtered) );
+//         }
+//         //all
+//         let res:Unit[] = [];
+//         for(let i = 0; i < num; i++){
+//             res = res.concat( filtered );
+//         }
+//         return res;
+//     }
+// }

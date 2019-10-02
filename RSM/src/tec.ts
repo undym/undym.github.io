@@ -587,7 +587,7 @@ export namespace Tec{
                               mul:2, num:1, hit:1,
         });}
         async run(attacker:Unit, target:Unit){
-            super.run(attacker, target);
+            await super.run(attacker, target);
 
             Util.msg.set(">反動");
             const cdmg = new Dmg({
