@@ -272,7 +272,7 @@ export class EqScene extends Scene{
                     leftColor:color,
                     right:()=>`${ear}`,
                     rightColor:color,
-                    groundColor:()=>ear === this.choosedEar ? Color.D_CYAN : Color.BLACK,
+                    groundColor:()=>this.choosedType === ChoosedType.EAR && ear === this.choosedEar ? Color.D_CYAN : Color.BLACK,
                     push:(elm)=>{
                         this.choosedEar = ear;
                         this.choosedType = ChoosedType.EAR;
@@ -304,7 +304,7 @@ export class EqScene extends Scene{
                     leftColor:color,
                     right:()=>`${eq}`,
                     rightColor:color,
-                    groundColor:()=>eq === this.choosedEq ? Color.D_CYAN : Color.BLACK,
+                    groundColor:()=> this.choosedType === ChoosedType.EQ && eq === this.choosedEq ? Color.D_CYAN : Color.BLACK,
                     push:(elm)=>{
                         this.choosedEq = eq;
                         this.choosedType = ChoosedType.EQ;

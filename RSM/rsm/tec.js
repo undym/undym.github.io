@@ -1072,7 +1072,7 @@ ActiveTec._valueOf = new Map();
     Tec.ばんそうこう = new class extends ActiveTec {
         constructor() {
             super({ uniqueName: "ばんそうこう", info: "一体を回復(光依存)",
-                type: TecType.回復, targetings: Targeting.SELECT,
+                type: TecType.回復, targetings: Targeting.SELECT | Targeting.ONLY_FRIEND,
                 mul: 2, num: 1, hit: 10, mp: 2,
             });
         }
