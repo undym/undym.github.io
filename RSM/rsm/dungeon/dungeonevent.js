@@ -28,9 +28,7 @@ export class DungeonEvent {
     constructor() {
         DungeonEvent._values.push(this);
     }
-    static values() {
-        return this._values;
-    }
+    static get values() { return this._values; }
     getImg() { return this.img ? this.img : (this.img = this.createImg()); }
     createImg() { return Img.empty; }
     happen() {
@@ -67,7 +65,7 @@ DungeonEvent._values = [];
             this.createImg = () => new Img("img/box_open.png");
             this.isZoomImg = () => false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                yield openBox(ItemDrop.BOX, Dungeon.now.rank);
+                yield openBox(ItemDrop.BOX, Dungeon.now.rank / 2);
                 if (Math.random() < 0.15) {
                     const trends = Dungeon.now.trendItems;
                     if (trends.length > 0) {
@@ -157,9 +155,10 @@ DungeonEvent._values = [];
             super();
             this.createImg = () => new Img("img/trap_broken.png");
             this.isZoomImg = () => false;
-            this.happenInner = () => {
+            this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
                 Util.msg.set("解除した");
-            };
+                yield openBox(ItemDrop.BOX, Dungeon.now.rank / 4);
+            });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
     };
@@ -213,7 +212,7 @@ DungeonEvent._values = [];
             this.createImg = () => new Img("img/tree_broken.png");
             this.isZoomImg = () => false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                yield openBox(ItemDrop.TREE, Dungeon.now.rank);
+                yield openBox(ItemDrop.TREE, Dungeon.now.rank / 2);
             });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
@@ -235,7 +234,7 @@ DungeonEvent._values = [];
             // createImg = ()=> new Img("img/tree_broken.png");
             // isZoomImg = ()=> false;
             this.happenInner = () => __awaiter(this, void 0, void 0, function* () {
-                yield openBox(ItemDrop.STRATUM, Dungeon.now.rank);
+                yield openBox(ItemDrop.STRATUM, Dungeon.now.rank / 2);
             });
             this.createBtnLayout = DungeonEvent.empty.createBtnLayout;
         }
@@ -257,7 +256,7 @@ DungeonEvent._values = [];
                 .set(ReturnBtn.index, (() => {
                 const btn = new Btn("汲む", () => __awaiter(this, void 0, void 0, function* () {
                     this.汲む = false;
-                    yield openBox(ItemDrop.LAKE, Dungeon.now.rank);
+                    yield openBox(ItemDrop.LAKE, Dungeon.now.rank / 2);
                 }));
                 return new VariableLayout(() => this.汲む ? btn : ReturnBtn.ins);
             })())
@@ -396,8 +395,6 @@ DungeonEvent._values = [];
                 PlayData.yen += yen;
                 Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright);
                 yield cwait();
-                Dungeon.now.dungeonClearItem.add(1);
-                yield cwait();
                 yield Dungeon.now.dungeonClearEvent();
                 DungeonEvent.ESCAPE_DUNGEON.happen();
             });
@@ -481,12 +478,12 @@ const openBox = (dropType, rank) => __awaiter(this, void 0, void 0, function* ()
     const partySkill = new PartySkillOpenBox();
     PartySkill.skills.forEach(skill => skill.openBox(partySkill, dropType));
     let openNum = 1;
-    let openBoost = 0.3 + partySkill.chain;
+    let openBoost = 0.25 + partySkill.chain;
     while (Math.random() < openBoost) {
         openNum++;
         openBoost /= 2;
     }
-    let baseRank = rank / 2 + partySkill.addRank;
+    let baseRank = rank + partySkill.addRank;
     for (let i = 0; i < openNum; i++) {
         const itemRank = Item.fluctuateRank(baseRank);
         let item = Item.rndItem(dropType, itemRank);

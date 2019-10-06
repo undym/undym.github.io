@@ -126,7 +126,6 @@ export abstract class Dungeon{
         return res|0;
     }
     get au():number{return this.args.au;}
-    get dungeonClearItem():Num{return this.args.clearItem();}
 
     get treasures():Num[]{return this.args.treasures();}
     rndTreasure():Num|undefined{
@@ -150,7 +149,6 @@ export abstract class Dungeon{
             rank:number,
             enemyLv:number,
             au:number,
-            clearItem:()=>Num,
             treasures:()=>Num[],
             exItem:()=>Num,
             trendItems:()=>Item[],
@@ -289,7 +287,6 @@ export namespace Dungeon{
     export const                         はじまりの丘:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"はじまりの丘",
                                 rank:0, enemyLv:1, au:50,
-                                clearItem:  ()=>Item.はじまりの丘の玉,
                                 treasures:  ()=>[Eq.棒],
                                 exItem:     ()=>Eq.瑠璃,
                                 trendItems: ()=>[Item.石, Item.土, Item.枝,],
@@ -313,11 +310,15 @@ export namespace Dungeon{
             e.prm(Prm.MAX_HP).base = 30;
             e.prm(Prm.STR).base = 12;
         };
+        async dungeonClearEvent(){
+            await super.dungeonClearEvent();
+
+            Item.はじまりの丘チール.add(1); await cwait();
+        }
     };
     export const                         再構成トンネル:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"再構成トンネル",
                                 rank:1, enemyLv:3, au:70,
-                                clearItem:  ()=>Item.再構成トンネルの玉,
                                 treasures:  ()=>[Eq.安全靴],
                                 exItem:     ()=>Eq.手甲,
                                 trendItems: ()=>[Item.水],
@@ -353,7 +354,6 @@ export namespace Dungeon{
     export const                         リテの門:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"リ・テの門",
                                 rank:1, enemyLv:7, au:70,
-                                clearItem:  ()=>Item.リテの門の玉,
                                 treasures:  ()=>[Eq.魔法の杖],
                                 exItem:     ()=>Eq.魔女のとんがり帽,
                                 trendItems: ()=>[Item.朽ち果てた鍵],
@@ -379,11 +379,15 @@ export namespace Dungeon{
             e.prm(Prm.STR).base = 20;
             e.prm(Prm.MAG).base = 12;
         };
+        async dungeonClearEvent(){
+            await super.dungeonClearEvent();
+
+            Item.リテの門チール.add(1); await cwait();
+        }
     };
     export const                         黒平原:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"黒平原",
                                 rank:2, enemyLv:14, au:100,
-                                clearItem:  ()=>Item.黒平原の玉,
                                 treasures:  ()=>[Eq.ゲルマンベルト],
                                 exItem:     ()=>Eq.オホーツクのひも,
                                 trendItems: ()=>[Item.黒い石, Item.黒い砂],
@@ -410,7 +414,6 @@ export namespace Dungeon{
     export const                         黒遺跡:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"黒遺跡",
                                 rank:0, enemyLv:18, au:120,
-                                clearItem:  ()=>Item.黒遺跡の玉,
                                 treasures:  ()=>[Eq.魔ヶ玉の指輪],
                                 exItem:     ()=>Eq.ゴーレムの腕,
                                 trendItems: ()=>[Item.黒い枝, Item.黒い青空],
@@ -433,7 +436,6 @@ export namespace Dungeon{
     export const                         PAIN:Dungeon = new class extends Dungeon{
         constructor(){super({uniqueName:"PAIN",
                                 rank:1, enemyLv:24, au:100,
-                                clearItem:  ()=>Item.PAINの玉,
                                 treasures:  ()=>[Eq.ニケ],
                                 exItem:     ()=>Eq.鉄下駄,
                                 trendItems: ()=>[],

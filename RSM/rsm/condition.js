@@ -130,7 +130,7 @@ Condition._valueOf = new Map();
                 if (action instanceof ActiveTec && action.type === TecType.格闘) {
                     Util.msg.set("＞盾");
                     yield wait();
-                    dmg.pow.mul *= (1 + target.getConditionValue(this) * 0.5);
+                    dmg.pow.mul /= (1 + target.getConditionValue(this) * 0.5);
                     target.addConditionValue(this, -1);
                 }
             });
@@ -156,8 +156,8 @@ Condition._valueOf = new Map();
         constructor() { super("癒", ConditionType.GOOD_LV3); }
         phaseStart(unit) {
             return __awaiter(this, void 0, void 0, function* () {
-                let value = unit.prm(Prm.MAX_HP).total * 0.2;
-                const lim = (unit.prm(Prm.LIG).total + unit.prm(Prm.LV).total) * 10;
+                let value = (unit.prm(Prm.LIG).total + unit.prm(Prm.LV).total);
+                const lim = unit.prm(Prm.MAX_HP).total * 0.2;
                 if (value > lim) {
                     value = lim;
                 }

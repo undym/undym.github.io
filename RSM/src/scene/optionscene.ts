@@ -6,8 +6,6 @@ import { Btn } from "../widget/btn.js";
 import { TownScene } from "./townscene.js";
 import { List } from "../widget/list.js";
 import { FXTest } from "../fx/fx.js";
-import { Input } from "../undym/input.js";
-import { Popup, MsgPopup } from "../widget/popup.js";
 import { Item, ItemType } from "../item.js";
 import { Font, Graphics } from "../graphics/graphics.js";
 import { ActiveTec, PassiveTec } from "../tec.js";
@@ -142,57 +140,6 @@ const setDebugBtn = (l:FlowLayout)=>{
         setOptionBtn(l);
     }));
 };
-// export class OptionScene extends Scene{
-//     private static _ins:OptionScene;
-//     static get ins():OptionScene{return this._ins != null ? this._ins : (this._ins = new OptionScene());}
-
-//     private info:string = "";
-
-//     private constructor(){
-//         super();
-//     }
-
-//     init(){
-        
-//         super.clear();
-
-//         if(Util.DEBUG){
-//             super.add(new Rect(0, 0, 0.2, 1),new YLayout()
-//                 .add(new Label(Font.def, ()=>this.info))
-//                 .add(new Btn(()=>"ITEM+99",()=>{
-//                     for(let item of Item.values){
-//                         item.num += 99;
-//                     }
-//                     this.info = "ITEM+99";
-//                 }))
-//                 .add(new Btn(()=>"EffectTest",async()=>{
-//                     Scene.load( new EffectTest() );
-//                 }))
-//                 .add(ILayout.empty)
-//             );
-//         }
-
-//         {
-//             let w = 0.2;
-//             super.add(new Rect(1 - w, 0, w, 1),new YLayout()
-//                 .add(ILayout.empty)
-//                 .add(new Layout()
-//                     .add(new Btn(()=>"再読み込み",()=>{
-//                         window.location.href = window.location.href;
-//                     }))
-//                     .add(new MsgPopup("left", Font.def, [
-//                         ["新しいバージョンがあれば更新されます",Color.WHITE],
-//                     ]))
-//                 )
-//                 .add(new Btn(()=>"<-",()=>{
-//                     Scene.load( FieldScene.ins );
-//                 }))
-//                 .add(ILayout.empty)
-//             );
-//         }
-//     }
-// }
-
 
 
 class EffectTest extends Scene{

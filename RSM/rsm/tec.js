@@ -82,7 +82,7 @@ TecType._values = [];
         constructor() { super("暗黒"); }
         createDmg(attacker, target) {
             return new Dmg({
-                pow: attacker.prm(Prm.DRK).total + attacker.prm(Prm.LV).total,
+                pow: attacker.prm(Prm.DRK).total + attacker.prm(Prm.LV).total * 0.75,
                 def: target.prm(Prm.LIG).total,
             });
         }

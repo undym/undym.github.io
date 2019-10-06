@@ -137,7 +137,7 @@ export namespace Condition{
             if(action instanceof ActiveTec && action.type === TecType.格闘){
                 
                 Util.msg.set("＞盾"); await wait();
-                dmg.pow.mul *= (1 + target.getConditionValue(this) * 0.5);
+                dmg.pow.mul /= (1 + target.getConditionValue(this) * 0.5);
 
                 target.addConditionValue(this, -1);
             }
@@ -162,8 +162,8 @@ export namespace Condition{
         constructor(){super("癒", ConditionType.GOOD_LV3);}
         
         async phaseStart(unit:Unit){
-            let value = unit.prm(Prm.MAX_HP).total * 0.2;
-            const lim = (unit.prm(Prm.LIG).total + unit.prm(Prm.LV).total) * 10;
+            let value = (unit.prm(Prm.LIG).total + unit.prm(Prm.LV).total);
+            const lim = unit.prm(Prm.MAX_HP).total * 0.2;
             if(value > lim){value = lim;}
 
             Util.msg.set("＞癒", Color.CYAN.bright);

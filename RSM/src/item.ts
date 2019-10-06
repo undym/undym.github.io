@@ -44,8 +44,8 @@ export class ItemType{
     static readonly 書 = new ItemType("書");
 
     static readonly メモ = new ItemType("メモ");
-    static readonly 玉 = new ItemType("玉");
     static readonly 素材 = new ItemType("素材");
+    static readonly 固有素材 = new ItemType("固有素材");
     static readonly 合成素材 = new ItemType("合成素材");
     static readonly 植物 = new ItemType("植物");
     static readonly 土 = new ItemType("土");
@@ -72,7 +72,7 @@ export class ItemParentType{
     static readonly ダンジョン  = new ItemParentType("ダンジョン", [ItemType.ダンジョン, ItemType.竿, ItemType.弾]);
     static readonly 強化       = new ItemParentType("強化", [ItemType.ドーピング, ItemType.書]);
     static readonly その他     = new ItemParentType("その他",    [
-                                                                    ItemType.メモ, ItemType.玉, ItemType.素材,
+                                                                    ItemType.メモ, ItemType.素材, ItemType.固有素材,
                                                                     ItemType.合成素材, ItemType.植物, ItemType.土, ItemType.水,
                                                                     ItemType.魚,
                                                                 ]);
@@ -151,7 +151,9 @@ export class Item implements Action, Num{
         
         return Item.石;
     }
-
+    /**
+     * return res > 0 ? res : 0;
+     * */
     static fluctuateRank(baseRank:number, rankFluctuatePassProb = 0.4){
         let add = 0;
 
@@ -523,32 +525,6 @@ export namespace Item{
     };
     //-----------------------------------------------------------------
     //
-    //玉
-    //
-    //-----------------------------------------------------------------
-    export const                         はじまりの丘の玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"はじまりの丘の玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
-    };
-    export const                         再構成トンネルの玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"再構成トンネルの玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
-    };
-    export const                         リテの門の玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"リ・テの門の玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
-    };
-    export const                         黒平原の玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"黒平原の玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
-    };
-    export const                         黒遺跡の玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"黒遺跡の玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
-    };
-    export const                         PAINの玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"PAINの玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
-    };
-    export const                         CSTEFの玉:Item = new class extends Item{
-        constructor(){super({uniqueName:"CSTEFの玉", info:"", type:ItemType.玉, rank:10, drop:ItemDrop.NO,})}
-    };
-    //-----------------------------------------------------------------
-    //
     //素材BoxRank0
     //
     //-----------------------------------------------------------------
@@ -643,6 +619,19 @@ export namespace Item{
     export const                         チタン:Item = new class extends Item{
         constructor(){super({uniqueName:"チタン", info:"",
                                 type:ItemType.素材, rank:4, drop:ItemDrop.BOX})}
+    };
+    //-----------------------------------------------------------------
+    //
+    //固有素材
+    //
+    //-----------------------------------------------------------------
+    export const                         はじまりの丘チール:Item = new class extends Item{
+        constructor(){super({uniqueName:"はじまりの丘チール", info:"はじまりの丘をクリアするともらえる記念チール", 
+                                type:ItemType.固有素材, rank:10, drop:ItemDrop.NO,})}
+    };
+    export const                         リテの門チール:Item = new class extends Item{
+        constructor(){super({uniqueName:"リ・テの門チール", info:"リテの門をクリアするともらえる記念チール", 
+                                type:ItemType.固有素材, rank:10, drop:ItemDrop.NO,})}
     };
     //-----------------------------------------------------------------
     //

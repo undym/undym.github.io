@@ -233,7 +233,7 @@ Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
     const 草の服 = new Mix({
         uniqueName: "草の服", limit: 2,
         result: () => [Eq.草の服, 1],
-        materials: () => [[Item.草, 5], [Item.黒い枝, 3], [Item.しいたけ, 3]],
+        materials: () => [[Item.草, 5], [Item.葛, 3], [Item.しいたけ, 3]],
     });
     const 布の服 = new Mix({
         uniqueName: "布の服", limit: 2,
@@ -269,9 +269,9 @@ Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
     //
     //--------------------------------------------------------
     const 硬化スティックパン = new Mix({
-        uniqueName: "硬化スティックパン", limit: 5,
+        uniqueName: "硬化スティックパン", limit: 10,
         result: () => [Item.硬化スティックパン, 1],
-        materials: () => [[Item.はじまりの丘の玉, 1], [Item.石, 5], [Item.土, 5]],
+        materials: () => [[Item.はじまりの丘チール, 2], [Item.石, 5], [Item.土, 5]],
     });
     const 布 = new Mix({
         uniqueName: "布", limit: Mix.LIMIT_INF,
@@ -282,6 +282,6 @@ Mix.LIMIT_INF = Number.POSITIVE_INFINITY;
     const 兵法指南の書 = new Mix({
         uniqueName: "兵法指南の書", limit: Mix.LIMIT_INF,
         result: () => [Item.兵法指南の書, 1],
-        materials: () => [[Item.リテの門の玉, 2], [Item.葉っぱ, 10], [Item.紙, 10]],
+        materials: () => [[Item.リテの門チール, 2], [Item.葉っぱ, 10], [Item.紙, 10]],
     });
 })(Mix || (Mix = {}));

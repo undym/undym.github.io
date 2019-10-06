@@ -22,9 +22,7 @@ import { PartySkillOpenBox, PartySkill } from "../partyskill.js";
 
 export abstract class DungeonEvent{
     private static _values:DungeonEvent[] = [];
-    static values():ReadonlyArray<DungeonEvent>{
-        return this._values;
-    }
+    static get values():ReadonlyArray<DungeonEvent>{return this._values;}
 
     static now:DungeonEvent;
 
@@ -73,7 +71,7 @@ export namespace DungeonEvent{
         createImg = ()=> new Img("img/box_open.png");
         isZoomImg = ()=> false;
         happenInner = async()=>{
-            await openBox( ItemDrop.BOX, Dungeon.now.rank );
+            await openBox( ItemDrop.BOX, Dungeon.now.rank / 2 );
 
             if(Math.random() < 0.15){
                 const trends = Dungeon.now.trendItems;
@@ -153,8 +151,9 @@ export namespace DungeonEvent{
         constructor(){super();}
         createImg = ()=> new Img("img/trap_broken.png");
         isZoomImg = ()=> false;
-        happenInner = ()=>{
+        happenInner = async()=>{
             Util.msg.set("解除した");
+            await openBox( ItemDrop.BOX, Dungeon.now.rank / 4 );
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
@@ -203,7 +202,7 @@ export namespace DungeonEvent{
         createImg = ()=> new Img("img/tree_broken.png");
         isZoomImg = ()=> false;
         happenInner = async()=>{
-            await openBox( ItemDrop.TREE, Dungeon.now.rank );
+            await openBox( ItemDrop.TREE, Dungeon.now.rank / 2);
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
@@ -222,7 +221,7 @@ export namespace DungeonEvent{
         // createImg = ()=> new Img("img/tree_broken.png");
         // isZoomImg = ()=> false;
         happenInner = async()=>{
-            await openBox( ItemDrop.STRATUM, Dungeon.now.rank );
+            await openBox( ItemDrop.STRATUM, Dungeon.now.rank / 2 );
         };
         createBtnLayout = DungeonEvent.empty.createBtnLayout;
     };
@@ -243,7 +242,7 @@ export namespace DungeonEvent{
                                 .set(ReturnBtn.index, (()=>{
                                     const btn = new Btn("汲む", async()=>{
                                         this.汲む = false;
-                                        await openBox( ItemDrop.LAKE, Dungeon.now.rank );
+                                        await openBox( ItemDrop.LAKE, Dungeon.now.rank / 2 );
                                     });
                                     return new VariableLayout(()=>this.汲む ? btn : ReturnBtn.ins);
                                 })())
@@ -377,8 +376,6 @@ export namespace DungeonEvent{
             PlayData.yen += yen;
             Util.msg.set(`報奨金${yen}円入手`, Color.YELLOW.bright); await cwait();
 
-            Dungeon.now.dungeonClearItem.add(1); await cwait();
-
             await Dungeon.now.dungeonClearEvent();
             
             DungeonEvent.ESCAPE_DUNGEON.happen();
@@ -483,12 +480,12 @@ const openBox = async(dropType:ItemDrop, rank:number)=>{
     PartySkill.skills.forEach(skill=> skill.openBox( partySkill, dropType ) );
 
     let openNum = 1;
-    let openBoost = 0.3 + partySkill.chain;
+    let openBoost = 0.25 + partySkill.chain;
     while(Math.random() < openBoost){
         openNum++;
         openBoost /= 2;
     }
-    let baseRank = rank / 2 + partySkill.addRank;
+    let baseRank = rank + partySkill.addRank;
     for(let i = 0; i < openNum; i++){
         const itemRank = Item.fluctuateRank( baseRank );
         let item = Item.rndItem( dropType, itemRank );

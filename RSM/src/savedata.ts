@@ -14,7 +14,7 @@ import { PartySkill } from "./partyskill.js";
 
 
 export class Version{
-    static readonly NOW = new Version(0,14,2);
+    static readonly NOW = new Version(0,14,3);
 
     private values:number[];
 

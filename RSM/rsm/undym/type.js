@@ -1,5 +1,9 @@
 export class Color {
     constructor(r, g, b, a = 1) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
         /**
          * range:変動範囲.rgbが-range~+rangeの範囲で変動する
          * spd:変動速度.
@@ -29,10 +33,6 @@ export class Color {
             let ratio2 = 1 - ratio1;
             return new Color(this.r * ratio1 + color.r * ratio2, this.g * ratio1 + color.g * ratio2, this.b * ratio1 + color.b * ratio2, this.a * ratio1 + color.a * ratio2);
         };
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
     }
     brighter() {
         let mul = 1.3;

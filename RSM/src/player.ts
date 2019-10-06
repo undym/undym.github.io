@@ -49,7 +49,7 @@ export abstract class Player{
 
         return res;
     }
-    /**合成等でのプレイヤーの加入処理。 */
+    /**プレイヤーの加入処理。 */
     join(){
         this.member = true;
         for(let i = 0; i < Unit.players.length; i++){

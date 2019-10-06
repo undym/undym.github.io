@@ -32,17 +32,14 @@ export class Color{
         return Color.RAINBOW[i];
     };
 
-    readonly r:number;
-    readonly g:number;
-    readonly b:number;
-    readonly a:number;
     private HTMLString:string;
 
-    constructor(r:number, g:number, b:number, a:number = 1){
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
+    constructor(
+        readonly r:number, 
+        readonly g:number, 
+        readonly b:number, 
+        readonly a:number = 1
+    ){
     }
 
     /**
@@ -136,12 +133,10 @@ export class Point{
     static readonly ONE = new Point(1,1);
     static readonly CENTER = new Point(0.5,0.5);
 
-    readonly x:number;
-    readonly y:number;
-
-    constructor(x:number, y:number){
-        this.x = x;
-        this.y = y;
+    constructor(
+        readonly x:number, 
+        readonly y:number
+    ){
     }
 
     move(addX:number, addY:number):Point{
@@ -154,16 +149,12 @@ export class Rect{
     static readonly FULL = new Rect(0,0,1,1);
     static readonly ZERO = new Rect(0,0,0,0);
 
-    readonly x:number;
-    readonly y:number;
-    readonly w:number;
-    readonly h:number;
-
-    constructor(x:number, y:number, w:number, h:number){
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+    constructor(
+        readonly x:number, 
+        readonly y:number, 
+        readonly w:number, 
+        readonly h:number
+    ){
     }
 
     get xw():number{return this.x + this.w;}
@@ -193,11 +184,9 @@ export class Rect{
 export class Size{
     static readonly ZERO = new Size(0,0);
     
-    readonly w:number;
-    readonly h:number;
-
-    constructor(w:number, h:number){
-        this.w = w;
-        this.h = h;
+    constructor(
+        readonly w:number, 
+        readonly h:number
+    ){
     }
 }

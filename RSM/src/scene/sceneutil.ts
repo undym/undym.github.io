@@ -8,8 +8,6 @@ import { Scene } from "../undym/scene.js";
 import { PlayData, Util, Debug } from "../util.js";
 import { Unit, Prm, PUnit, EUnit } from "../unit.js";
 import { Input } from "../undym/input.js";
-import { MsgPopup, Popup } from "../widget/popup.js";
-import { Action } from "../force.js";
 import { ConditionType } from "../condition.js";
 import { EqPos, Eq } from "../eq.js";
 import { Font, Graphics } from "../graphics/graphics.js";

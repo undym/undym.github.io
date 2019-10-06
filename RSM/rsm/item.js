@@ -40,8 +40,8 @@ ItemType.弾 = new ItemType("弾");
 ItemType.ドーピング = new ItemType("ドーピング");
 ItemType.書 = new ItemType("書");
 ItemType.メモ = new ItemType("メモ");
-ItemType.玉 = new ItemType("玉");
 ItemType.素材 = new ItemType("素材");
+ItemType.固有素材 = new ItemType("固有素材");
 ItemType.合成素材 = new ItemType("合成素材");
 ItemType.植物 = new ItemType("植物");
 ItemType.土 = new ItemType("土");
@@ -60,7 +60,7 @@ ItemParentType.回復 = new ItemParentType("回復", [ItemType.蘇生, ItemType.
 ItemParentType.ダンジョン = new ItemParentType("ダンジョン", [ItemType.ダンジョン, ItemType.竿, ItemType.弾]);
 ItemParentType.強化 = new ItemParentType("強化", [ItemType.ドーピング, ItemType.書]);
 ItemParentType.その他 = new ItemParentType("その他", [
-    ItemType.メモ, ItemType.玉, ItemType.素材,
+    ItemType.メモ, ItemType.素材, ItemType.固有素材,
     ItemType.合成素材, ItemType.植物, ItemType.土, ItemType.水,
     ItemType.魚,
 ]);
@@ -137,6 +137,9 @@ export class Item {
         }
         return Item.石;
     }
+    /**
+     * return res > 0 ? res : 0;
+     * */
     static fluctuateRank(baseRank, rankFluctuatePassProb = 0.4) {
         let add = 0;
         while (Math.random() <= rankFluctuatePassProb) {
@@ -539,32 +542,6 @@ Item.DEF_NUM_LIMIT = 9999;
     };
     //-----------------------------------------------------------------
     //
-    //玉
-    //
-    //-----------------------------------------------------------------
-    Item.はじまりの丘の玉 = new class extends Item {
-        constructor() { super({ uniqueName: "はじまりの丘の玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
-    };
-    Item.再構成トンネルの玉 = new class extends Item {
-        constructor() { super({ uniqueName: "再構成トンネルの玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
-    };
-    Item.リテの門の玉 = new class extends Item {
-        constructor() { super({ uniqueName: "リ・テの門の玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
-    };
-    Item.黒平原の玉 = new class extends Item {
-        constructor() { super({ uniqueName: "黒平原の玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
-    };
-    Item.黒遺跡の玉 = new class extends Item {
-        constructor() { super({ uniqueName: "黒遺跡の玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
-    };
-    Item.PAINの玉 = new class extends Item {
-        constructor() { super({ uniqueName: "PAINの玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
-    };
-    Item.CSTEFの玉 = new class extends Item {
-        constructor() { super({ uniqueName: "CSTEFの玉", info: "", type: ItemType.玉, rank: 10, drop: ItemDrop.NO, }); }
-    };
-    //-----------------------------------------------------------------
-    //
     //素材BoxRank0
     //
     //-----------------------------------------------------------------
@@ -694,6 +671,23 @@ Item.DEF_NUM_LIMIT = 9999;
         constructor() {
             super({ uniqueName: "チタン", info: "",
                 type: ItemType.素材, rank: 4, drop: ItemDrop.BOX });
+        }
+    };
+    //-----------------------------------------------------------------
+    //
+    //固有素材
+    //
+    //-----------------------------------------------------------------
+    Item.はじまりの丘チール = new class extends Item {
+        constructor() {
+            super({ uniqueName: "はじまりの丘チール", info: "はじまりの丘をクリアするともらえる記念チール",
+                type: ItemType.固有素材, rank: 10, drop: ItemDrop.NO, });
+        }
+    };
+    Item.リテの門チール = new class extends Item {
+        constructor() {
+            super({ uniqueName: "リ・テの門チール", info: "リテの門をクリアするともらえる記念チール",
+                type: ItemType.固有素材, rank: 10, drop: ItemDrop.NO, });
         }
     };
     //-----------------------------------------------------------------

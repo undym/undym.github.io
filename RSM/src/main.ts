@@ -8,11 +8,11 @@ import { FX, FXTest } from "./fx/fx.js";
 import { Dungeon } from "./dungeon/dungeon.js";
 import { Player } from "./player.js";
 import { Rect, Color, Point } from "./undym/type.js";
-import { Graphics, Texture, Font } from "./graphics/graphics.js";
+import { Graphics, Texture, Font, Img } from "./graphics/graphics.js";
 import { Item } from "./item.js";
 import { SaveData, Version } from "./savedata.js";
 import { DungeonEvent } from "./dungeon/dungeonevent.js";
-import { XLayout, ILayout } from "./undym/layout.js";
+import { XLayout, ILayout, Label } from "./undym/layout.js";
 import { Job } from "./job.js";
 import { PartySkill } from "./partyskill.js";
 
@@ -124,7 +124,7 @@ const init = ()=>{
     SceneType.TOWN.set();
     Dungeon.now = Dungeon.はじまりの丘;
     //画像読み込み
-    for(const ev of DungeonEvent.values()){
+    for(const ev of DungeonEvent.values){
         ev.getImg();
     }
 
@@ -146,38 +146,12 @@ const continueGame = ()=>{
 }
 
 const setInput = ()=>{
-    document.addEventListener("keydown", ev=>{
-        if(Debug.DEBUG){
+    if(Debug.DEBUG){
+        document.addEventListener("keydown", ev=>{
             if(ev.key === "d"){
                 Debug.debugMode = !Debug.debugMode;
             }
-        }
-    });
+        });
+    }
 };
 
-
-class TestScene extends Scene{
-    constructor(){
-        super();
-    }
-    init(){
-        super.clear();
-
-        super.add(Rect.FULL, ILayout.create({draw:()=>{
-            Graphics.fillRect(Rect.FULL, Color.GRAY);
-        }}));
-
-        const MAIN = new Rect(0, 0, 1, 0.8);
-        const WIPE = new Rect(0, MAIN.yh, 0.2, 0.2);
-        const MSG = new Rect(WIPE.xw, WIPE.y, 1 - WIPE.w, WIPE.h);
-
-        super.add(Rect.FULL, ILayout.create({draw:()=>{
-            if(Math.random() < 0.6){return;}
-            for(let i = 0; i < 10; i++){
-                const y = Math.random();
-                Graphics.line({x:0, y:y}, {x:1, y:y}, Color.BLACK);
-            }
-        }}));
-
-    }
-}

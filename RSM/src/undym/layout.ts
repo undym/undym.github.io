@@ -42,8 +42,8 @@ export abstract class ILayout{
     }
 
     
-    abstract ctrlInner(bounds:{x:number, y:number, w:number, h:number}):void;
-    abstract drawInner(bounds:{x:number, y:number, w:number, h:number}):void;
+    abstract ctrlInner(bounds:Rect):void;
+    abstract drawInner(bounds:Rect):void;
 
 
     setOutsideRatioMargin(top:number, right:number, bottom:number, left:number):this{
