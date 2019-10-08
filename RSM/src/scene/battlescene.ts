@@ -268,7 +268,7 @@ export class BattleScene extends Scene{
                         await this.setChooseTargetBtn(attacker, async(targets)=>{
                             if(
                                    !targets[0].dead 
-                                || (tec.targetings & Targeting.WITH_DEAD || tec.targetings & Targeting.ONLY_DEAD)
+                                || (tec.targetings & Targeting.WITH_DEAD || tec.targetings & Targeting.DEAD_ONLY)
                             ){
                                 Util.msg.set(`＞${targets[0].name}を選択`);
                                 await tec.use(attacker, new Array<Unit>( tec.rndAttackNum() ).fill( targets[0] ));

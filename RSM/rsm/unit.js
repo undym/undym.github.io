@@ -140,6 +140,7 @@ export class Unit {
             this._all.push(e);
         }
     }
+    get center() { return this.bounds.center; }
     //---------------------------------------------------------
     //
     //

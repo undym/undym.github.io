@@ -138,7 +138,10 @@ export abstract class Unit{
     name:string = "";
     exists:boolean = false;
     dead:boolean = false;
+
     bounds:Rect;
+    get center(){return this.bounds.center;}
+
     tecs:Tec[] = [];
     /**戦闘時の技ページ。 */
     tecPage = 0;

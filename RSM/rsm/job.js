@@ -256,7 +256,7 @@ Job.DEF_LVUP_EXP = 5;
                 },
             });
             this.setEnemyInner = (e) => {
-                e.tecs = [Tec.天籟, Tec.ばんそうこう, Tec.殴る, Tec.殴る, Tec.殴る, Tec.ユグドラシル];
+                e.tecs = [Tec.天籟, Tec.ばんそうこう, Tec.天籟, Tec.天籟, Tec.殴る, Tec.ユグドラシル];
             };
         }
     };

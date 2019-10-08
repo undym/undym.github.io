@@ -12,7 +12,7 @@ import { wait } from "./undym/scene.js";
 import { Dmg, Targeting } from "./force.js";
 import { Condition, ConditionType } from "./condition.js";
 import { Color } from "./undym/type.js";
-import { FX_格闘 } from "./fx/fx.js";
+import { FX_格闘, FX_魔法, FX_神格, FX_暗黒, FX_練術, FX_過去, FX_銃術, FX_回復 } from "./fx/fx.js";
 import { randomInt } from "./undym/random.js";
 import { Item } from "./item.js";
 export class TecType {
@@ -63,7 +63,7 @@ TecType._values = [];
             });
         }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            FX_魔法(target.bounds.center);
         }
     };
     TecType.神格 = new class extends TecType {
@@ -75,7 +75,7 @@ TecType._values = [];
             });
         }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            FX_神格(target.bounds.center);
         }
     };
     TecType.暗黒 = new class extends TecType {
@@ -87,7 +87,7 @@ TecType._values = [];
             });
         }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            FX_暗黒(target.bounds.center);
         }
     };
     TecType.練術 = new class extends TecType {
@@ -99,7 +99,7 @@ TecType._values = [];
             });
         }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            FX_練術(attacker.bounds.center, target.bounds.center);
         }
     };
     TecType.過去 = new class extends TecType {
@@ -111,7 +111,7 @@ TecType._values = [];
             });
         }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            FX_過去(target.bounds.center);
         }
     };
     TecType.銃術 = new class extends TecType {
@@ -123,7 +123,7 @@ TecType._values = [];
             });
         }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            FX_銃術(attacker.bounds.center, target.bounds.center);
         }
     };
     TecType.弓術 = new class extends TecType {
@@ -135,14 +135,14 @@ TecType._values = [];
             });
         }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            FX_銃術(attacker.bounds.center, target.bounds.center);
         }
     };
     TecType.状態 = new class extends TecType {
         constructor() { super("状態"); }
         createDmg(attacker, target) { return new Dmg(); }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            // FX_格闘(target.bounds.center);
         }
     };
     TecType.回復 = new class extends TecType {
@@ -153,14 +153,14 @@ TecType._values = [];
             });
         }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            FX_回復(target.bounds.center);
         }
     };
     TecType.その他 = new class extends TecType {
         constructor() { super("その他"); }
         createDmg(attacker, target) { return new Dmg(); }
         effect(attacker, target, dmg) {
-            FX_格闘(target.bounds.center);
+            // FX_格闘(target.bounds.center);
         }
     };
 })(TecType || (TecType = {}));
@@ -913,7 +913,7 @@ ActiveTec._valueOf = new Map();
     Tec.グレートウォール = new class extends ActiveTec {
         constructor() {
             super({ uniqueName: "グレートウォール", info: "味方全体を<盾>化",
-                type: TecType.状態, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
+                type: TecType.状態, targetings: Targeting.ALL | Targeting.FRIEND_ONLY,
                 mul: 1, num: 1, hit: 1,
             });
         }
@@ -958,7 +958,7 @@ ActiveTec._valueOf = new Map();
     Tec.癒しの風 = new class extends ActiveTec {
         constructor() {
             super({ uniqueName: "癒しの風", info: "一体を<癒5>(毎ターン回復)状態にする",
-                type: TecType.状態, targetings: Targeting.SELECT | Targeting.ONLY_FRIEND,
+                type: TecType.状態, targetings: Targeting.SELECT | Targeting.FRIEND_ONLY,
                 mul: 1, num: 1, hit: 10, mp: 2,
             });
         }
@@ -971,7 +971,7 @@ ActiveTec._valueOf = new Map();
     Tec.いやらしの風 = new class extends ActiveTec {
         constructor() {
             super({ uniqueName: "いやらしの風", info: "味方全体を<癒5>状態にする",
-                type: TecType.状態, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
+                type: TecType.状態, targetings: Targeting.ALL | Targeting.FRIEND_ONLY,
                 mul: 1, num: 1, hit: 10, mp: 6,
             });
         }
@@ -984,7 +984,7 @@ ActiveTec._valueOf = new Map();
     Tec.風 = new class extends ActiveTec {
         constructor() {
             super({ uniqueName: "風", info: "自分を<風3>(回避UP)状態にする",
-                type: TecType.状態, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
+                type: TecType.状態, targetings: Targeting.ALL | Targeting.FRIEND_ONLY,
                 mul: 1, num: 1, hit: 10, mp: 1, tp: 1,
             });
         }
@@ -1072,7 +1072,7 @@ ActiveTec._valueOf = new Map();
     Tec.ばんそうこう = new class extends ActiveTec {
         constructor() {
             super({ uniqueName: "ばんそうこう", info: "一体を回復(光依存)",
-                type: TecType.回復, targetings: Targeting.SELECT | Targeting.ONLY_FRIEND,
+                type: TecType.回復, targetings: Targeting.SELECT | Targeting.FRIEND_ONLY,
                 mul: 2, num: 1, hit: 10, mp: 2,
             });
         }
@@ -1087,7 +1087,7 @@ ActiveTec._valueOf = new Map();
     Tec.ひんやりゼリー = new class extends ActiveTec {
         constructor() {
             super({ uniqueName: "ひんやりゼリー", info: "味方全体を回復",
-                type: TecType.回復, targetings: Targeting.ALL | Targeting.ONLY_FRIEND,
+                type: TecType.回復, targetings: Targeting.ALL | Targeting.FRIEND_ONLY,
                 mul: 2, num: 1, hit: 10, mp: 2,
             });
         }
@@ -1118,7 +1118,7 @@ ActiveTec._valueOf = new Map();
     Tec.ユグドラシル = new class extends ActiveTec {
         constructor() {
             super({ uniqueName: "ユグドラシル", info: "味方全員を蘇生・回復",
-                type: TecType.回復, targetings: Targeting.ALL | Targeting.ONLY_FRIEND | Targeting.WITH_DEAD,
+                type: TecType.回復, targetings: Targeting.ALL | Targeting.FRIEND_ONLY | Targeting.WITH_DEAD,
                 mul: 1, num: 1, hit: 10, ep: 1,
             });
         }

@@ -273,7 +273,7 @@ export namespace Job{
                                 },
         });}
         setEnemyInner   = (e:EUnit)=>{
-            e.tecs = [Tec.天籟, Tec.ばんそうこう, Tec.殴る, Tec.殴る, Tec.殴る, Tec.ユグドラシル];
+            e.tecs = [Tec.天籟, Tec.ばんそうこう, Tec.天籟, Tec.天籟, Tec.殴る, Tec.ユグドラシル];
         }
     };
     export const                         女神:Job = new class extends Job{

@@ -275,14 +275,148 @@ export const FX_魔法 = (center) => {
     });
 };
 FXTest.add(FX_魔法.name, () => FX_魔法(FXTest.target));
-export const FX_鎖 = (attacker, target) => {
-    FX.add((count) => {
+export const FX_神格 = (center) => {
+    FX.add(count => {
         const over = 20;
+        for (let i = 0; i < 3; i++) {
+            Graphics.setLineWidth(6, () => {
+                Graphics.rotate(Math.PI * 2 * 8 / 360, center, () => {
+                    const x = center.x + Math.random() * Graphics.dotW * 6;
+                    const y = center.y + Math.random() * Graphics.dotW * 6;
+                    const color = new Color(0.5 + Math.random(), 0.5 + Math.random(), 0.5 + Math.random());
+                    const w = Graphics.dotW * 30;
+                    const h = w * 2;
+                    //x
+                    {
+                        const p1 = new Point(x - w / 2, y);
+                        const p2 = new Point(x + w / 2, y);
+                        Graphics.line(p1, p2, color);
+                    }
+                    //y
+                    {
+                        const p1 = new Point(x, y - h / 3);
+                        const p2 = new Point(x, y + h * 2 / 3);
+                        Graphics.line(p1, p2, color);
+                    }
+                });
+            });
+        }
         return count < over;
     });
 };
-FXTest.add(FX_鎖.name, () => FX_鎖(FXTest.attacker, FXTest.target));
-export const FX_銃 = (attacker, target) => {
+FXTest.add(FX_神格.name, () => FX_神格(FXTest.target));
+export const FX_暗黒 = (center) => {
+    const addParticle = (point, vec, size, color) => {
+        const over = 12;
+        const rad = Math.PI * 2 * Math.random();
+        const v = vec;
+        let vx = Math.cos(rad) * v;
+        let vy = Math.sin(rad) * v;
+        FX.add(count => {
+            const r = size * (1 - count / over);
+            // Graphics.fillOval(point, r, color);
+            Graphics.fillRect(new Rect(point.x - r / 2, point.y - r / 2, r, r), color);
+            point.x += vx;
+            point.y += vy;
+            vx *= 0.85;
+            vy *= 0.85;
+            return count < over;
+        });
+    };
+    FX.add(count => {
+        const over = 4;
+        const start = new Point(center.x + 0.03, center.y - 0.07);
+        const end = new Point(center.x - 0.03, center.y + 0.07);
+        for (let i2 = 0; i2 < 2; i2++) {
+            const count2 = count + i2 * 0.5;
+            const x = (start.x * (over - count2) + end.x * count2) / over;
+            const y = (start.y * (over - count2) + end.y * count2) / over;
+            for (let i = 0; i < 25; i++) {
+                const vec = 0.001 + Math.random() * 0.012 * (1 - count / over);
+                const c = 0.1 + Math.random() * 0.2;
+                addParticle({ x: x, y: y }, vec, /*size*/ 0.01 + 0.01 * Math.random() * (1 - count / over), new Color(c + Math.random() * 0.4, c, c));
+            }
+        }
+        return count < over;
+    });
+};
+FXTest.add(FX_暗黒.name, () => FX_暗黒(FXTest.target));
+export const FX_練術 = (attacker, target) => {
+    FX.add((count) => {
+        const over = 20;
+        const color = { r: 0, g: 0, b: 0, a: 1 };
+        const rndColor = () => {
+            color.g = Math.random();
+            return color;
+        };
+        //line: attacker to target
+        for (let i2 = 0; i2 < 2; i2++) {
+            const points = [];
+            const loop = 10;
+            for (let i = 1; i < loop - 1; i++) {
+                let x = (attacker.x * (loop - i) + target.x * i) / loop;
+                let y = (attacker.y * (loop - i) + target.y * i) / loop;
+                const rad = i * 0.6 + count * 1.2 + i2 * 0.6;
+                const r = 0.05;
+                x = x + Math.sin(rad ^ Number.MAX_SAFE_INTEGER * 1.0) * r;
+                y = y + Math.sin(rad) * r;
+                points.push({ x: x, y: y });
+            }
+            points.unshift(attacker);
+            points.push(target);
+            for (let i3 = 0; i3 < points.length - 1; i3++) {
+                Graphics.setLineWidth(1 + (points.length - i3) / 2, () => {
+                    Graphics.line(points[i3], points[i3 + 1], rndColor());
+                });
+            }
+        }
+        //line: target
+        const loop = 20;
+        const points = [];
+        for (let i = 0; i < loop; i++) {
+            const rad = Math.PI * 2 * i / loop * 2.5 + count * 0.6;
+            const r = 0.025 * i / loop + 0.025 * Math.random();
+            let x = target.x + Math.cos(rad) * r;
+            let y = target.y + Math.sin(rad) * r;
+            points.push({ x: x, y: y });
+        }
+        for (let i = 0; i < points.length - 1; i++) {
+            Graphics.setLineWidth(1 + Math.random() * 6, () => {
+                Graphics.line(points[i], points[i + 1], rndColor());
+            });
+        }
+        return count < over;
+    });
+};
+FXTest.add(FX_練術.name, () => FX_練術(FXTest.attacker, FXTest.target));
+export const FX_過去 = (target) => {
+    FX.add((count) => {
+        const over = 20;
+        const color = { r: 0, g: 0, b: 0, a: 1 };
+        const rndColor = () => {
+            color.r = color.g = color.b = Math.random();
+            return color;
+        };
+        //line: target
+        const loop = 40;
+        const points = [];
+        for (let i = 0; i < loop; i++) {
+            const rad = Math.PI * 2 * i / loop * 2.5;
+            const r = 0.025 * i / loop + 0.025 * Math.random();
+            let x = target.x + Math.cos(rad) * r;
+            let y = target.y + Math.sin(rad) * r;
+            points.push({ x: x, y: y });
+        }
+        for (let i = 0; i < points.length - 1; i++) {
+            Graphics.setLineWidth(1 + Math.random() * 6, () => {
+                Graphics.line(points[i], points[i + 1], rndColor());
+            });
+        }
+        return count < over;
+    });
+};
+FXTest.add(FX_過去.name, () => FX_過去(FXTest.target));
+export const FX_銃術 = (attacker, target) => {
     let particles = [];
     for (let i = 0; i < 20; i++) {
         const vecBase = 0.08;
@@ -341,4 +475,39 @@ export const FX_銃 = (attacker, target) => {
         return count < over;
     });
 };
-FXTest.add(FX_銃.name, () => FX_銃(FXTest.attacker, FXTest.target));
+FXTest.add(FX_銃術.name, () => FX_銃術(FXTest.attacker, FXTest.target));
+export const FX_回復 = (target) => {
+    const addStar = (x, y) => {
+        let w = Graphics.dotW * 10;
+        let h = Graphics.dotH * 10;
+        FX.add(count => {
+            if (count % 2) {
+                return true;
+            }
+            let _w = w;
+            let _h = h;
+            let lineWidth = 1;
+            for (let i = 0; i < 3; i++) {
+                Graphics.setLineWidth(lineWidth++, () => {
+                    Graphics.line(new Point(x - _w, y), new Point(x + _h, y), Color.WHITE);
+                    Graphics.line(new Point(x, y - _w), new Point(x, y + _h), Color.WHITE);
+                });
+                _w /= 2;
+                _h /= 2;
+            }
+            w *= 0.9;
+            h *= 0.9;
+            return count < 10;
+        });
+    };
+    FX.add((count) => {
+        const over = 20;
+        const rad = count * 0.6;
+        const r = 50;
+        const x = target.x + Math.cos(rad) * (1 - count / over) * Graphics.dotW * r;
+        const y = target.y + Math.sin(rad) * (1 - count / over) * Graphics.dotH * r;
+        addStar(x, y);
+        return count < over;
+    });
+};
+FXTest.add(FX_回復.name, () => FX_回復(FXTest.target));

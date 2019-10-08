@@ -162,11 +162,11 @@ export class Graphics{
     static getRenderTarget()                {return this.texture;}
     static setRenderTarget(texture:Texture) {this.texture = texture;}
 
-    static set lineWidth(width:number){this.texture.ctx.lineWidth = width;}
-    static setLineWidth(width:number, run:()=>void){
+    static set lineWidth(pixelWidth:number){this.texture.ctx.lineWidth = pixelWidth;}
+    static setLineWidth(pixelWidth:number, run:()=>void){
         const ctx = this.texture.ctx;
         const bak = ctx.lineWidth;
-        ctx.lineWidth = width;
+        ctx.lineWidth = pixelWidth;
 
         run();
 

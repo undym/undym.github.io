@@ -289,7 +289,7 @@ export namespace Dungeon{
                                 rank:0, enemyLv:1, au:50,
                                 treasures:  ()=>[Eq.棒],
                                 exItem:     ()=>Eq.瑠璃,
-                                trendItems: ()=>[Item.石, Item.土, Item.枝,],
+                                trendItems: ()=>[Item.石, Item.枝,],
         });}
         isVisible = ()=>true;
         setBossInner = ()=>{
@@ -321,7 +321,7 @@ export namespace Dungeon{
                                 rank:1, enemyLv:3, au:70,
                                 treasures:  ()=>[Eq.安全靴],
                                 exItem:     ()=>Eq.手甲,
-                                trendItems: ()=>[Item.水],
+                                trendItems: ()=>[Item.土, Item.水],
         });}
         isVisible = ()=>Dungeon.はじまりの丘.dungeonClearCount > 0;
         setBossInner = ()=>{
@@ -457,7 +457,6 @@ export namespace Dungeon{
     // export const                         CSTEF:Dungeon = new class extends Dungeon{
     //     constructor(){super({uniqueName:"C･STEF",
     //                             rank:3, enemyLv:24, au:200,
-    //                             clearItem:  ()=>Item.CSTEFの玉,
     //                             treasures:  ()=>[],
     //                             exItem:     ()=>Eq.鉄下駄,
     //                             trendItems: ()=>[],

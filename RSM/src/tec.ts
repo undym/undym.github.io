@@ -4,7 +4,7 @@ import { wait } from "./undym/scene.js";
 import { Force, Dmg, Targeting, Action } from "./force.js";
 import { Condition, ConditionType } from "./condition.js";
 import { Color } from "./undym/type.js";
-import { FX_Str, FX_格闘 } from "./fx/fx.js";
+import { FX_Str, FX_格闘, FX_魔法, FX_神格, FX_暗黒, FX_練術, FX_過去, FX_銃術, FX_回復 } from "./fx/fx.js";
 import { Font } from "./graphics/graphics.js";
 import { randomInt } from "./undym/random.js";
 import { Battle } from "./battle.js";
@@ -70,7 +70,7 @@ export namespace TecType{
             });
         }
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            FX_魔法(target.bounds.center);
         }
     };
     export const             神格 = new class extends TecType{
@@ -82,7 +82,7 @@ export namespace TecType{
             });
         }
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            FX_神格(target.bounds.center);
         }
     };
     export const             暗黒 = new class extends TecType{
@@ -94,7 +94,7 @@ export namespace TecType{
             });
         }
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            FX_暗黒(target.bounds.center);
         }
     };
     export const             練術 = new class extends TecType{
@@ -106,7 +106,7 @@ export namespace TecType{
             });
         }
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            FX_練術(attacker.bounds.center, target.bounds.center);
         }
     };
     export const             過去 = new class extends TecType{
@@ -118,7 +118,7 @@ export namespace TecType{
             });
         }
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            FX_過去(target.bounds.center);
         }
     };
     export const             銃術 = new class extends TecType{
@@ -130,7 +130,7 @@ export namespace TecType{
             });
         }
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            FX_銃術(attacker.bounds.center, target.bounds.center);
         }
     };
     export const             弓術 = new class extends TecType{
@@ -142,14 +142,14 @@ export namespace TecType{
             });
         }
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            FX_銃術(attacker.bounds.center, target.bounds.center);
         }
     };
     export const             状態 = new class extends TecType{
         constructor(){super("状態");}
         createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();}
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            // FX_格闘(target.bounds.center);
         }
     };
     export const             回復 = new class extends TecType{
@@ -160,14 +160,14 @@ export namespace TecType{
             });
         }
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            FX_回復(target.bounds.center);
         }
     };
     export const             その他 = new class extends TecType{
         constructor(){super("その他");}
         createDmg(attacker:Unit, target:Unit):Dmg{return new Dmg();}
         effect(attacker:Unit, target:Unit, dmg:Dmg){
-            FX_格闘(target.bounds.center);
+            // FX_格闘(target.bounds.center);
         }
     };
 }
@@ -854,7 +854,7 @@ export namespace Tec{
     }
     export const                          グレートウォール:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"グレートウォール", info:"味方全体を<盾>化",
-                              type:TecType.状態, targetings:Targeting.ALL | Targeting.ONLY_FRIEND,
+                              type:TecType.状態, targetings:Targeting.ALL | Targeting.FRIEND_ONLY,
                               mul:1, num:1, hit:1,
         });}
         async run(attacker:Unit, target:Unit){
@@ -886,7 +886,7 @@ export namespace Tec{
     }
     export const                          癒しの風:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"癒しの風", info:"一体を<癒5>(毎ターン回復)状態にする",
-                              type:TecType.状態, targetings:Targeting.SELECT | Targeting.ONLY_FRIEND,
+                              type:TecType.状態, targetings:Targeting.SELECT | Targeting.FRIEND_ONLY,
                               mul:1, num:1, hit:10, mp:2,
         });}
         async run(attacker:Unit, target:Unit){
@@ -895,7 +895,7 @@ export namespace Tec{
     }
     export const                          いやらしの風:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"いやらしの風", info:"味方全体を<癒5>状態にする",
-                              type:TecType.状態, targetings:Targeting.ALL | Targeting.ONLY_FRIEND,
+                              type:TecType.状態, targetings:Targeting.ALL | Targeting.FRIEND_ONLY,
                               mul:1, num:1, hit:10, mp:6,
         });}
         async run(attacker:Unit, target:Unit){
@@ -904,7 +904,7 @@ export namespace Tec{
     }
     export const                          風:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"風", info:"自分を<風3>(回避UP)状態にする",
-                              type:TecType.状態, targetings:Targeting.ALL | Targeting.ONLY_FRIEND,
+                              type:TecType.状態, targetings:Targeting.ALL | Targeting.FRIEND_ONLY,
                               mul:1, num:1, hit:10, mp:1, tp:1,
         });}
         async run(attacker:Unit, target:Unit){
@@ -972,7 +972,7 @@ export namespace Tec{
     //--------------------------------------------------------------------------
     export const                          ばんそうこう:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"ばんそうこう", info:"一体を回復(光依存)",
-                              type:TecType.回復, targetings:Targeting.SELECT | Targeting.ONLY_FRIEND,
+                              type:TecType.回復, targetings:Targeting.SELECT | Targeting.FRIEND_ONLY,
                               mul:2, num:1, hit:10, mp:2,
         });}
         async run(attacker:Unit, target:Unit){
@@ -983,7 +983,7 @@ export namespace Tec{
     }
     export const                          ひんやりゼリー:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"ひんやりゼリー", info:"味方全体を回復",
-                              type:TecType.回復, targetings:Targeting.ALL | Targeting.ONLY_FRIEND,
+                              type:TecType.回復, targetings:Targeting.ALL | Targeting.FRIEND_ONLY,
                               mul:2, num:1, hit:10, mp:2,
         });}
         async run(attacker:Unit, target:Unit){
@@ -1006,7 +1006,7 @@ export namespace Tec{
     }
     export const                          ユグドラシル:ActiveTec = new class extends ActiveTec{
         constructor(){super({ uniqueName:"ユグドラシル", info:"味方全員を蘇生・回復",
-                              type:TecType.回復, targetings:Targeting.ALL | Targeting.ONLY_FRIEND | Targeting.WITH_DEAD,
+                              type:TecType.回復, targetings:Targeting.ALL | Targeting.FRIEND_ONLY | Targeting.WITH_DEAD,
                               mul:1, num:1, hit:10, ep:1,
         });}
         async run(attacker:Unit, target:Unit){
