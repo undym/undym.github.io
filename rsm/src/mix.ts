@@ -162,6 +162,14 @@ export namespace Mix{
     //装備
     //
     //--------------------------------------------------------
+    
+    //頭
+
+    const           マーザンの角:Mix = new Mix({
+        uniqueName:"マーザンの角", limit:2,
+        result:()=>[Eq.マーザンの角, 1],
+        materials:()=>[[Item.マーザンの鱗, 2], [Item.RANK2, 5]],
+    });
 
     //武器
 
@@ -287,6 +295,11 @@ export namespace Mix{
         materials:()=>[[Item.布, 2], [Item.スギ, 5], [Item.ヒノキ, 5]],
         isVisible:()=>皮の服.count > 0,
     });
+    const           防弾チョッキ:Mix = new Mix({
+        uniqueName:"防弾チョッキ", limit:2,
+        result:()=>[Eq.防弾チョッキ, 1],
+        materials:()=>[[Item.マーザンの鱗, 3], [Item.黒い石, 10]],
+    });
     
     //手
 
@@ -320,5 +333,15 @@ export namespace Mix{
         uniqueName:"兵法指南の書", limit:Mix.LIMIT_INF,
         result:()=>[Item.兵法指南の書, 1],
         materials:()=>[[Item.リテの門チール, 2], [Item.葉っぱ, 10], [Item.紙, 10]],
+    });
+    const           五輪の書:Mix = new Mix({
+        uniqueName:"五輪の書", limit:Mix.LIMIT_INF,
+        result:()=>[Item.五輪の書, 1],
+        materials:()=>[[Item.クリスタル, 1], [Item.イズミジュエリー, 3], [Item.紙, 10]],
+    });
+    const           天地創造の書:Mix = new Mix({
+        uniqueName:"天地創造の書", limit:Mix.LIMIT_INF,
+        result:()=>[Item.天地創造の書, 1],
+        materials:()=>[[Item.血粉末, 1], [Item.サファイア, 3], [Item.紙, 10]],
     });
 }

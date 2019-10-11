@@ -456,6 +456,18 @@ export namespace Tec{
             return dmg;
         }
     }
+    export const                          聖剣:ActiveTec = new class extends ActiveTec{
+        constructor(){super({ uniqueName:"聖剣", info:"一体に格闘攻撃　攻撃後光依存で回復",
+                              type:TecType.格闘, targetings:Targeting.SELECT,
+                              mul:1, num:1, hit:1, mp:3, tp:2,
+        });}
+        async run(attacker:Unit, target:Unit){
+            await super.run(attacker, target);
+
+            const value = attacker.prm(Prm.LIG).total;
+            Unit.healHP(attacker, value);
+        }
+    }
     //--------------------------------------------------------------------------
     //
     //格闘Passive

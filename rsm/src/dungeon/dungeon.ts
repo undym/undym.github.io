@@ -390,7 +390,7 @@ export namespace Dungeon{
                                 rank:2, enemyLv:14, au:100,
                                 treasures:  ()=>[Eq.ゲルマンベルト],
                                 exItem:     ()=>Eq.オホーツクのひも,
-                                trendItems: ()=>[Item.黒い石, Item.黒い砂],
+                                trendItems: ()=>[Item.黒い石, Item.黒い砂, Item.黒い枝, Item.黒い青空],
         });}
         isVisible = ()=>Dungeon.リテの門.dungeonClearCount > 0;
         setBossInner = ()=>{
@@ -416,7 +416,7 @@ export namespace Dungeon{
                                 rank:0, enemyLv:18, au:120,
                                 treasures:  ()=>[Eq.魔ヶ玉の指輪],
                                 exItem:     ()=>Eq.ゴーレムの腕,
-                                trendItems: ()=>[Item.黒い枝, Item.黒い青空],
+                                trendItems: ()=>[Item.黒い石, Item.黒い砂, Item.黒い枝, Item.黒い青空],
         });}
         isVisible = ()=>Dungeon.黒平原.dungeonClearCount > 0;
         setBossInner = ()=>{
@@ -433,8 +433,8 @@ export namespace Dungeon{
             e.prm(Prm.PST).base = 30;
         };
     };
-    export const                         PAIN:Dungeon = new class extends Dungeon{
-        constructor(){super({uniqueName:"PAIN",
+    export const                         マーザン森:Dungeon = new class extends Dungeon{
+        constructor(){super({uniqueName:"マーザン森",
                                 rank:1, enemyLv:24, au:100,
                                 treasures:  ()=>[Eq.ニケ],
                                 exItem:     ()=>Eq.鉄下駄,
@@ -444,16 +444,75 @@ export namespace Dungeon{
         setBossInner = ()=>{
             let e = Unit.enemies[0];
             Job.ガンマン.setEnemy(e, e.prm(Prm.LV).base);
-            e.name = "にこ";
+            e.name = "マーザン";
             e.prm(Prm.MAX_HP).base = 200;
         };
         setExInner = ()=>{
             let e = Unit.enemies[0];
             Job.ガンマン.setEnemy(e, e.prm(Prm.LV).base);
-            e.name = "Exにこ";
+            e.name = "Exマーザン";
             e.prm(Prm.MAX_HP).base = 400;
         };
+        async dungeonClearEvent(){
+            await super.dungeonClearEvent();
+
+            Item.マーザンの鱗.add(1); await cwait();
+        }
     };
+    // export const                         古マーザン森:Dungeon = new class extends Dungeon{
+    //     constructor(){super({uniqueName:"古マーザン森",
+    //                             rank:3, enemyLv:24, au:100,
+    //                             treasures:  ()=>[Eq.ニケ],
+    //                             exItem:     ()=>Eq.鉄下駄,
+    //                             trendItems: ()=>[],
+    //     });}
+    //     isVisible = ()=>Dungeon.マーザン森.dungeonClearCount > 0;
+    //     setBossInner = ()=>{
+    //         for(const e of Unit.enemies){
+    //             Job.ガンマン.setEnemy(e, e.prm(Prm.LV).base);
+    //             e.prm(Prm.MAX_HP).base *= 3;
+    //             e.ep = Unit.DEF_MAX_EP;
+    //         }
+    //         let e = Unit.enemies[0];
+    //         Job.ガンマン.setEnemy(e, e.prm(Prm.LV).base);
+    //         e.name = "超マーザン";
+    //         e.prm(Prm.MAX_HP).base = 300;
+    //     };
+    //     setExInner = ()=>{
+    //         let e = Unit.enemies[0];
+    //         Job.ガンマン.setEnemy(e, e.prm(Prm.LV).base);
+    //         e.name = "Ex超マーザン";
+    //         e.prm(Prm.MAX_HP).base = 500;
+    //     };
+        // async dungeonClearEvent(){
+        //     await super.dungeonClearEvent();
+
+        //     Item.マーザンの鱗.add(1); await cwait();
+        // }
+    // };
+
+
+    // export const                         PAIN:Dungeon = new class extends Dungeon{
+    //     constructor(){super({uniqueName:"PAIN",
+    //                             rank:1, enemyLv:24, au:100,
+    //                             treasures:  ()=>[Eq.ニケ],
+    //                             exItem:     ()=>Eq.鉄下駄,
+    //                             trendItems: ()=>[],
+    //     });}
+    //     isVisible = ()=>Dungeon.黒遺跡.dungeonClearCount > 0;
+    //     setBossInner = ()=>{
+    //         let e = Unit.enemies[0];
+    //         Job.ガンマン.setEnemy(e, e.prm(Prm.LV).base);
+    //         e.name = "にこ";
+    //         e.prm(Prm.MAX_HP).base = 200;
+    //     };
+    //     setExInner = ()=>{
+    //         let e = Unit.enemies[0];
+    //         Job.ガンマン.setEnemy(e, e.prm(Prm.LV).base);
+    //         e.name = "Exにこ";
+    //         e.prm(Prm.MAX_HP).base = 400;
+    //     };
+    // };
     // export const                         CSTEF:Dungeon = new class extends Dungeon{
     //     constructor(){super({uniqueName:"C･STEF",
     //                             rank:3, enemyLv:24, au:200,

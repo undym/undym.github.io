@@ -198,12 +198,12 @@ Job.DEF_LVUP_EXP = 5;
         constructor() {
             super({ uniqueName: "騎士", info: "",
                 appearLv: 35, lvupExp: Job.DEF_LVUP_EXP * 3,
-                grow: () => [[Prm.STR, 2], [Prm.LIG, 2]],
-                learn: () => [],
+                grow: () => [[Prm.STR, 1], [Prm.LIG, 1]],
+                learn: () => [Tec.聖剣],
                 canJobChange: (p) => p.isMasteredJob(Job.剣士) && p.isMasteredJob(Job.天使),
             });
             this.setEnemyInner = (e) => {
-                e.tecs = [Tec.殴る, Tec.衛生, Tec.ばんそうこう, Tec.二回殴る, Tec.人狼剣, Tec.急所];
+                e.tecs = [Tec.殴る, Tec.衛生, Tec.ばんそうこう, Tec.聖剣, Tec.聖剣, Tec.天籟];
             };
         }
     };
@@ -514,7 +514,7 @@ Job.DEF_LVUP_EXP = 5;
                 canJobChange: (p) => p.isMasteredJob(Job.格闘家) || p.isMasteredJob(Job.天使) || p.isMasteredJob(Job.スネイカー) || p.isMasteredJob(Job.ガンマン),
             });
             this.setEnemyInner = (e) => {
-                e.tecs = [Tec.撃つ, Tec.撃つ, Tec.射る, Tec.射る, Tec.殴る, Tec.天籟, Tec.便風, Tec.石肌];
+                e.tecs = [Tec.撃つ, Tec.撃つ, Tec.射る, Tec.射る, Tec.HP自動回復, Tec.天籟, Tec.便風, Tec.石肌];
             };
         }
     };

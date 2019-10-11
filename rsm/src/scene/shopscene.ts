@@ -234,8 +234,8 @@ const initGoods = ()=>{
     createItemGoods(Item.夜叉の矢, ()=>(Item.夜叉の矢.num+1) * 500, ()=>クピドmaster);
     createItemGoods(Item.散弾, ()=>(Item.散弾.num+1) * 500, ()=>砲撃手master);
     
-    createItemGoods(Item.ボロい釣竿, ()=>300, ()=>Dungeon.PAIN.dungeonClearCount > 0);
-    createItemGoods(Item.マーザン竿, ()=>700, ()=>Dungeon.PAIN.dungeonClearCount > 10);
+    createItemGoods(Item.ボロい釣竿, ()=>300, ()=>Dungeon.マーザン森.dungeonClearCount > 0);
+    createItemGoods(Item.マーザン竿, ()=>700, ()=>Dungeon.マーザン森.dungeonClearCount > 10);
 
     createEarGoods(EqEar.おにく,       ()=>100 ,()=>Dungeon.はじまりの丘.dungeonClearCount > 0 && EqEar.おにく.totalGetCount < 2);
     createEarGoods(EqEar.水晶のピアス,  ()=>200 ,()=>Dungeon.はじまりの丘.dungeonClearCount > 0 && EqEar.水晶のピアス.totalGetCount < 2);

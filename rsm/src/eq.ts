@@ -214,25 +214,25 @@ export namespace Eq{
     //頭
     //
     //--------------------------------------------------------------------------
-    export const                         髪 = new class extends Eq{
+    export const                         髪:Eq = new class extends Eq{
         constructor(){super({uniqueName:"髪", info:"はげてない、まだはげてない", 
                                 pos:EqPos.頭, lv:0});}
     }
-    export const                         魔女のとんがり帽 = new class extends Eq{//リテの門EX
+    export const                         魔女のとんがり帽:Eq = new class extends Eq{//リテの門EX
         constructor(){super({uniqueName:"魔女のとんがり帽", info:"最大MP+10", 
                                 pos:EqPos.頭, lv:3});}
         equip(unit:Unit){
             unit.prm(Prm.MAX_MP).eq += 10;
         }
     }
-    export const                         山男のとんかつ帽 = new class extends Eq{
+    export const                         山男のとんかつ帽:Eq = new class extends Eq{
         constructor(){super({uniqueName:"山男のとんかつ帽", info:"最大TP+10", 
                                 pos:EqPos.頭, lv:3});}
         equip(unit:Unit){
             unit.prm(Prm.MAX_TP).eq += 10;
         }
     }
-    export const                         千里ゴーグル = new class extends Eq{
+    export const                         千里ゴーグル:Eq = new class extends Eq{
         constructor(){super({uniqueName:"千里ゴーグル", info:"銃・弓攻撃時稀にクリティカル", 
                                 pos:EqPos.頭, lv:120});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -242,24 +242,31 @@ export namespace Eq{
             }
         }   
     }
-    export const                         勾玉 = new class extends Eq{
+    export const                         勾玉:Eq = new class extends Eq{
         constructor(){super({uniqueName:"勾玉", info:"", 
                                 pos:EqPos.頭, lv:Eq.NO_APPEAR_LV});}
     }
-    export const                         メガネ = new class extends Eq{
+    export const                         メガネ:Eq = new class extends Eq{
         constructor(){super({uniqueName:"メガネ", info:"", 
                                 pos:EqPos.頭, lv:Eq.NO_APPEAR_LV});}
+    }
+    export const                         マーザンの角:Eq = new class extends Eq{
+        constructor(){super({uniqueName:"マーザンの角", info:"防御値+200", 
+                                pos:EqPos.頭, lv:30});}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            dmg.def.add += 200;
+        }
     }
     //--------------------------------------------------------------------------
     //
     //武
     //
     //--------------------------------------------------------------------------
-    export const                         恋人 = new class extends Eq{
+    export const                         恋人:Eq = new class extends Eq{
         constructor(){super({uniqueName:"恋人", info:"",
                                 pos:EqPos.武, lv:0});}
     }
-    export const                         棒 = new class extends Eq{
+    export const                         棒:Eq = new class extends Eq{
         constructor(){super({uniqueName:"棒", info:"格闘攻撃x1.5",
                                 pos:EqPos.武, lv:20});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -268,7 +275,7 @@ export namespace Eq{
             }
         }
     }
-    export const                         魔法の杖 = new class extends Eq{//再構成トンネル・財宝
+    export const                         魔法の杖:Eq = new class extends Eq{//再構成トンネル・財宝
         constructor(){super({uniqueName:"魔法の杖", info:"魔法攻撃x1.5",
                                 pos:EqPos.武, lv:40});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -277,105 +284,97 @@ export namespace Eq{
             }
         }
     }
-    export const                         う棒 = new class extends Eq{//mix
+    export const                         う棒:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"う棒", info:"力+20光+20",
                                 pos:EqPos.武, lv:25});}
         equip(unit:Unit){ unit.prm(Prm.STR).eq += 20; unit.prm(Prm.LIG).eq += 20; }
     }
-    export const                         銅剣 = new class extends Eq{//mix
+    export const                         銅剣:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"銅剣", info:"力+40光+40",
                                 pos:EqPos.武, lv:45});}
         equip(unit:Unit){ unit.prm(Prm.STR).eq += 40; unit.prm(Prm.LIG).eq += 40; }
     }
-    export const                         はがねの剣 = new class extends Eq{//mix
+    export const                         はがねの剣:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"はがねの剣", info:"力+70光+70",
                                 pos:EqPos.武, lv:65});}
         equip(unit:Unit){ unit.prm(Prm.STR).eq += 70; unit.prm(Prm.LIG).eq += 70; }
     }
-    export const                         杖 = new class extends Eq{//mix
+    export const                         杖:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"杖", info:"魔+20闇+20",
                                 pos:EqPos.武, lv:25});}
         equip(unit:Unit){ unit.prm(Prm.MAG).eq += 20; unit.prm(Prm.DRK).eq += 20; }
     }
-    export const                         スギの杖 = new class extends Eq{//mix
+    export const                         スギの杖:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"スギの杖", info:"魔+40闇+40",
                                 pos:EqPos.武, lv:45});}
         equip(unit:Unit){ unit.prm(Prm.MAG).eq += 40; unit.prm(Prm.DRK).eq += 40; }
     }
-    export const                         ヒノキの杖 = new class extends Eq{//mix
+    export const                         ヒノキの杖:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"ヒノキの杖", info:"魔+70闇+70",
                                 pos:EqPos.武, lv:65});}
         equip(unit:Unit){ unit.prm(Prm.MAG).eq += 70; unit.prm(Prm.DRK).eq += 70; }
     }
-    export const                         木の鎖 = new class extends Eq{//mix
+    export const                         木の鎖:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"木の鎖", info:"鎖+20過+20",
                                 pos:EqPos.武, lv:25});}
         equip(unit:Unit){ unit.prm(Prm.CHN).eq += 20; unit.prm(Prm.PST).eq += 20; }
     }
-    export const                         銅の鎖 = new class extends Eq{//mix
+    export const                         銅の鎖:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"銅の鎖", info:"鎖+40過+40",
                                 pos:EqPos.武, lv:45});}
         equip(unit:Unit){ unit.prm(Prm.CHN).eq += 40; unit.prm(Prm.PST).eq += 40; }
     }
-    export const                         鉄の鎖 = new class extends Eq{//mix
+    export const                         鉄の鎖:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"鉄の鎖", info:"鎖+70過+70",
                                 pos:EqPos.武, lv:65});}
         equip(unit:Unit){ unit.prm(Prm.CHN).eq += 70; unit.prm(Prm.PST).eq += 70; }
     }
-    export const                         パチンコ = new class extends Eq{//mix
+    export const                         パチンコ:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"パチンコ", info:"銃+20弓+20",
                                 pos:EqPos.武, lv:25});}
         equip(unit:Unit){ unit.prm(Prm.GUN).eq += 20; unit.prm(Prm.ARR).eq += 20; }
     }
-    export const                         ボウガン = new class extends Eq{//mix
+    export const                         ボウガン:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"ボウガン", info:"銃+40弓+40",
                                 pos:EqPos.武, lv:45});}
         equip(unit:Unit){ unit.prm(Prm.GUN).eq += 40; unit.prm(Prm.ARR).eq += 40; }
     }
-    export const                         投石器 = new class extends Eq{//mix
+    export const                         投石器:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"投石器", info:"銃+70弓+70",
                                 pos:EqPos.武, lv:65});}
         equip(unit:Unit){ unit.prm(Prm.GUN).eq += 70; unit.prm(Prm.ARR).eq += 70; }
     }
-    // export const                         忍者刀 = new class extends Eq{
-    //     constructor(){super({uniqueName:"忍者刀", info:"格闘攻撃時稀に追加攻撃",
-    //                             pos:EqPos.武, lv:99});}
-    //     createMix(){return new Mix({
-    //         result:[this,1,
-    //         materials:[[Item.石, 1],
-    //     });}
-    // }
     //--------------------------------------------------------------------------
     //
     //盾
     //
     //--------------------------------------------------------------------------
-    export const                         板 = new class extends Eq{
+    export const                         板:Eq = new class extends Eq{
         constructor(){super({uniqueName:"板", info:"",
                                 pos:EqPos.盾, lv:0});}
     }
-    export const                         銅板 = new class extends Eq{//合成
+    export const                         銅板:Eq = new class extends Eq{//合成
         constructor(){super({uniqueName:"銅板", info:"防御値+50",
                                 pos:EqPos.盾, lv:12});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             dmg.def.add += 50;
         }
     }
-    export const                         鉄板 = new class extends Eq{//合成
+    export const                         鉄板:Eq = new class extends Eq{//合成
         constructor(){super({uniqueName:"鉄板", info:"防御値+100",
                                 pos:EqPos.盾, lv:22});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             dmg.def.add += 100;
         }
     }
-    export const                         鋼鉄板 = new class extends Eq{//合成
+    export const                         鋼鉄板:Eq = new class extends Eq{//合成
         constructor(){super({uniqueName:"鋼鉄板", info:"防御値+200",
                                 pos:EqPos.盾, lv:32});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             dmg.def.add += 200;
         }
     }
-    export const                         チタン板 = new class extends Eq{//合成
+    export const                         チタン板:Eq = new class extends Eq{//合成
         constructor(){super({uniqueName:"チタン板", info:"防御値+300",
                                 pos:EqPos.盾, lv:42});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -387,72 +386,82 @@ export namespace Eq{
     //体
     //
     //--------------------------------------------------------------------------
-    export const                         襤褸切れ = new class extends Eq{
+    export const                         襤褸切れ:Eq = new class extends Eq{
         constructor(){super({uniqueName:"襤褸切れ", info:"",
                                 pos:EqPos.体, lv:0});}
     }
-    export const                         草の服 = new class extends Eq{//mix
+    export const                         草の服:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"草の服", info:"最大HP+20",
                                 pos:EqPos.体, lv:15});}
         equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 20;}
     }
-    export const                         布の服 = new class extends Eq{//mix
+    export const                         布の服:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"布の服", info:"最大HP+40",
                                 pos:EqPos.体, lv:35});}
         equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 40;}
     }
-    export const                         皮の服 = new class extends Eq{//mix
+    export const                         皮の服:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"皮の服", info:"最大HP+70",
                                 pos:EqPos.体, lv:55});}
         equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 70;}
     }
-    export const                         木の鎧 = new class extends Eq{//mix
+    export const                         木の鎧:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"木の鎧", info:"最大HP+100",
                                 pos:EqPos.体, lv:95});}
         equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 100;}
     }
-    export const                         青銅の鎧 = new class extends Eq{
-        constructor(){super({uniqueName:"青銅の鎧", info:"最大HP+200",
-                                pos:EqPos.体, lv:125});}
-        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 200;}
-    }
-    export const                         鉄の鎧 = new class extends Eq{
-        constructor(){super({uniqueName:"鉄の鎧", info:"最大HP+300",
-                                pos:EqPos.体, lv:145});}
-        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 300;}
-    }
-    export const                         鋼鉄の鎧 = new class extends Eq{
-        constructor(){super({uniqueName:"鋼鉄の鎧", info:"最大HP+400",
-                                pos:EqPos.体, lv:160});}
-        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 400;}
-    }
-    export const                         銀の鎧 = new class extends Eq{
-        constructor(){super({uniqueName:"銀の鎧", info:"最大HP+500",
-                                pos:EqPos.体, lv:180});}
-        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 500;}
-    }
-    export const                         金の鎧 = new class extends Eq{
-        constructor(){super({uniqueName:"金の鎧", info:"最大HP+600",
-                                pos:EqPos.体, lv:200});}
-        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 600;}
+    // export const                         青銅の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"青銅の鎧", info:"最大HP+200",
+    //                             pos:EqPos.体, lv:125});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 200;}
+    // }
+    // export const                         鉄の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"鉄の鎧", info:"最大HP+300",
+    //                             pos:EqPos.体, lv:145});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 300;}
+    // }
+    // export const                         鋼鉄の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"鋼鉄の鎧", info:"最大HP+400",
+    //                             pos:EqPos.体, lv:160});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 400;}
+    // }
+    // export const                         銀の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"銀の鎧", info:"最大HP+500",
+    //                             pos:EqPos.体, lv:180});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 500;}
+    // }
+    // export const                         金の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"金の鎧", info:"最大HP+600",
+    //                             pos:EqPos.体, lv:200});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 600;}
+    // }
+    export const                         防弾チョッキ:Eq = new class extends Eq{//mix
+        constructor(){super({uniqueName:"防弾チョッキ", info:"最大HP+50　被銃術・弓術攻撃-40%",
+                                pos:EqPos.体, lv:95});}
+        equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 50;}
+        beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
+            if(action instanceof ActiveTec && action.type.any(TecType.銃術, TecType.弓術)){
+                dmg.pow.mul *= 0.6;
+            }
+        }
     }
     //--------------------------------------------------------------------------
     //
     //腰
     //
     //--------------------------------------------------------------------------
-    export const                         ひも = new class extends Eq{
+    export const                         ひも:Eq = new class extends Eq{
         constructor(){super({uniqueName:"ひも", info:"",
                                 pos:EqPos.腰, lv:0});}
     }
-    export const                         ゲルマンベルト = new class extends Eq{//黒平原財宝
+    export const                         ゲルマンベルト:Eq = new class extends Eq{//黒平原財宝
         constructor(){super({uniqueName:"ゲルマンベルト", info:"攻撃+10%",
                                 pos:EqPos.腰, lv:10});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
             dmg.pow.mul *= 1.1;
         }
     }
-    export const                         オホーツクのひも = new class extends Eq{//黒平原EX
+    export const                         オホーツクのひも:Eq = new class extends Eq{//黒平原EX
         constructor(){super({uniqueName:"オホーツクのひも", info:"被攻撃-10%",
                                 pos:EqPos.腰, lv:10});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -464,11 +473,11 @@ export namespace Eq{
     //手
     //
     //--------------------------------------------------------------------------
-    export const                         手 = new class extends Eq{
+    export const                         手:Eq = new class extends Eq{
         constructor(){super({uniqueName:"手", info:"",
                                 pos:EqPos.手, lv:0});}
     }
-    export const                         手甲 = new class extends Eq{//再構成トンネルEX
+    export const                         手甲:Eq = new class extends Eq{//再構成トンネルEX
         constructor(){super({uniqueName:"手甲", info:"全ステータス+20",
                                 pos:EqPos.手, lv:10});}
         equip(unit:Unit){
@@ -483,7 +492,7 @@ export namespace Eq{
             }
         }
     }
-    export const                         パウアハッハ = new class extends Eq{//mix
+    export const                         パウアハッハ:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"パウアハッハ", info:"魔法・暗黒・過去・弓術攻撃+20%",
                                 pos:EqPos.手, lv:12});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -492,7 +501,7 @@ export namespace Eq{
             }
         }
     }
-    export const                         カンベレグ = new class extends Eq{//mix
+    export const                         カンベレグ:Eq = new class extends Eq{//mix
         constructor(){super({uniqueName:"カンベレグ", info:"格闘・神格・練術・銃術攻撃+20%",
                                 pos:EqPos.手, lv:12});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -501,7 +510,7 @@ export namespace Eq{
             }
         }
     }
-    export const                         ゴーレムの腕 = new class extends Eq{//黒遺跡EX
+    export const                         ゴーレムの腕:Eq = new class extends Eq{//黒遺跡EX
         constructor(){super({uniqueName:"ゴーレムの腕", info:"神格・過去攻撃+33%",
                                 pos:EqPos.手, lv:5});}
         beforeDoAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -510,7 +519,7 @@ export namespace Eq{
             }
         }
     }
-    export const                         ニケ = new class extends Eq{//PAINTREASURE
+    export const                         ニケ:Eq = new class extends Eq{//マーザン森財宝
         constructor(){super({uniqueName:"ニケ", info:"最大MP+10 最大TP+5 光・闇+50",
                                 pos:EqPos.手, lv:45});}
         equip(unit:Unit){
@@ -525,25 +534,25 @@ export namespace Eq{
     //指
     //
     //--------------------------------------------------------------------------
-    export const                         肩身の指輪 = new class extends Eq{
+    export const                         肩身の指輪:Eq = new class extends Eq{
         constructor(){super({uniqueName:"肩身の指輪", info:"",
                                 pos:EqPos.指, lv:0});}
     }
-    export const                         ミュータント = new class extends Eq{
+    export const                         ミュータント:Eq = new class extends Eq{
         constructor(){super({uniqueName:"ミュータント", info:"戦闘開始時<盾>化",
                                 pos:EqPos.指, lv:10});}
         battleStart(unit:Unit){
             unit.setCondition( Condition.盾, 1 );
         }
     }
-    export const                         魔ヶ玉の指輪 = new class extends Eq{
+    export const                         魔ヶ玉の指輪:Eq = new class extends Eq{
         constructor(){super({uniqueName:"魔ヶ玉の指輪", info:"行動開始時MP+10%",
                                 pos:EqPos.指, lv:20});}
         phaseStart(unit:Unit){
             Unit.healMP(unit, unit.prm(Prm.MAX_MP).total * 0.1 + 1);
         }
     }
-    export const                         瑠璃 = new class extends Eq{//はじまりの丘EX
+    export const                         瑠璃:Eq = new class extends Eq{//はじまりの丘EX
         constructor(){super({uniqueName:"瑠璃", info:"戦闘開始時TP+10%",
                                 pos:EqPos.指, lv:50});}
         battleStart(unit:Unit){
@@ -555,11 +564,11 @@ export namespace Eq{
     //脚
     //
     //--------------------------------------------------------------------------
-    export const                         きれいな靴 = new class extends Eq{
+    export const                         きれいな靴:Eq = new class extends Eq{
         constructor(){super({uniqueName:"きれいな靴", info:"",
                                 pos:EqPos.脚, lv:0});}
     }
-    export const                         安全靴 = new class extends Eq{//再構成トンネルTREASURE
+    export const                         安全靴:Eq = new class extends Eq{//再構成トンネル財宝
         constructor(){super({uniqueName:"安全靴", info:"被攻撃時稀に<盾>化",
                                 pos:EqPos.脚, lv:40});}
         afterBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){
@@ -568,7 +577,7 @@ export namespace Eq{
             }
         }
     }
-    export const                         鉄下駄 = new class extends Eq{//PAINEX
+    export const                         鉄下駄:Eq = new class extends Eq{//PAINEX
         constructor(){super({uniqueName:"鉄下駄", info:"攻撃命中率x0.9 防御値x2",
                                 pos:EqPos.脚, lv:21});}
         beforeBeAtk(action:Action, attacker:Unit, target:Unit, dmg:Dmg){

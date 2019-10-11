@@ -487,21 +487,29 @@ export namespace Item{
     //書
     //
     //-----------------------------------------------------------------
-    export const                         兵法指南の書:Item = new class extends Item{
-        constructor(){super({uniqueName:"兵法指南の書", info:"技のセット可能数を6に増やす",
-                                type:ItemType.書, rank:10, drop:ItemDrop.NO,
-                                use:async(user,target)=>{
-                                    target.tecs.push( Tec.empty );
-                                    FX_Str(Font.def, `${target.name}の技セット可能数が6になった`, Point.CENTER, Color.WHITE);
-                                },
-        })}
-        canUse(user:Unit, targets:Unit[]){
-            for(const u of targets){
-                if(!(u instanceof PUnit && u.tecs.length === 5) ){return false;}
+    const createAddTecNumBook = (uniqueName:string, tecNum:number)=>{
+        return new class extends Item{
+            constructor(){super({uniqueName:uniqueName, info:`技のセット可能数を${tecNum}に増やす`,
+                                    type:ItemType.書, rank:10, drop:ItemDrop.NO,
+                                    use:async(user,target)=>{
+                                        target.tecs.push( Tec.empty );
+                                        FX_Str(Font.def, `${target.name}の技セット可能数が${tecNum}になった`, Point.CENTER, Color.WHITE);
+                                    },
+            })}
+            canUse(user:Unit, targets:Unit[]){
+                for(const u of targets){
+                    if(!(u instanceof PUnit && u.tecs.length === tecNum-1) ){return false;}
+                }
+                return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;
             }
-            return super.canUse( user, targets ) && SceneType.now !== SceneType.BATTLE;
-        }
+        };
     };
+    export const                         兵法指南の書:Item = 
+                    createAddTecNumBook("兵法指南の書", 6);
+    export const                         五輪の書:Item = 
+                    createAddTecNumBook("五輪の書", 7);
+    export const                         天地創造の書:Item = 
+                    createAddTecNumBook("天地創造の書", 8);
     //-----------------------------------------------------------------
     //
     //メモ
@@ -514,6 +522,10 @@ export namespace Item{
     export const                         夏のメモ:Item = new class extends Item{
         constructor(){super({uniqueName:"夏のメモ", info:"夏はいつ終わるの？", 
                                 type:ItemType.メモ, rank:1, drop:ItemDrop.BOX, numLimit:1})}
+    };
+    export const                         ジスカルドのメモ:Item = new class extends Item{
+        constructor(){super({uniqueName:"ジスカルドのメモ", info:"じすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさん", 
+                                type:ItemType.メモ, rank:9, drop:ItemDrop.BOX, numLimit:1})}
     };
     export const                         合成許可証:Item = new class extends Item{
         constructor(){super({uniqueName:"合成許可証", info:"合成が解放される", 
@@ -633,6 +645,10 @@ export namespace Item{
         constructor(){super({uniqueName:"リ・テの門チール", info:"リテの門をクリアするともらえる記念チール", 
                                 type:ItemType.固有素材, rank:10, drop:ItemDrop.NO,})}
     };
+    export const                         マーザンの鱗:Item = new class extends Item{
+        constructor(){super({uniqueName:"マーザンの鱗", info:"なんやーーーーー！！！", 
+                                type:ItemType.固有素材, rank:10, drop:ItemDrop.NO,})}
+    };
     //-----------------------------------------------------------------
     //
     //合成素材
@@ -708,9 +724,29 @@ export namespace Item{
         constructor(){super({uniqueName:"鉄", info:"かたい",
                                 type:ItemType.土, rank:2, drop:ItemDrop.BOX | ItemDrop.STRATUM})}
     };
+    export const                         オニキス:Item = new class extends Item{
+        constructor(){super({uniqueName:"オニキス", info:"",
+                                type:ItemType.土, rank:2, drop:ItemDrop.STRATUM})}
+    };
     export const                         岩:Item = new class extends Item{
         constructor(){super({uniqueName:"岩", info:"",
                                 type:ItemType.土, rank:3, drop:ItemDrop.BOX | ItemDrop.STRATUM})}
+    };
+    export const                         イズミジュエリー:Item = new class extends Item{
+        constructor(){super({uniqueName:"イズミジュエリー", info:"",
+                                type:ItemType.土, rank:3, drop:ItemDrop.STRATUM})}
+    };
+    export const                         クリスタル:Item = new class extends Item{
+        constructor(){super({uniqueName:"クリスタル", info:"",
+                                type:ItemType.土, rank:4, drop:ItemDrop.STRATUM})}
+    };
+    export const                         サファイア:Item = new class extends Item{
+        constructor(){super({uniqueName:"サファイア", info:"",
+                                type:ItemType.土, rank:4, drop:ItemDrop.STRATUM})}
+    };
+    export const                         血粉末:Item = new class extends Item{
+        constructor(){super({uniqueName:"血粉末", info:"",
+                                type:ItemType.土, rank:5, drop:ItemDrop.STRATUM})}
     };
     //-----------------------------------------------------------------
     //

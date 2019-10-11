@@ -349,6 +349,7 @@ export class Font {
                 if (this.measureRatioW(sub) <= ratioW) {
                     res.push(sub);
                     str = str.substring(i, str.length);
+                    break;
                 }
             }
         }

@@ -406,6 +406,24 @@ ActiveTec._valueOf = new Map();
             return dmg;
         }
     };
+    Tec.聖剣 = new class extends ActiveTec {
+        constructor() {
+            super({ uniqueName: "聖剣", info: "一体に格闘攻撃　攻撃後光依存で回復",
+                type: TecType.格闘, targetings: Targeting.SELECT,
+                mul: 1, num: 1, hit: 1, mp: 3, tp: 2,
+            });
+        }
+        run(attacker, target) {
+            const _super = Object.create(null, {
+                run: { get: () => super.run }
+            });
+            return __awaiter(this, void 0, void 0, function* () {
+                yield _super.run.call(this, attacker, target);
+                const value = attacker.prm(Prm.LIG).total;
+                Unit.healHP(attacker, value);
+            });
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //格闘Passive

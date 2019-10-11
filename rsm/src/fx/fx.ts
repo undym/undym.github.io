@@ -266,13 +266,13 @@ FXTest.add(FX_Shake.name, ()=>{
 export const FX_格闘 = (center:{x:number, y:number})=>{
     let particles:{x:number, y:number, vx:number, vy:number, lifeTime:number}[] = [];
     for(let i = 0; i < 40; i++){
-        const pow = 0.0001 + Math.random() * 0.02;
+        const pow = 1 + Math.random() * 15;
         const rad = Math.PI * 2 * Math.random();
         particles.push({
             x:center.x,
             y:center.y,
-            vx:Math.cos(rad) * pow,
-            vy:Math.sin(rad) * pow,
+            vx:Math.cos(rad) * pow * Graphics.dotW,
+            vy:Math.sin(rad) * pow * Graphics.dotH,
             lifeTime:3 + Math.random() * 15,
         });
     }
@@ -308,7 +308,7 @@ export const FX_魔法 = (center:{x:number, y:number}) => {
         const b = Math.random();
         for(let i2 = 0; i2 < i2Loop; i2++){
             particles.push({
-                r: 0.01 + i2 * 0.01,
+                r: 4 + i2 * 8,
                 rad: Math.PI * 2 * i / iLoop,
                 ordinal:i2,
                 color:new Color(r,g,b, 0.7 + 0.3 * i2 / i2Loop),
@@ -319,12 +319,12 @@ export const FX_魔法 = (center:{x:number, y:number}) => {
         const t = count % 2;
         let exists = false;
         for (const p of particles) {
-            if (p.r > 0.002 && p.ordinal % 2 === t) {
+            if (p.r > 1 && p.ordinal % 2 === t) {
                 exists = true;
-                const size = (p.r * 100 + 1) / Graphics.pixelW;
+                const size = (p.r * 0.35 + 1) / Graphics.pixelW;
                 const point = {
-                    x: center.x + Math.cos(p.rad) * p.r,
-                    y: center.y + Math.sin(p.rad) * p.r,
+                    x: center.x + Math.cos(p.rad) * p.r * Graphics.dotW,
+                    y: center.y + Math.sin(p.rad) * p.r * Graphics.dotH,
                 };
                 Graphics.fillOval(point, size, p.color);
                 p.r *= 0.75;
@@ -345,10 +345,10 @@ export const FX_神格 = (center:{x:number, y:number})=>{
             Graphics.setLineWidth(6, ()=>{
                 Graphics.rotate(Math.PI * 2 * 8 / 360, center, ()=>{    
                     const x = center.x + Math.random() * Graphics.dotW * 6;
-                    const y = center.y + Math.random() * Graphics.dotW * 6;
+                    const y = center.y + Math.random() * Graphics.dotH * 6;
                     const color = new Color(0.5 + Math.random(), 0.5 + Math.random(), 0.5 + Math.random());
                     const w = Graphics.dotW * 30;
-                    const h = w * 2;
+                    const h = Graphics.dotH * 50;
                     //x
                     {
                         const p1 = new Point(x - w / 2, y);
@@ -376,8 +376,8 @@ export const FX_暗黒 = (center:{x:number, y:number})=>{
         const over = 12;
         const rad = Math.PI * 2 * Math.random();
         const v = vec;
-        let vx = Math.cos(rad) * v;
-        let vy = Math.sin(rad) * v;
+        let vx = Math.cos(rad) * v * Graphics.dotW;
+        let vy = Math.sin(rad) * v * Graphics.dotH;
         FX.add(count=>{
             const r = size * (1 - count / over);
             // Graphics.fillOval(point, r, color);
@@ -400,8 +400,8 @@ export const FX_暗黒 = (center:{x:number, y:number})=>{
             const x = (start.x * (over - count2) + end.x * count2) / over;
             const y = (start.y * (over - count2) + end.y * count2) / over;
 
-            for(let i = 0; i < 25; i++){
-                const vec = 0.001 + Math.random() * 0.012 * (1 - count / over);
+            for(let i = 0; i < 13; i++){
+                const vec = 1 + Math.random() * 12 * (1 - count / over);
                 const c = 0.1 + Math.random() * 0.2;
                 addParticle({x:x, y:y}, vec, /*size*/0.01 + 0.01 * Math.random() * (1 - count / over), new Color(c + Math.random() * 0.4,c,c));
             }
@@ -452,9 +452,9 @@ export const FX_練術 = (attacker:{x:number, y:number}, target:{x:number, y:num
         const points:{x:number,y:number}[] = [];
         for(let i = 0; i < loop; i++){
             const rad = Math.PI * 2 * i / loop * 2.5 + count * 0.6;
-            const r = 0.025 * i / loop + 0.025 * Math.random();
-            let x = target.x + Math.cos(rad) * r;
-            let y = target.y + Math.sin(rad) * r;
+            const r = 25 * i / loop + 25 * Math.random();
+            let x = target.x + Math.cos(rad) * r * Graphics.dotW;
+            let y = target.y + Math.sin(rad) * r * Graphics.dotH;
             points.push({x:x, y:y});
         }
         for(let i = 0; i < points.length-1; i++){
@@ -485,9 +485,9 @@ export const FX_過去 = (target:{x:number, y:number})=>{
         const points:{x:number,y:number}[] = [];
         for(let i = 0; i < loop; i++){
             const rad = Math.PI * 2 * i / loop * 2.5;
-            const r = 0.025 * i / loop + 0.025 * Math.random();
-            let x = target.x + Math.cos(rad) * r;
-            let y = target.y + Math.sin(rad) * r;
+            const r = 25 * i / loop + 25 * Math.random();
+            let x = target.x + Math.cos(rad) * r * Graphics.dotW;
+            let y = target.y + Math.sin(rad) * r * Graphics.dotH;
             points.push({x:x, y:y});
         }
         for(let i = 0; i < points.length-1; i++){
@@ -566,7 +566,9 @@ export const FX_銃術 = (attacker:{x:number, y:number}, target:{x:number, y:num
     FX.add((count) => {
         const over = 10;
         const a = 1.0 - count / over;
-        Graphics.line(attacker, target, new Color(1, 1, 1, a));
+        Graphics.setLineWidth(2, ()=>{
+            Graphics.line(attacker, target, new Color(1, 1, 1, a));
+        });
         const r = 0.07 * count / over;
         Graphics.drawOval(target, r, new Color(1, 1, 1, a));
         return count < over;

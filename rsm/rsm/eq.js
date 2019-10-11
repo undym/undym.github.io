@@ -219,6 +219,15 @@ EqEar._valueOf = new Map();
                 pos: EqPos.頭, lv: Eq.NO_APPEAR_LV });
         }
     };
+    Eq.マーザンの角 = new class extends Eq {
+        constructor() {
+            super({ uniqueName: "マーザンの角", info: "防御値+200",
+                pos: EqPos.頭, lv: 30 });
+        }
+        beforeBeAtk(action, attacker, target, dmg) {
+            dmg.def.add += 200;
+        }
+    };
     //--------------------------------------------------------------------------
     //
     //武
@@ -336,14 +345,6 @@ EqEar._valueOf = new Map();
         }
         equip(unit) { unit.prm(Prm.GUN).eq += 70; unit.prm(Prm.ARR).eq += 70; }
     };
-    // export const                         忍者刀 = new class extends Eq{
-    //     constructor(){super({uniqueName:"忍者刀", info:"格闘攻撃時稀に追加攻撃",
-    //                             pos:EqPos.武, lv:99});}
-    //     createMix(){return new Mix({
-    //         result:[this,1,
-    //         materials:[[Item.石, 1],
-    //     });}
-    // }
     //--------------------------------------------------------------------------
     //
     //盾
@@ -430,40 +431,42 @@ EqEar._valueOf = new Map();
         }
         equip(unit) { unit.prm(Prm.MAX_HP).eq += 100; }
     };
-    Eq.青銅の鎧 = new class extends Eq {
+    // export const                         青銅の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"青銅の鎧", info:"最大HP+200",
+    //                             pos:EqPos.体, lv:125});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 200;}
+    // }
+    // export const                         鉄の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"鉄の鎧", info:"最大HP+300",
+    //                             pos:EqPos.体, lv:145});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 300;}
+    // }
+    // export const                         鋼鉄の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"鋼鉄の鎧", info:"最大HP+400",
+    //                             pos:EqPos.体, lv:160});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 400;}
+    // }
+    // export const                         銀の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"銀の鎧", info:"最大HP+500",
+    //                             pos:EqPos.体, lv:180});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 500;}
+    // }
+    // export const                         金の鎧 = new class extends Eq{
+    //     constructor(){super({uniqueName:"金の鎧", info:"最大HP+600",
+    //                             pos:EqPos.体, lv:200});}
+    //     equip(unit:Unit){unit.prm(Prm.MAX_HP).eq += 600;}
+    // }
+    Eq.防弾チョッキ = new class extends Eq {
         constructor() {
-            super({ uniqueName: "青銅の鎧", info: "最大HP+200",
-                pos: EqPos.体, lv: 125 });
+            super({ uniqueName: "防弾チョッキ", info: "最大HP+50　被銃術・弓術攻撃-40%",
+                pos: EqPos.体, lv: 95 });
         }
-        equip(unit) { unit.prm(Prm.MAX_HP).eq += 200; }
-    };
-    Eq.鉄の鎧 = new class extends Eq {
-        constructor() {
-            super({ uniqueName: "鉄の鎧", info: "最大HP+300",
-                pos: EqPos.体, lv: 145 });
+        equip(unit) { unit.prm(Prm.MAX_HP).eq += 50; }
+        beforeBeAtk(action, attacker, target, dmg) {
+            if (action instanceof ActiveTec && action.type.any(TecType.銃術, TecType.弓術)) {
+                dmg.pow.mul *= 0.6;
+            }
         }
-        equip(unit) { unit.prm(Prm.MAX_HP).eq += 300; }
-    };
-    Eq.鋼鉄の鎧 = new class extends Eq {
-        constructor() {
-            super({ uniqueName: "鋼鉄の鎧", info: "最大HP+400",
-                pos: EqPos.体, lv: 160 });
-        }
-        equip(unit) { unit.prm(Prm.MAX_HP).eq += 400; }
-    };
-    Eq.銀の鎧 = new class extends Eq {
-        constructor() {
-            super({ uniqueName: "銀の鎧", info: "最大HP+500",
-                pos: EqPos.体, lv: 180 });
-        }
-        equip(unit) { unit.prm(Prm.MAX_HP).eq += 500; }
-    };
-    Eq.金の鎧 = new class extends Eq {
-        constructor() {
-            super({ uniqueName: "金の鎧", info: "最大HP+600",
-                pos: EqPos.体, lv: 200 });
-        }
-        equip(unit) { unit.prm(Prm.MAX_HP).eq += 600; }
     };
     //--------------------------------------------------------------------------
     //

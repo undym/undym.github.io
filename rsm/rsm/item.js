@@ -492,25 +492,30 @@ Item.DEF_NUM_LIMIT = 9999;
     //書
     //
     //-----------------------------------------------------------------
-    Item.兵法指南の書 = new class extends Item {
-        constructor() {
-            super({ uniqueName: "兵法指南の書", info: "技のセット可能数を6に増やす",
-                type: ItemType.書, rank: 10, drop: ItemDrop.NO,
-                use: (user, target) => __awaiter(this, void 0, void 0, function* () {
-                    target.tecs.push(Tec.empty);
-                    FX_Str(Font.def, `${target.name}の技セット可能数が6になった`, Point.CENTER, Color.WHITE);
-                }),
-            });
-        }
-        canUse(user, targets) {
-            for (const u of targets) {
-                if (!(u instanceof PUnit && u.tecs.length === 5)) {
-                    return false;
-                }
+    const createAddTecNumBook = (uniqueName, tecNum) => {
+        return new class extends Item {
+            constructor() {
+                super({ uniqueName: uniqueName, info: `技のセット可能数を${tecNum}に増やす`,
+                    type: ItemType.書, rank: 10, drop: ItemDrop.NO,
+                    use: (user, target) => __awaiter(this, void 0, void 0, function* () {
+                        target.tecs.push(Tec.empty);
+                        FX_Str(Font.def, `${target.name}の技セット可能数が${tecNum}になった`, Point.CENTER, Color.WHITE);
+                    }),
+                });
             }
-            return super.canUse(user, targets) && SceneType.now !== SceneType.BATTLE;
-        }
+            canUse(user, targets) {
+                for (const u of targets) {
+                    if (!(u instanceof PUnit && u.tecs.length === tecNum - 1)) {
+                        return false;
+                    }
+                }
+                return super.canUse(user, targets) && SceneType.now !== SceneType.BATTLE;
+            }
+        };
     };
+    Item.兵法指南の書 = createAddTecNumBook("兵法指南の書", 6);
+    Item.五輪の書 = createAddTecNumBook("五輪の書", 7);
+    Item.天地創造の書 = createAddTecNumBook("天地創造の書", 8);
     //-----------------------------------------------------------------
     //
     //メモ
@@ -526,6 +531,12 @@ Item.DEF_NUM_LIMIT = 9999;
         constructor() {
             super({ uniqueName: "夏のメモ", info: "夏はいつ終わるの？",
                 type: ItemType.メモ, rank: 1, drop: ItemDrop.BOX, numLimit: 1 });
+        }
+    };
+    Item.ジスカルドのメモ = new class extends Item {
+        constructor() {
+            super({ uniqueName: "ジスカルドのメモ", info: "じすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさんじすさん",
+                type: ItemType.メモ, rank: 9, drop: ItemDrop.BOX, numLimit: 1 });
         }
     };
     Item.合成許可証 = new class extends Item {
@@ -690,6 +701,12 @@ Item.DEF_NUM_LIMIT = 9999;
                 type: ItemType.固有素材, rank: 10, drop: ItemDrop.NO, });
         }
     };
+    Item.マーザンの鱗 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "マーザンの鱗", info: "なんやーーーーー！！！",
+                type: ItemType.固有素材, rank: 10, drop: ItemDrop.NO, });
+        }
+    };
     //-----------------------------------------------------------------
     //
     //合成素材
@@ -795,10 +812,40 @@ Item.DEF_NUM_LIMIT = 9999;
                 type: ItemType.土, rank: 2, drop: ItemDrop.BOX | ItemDrop.STRATUM });
         }
     };
+    Item.オニキス = new class extends Item {
+        constructor() {
+            super({ uniqueName: "オニキス", info: "",
+                type: ItemType.土, rank: 2, drop: ItemDrop.STRATUM });
+        }
+    };
     Item.岩 = new class extends Item {
         constructor() {
             super({ uniqueName: "岩", info: "",
                 type: ItemType.土, rank: 3, drop: ItemDrop.BOX | ItemDrop.STRATUM });
+        }
+    };
+    Item.イズミジュエリー = new class extends Item {
+        constructor() {
+            super({ uniqueName: "イズミジュエリー", info: "",
+                type: ItemType.土, rank: 3, drop: ItemDrop.STRATUM });
+        }
+    };
+    Item.クリスタル = new class extends Item {
+        constructor() {
+            super({ uniqueName: "クリスタル", info: "",
+                type: ItemType.土, rank: 4, drop: ItemDrop.STRATUM });
+        }
+    };
+    Item.サファイア = new class extends Item {
+        constructor() {
+            super({ uniqueName: "サファイア", info: "",
+                type: ItemType.土, rank: 4, drop: ItemDrop.STRATUM });
+        }
+    };
+    Item.血粉末 = new class extends Item {
+        constructor() {
+            super({ uniqueName: "血粉末", info: "",
+                type: ItemType.土, rank: 5, drop: ItemDrop.STRATUM });
         }
     };
     //-----------------------------------------------------------------
